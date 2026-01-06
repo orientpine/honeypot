@@ -1,0 +1,9 @@
+{
+  "name": "slide-image-generator",
+  "version": "1.0.0",
+  "description": "slide-prompt-generator로 생성된 슬라이드 프롬프트를 Gemini API로 이미지화하는 플러그인. 4K 16:9 고해상도 슬라이드 이미지 자동 생성.",
+  "author": {
+    "name": "BaekdongCha"
+  },
+  "skills": "./skills/"
+}

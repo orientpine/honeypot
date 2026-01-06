@@ -1,0 +1,9 @@
+{
+  "name": "chapter4-generator",
+  "version": "1.0.0",
+  "description": "국책과제 연구계획서의 '제4장 사업 기대효과' 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 플러그인",
+  "author": {
+    "name": "BaekdongCha"
+  },
+  "skills": "./skills/"
+}
