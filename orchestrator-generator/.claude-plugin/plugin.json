@@ -1,9 +1,0 @@
-{
-  "name": "orchestrator-generator",
-  "version": "1.0.0",
-  "description": "국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 플러그인. 단일 입력 파일로 Chapter 3->1->2->4->5 순서로 문서를 자동 생성한다.",
-  "author": {
-    "name": "BaekdongCha"
-  },
-  "skills": "./skills/"
-}

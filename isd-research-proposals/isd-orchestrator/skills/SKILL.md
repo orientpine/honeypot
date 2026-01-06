@@ -1,9 +1,9 @@
 ---
-name: orchestrator-generator
-description: 국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 오케스트레이터. 단일 입력 파일(input_template.md 양식)을 받아 Chapter 3->1->2->4->5 순서로 문서를 생성하고 검증문서를 포함한 최종 실행 보고서를 제공한다. 사용자가 ISD 연구계획서 전체 자동 생성을 요청하거나 orchestrator를 사용해달라고 요청할 때 이 스킬을 사용한다.
+name: isd-orchestrator
+description: 국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 오케스트레이터. 단일 입력 파일(input_template.md 양식)을 받아 Chapter 3->1->2->4->5 순서로 문서를 생성하고 검증문서를 포함한 최종 실행 보고서를 제공한다. 사용자가 ISD 연구계획서 전체 자동 생성을 요청하거나 isd-orchestrator를 사용해달라고 요청할 때 이 스킬을 사용한다.
 ---
 
-# Orchestrator Generator
+# ISD Orchestrator
 
 ## ⚠️ CRITICAL: 검증문서 생성 필수 규칙
 
@@ -369,7 +369,7 @@ output/[프로젝트명]/
 ## Usage Example
 
 ```
-orchestrator-generator 스킬을 사용해서 ISD 연구계획서를 생성해줘.
+isd-orchestrator 스킬을 사용해서 ISD 연구계획서를 생성해줘.
 입력 파일: ./my_project_input.md
 ```
 
