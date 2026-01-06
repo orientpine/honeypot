@@ -1,0 +1,89 @@
+{
+  "name": "isd-generator-marketplace",
+  "owner": {
+    "name": "BaekdongCha"
+  },
+  "plugins": [
+    {
+      "name": "chapter1-generator",
+      "source": "./chapter1-generator",
+      "description": "국책과제 연구계획서의 제1장 개발 대상 및 필요성 문서를 자동 생성하는 플러그인",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "chapter2-generator",
+      "source": "./chapter2-generator",
+      "description": "국책과제 연구계획서의 제2장 국내외 시장 및 기술 동향 문서를 자동 생성하는 플러그인",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "chapter3-generator",
+      "source": "./chapter3-generator",
+      "description": "국책과제 연구계획서의 제3장 사업 목표 및 추진 전략 문서를 자동 생성하는 플러그인",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "chapter4-generator",
+      "source": "./chapter4-generator",
+      "description": "국책과제 연구계획서의 제4장 사업 기대효과 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 플러그인. 결과 활용 방안, 기술 사업화 전략, 기대효과 및 파급효과를 작성한다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "chapter5-generator",
+      "source": "./chapter5-generator",
+      "description": "국책과제 연구계획서의 제5장 기타 참고자료 문서를 자동 생성하는 플러그인. 유사중복 자체점검, 참고문헌 정리, 기존 사업과의 차별성을 작성한다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "orchestrator-generator",
+      "source": "./orchestrator-generator",
+      "description": "국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 플러그인. 단일 입력 파일로 Chapter 3->1->2->4->5 순서로 문서를 자동 생성한다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "figure-generator",
+      "source": "./figure-generator",
+      "description": "국책과제 연구계획서 출력 문서에서 <이미지명> 형식의 캡션을 추출하고, PPT 스타일 인포그래픽 이미지를 나노바나나 MCP API로 자동 생성하는 플러그인",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "slide-prompt-generator",
+      "source": "./slide-prompt-generator",
+      "description": "연구 계획서 문서를 분석하여 개념 설명 슬라이드 이미지 생성용 프롬프트를 작성하는 플러그인. 정부/공공기관 발표 자료 스타일의 인포그래픽 슬라이드 프롬프트 생성.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    },
+    {
+      "name": "slide-image-generator",
+      "source": "./slide-image-generator",
+      "description": "slide-prompt-generator로 생성된 슬라이드 프롬프트를 Gemini API(gemini-3-pro-image-preview)로 이미지화하는 플러그인. 4K 16:9 고해상도 슬라이드 이미지 자동 생성.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BaekdongCha"
+      }
+    }
+  ]
+}
