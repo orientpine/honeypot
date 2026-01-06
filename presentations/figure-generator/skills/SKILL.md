@@ -370,7 +370,7 @@ description: 국책과제 연구계획서 출력 문서에서 <이미지명> 형
 [Phase 3: 이미지 생성]
     |
     +-- Step 3-1. Python 스크립트 실행 준비
-    |   +-- 스크립트 경로 확인: local-marketplace/figure-generator/scripts/generate_images.py
+    |   +-- 스크립트 경로 확인: presentations/figure-generator/scripts/generate_images.py
     |   +-- 프롬프트 폴더 경로 확인: [출력 디렉토리]/prompts/
     |   +-- 출력 폴더 경로 확인: [출력 디렉토리]/figures/
     |   +-- Gemini API 설정 확인:

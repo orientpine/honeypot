@@ -68,7 +68,7 @@ slide-prompt-generator로 생성된 슬라이드 프롬프트 파일(.md)을 읽
 [Phase 2: 이미지 생성]
     |
     +-- Step 2-1. Python 스크립트 실행
-    |   +-- 스크립트 경로: local-marketplace/slide-image-generator/scripts/generate_slide_images.py
+    |   +-- 스크립트 경로: presentations/slide-image-generator/scripts/generate_slide_images.py
     |   +-- 실행 명령어:
     |       python scripts/generate_slide_images.py \
     |         --prompts-dir slide_image_gen/prompts/ \
@@ -115,7 +115,7 @@ slide-prompt-generator로 생성된 슬라이드 프롬프트 파일(.md)을 읽
 ### 실행 명령어
 
 ```bash
-python local-marketplace/slide-image-generator/scripts/generate_slide_images.py \
+python presentations/slide-image-generator/scripts/generate_slide_images.py \
   --prompts-dir slide_image_gen/prompts/ \
   --output-dir slide_image_gen/figures/
 ```
