@@ -320,6 +320,10 @@ plugins/{plugin-name}/
 # scripts/main_script.py
 import os
 import argparse
+from dotenv import load_dotenv
+
+# .env 파일 로드 (프로젝트 루트의 .env 자동 인식)
+load_dotenv()
 
 # API 키는 환경변수에서 로드 (하드코딩 금지)
 API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -451,7 +455,7 @@ model: opus
 
 ## NOTES
 
-- **API Key**: Gemini API key hardcoded in Python scripts (line 26) - replace for production
+- **API Key**: `.env` 파일에서 `GEMINI_API_KEY` 환경변수 로드 (python-dotenv 사용)
 - **Model**: `gemini-3-pro-image-preview` for 4K 16:9 images with Korean text
 - **Rate Limit**: 2-second delay between API calls
 - **ISD Output**: `output/[프로젝트명]/chapter_{1-5}/`
