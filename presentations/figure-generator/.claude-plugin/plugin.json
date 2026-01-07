@@ -1,9 +1,0 @@
-{
-  "name": "figure-generator",
-  "version": "1.1.0",
-  "description": "국책과제 연구계획서 출력 문서에서 <이미지명> 형식의 캡션을 추출하고, 각 캡션에 대해 PPT 스타일 인포그래픽 이미지 생성 프롬프트를 작성한 후, Gemini API(gemini-3-pro-image-preview)를 통해 4K 16:9 이미지를 자동 생성하는 플러그인",
-  "author": {
-    "name": "BaekdongCha"
-  },
-  "skills": "./skills/"
-}

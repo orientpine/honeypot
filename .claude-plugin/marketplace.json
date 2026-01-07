@@ -7,12 +7,12 @@
   },
   "metadata": {
     "description": "국책과제 연구계획서(ISD) 자동 생성, 프레젠테이션 이미지 생성, 퇴직연금 포트폴리오 Multi-Agent 분석을 위한 통합 플러그인 마켓플레이스",
-    "version": "1.1.0"
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "investments-portfolio",
-      "source": "./agents/investments",
+      "source": "./plugins/investments-portfolio",
       "description": "퇴직연금 포트폴리오 Multi-Agent 분석 시스템. 거시경제 분석, 펀드 추천, 규제 검증, 출력 검증을 순차적으로 수행하여 DC형 퇴직연금 포트폴리오를 추천합니다.",
       "version": "3.0.0",
       "author": {
@@ -32,19 +32,19 @@
         "korean"
       ],
       "category": "finance",
-      "strict": false,
+      "strict": true,
       "agents": [
-        "./portfolio-coordinator.md",
-        "./macro-outlook.md",
-        "./fund-portfolio.md",
-        "./compliance-checker.md",
-        "./output-critic.md",
-        "./leadership-outlook.md"
+        "./agents/portfolio-coordinator.md",
+        "./agents/macro-outlook.md",
+        "./agents/fund-portfolio.md",
+        "./agents/compliance-checker.md",
+        "./agents/output-critic.md",
+        "./agents/leadership-outlook.md"
       ]
     },
     {
       "name": "general-agents",
-      "source": "./agents/general",
+      "source": "./plugins/general-agents",
       "description": "범용 AI 에이전트 모음. 심층 인터뷰, 요구사항 분석, 계획 수립 및 실행을 위한 에이전트를 포함합니다.",
       "version": "1.0.0",
       "author": {
@@ -62,14 +62,14 @@
         "general-purpose"
       ],
       "category": "utilities",
-      "strict": false,
+      "strict": true,
       "agents": [
-        "./interview.md"
+        "./agents/interview.md"
       ]
     },
     {
       "name": "isd-orchestrator",
-      "source": "./isd-research-proposals/isd-orchestrator",
+      "source": "./plugins/isd-orchestrator",
       "description": "국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 오케스트레이터. 단일 입력 파일로 Chapter 3->1->2->4->5 순서로 문서를 자동 생성한다.",
       "version": "1.0.0",
       "author": {
@@ -87,14 +87,14 @@
         "automation"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "chapter1-generator",
-      "source": "./isd-research-proposals/chapter1-generator",
+      "source": "./plugins/chapter1-generator",
       "description": "국책과제 연구계획서의 제1장 개발 대상 및 필요성 문서를 자동 생성하는 플러그인",
       "version": "1.0.0",
       "author": {
@@ -111,14 +111,14 @@
         "document-generation"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "chapter2-generator",
-      "source": "./isd-research-proposals/chapter2-generator",
+      "source": "./plugins/chapter2-generator",
       "description": "국책과제 연구계획서의 제2장 국내외 시장 및 기술 동향 문서를 자동 생성하는 플러그인",
       "version": "1.0.0",
       "author": {
@@ -136,14 +136,14 @@
         "technology-trends"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "chapter3-generator",
-      "source": "./isd-research-proposals/chapter3-generator",
+      "source": "./plugins/chapter3-generator",
       "description": "국책과제 연구계획서의 제3장 사업 목표 및 추진 전략 문서를 자동 생성하는 플러그인",
       "version": "1.0.0",
       "author": {
@@ -161,14 +161,14 @@
         "strategy"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "chapter4-generator",
-      "source": "./isd-research-proposals/chapter4-generator",
+      "source": "./plugins/chapter4-generator",
       "description": "국책과제 연구계획서의 제4장 사업 기대효과 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 플러그인. 결과 활용 방안, 기술 사업화 전략, 기대효과 및 파급효과를 작성한다.",
       "version": "1.0.0",
       "author": {
@@ -186,14 +186,14 @@
         "commercialization"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "chapter5-generator",
-      "source": "./isd-research-proposals/chapter5-generator",
+      "source": "./plugins/chapter5-generator",
       "description": "국책과제 연구계획서의 제5장 기타 참고자료 문서를 자동 생성하는 플러그인. 유사중복 자체점검, 참고문헌 정리, 기존 사업과의 차별성을 작성한다.",
       "version": "1.0.0",
       "author": {
@@ -211,14 +211,14 @@
         "differentiation"
       ],
       "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "figure-generator",
-      "source": "./presentations/figure-generator",
+      "source": "./plugins/figure-generator",
       "description": "국책과제 연구계획서 출력 문서에서 <이미지명> 형식의 캡션을 추출하고, PPT 스타일 인포그래픽 이미지를 Gemini API로 자동 생성하는 플러그인",
       "version": "1.0.0",
       "author": {
@@ -236,14 +236,14 @@
         "ppt-style"
       ],
       "category": "presentations",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "slide-prompt-generator",
-      "source": "./presentations/slide-prompt-generator",
+      "source": "./plugins/slide-prompt-generator",
       "description": "연구 계획서 문서를 분석하여 개념 설명 슬라이드 이미지 생성용 프롬프트를 작성하는 플러그인. 정부/공공기관 발표 자료 스타일의 인포그래픽 슬라이드 프롬프트 생성.",
       "version": "1.0.0",
       "author": {
@@ -260,14 +260,14 @@
         "presentation"
       ],
       "category": "presentations",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     },
     {
       "name": "slide-image-generator",
-      "source": "./presentations/slide-image-generator",
+      "source": "./plugins/slide-image-generator",
       "description": "slide-prompt-generator로 생성된 슬라이드 프롬프트를 Gemini API(gemini-3-pro-image-preview)로 이미지화하는 플러그인. 4K 16:9 고해상도 슬라이드 이미지 자동 생성.",
       "version": "1.0.0",
       "author": {
@@ -285,9 +285,9 @@
         "presentation"
       ],
       "category": "presentations",
-      "strict": false,
+      "strict": true,
       "skills": [
-        "./skills/"
+        "./skills"
       ]
     }
   ]

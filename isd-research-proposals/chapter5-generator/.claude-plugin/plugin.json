@@ -1,9 +1,0 @@
-{
-  "name": "chapter5-generator",
-  "version": "1.0.0",
-  "description": "국책과제 연구계획서의 '제5장 기타 참고자료' 문서를 Chapter 1~4 기반으로 자동 생성하는 플러그인. 유사중복 자체점검, 참고문헌 정리, 기존 사업과의 차별성을 체계적으로 작성한다.",
-  "author": {
-    "name": "BaekdongCha"
-  },
-  "skills": "./skills/"
-}
