@@ -1,9 +1,0 @@
-{
-  "name": "chapter2-generator",
-  "version": "1.0.0",
-  "description": "국책과제 연구계획서의 '제2장 국내외 시장 및 기술 동향' 문서를 자동 생성하는 스킬. Chapter 3 문서와 Chapter 1 문서를 입력받아 웹 검색을 통해 시장 규모, 기술 동향, 특허 분석, 경쟁력 수준을 조사하고, 체계적인 시장/기술 분석 문서를 생성한다. 사용자가 Chapter 1과 Chapter 3를 기반으로 Chapter 2를 작성하거나 시장/기술 동향 섹션 작성을 요청할 때 이 스킬을 사용한다.",
-  "author": {
-    "name": "BaekdongCha"
-  },
-  "skills": "./skills/"
-}

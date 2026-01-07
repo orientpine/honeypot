@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "chapter1-generator@toolbox-marketplace": true,
+    "general-agents@toolbox-marketplace": true
+  }
+}
