@@ -1,62 +1,67 @@
-목적:
-국가 연구기관·정부·공공 R&D 공식 발표 자료용 슬라이드 생성.
-[슬라이드 주제와 목적을 1-2문장으로 설명]
+[INSTRUCTION - DO NOT RENDER IN IMAGE]
 
-전체 톤앤매너:
-- 신뢰감, 공공성, 기술 선도, 미래지향
+Purpose:
+Generate a slide for official Korean government/national research institute R&D presentations.
+[슬라이드 주제와 목적을 영어로 1-2문장 기술]
+
+Tone & Manner:
+- Trustworthy, public-oriented, technology-leading, future-oriented
 - National Research Institute & Government Report Style
-- 과장 없는 기술 중심 표현
-- 비전공자도 이해 가능한 시각적 설명
+- Technical expression without exaggeration
+- Visual explanation understandable by non-experts
 
-스타일:
-- 정돈된 산업용 3D 렌더링 + 미니멀 인포그래픽
-- 현실적인 산업 장비 비율
-- 약한 Isometric 시점
-- 얇은 라인 아이콘, 평면 + 입체 혼합
-- Sans-serif 폰트 (정부 보고서 스타일)
-- 텍스트 최소화, 시각 요소 중심
+Style:
+- Clean industrial 3D rendering + minimal infographic
+- Realistic industrial equipment proportions
+- Subtle Isometric perspective (15-30 degrees)
+- Thin line icons, flat + 3D hybrid
+- Sans-serif font (government report style)
+- Minimize text, focus on visual elements
 
-색상:
-- 배경: 화이트 또는 라이트 그레이
-- 메인 컬러: [주요 색상과 HEX 코드]
-- 서브 컬러: [보조 색상과 HEX 코드]
-- 강조 컬러: [강조 색상과 HEX 코드]
+Colors (Theme: [테마 ID]):
+- Background: [배경 HEX 코드]
+- Main: [메인 HEX 코드] - titles, key boxes
+- Sub: [서브 HEX 코드] - connections, secondary boxes
+- Accent: [강조 HEX 코드] - highlights, key points
 
-조명:
-- 부드러운 스튜디오 라이트
-- 그림자 최소화
-- 높은 가독성, 명확한 윤곽
+Lighting:
+- Soft studio lighting
+- Minimal shadows
+- High readability, clear outlines
 
-해상도:
+Resolution:
 - Ultra High Resolution
 - 8K Quality
-- 프레젠테이션 및 인쇄 대응
+- Presentation and print ready
 
 --------------------------------------------------
+[슬라이드 콘텐츠 - 한글]
+--------------------------------------------------
+
 슬라이드 레이아웃:
-- 단일 슬라이드
-- [레이아웃 유형: 피라미드/방사형/순환형/분해도/병렬비교/타임라인/조직도/표 등]
-- [구조 설명]
+- 단일 슬라이드, 16:9 비율
+- 레이아웃 유형: [피라미드/방사형/순환형/분해도/병렬비교/타임라인/조직도/표/동심원/Swimlane/매트릭스/깔때기]
+- 구조: [레이아웃 구조 상세 설명]
 
 --------------------------------------------------
-상단 타이틀 (작게, 중앙 또는 좌측):
-"[슬라이드 제목]"
+상단 타이틀:
+"[슬라이드 제목]" (Korean: [한글 제목], meaning "[영어 의미]")
 
-부제목 (더 작게):
+부제목:
 "[부제목 또는 핵심 메시지]"
 
 --------------------------------------------------
 [섹션 1] [섹션 제목]
 
-위치: [슬라이드 내 위치]
+위치: [슬라이드 내 위치 - 좌상단/중앙/우하단 등]
 
 시각화:
 - [시각화 방식 설명]
 - [구성 요소]
-- [색상 및 스타일]
+- [색상: 메인/서브/강조 중 선택]
 
 라벨:
-"[라벨 텍스트]"
+"[라벨 텍스트]" (Korean: [한글], meaning "[영어 의미]")
 
 부가 요소:
 - [추가 요소 1]
@@ -68,7 +73,21 @@
 [위와 동일한 형식으로 작성]
 
 --------------------------------------------------
-[필요한 만큼 섹션 추가]
+[필요한 만큼 섹션 추가 - 최대 8개 섹션 권장]
+
+--------------------------------------------------
+텍스트 규격 (필수 준수):
+
+| 요소 | 크기 | 굵기 | 색상 |
+|:---|:---:|:---:|:---|
+| 대제목 | 32pt | Bold | 메인 컬러 또는 화이트 |
+| 섹션 제목 | 22pt | Bold | 메인 컬러 |
+| 박스 라벨 | 16pt | SemiBold | 메인/서브 컬러 |
+| 소항목 | 14pt | Regular | 다크 그레이 (#333333) |
+
+**최소 폰트 크기: 14pt (이하 사용 금지)**
+**슬라이드 전체 텍스트 요소: 최대 25개**
+**한 박스 내 텍스트: 최대 3줄**
 
 --------------------------------------------------
 인포그래픽 디테일:
@@ -79,23 +98,41 @@
 - [원칙 3]
 
 색상 활용:
-- [색상 활용 방식]
+- 메인 컬러: [사용처]
+- 서브 컬러: [사용처]
+- 강조 컬러: [사용처]
+
+그래픽 요소:
+- 박스: 둥근 모서리 (radius 8px), 연한 그림자
+- 화살표: 두께 3px, 서브 컬러
+- 연결선: 두께 2px, 실선 또는 점선
+- 아이콘: 얇은 라인, 단색
 
 텍스트 규칙:
 - 모든 라벨은 한글
-- 기술 용어는 영어 병기
-- 키워드 수준만 허용
-- 문장형 설명 금지
+- 기술 용어는 영어 병기 (예: Cross-Embodiment, MLOps)
+- 키워드 수준만 허용 (문장형 설명 금지)
+- 핵심 마일스톤은 ★ 표시
+- 라벨 간 최소 간격 20px
 
 --------------------------------------------------
-금지 요소:
-- 만화풍
-- 과도한 SF, 사이버펑크
-- 어두운 배경
-- 복잡한 실제 배경
-- 감정 과장 표현
-- 불필요한 장식
+Forbidden Elements:
+- Cartoon style
+- Excessive SF, cyberpunk aesthetics
+- Dark backgrounds
+- Complex real-world backgrounds
+- Exaggerated emotional expressions
+- Unnecessary decorations
+- Excessive glow/neon effects
+- Font size below 14pt
+- More than 25 text elements
+- More than 3 lines in a single box
+- Text over gradient backgrounds
+- Incorrect Korean characters
 
+--------------------------------------------------
 최종 결과물 목표:
 - 공공기관·정부·연구기관 발표에 즉시 사용 가능한
 - 한 장으로 이해되는 [개념명] 슬라이드
+- 모든 텍스트 14pt 이상으로 선명하게 렌더링
+- [테마명] 색상 팔레트 일관성 유지
