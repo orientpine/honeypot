@@ -1,5 +1,5 @@
 ---
-name: chapter4-generator
+name: chapter4
 description: "국책과제 연구계획서의 '제4장 사업 기대효과' 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 스킬. Chapter 1의 개발 필요성/성과지표와 Chapter 3의 연구목표/성과물을 분석하여 결과 활용 방안, 기술 사업화 전략, 기대효과 및 파급효과를 체계적으로 작성한다. 사용자가 Chapter 1, Chapter 3 문서를 기반으로 Chapter 4를 작성하거나 사업의 기대효과/파급효과 섹션 작성을 요청할 때 이 스킬을 사용한다."
 ---
 

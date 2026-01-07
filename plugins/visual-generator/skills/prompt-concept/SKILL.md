@@ -1,5 +1,5 @@
 ---
-name: visual-prompt-concept
+name: prompt-concept
 description: "핵심 개념을 직관적으로 시각화하는 TED 스타일 이미지 프롬프트를 생성합니다. 개념 설명 PPT, 교육 자료, 기술 블로그용 시각 자료가 필요할 때 사용합니다. visual-renderer와 호환되는 프롬프트를 출력합니다."
 ---
 
