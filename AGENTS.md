@@ -16,19 +16,23 @@ toolbox/
 │   └── marketplace.json              # Single marketplace registry (4 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인
-    │   └── skills/
-    │       ├── orchestrator/         # Master orchestrator (Chapter 3→1→2→4→5)
-    │       ├── chapter1/             # Chapter 1 generator
-    │       ├── chapter2/             # Chapter 2 generator
-    │       ├── chapter3/             # Chapter 3 generator
-    │       ├── chapter4/             # Chapter 4 generator
-    │       ├── chapter5/             # Chapter 5 generator
-    │       └── figure/               # Caption extraction + Gemini API image gen
+    │   ├── skills/
+    │   │   ├── orchestrator/         # Master orchestrator (Chapter 3→1→2→4→5)
+    │   │   ├── chapter1/             # Chapter 1 generator
+    │   │   ├── chapter2/             # Chapter 2 generator
+    │   │   ├── chapter3/             # Chapter 3 generator
+    │   │   ├── chapter4/             # Chapter 4 generator
+    │   │   ├── chapter5/             # Chapter 5 generator
+    │   │   └── figure/               # Caption extraction + Gemini API image gen
+    │   └── scripts/
+    │       └── generate_images.py    # Gemini API image generation script
     ├── visual-generator/             # 시각자료 통합 플러그인
-    │   └── skills/
-    │       ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
-    │       ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
-    │       └── renderer/             # Gemini API 이미지 생성
+    │   ├── skills/
+    │   │   ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
+    │   │   ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
+    │   │   └── renderer/             # Gemini API 이미지 생성
+    │   └── scripts/
+    │       └── generate_slide_images.py  # Gemini API slide image generation script
     ├── investments-portfolio/        # Portfolio analysis multi-agent system
     │   └── agents/                   # 6 agents: portfolio-coordinator, macro-outlook, etc.
     └── general-agents/               # General-purpose agents
@@ -99,12 +103,12 @@ toolbox/
 
 ```bash
 # Generate images from prompts (requires google-genai, Pillow)
-python plugins/figure-generator/scripts/generate_images.py \
+python plugins/isd-generator/scripts/generate_images.py \
   --prompts-dir [path]/prompts/ \
   --output-dir [path]/figures/
 
 # Generate slide images
-python plugins/slide-image-generator/scripts/generate_slide_images.py \
+python plugins/visual-generator/scripts/generate_slide_images.py \
   --prompts-dir [path] --output-dir [path]
 ```
 
