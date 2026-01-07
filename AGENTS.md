@@ -13,37 +13,41 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (11 plugins)
+│   └── marketplace.json              # Single marketplace registry (4 plugins)
 └── plugins/
+    ├── isd-generator/                # ISD 연구계획서 통합 플러그인
+    │   └── skills/
+    │       ├── orchestrator/         # Master orchestrator (Chapter 3→1→2→4→5)
+    │       ├── chapter1/             # Chapter 1 generator
+    │       ├── chapter2/             # Chapter 2 generator
+    │       ├── chapter3/             # Chapter 3 generator
+    │       ├── chapter4/             # Chapter 4 generator
+    │       ├── chapter5/             # Chapter 5 generator
+    │       └── figure/               # Caption extraction + Gemini API image gen
+    ├── visual-generator/             # 시각자료 통합 플러그인
+    │   └── skills/
+    │       ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
+    │       ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
+    │       └── renderer/             # Gemini API 이미지 생성
     ├── investments-portfolio/        # Portfolio analysis multi-agent system
     │   └── agents/                   # 6 agents: portfolio-coordinator, macro-outlook, etc.
-    ├── general-agents/               # General-purpose agents
-    │   └── agents/                   # interview.md
-    ├── isd-orchestrator/             # Master orchestrator (Chapter 3→1→2→4→5)
-    │   └── skills/
-    ├── chapter{1-5}-generator/       # Individual chapter generators
-    │   └── skills/
-    ├── figure-generator/             # Caption extraction + Gemini API image gen
-    │   ├── skills/
-    │   └── scripts/
-    ├── slide-prompt-generator/       # Slide prompt generation
-    │   └── skills/
-    └── slide-image-generator/        # Gemini API slide image generation
-        ├── skills/
-        └── scripts/
+    └── general-agents/               # General-purpose agents
+        └── agents/                   # interview.md
 ```
 
 ## WHERE TO LOOK
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Generate full ISD proposal | `plugins/isd-orchestrator/` | Uses `input_template.md` |
-| Generate single ISD chapter | `plugins/chapter{N}-generator/` | Chapter 3 first, then 1→2→4→5 |
-| Generate figures from `<caption>` | `plugins/figure-generator/` | Gemini API required |
-| Generate slide prompts | `plugins/slide-prompt-generator/` | 4-color palette, PPT style |
+| Generate full ISD proposal | `plugins/isd-generator/skills/orchestrator/` | Uses `input_template.md` |
+| Generate single ISD chapter | `plugins/isd-generator/skills/chapter{N}/` | Chapter 3 first, then 1→2→4→5 |
+| Generate figures from `<caption>` | `plugins/isd-generator/skills/figure/` | Gemini API required |
+| Generate concept prompts (TED style) | `plugins/visual-generator/skills/prompt-concept/` | Minimal infographics |
+| Generate gov prompts (official style) | `plugins/visual-generator/skills/prompt-gov/` | 4-color palette, PPT style |
+| Render prompts to images | `plugins/visual-generator/skills/renderer/` | Gemini API required |
 | Portfolio analysis agents | `plugins/investments-portfolio/` | Korean DC pension multi-agent |
 | General interview agent | `plugins/general-agents/` | Deep interview + execution |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 11 plugins listed |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 4 plugins listed |
 
 ## CONVENTIONS
 
@@ -446,9 +450,9 @@ model: opus
 
 | 복잡도 | 참조 플러그인 | 위치 |
 |--------|--------------|------|
-| Simple | slide-prompt-generator | `plugins/slide-prompt-generator/skills/` |
-| Standard | chapter1-generator | `plugins/chapter1-generator/skills/` |
-| Advanced | figure-generator | `plugins/figure-generator/` |
+| Simple | visual-generator:prompt-concept | `plugins/visual-generator/skills/prompt-concept/` |
+| Standard | isd-generator:chapter1 | `plugins/isd-generator/skills/chapter1/` |
+| Advanced | isd-generator:figure | `plugins/isd-generator/skills/figure/` |
 | Agent | investments-portfolio | `plugins/investments-portfolio/agents/` |
 
 ---

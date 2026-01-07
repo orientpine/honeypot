@@ -5,14 +5,14 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
     {
-      "name": "visual-prompt-concept",
-      "source": "./plugins/visual-prompt-concept",
-      "description": "TED 스타일 개념 시각화 이미지 프롬프트 생성",
+      "name": "isd-generator",
+      "source": "./plugins/isd-generator",
+      "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
       "version": "1.0.0",
       "author": {
         "name": "Baekdong Cha",
@@ -21,162 +21,26 @@
       "homepage": "https://github.com/orientpine/toolbox_orientpine",
       "repository": "https://github.com/orientpine/toolbox_orientpine",
       "license": "MIT",
-      "keywords": ["presentation", "ted-style", "visualization", "concept"],
+      "keywords": ["isd", "research-proposal", "documentation", "orchestration", "chapter-generator"],
+      "category": "documentation",
+      "strict": true,
+      "skills": ["./skills"]
+    },
+    {
+      "name": "visual-generator",
+      "source": "./plugins/visual-generator",
+      "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/toolbox_orientpine",
+      "repository": "https://github.com/orientpine/toolbox_orientpine",
+      "license": "MIT",
+      "keywords": ["presentation", "visualization", "gemini", "image-generation", "slides"],
       "category": "presentations",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "visual-prompt-gov",
-      "source": "./plugins/visual-prompt-gov",
-      "description": "정부/공공기관 R&D 발표용 슬라이드 프롬프트 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["presentation", "government", "r&d", "slides"],
-      "category": "presentations",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "visual-renderer",
-      "source": "./plugins/visual-renderer",
-      "description": "Gemini API를 이용한 시각 자료 이미지 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["gemini", "image-generation", "slides"],
-      "category": "presentations",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "figure-generator",
-      "source": "./plugins/figure-generator",
-      "description": "문서 캡션에서 그림 이미지 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["figure", "caption", "image-generation", "document"],
-      "category": "presentations",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "isd-orchestrator",
-      "source": "./plugins/isd-orchestrator",
-      "description": "ISD 연구계획서 전체 오케스트레이션",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "research-proposal", "orchestration", "documentation"],
-      "category": "documentation",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "chapter1-generator",
-      "source": "./plugins/chapter1-generator",
-      "description": "ISD 1장 연구개발과제 개요 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "chapter1", "overview", "research"],
-      "category": "documentation",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "chapter2-generator",
-      "source": "./plugins/chapter2-generator",
-      "description": "ISD 2장 연구개발 수행내용 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "chapter2", "execution", "research"],
-      "category": "documentation",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "chapter3-generator",
-      "source": "./plugins/chapter3-generator",
-      "description": "ISD 3장 연구개발 필요성 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "chapter3", "necessity", "research"],
-      "category": "documentation",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "chapter4-generator",
-      "source": "./plugins/chapter4-generator",
-      "description": "ISD 4장 연구개발 추진전략 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "chapter4", "strategy", "research"],
-      "category": "documentation",
-      "strict": false,
-      "skills": ["./skills"]
-    },
-    {
-      "name": "chapter5-generator",
-      "source": "./plugins/chapter5-generator",
-      "description": "ISD 5장 연구개발 성과활용 생성",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/toolbox_orientpine",
-      "repository": "https://github.com/orientpine/toolbox_orientpine",
-      "license": "MIT",
-      "keywords": ["isd", "chapter5", "utilization", "research"],
-      "category": "documentation",
-      "strict": false,
+      "strict": true,
       "skills": ["./skills"]
     },
     {
@@ -193,7 +57,7 @@
       "license": "MIT",
       "keywords": ["finance", "portfolio", "dc-pension", "multi-agent"],
       "category": "finance",
-      "strict": false,
+      "strict": true,
       "agents": [
         "./agents/portfolio-coordinator.md",
         "./agents/macro-outlook.md",
@@ -217,7 +81,7 @@
       "license": "MIT",
       "keywords": ["utilities", "interview", "general-purpose"],
       "category": "utilities",
-      "strict": false,
+      "strict": true,
       "agents": [
         "./agents/interview.md"
       ]

@@ -1,5 +1,5 @@
 ---
-name: visual-renderer
+name: renderer
 description: "visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트를 Gemini API로 이미지화하는 스킬. 사용자가 시각 자료 이미지 생성을 요청하거나 프롬프트를 이미지로 변환하고 싶을 때 사용한다."
 ---
 

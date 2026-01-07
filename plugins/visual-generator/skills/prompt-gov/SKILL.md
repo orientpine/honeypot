@@ -1,5 +1,5 @@
 ---
-name: visual-prompt-gov
+name: prompt-gov
 description: "연구 계획서 문서를 분석하여 정부/공공기관 발표 자료 스타일의 인포그래픽 슬라이드 프롬프트를 생성합니다. visual-renderer와 호환되는 프롬프트를 출력합니다."
 ---
 
