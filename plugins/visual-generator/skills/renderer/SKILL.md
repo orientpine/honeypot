@@ -68,11 +68,11 @@ visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(
 [Phase 2: 이미지 생성]
     |
     +-- Step 2-1. Python 스크립트 실행
-    |   +-- 스크립트 경로: plugins/visual-generator/scripts/generate_slide_images.py
+    |   +-- 스크립트 경로: toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py
     |   +-- 실행 명령어:
-    |       python scripts/generate_slide_images.py \
-    |         --prompts-dir slide_image_gen/prompts/ \
-    |         --output-dir slide_image_gen/figures/
+    |       python toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
+    |         --prompts-dir [prompts_folder]/ \
+    |         --output-dir [output_folder]/
     |
     +-- Step 2-2. 생성 진행 모니터링
     |   +-- 각 이미지 생성 진행 상황 출력
@@ -115,10 +115,13 @@ visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(
 ### 실행 명령어
 
 ```bash
-python plugins/visual-generator/scripts/generate_slide_images.py \
+# 프로젝트 루트 기준 상대 경로 (toolbox_orientpine이 submodule로 포함된 경우)
+python toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
   --prompts-dir [prompts_folder]/ \
   --output-dir [output_folder]/
 ```
+
+**주의**: 스크립트는 프로젝트 내 `toolbox_orientpine/plugins/visual-generator/scripts/` 폴더에 위치합니다.
 
 ### API 설정
 
@@ -238,6 +241,7 @@ visual-prompt-gov 또는 visual-prompt-concept에서 정의한 스타일을 따�
 
 ## Resources
 
-### scripts/
+### 스크립트 위치
 
-- `generate_slide_images.py`: Gemini API 슬라이드 이미지 생성 스크립트
+- **프로젝트 내 경로**: `toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py`
+- **설명**: Gemini API를 사용한 슬라이드 이미지 생성 스크립트
