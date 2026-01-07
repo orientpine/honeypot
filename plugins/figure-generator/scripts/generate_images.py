@@ -19,8 +19,12 @@ import time
 import argparse
 from pathlib import Path
 
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
+# .env 파일 로드
+load_dotenv()
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
