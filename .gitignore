@@ -25,3 +25,7 @@ Thumbs.db
 
 # Output directories (generated content)
 output/
+
+# Claude Code
+.claude/
+.claude-plugin/
