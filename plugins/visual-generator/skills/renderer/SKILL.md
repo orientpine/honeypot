@@ -68,9 +68,9 @@ visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(
 [Phase 2: 이미지 생성]
     |
     +-- Step 2-1. Python 스크립트 실행
-    |   +-- 스크립트 경로: toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py
+    |   +-- 스크립트 경로: ./toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py
     |   +-- 실행 명령어:
-    |       python toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
+    |       python ./toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
     |         --prompts-dir [prompts_folder]/ \
     |         --output-dir [output_folder]/
     |
