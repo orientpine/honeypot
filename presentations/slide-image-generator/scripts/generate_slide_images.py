@@ -26,8 +26,13 @@ from google import genai
 from google.genai import types
 
 # API 설정
-GEMINI_API_KEY = "AIzaSyAmDaAt-zIrHRgsuHbc2dwDk89w49b2WX8"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 MODEL_NAME = "gemini-3-pro-image-preview"
+
+if not GEMINI_API_KEY:
+    print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
+    print("  export GEMINI_API_KEY='your-api-key' 또는 .env 파일에 설정하세요.")
+    sys.exit(1)
 
 
 def extract_prompt_content(md_file_path: str) -> str:
