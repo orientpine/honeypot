@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gemini API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 생성하는 스크립트
+Visual Renderer - Gemini API를 사용하여 프롬프트 파일에서 이미지를 생성하는 스크립트
 
 사용법:
     python generate_slide_images.py --prompts-dir [프롬프트 폴더] --output-dir [출력 폴더]
@@ -12,8 +12,8 @@ Gemini API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 �
     - 사고모드: 활성화
     - 고급 텍스트 렌더링: 활성화
 
-입력: slide-prompt-generator로 생성된 슬라이드 프롬프트 (.md)
-출력: 정부/공공기관 발표용 고해상도 슬라이드 이미지 (.png)
+입력: visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 (.md)
+출력: 고해상도 시각 자료 이미지 (.png)
 """
 
 import os
@@ -41,12 +41,12 @@ if not GEMINI_API_KEY:
 
 def extract_prompt_content(md_file_path: str) -> str:
     """
-    슬라이드 프롬프트 파일 전체 내용 반환
+    프롬프트 파일 전체 내용 반환
 
-    slide-prompt-generator 형식:
-    - 목적, 톤앤매너, 스타일, 색상, 조명, 해상도
-    - 슬라이드 레이아웃, 상단 타이틀, 메인 콘텐츠 섹션들
-    - 인포그래픽 디테일, 금지 요소, 최종 결과물 목표
+    visual-prompt-gov / visual-prompt-concept 형식:
+    - 목적, 스타일, 색상, 조명, 해상도
+    - 레이아웃, 타이틀, 메인 콘텐츠 섹션들
+    - 금지 요소, 최종 결과물 목표
 
     (제외 섹션 없이 전체 사용)
     """

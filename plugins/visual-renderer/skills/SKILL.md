@@ -1,14 +1,14 @@
 ---
-name: slide-image-generator
-description: slide-prompt-generator로 생성된 슬라이드 프롬프트를 Gemini API로 이미지화하는 스킬. 사용자가 슬라이드 이미지 생성을 요청하거나 slide_image_gen 폴더의 프롬프트를 이미지로 변환하고 싶을 때 사용한다.
+name: visual-renderer
+description: "visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트를 Gemini API로 이미지화하는 스킬. 사용자가 시각 자료 이미지 생성을 요청하거나 프롬프트를 이미지로 변환하고 싶을 때 사용한다."
 ---
 
-# Slide Image Generator
+# Visual Renderer
 
 ## Overview
 
-slide-prompt-generator로 생성된 슬라이드 프롬프트 파일(.md)을 읽어 Gemini API를 통해
-정부/공공기관 발표용 고품질 슬라이드 이미지를 자동 생성하는 스킬이다.
+visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(.md)을 읽어 Gemini API를 통해
+고품질 시각 자료 이미지를 자동 생성하는 스킬이다.
 
 핵심 기능:
 - slide_image_gen/prompts/ 폴더의 프롬프트 자동 처리
@@ -68,7 +68,7 @@ slide-prompt-generator로 생성된 슬라이드 프롬프트 파일(.md)을 읽
 [Phase 2: 이미지 생성]
     |
     +-- Step 2-1. Python 스크립트 실행
-    |   +-- 스크립트 경로: presentations/slide-image-generator/scripts/generate_slide_images.py
+    |   +-- 스크립트 경로: plugins/visual-renderer/scripts/generate_slide_images.py
     |   +-- 실행 명령어:
     |       python scripts/generate_slide_images.py \
     |         --prompts-dir slide_image_gen/prompts/ \
@@ -115,9 +115,9 @@ slide-prompt-generator로 생성된 슬라이드 프롬프트 파일(.md)을 읽
 ### 실행 명령어
 
 ```bash
-python presentations/slide-image-generator/scripts/generate_slide_images.py \
-  --prompts-dir slide_image_gen/prompts/ \
-  --output-dir slide_image_gen/figures/
+python plugins/visual-renderer/scripts/generate_slide_images.py \
+  --prompts-dir [prompts_folder]/ \
+  --output-dir [output_folder]/
 ```
 
 ### API 설정
@@ -169,14 +169,14 @@ slide_image_gen/
 ### 입력 예시
 
 ```
-slide-image-generator 스킬을 사용해서 슬라이드 이미지를 생성해줘.
-프롬프트 폴더: slide_image_gen/prompts/
+visual-renderer 스킬을 사용해서 이미지를 생성해줘.
+프롬프트 폴더: [prompts_folder]/
 ```
 
 또는 간단히:
 
 ```
-슬라이드 이미지 생성해줘
+이미지 렌더링해줘
 ```
 
 ### 수행 절차
@@ -196,7 +196,7 @@ slide-image-generator 스킬을 사용해서 슬라이드 이미지를 생성해
 
 ## 이미지 스타일 기준
 
-slide-prompt-generator에서 정의한 공통 스타일:
+visual-prompt-gov 또는 visual-prompt-concept에서 정의한 스타일을 따름:
 
 ### 색상 팔레트
 
@@ -229,8 +229,9 @@ slide-prompt-generator에서 정의한 공통 스타일:
 
 | 플러그인 | 역할 | 연계 |
 |---------|------|------|
-| slide-prompt-generator | 슬라이드 프롬프트 생성 | 입력 |
-| slide-image-generator | 프롬프트 → 이미지 변환 | 현재 |
+| visual-prompt-gov | 정부/공공 스타일 프롬프트 | 입력 |
+| visual-prompt-concept | TED/개념 시각화 프롬프트 | 입력 |
+| visual-renderer | 프롬프트 → 이미지 변환 | 현재 |
 | figure-generator | 문서 캡션 → 이미지 | 유사 |
 
 ---
