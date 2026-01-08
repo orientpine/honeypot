@@ -15,15 +15,22 @@ toolbox/
 ├── .claude-plugin/
 │   └── marketplace.json              # Single marketplace registry (5 plugins)
 └── plugins/
-    ├── isd-generator/                # ISD 연구계획서 통합 플러그인
-    │   ├── skills/
-    │   │   ├── orchestrator/         # Master orchestrator (Chapter 3→1→2→4→5)
-    │   │   ├── chapter1/             # Chapter 1 generator
-    │   │   ├── chapter2/             # Chapter 2 generator
-    │   │   ├── chapter3/             # Chapter 3 generator
-    │   │   ├── chapter4/             # Chapter 4 generator
-    │   │   ├── chapter5/             # Chapter 5 generator
-    │   │   └── figure/               # Caption extraction + Gemini API image gen
+    ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent 기반)
+    │   ├── agents/
+    │   │   ├── orchestrator.md       # Master orchestrator (Chapter 3→1→2→4→5)
+    │   │   ├── chapter1.md           # Chapter 1 generator
+    │   │   ├── chapter2.md           # Chapter 2 generator
+    │   │   ├── chapter3.md           # Chapter 3 generator
+    │   │   ├── chapter4.md           # Chapter 4 generator
+    │   │   ├── chapter5.md           # Chapter 5 generator
+    │   │   └── figure.md             # Caption extraction + Gemini API image gen
+    │   ├── references/
+    │   │   ├── document_templates/   # Chapter 1-5 document templates
+    │   │   ├── examples/             # Example documents (aiagent, ultracold, multiagent)
+    │   │   ├── guides/               # Web search, image, caption guides
+    │   │   └── input_template.md     # Orchestrator input template
+    │   ├── assets/
+    │   │   └── output_templates/     # Output templates for all chapters
     │   └── scripts/
     │       └── generate_images.py    # Gemini API image generation script
     ├── visual-generator/             # 시각자료 통합 플러그인
@@ -68,9 +75,9 @@ toolbox/
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Generate full ISD proposal | `plugins/isd-generator/skills/orchestrator/` | Uses `input_template.md` |
-| Generate single ISD chapter | `plugins/isd-generator/skills/chapter{N}/` | Chapter 3 first, then 1→2→4→5 |
-| Generate figures from `<caption>` | `plugins/isd-generator/skills/figure/` | Gemini API required |
+| Generate full ISD proposal | `plugins/isd-generator/agents/orchestrator.md` | Uses `references/input_template.md` |
+| Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
+| Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
 | Generate concept prompts (TED style) | `plugins/visual-generator/skills/prompt-concept/` | Minimal infographics |
 | Generate gov prompts (official style) | `plugins/visual-generator/skills/prompt-gov/` | 4-color palette, PPT style |
 | Render prompts to images | `plugins/visual-generator/skills/renderer/` | Gemini API required |
@@ -555,8 +562,8 @@ model: opus
 | 복잡도 | 참조 플러그인 | 위치 |
 |--------|--------------|------|
 | Simple | visual-generator:prompt-concept | `plugins/visual-generator/skills/prompt-concept/` |
-| Standard | isd-generator:chapter1 | `plugins/isd-generator/skills/chapter1/` |
-| Advanced | isd-generator:figure | `plugins/isd-generator/skills/figure/` |
+| Standard | isd-generator (Agent) | `plugins/isd-generator/agents/chapter1.md` |
+| Advanced | isd-generator:figure (Agent) | `plugins/isd-generator/agents/figure.md` |
 | Agent | investments-portfolio | `plugins/investments-portfolio/agents/` |
 
 ---
