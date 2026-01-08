@@ -113,6 +113,29 @@
         "./agents/style-analyzer.md",
         "./agents/skill-generator.md"
       ]
+    },
+    {
+      "name": "report-generator",
+      "source": "./plugins/report-generator",
+      "description": "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 플러그인. 폴더/파일/코드베이스 입력을 지원하며 4단계 문장 패턴을 적용하여 최대 9개 챕터로 구성된 전문 보고서를 생성합니다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/toolbox_orientpine",
+      "repository": "https://github.com/orientpine/toolbox_orientpine",
+      "license": "MIT",
+      "keywords": ["research-report", "documentation", "4-step-pattern", "automatic-writing", "phd-level"],
+      "category": "documentation",
+      "strict": true,
+      "agents": [
+        "./agents/orchestrator.md",
+        "./agents/input-analyzer.md",
+        "./agents/content-mapper.md",
+        "./agents/chapter-writer.md",
+        "./agents/quality-checker.md"
+      ]
     }
   ]
 }
