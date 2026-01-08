@@ -1,0 +1,170 @@
+---
+name: {{ name }}-introduction
+description: |
+  {{ name | title }} 스타일의 Introduction 섹션 작성 스킬.
+  문제-해결 서사 구조로 역학 데이터, 현재 한계, 솔루션 제시를 포함합니다.
+  Voice: {{ introduction.voice.active.mean * 100 | round }}% active / {{ introduction.voice.passive.mean * 100 | round }}% passive
+  Tense: Present predominantly
+---
+
+# {{ name | title }}-Style Introduction Writer
+
+## Style Overview
+
+- **Voice**: {{ introduction.voice.active.mean * 100 | round }}% active, {{ introduction.voice.passive.mean * 100 | round }}% passive
+- **Tense**: Present tense predominantly
+- **Tone**: Authoritative, data-driven, solution-focused
+- **Length**: Typically {{ introduction.paragraph_count.mean | round }}-{{ introduction.paragraph_count.max | round }} paragraphs
+
+## Narrative Structure
+
+```
+Paragraph 1: Global Context (Clinical/Scientific Problem)
+    ↓
+Paragraph 2: Specific Problem (Epidemiology, Impact)
+    ↓
+Paragraph 3: Current Solutions & Limitations
+    ↓
+Paragraph 4: Technical Barriers (Why problem persists)
+    ↓
+Paragraph 5: Solution Introduction ("Here, we present...")
+    ↓
+Paragraph 6: Validation Preview (Scope of demonstration)
+```
+
+## Key Writing Patterns
+
+### 1. Opening with Clinical Need
+
+Start with disease burden or clinical problem:
+
+```
+"[Disease] affects [X million] people worldwide, with [Y%] occurring in
+[population/region]. Early detection is critical for [clinical outcome],
+yet current screening methods remain [limitation]."
+```
+
+### 2. Problem Statement with Data
+
+Quantify the problem:
+
+```
+"[Current method] requires [limitation 1: cost/time/expertise], making it
+[inaccessible/impractical] for [target setting]. The sensitivity of [method]
+is limited to [X], insufficient for [clinical need]."
+```
+
+### 3. Unmet Need Statement
+
+Explicitly state the gap:
+
+```
+"These realities underline the unmet need for [desired characteristics],
+ideally [additional requirements] in [target setting]."
+```
+
+### 4. Solution Introduction Pattern (CRITICAL)
+
+Use delayed revelation after establishing need:
+
+```
+"Here, we present [System Name] ([Full Name]) for [application]. The
+[system] integrates [component 1] with [component 2], enabling [key capability].
+[System] leverages [key innovation] to achieve [performance metric]."
+```
+
+### 5. Validation Preview
+
+End with scope of demonstration:
+
+```
+"We validate [system] using [sample types] from [patient population] (n=[X])
+and demonstrate its potential for [clinical application]."
+```
+
+## High Frequency Verbs
+
+{% for verb, count in introduction.high_freq_verbs[:10] %}
+- {{ verb }}
+{% endfor %}
+
+## Transition Phrases
+
+{% for phrase in introduction.transition_phrases[:5] %}
+- "{{ phrase.phrase }}"
+{% endfor %}
+
+## Vocabulary Patterns
+
+### Problem Domain
+- limitations, challenges, insufficient, laborious
+- limited sensitivity, high cost, time-consuming
+- resource-intensive, technically demanding
+- healthcare disparities, underserved populations
+
+### Solution Domain
+- integrates, combines, streamlines, leverages
+- enables, facilitates, addresses, overcomes
+- rapid, sensitive, specific, portable
+- point-of-care, resource-limited settings
+
+## Transformation Example
+
+### Input
+```
+Disease: Cervical cancer
+Statistics: 600,000 new cases/year, 80% in LMICs
+Current method: PCR
+Limitations: Expensive equipment, trained personnel
+Our solution: CreDiT (CRISPR Enhanced Digital Testing)
+Technology: CRISPR + digital signal processing
+Key advantages: Rapid, affordable, point-of-care
+Validation: 121 clinical samples
+```
+
+### Output
+```markdown
+Addressing the global disparity in cancer care necessitates the development
+of rapid and affordable nucleic acid (NA) testing technologies. Cervical
+cancer alone accounts for over 600,000 new cases a year, with more than 80%
+of them occurring in low- and middle-income countries (LMICs) [REF-WHO2020A].
+Persistent infection with high-risk human papillomavirus (hrHPV) is the
+primary cause of cervical cancer, and screening for hrHPV NAs has been shown
+to be more effective than cytology-based Pap tests [REF-RONCO2014A].
+
+The primary assay method, polymerase chain reaction (PCR), incurs high fixed
+and operational costs that strain healthcare systems in LMICs [REF-FIELDS2016A].
+Visual inspection with acetic acid (VIA) is a rapid, inexpensive alternative
+but suffers from poor accuracy. These realities underline the unmet need for
+fast, accurate hrHPV testing, ideally administered at point-of-care in LMIC
+settings.
+
+Here, we present CreDiT (CRISPR Enhanced Digital Testing) for on-site NA
+detection. The CreDiT platform integrates a one-pot CRISPR strategy for
+concurrent NA amplification and sensing with a robust fluorescent detection
+method based on the Walsh-Hadamard transform (WHT). This approach enables
+sensitive and specific detection within 30 min using a compact, battery-powered
+device. We validate CreDiT for hrHPV detection using clinical cervical samples
+(n = 121) and demonstrate its potential as a portable diagnostic platform for
+decentralized testing.
+```
+
+## Anti-Patterns (AVOID)
+
+| Pattern | Problem | Correction |
+|---------|---------|------------|
+| Starting with "In recent years..." | Cliche opening | Start with specific clinical need |
+| Vague problem statements | Not compelling | Quantify with epidemiological data |
+| Premature solution reveal | Undermines narrative | Build tension before introducing solution |
+| Missing validation preview | Incomplete setup | End with scope of demonstration |
+| Over-citation in first paragraph | Distracting | Save citations for specific claims |
+
+## Output Directory
+
+- **File naming**: `introduction_{descriptor}.md`
+- **Example**: `output/bladderCancer/introduction_final.md`
+
+---
+
+*Auto-generated by Paper Style Generator*
+*Confidence: {{ confidence.introduction * 100 | round }}%*

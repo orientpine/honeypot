@@ -1,19 +1,19 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-07T10:50:00+09:00
-**Version:** 2.0.0
+**Generated:** 2026-01-08T13:00:00+09:00
+**Version:** 2.2.0
 **Branch:** main
 
 ## OVERVIEW
 
-AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-generation and presentation figure creation. Claude plugin ecosystem with orchestrated multi-agent workflows.
+AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-generation, presentation figure creation, academic paper writing style extraction, and **meta-plugin for auto-generating paper writing skill sets**. Claude plugin ecosystem with orchestrated multi-agent workflows.
 
 ## STRUCTURE
 
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (4 plugins)
+│   └── marketplace.json              # Single marketplace registry (5 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인
     │   ├── skills/
@@ -33,6 +33,31 @@ toolbox/
     │   │   └── renderer/             # Gemini API 이미지 생성
     │   └── scripts/
     │       └── generate_slide_images.py  # Gemini API slide image generation script
+    ├── paper-style-generator/        # Meta-plugin: PDF → Paper Writing Skills
+    │   ├── agents/
+    │   │   ├── orchestrator.md       # Main workflow coordinator
+    │   │   ├── pdf-converter.md      # MinerU PDF→MD conversion
+    │   │   ├── style-analyzer.md     # Deep style pattern extraction
+    │   │   └── skill-generator.md    # 10-skill set generation (including orchestrator)
+    │   ├── scripts/
+    │   │   ├── mineru_converter.py   # MinerU Python wrapper
+    │   │   ├── md_postprocessor.py   # MD cleanup & section tagging
+    │   │   └── style_extractor.py    # Pattern extraction logic
+    │   ├── templates/                # Jinja2 templates for skill generation
+    │   │   ├── skill_common.md.j2
+    │   │   ├── skill_abstract.md.j2
+    │   │   ├── skill_introduction.md.j2
+    │   │   ├── skill_methodology.md.j2
+    │   │   ├── skill_results.md.j2
+    │   │   ├── skill_discussion.md.j2
+    │   │   ├── skill_caption.md.j2
+    │   │   ├── skill_title.md.j2
+    │   │   ├── skill_verify.md.j2
+    │   │   ├── skill_orchestrator.md.j2  # Full paper auto-generation
+    │   │   └── marketplace.json.j2
+    │   └── references/
+    │       ├── analysis_schema.md    # Analysis item definitions
+    │       └── output_structure.md   # Output directory guide
     ├── investments-portfolio/        # Portfolio analysis multi-agent system
     │   └── agents/                   # 6 agents: portfolio-coordinator, macro-outlook, etc.
     └── general-agents/               # General-purpose agents
@@ -49,9 +74,10 @@ toolbox/
 | Generate concept prompts (TED style) | `plugins/visual-generator/skills/prompt-concept/` | Minimal infographics |
 | Generate gov prompts (official style) | `plugins/visual-generator/skills/prompt-gov/` | 4-color palette, PPT style |
 | Render prompts to images | `plugins/visual-generator/skills/renderer/` | Gemini API required |
+| **Generate paper writing skills from PDFs** | `plugins/paper-style-generator/` | MinerU + 11 Jinja2 templates |
 | Portfolio analysis agents | `plugins/investments-portfolio/` | Korean DC pension multi-agent |
 | General interview agent | `plugins/general-agents/` | Deep interview + execution |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 4 plugins listed |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 5 plugins listed |
 
 ## CONVENTIONS
 
@@ -99,6 +125,37 @@ toolbox/
 - Output files: `00-macro-outlook.md` through `04-portfolio-summary.md`
 - Folder: `portfolios/YYYY-MM-DD-{profile}-{session}/`
 
+### Paper Style Generator (Meta-Plugin)
+- **Purpose**: Analyze PDF papers (10+) and auto-generate paper writing skill sets
+- **Workflow**: `orchestrator` → `pdf-converter` → `style-analyzer` → `skill-generator`
+- **Input**: PDF papers from same author/research group or same field
+- **Output**: 10 independent Claude skills in `~/.claude/skills/{name}-gen/`
+  1. `{name}-common` - Shared style guide
+  2. `{name}-abstract` - Abstract writing
+  3. `{name}-introduction` - Introduction section
+  4. `{name}-methodology` - Methods section
+  5. `{name}-results` - Results section
+  6. `{name}-discussion` - Discussion/Conclusions
+  7. `{name}-caption` - Figure/Table captions
+  8. `{name}-title` - Paper title generation
+  9. `{name}-verify` - Pre-publication verification
+  10. **`{name}-orchestrator`** - **Full paper auto-generation (NEW)**
+- **Orchestrator Features**:
+  - Sequential section generation: Title → Abstract → Introduction → Methodology → Results → Discussion → Captions
+  - Final verification via `{name}-verify`
+  - Cross-section consistency tracking (sample sizes, metrics, biomarkers)
+  - Execution modes: Full Auto, Interactive, Resume from section
+  - Output: `output/{paper_topic}/manuscript_complete.md`
+- **Style Analysis Extracts**:
+  - Voice ratio (active/passive) per section
+  - Tense patterns (past/present)
+  - "We" usage ratio in Results (target: ≤30%)
+  - High-frequency academic verbs
+  - Transition phrases by section
+  - Measurement formatting patterns
+  - Citation style detection
+  - Field characteristics from keywords
+
 ## COMMANDS
 
 ```bash
@@ -110,6 +167,21 @@ python plugins/isd-generator/scripts/generate_images.py \
 # Generate slide images
 python plugins/visual-generator/scripts/generate_slide_images.py \
   --prompts-dir [path] --output-dir [path]
+
+# Paper Style Generator: Convert PDFs to Markdown (requires MinerU)
+python plugins/paper-style-generator/scripts/mineru_converter.py \
+  --input-dir [pdf_folder] \
+  --output-dir [md_output_folder]
+
+# Paper Style Generator: Post-process and tag sections
+python plugins/paper-style-generator/scripts/md_postprocessor.py \
+  --input-dir [md_folder] \
+  --output-dir [tagged_output_folder]
+
+# Paper Style Generator: Extract style patterns
+python plugins/paper-style-generator/scripts/style_extractor.py \
+  --input-dir [tagged_md_folder] \
+  --output-file [analysis.json]
 ```
 
 ## CLAUDE CODE MARKETPLACE RULES
