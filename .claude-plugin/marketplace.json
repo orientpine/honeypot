@@ -82,9 +82,7 @@
       "keywords": ["utilities", "interview", "general-purpose"],
       "category": "utilities",
       "strict": true,
-      "agents": [
-        "./agents/interview.md"
-      ]
+      "agents": ["./agents/interview.md"]
     },
     {
       "name": "paper-style-generator",
