@@ -24,7 +24,15 @@
       "keywords": ["isd", "research-proposal", "documentation", "orchestration", "chapter-generator"],
       "category": "documentation",
       "strict": true,
-      "skills": ["./skills"]
+      "agents": [
+        "./agents/orchestrator.md",
+        "./agents/chapter1.md",
+        "./agents/chapter2.md",
+        "./agents/chapter3.md",
+        "./agents/chapter4.md",
+        "./agents/chapter5.md",
+        "./agents/figure.md"
+      ]
     },
     {
       "name": "visual-generator",
