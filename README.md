@@ -64,13 +64,66 @@ Step 2: 메인 프로젝트에서 submodule 참조 업데이트
 - 모든 Submodule 최신화: git submodule update --remote --merge
 - Submodule 변경사항 확인: git diff --submodule
 
-### 6. 헷갈리기 쉬운 포인트
+### 6. git submodule init / update가 필요한 상황
+
+#### 언제 필요한가?
+
+다음 상황에서는 `git submodule init`과 `git submodule update`를 실행해야 합니다:
+
+**상황 1: 일반 git clone으로 프로젝트를 받은 경우**
+```bash
+git clone https://github.com/username/your-project.git
+cd your-project
+ls toolbox_orientpine/  # 폴더가 비어있음!
+```
+→ `--recurse-submodules` 옵션 없이 클론하면 submodule 폴더는 생성되지만 내용이 비어있습니다.
+
+**상황 2: git pull 후 새로운 submodule이 추가된 경우**
+```bash
+git pull origin main  # 다른 팀원이 추가한 새 submodule 정보가 포함됨
+ls new_submodule/     # 폴더가 비어있음!
+```
+→ pull로는 submodule 메타정보만 받아오고, 실제 내용은 별도로 초기화해야 합니다.
+
+**상황 3: submodule 폴더 안이 비어있는 모든 경우**
+→ `.gitmodules` 파일에 submodule 정보는 있지만 실제 내용이 없는 상태
+
+#### 해결 방법
+
+**방법 A: 한 줄로 해결 (권장)**
+```bash
+git submodule update --init --recursive
+```
+이 명령은 `git submodule init` + `git submodule update`를 한번에 수행합니다.
+
+**방법 B: 단계별 실행 (이해를 위해)**
+```bash
+# 1단계: submodule 정보를 .git/config에 등록
+git submodule init
+
+# 2단계: 등록된 submodule의 실제 내용을 가져옴
+git submodule update
+```
+
+**각 명령의 역할:**
+- `git submodule init`: `.gitmodules` 파일을 읽어 로컬 `.git/config`에 submodule URL 등록
+- `git submodule update`: 등록된 URL에서 커밋된 버전의 submodule 내용을 체크아웃
+
+#### 실무 팁
+
+```bash
+# 앞으로 git clone할 때 항상 submodule도 함께 가져오기
+git config --global submodule.recurse true
+```
+이 설정을 하면 `git clone`, `git pull`, `git checkout` 시 submodule이 자동으로 업데이트됩니다.
+
+### 7. 헷갈리기 쉬운 포인트
 
 - submodule만 업데이트하고 끝냄 -> 메인 프로젝트에서도 커밋 필요!
 - git clone 했는데 submodule 폴더가 비어있음 -> git submodule update --init --recursive 실행
 - 최신 toolbox를 가져오고 싶음 -> git submodule update --remote --merge
 
-### 7. 주의사항
+### 8. 주의사항
 
 중요: Submodule을 업데이트한 후에는 반드시 메인 프로젝트에서도 커밋해야 합니다.
 그렇지 않으면 다른 사용자가 클론할 때 이전 버전의 submodule을 받게 됩니다.
