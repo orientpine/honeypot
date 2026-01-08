@@ -1,0 +1,62 @@
+{
+  "domain": "GENERAL",
+  "description": "범용 연구/개발 분야 (특정 도메인 감지 실패 시 적용)",
+  "chapter_keywords": {
+    "chapter_1_hardware": {
+      "title": "시스템 인프라 구축",
+      "primary_keywords": ["센서", "sensor", "하드웨어", "hardware", "인터페이스", "interface", "통신", "communication"],
+      "secondary_keywords": ["프로토콜", "protocol", "연결", "connection", "드라이버", "driver", "포트", "port"]
+    },
+    "chapter_2_computation": {
+      "title": "핵심 연산 모듈",
+      "primary_keywords": ["알고리즘", "algorithm", "연산", "computation", "처리", "processing", "변환", "transformation"],
+      "secondary_keywords": ["함수", "function", "계산", "calculation", "수식", "formula", "모델", "model"]
+    },
+    "chapter_3_generation": {
+      "title": "데이터/결과 생성 시스템",
+      "primary_keywords": ["생성", "generation", "계획", "planning", "스케줄", "schedule", "시퀀스", "sequence"],
+      "secondary_keywords": ["파이프라인", "pipeline", "워크플로우", "workflow", "자동화", "automation"]
+    },
+    "chapter_4_control": {
+      "title": "제어 및 조절 시스템",
+      "primary_keywords": ["제어", "control", "조절", "regulation", "피드백", "feedback", "루프", "loop"],
+      "secondary_keywords": ["설정값", "setpoint", "오차", "error", "보정", "correction", "안정화", "stabilization"]
+    },
+    "chapter_5_ai": {
+      "title": "지능형 시스템",
+      "primary_keywords": ["AI", "ML", "학습", "learning", "예측", "prediction", "분류", "classification"],
+      "secondary_keywords": ["모델", "model", "훈련", "training", "추론", "inference", "데이터", "data"]
+    },
+    "chapter_6_interface": {
+      "title": "인터페이스 설계",
+      "primary_keywords": ["API", "인터페이스", "interface", "프로토콜", "protocol", "통신", "communication"],
+      "secondary_keywords": ["메시지", "message", "요청", "request", "응답", "response", "포맷", "format"]
+    },
+    "chapter_7_integration": {
+      "title": "시스템 통합 및 검증",
+      "primary_keywords": ["테스트", "test", "검증", "verification", "통합", "integration", "시뮬레이션", "simulation"],
+      "secondary_keywords": ["유닛", "unit", "E2E", "성능", "performance", "벤치마크", "benchmark"]
+    },
+    "chapter_8_safety": {
+      "title": "안정성 및 오류 처리",
+      "primary_keywords": ["안전", "safety", "오류", "error", "예외", "exception", "복구", "recovery"],
+      "secondary_keywords": ["로깅", "logging", "모니터링", "monitoring", "알림", "alert", "백업", "backup"]
+    }
+  },
+  "domain_specific_terms": {
+    "generic_to_domain": {
+      "모듈": "모듈(module)",
+      "처리": "처리(processing)",
+      "설정": "설정(configuration)",
+      "연결": "연결(connection)",
+      "입력": "입력(input)",
+      "출력": "출력(output)"
+    }
+  },
+  "detection_hints": {
+    "ros2_indicators": ["ROS", "ros2", "node", "topic", "service", "action", "msg", "launch"],
+    "ai_ml_indicators": ["PyTorch", "TensorFlow", "model", "training", "inference", "neural", "deep learning"],
+    "physics_indicators": ["quantum", "particle", "field", "energy", "wave", "equation"],
+    "biotech_indicators": ["gene", "protein", "cell", "DNA", "RNA", "assay", "sequencing"]
+  }
+}
