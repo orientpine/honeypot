@@ -1,0 +1,373 @@
+---
+name: {{ name }}-orchestrator
+description: |
+  {{ name | title }} 스타일의 논문 전체 자동 생성 오케스트레이터.
+  Title → Abstract → Introduction → Methodology → Results → Discussion → Captions 순서로
+  모든 섹션을 자동 생성하고 최종 검증까지 수행합니다.
+  개별 스킬을 순차적으로 호출하며 섹션 간 일관성을 유지합니다.
+---
+
+# {{ name | title }} Paper Orchestrator
+
+## Overview
+
+이 스킬은 {{ name | title }} 스타일의 학술 논문 전체를 자동으로 생성합니다.
+모든 섹션 스킬을 순차적으로 호출하고, 섹션 간 일관성을 유지하며, 최종 검증을 수행합니다.
+
+## Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    INPUT COLLECTION                         │
+│  resource/{paper_topic}/ 폴더에서 연구 자료 수집            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 1: TITLE GENERATION                                  │
+│  └── {{ name }}-title 스킬 호출                             │
+│      → output/{paper_topic}/title_options.md                │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 2: ABSTRACT GENERATION                               │
+│  └── {{ name }}-abstract 스킬 호출                          │
+│      → output/{paper_topic}/abstract_draft.md               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 3: INTRODUCTION                                      │
+│  └── {{ name }}-introduction 스킬 호출                      │
+│      → output/{paper_topic}/introduction_draft.md           │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 4: METHODOLOGY                                       │
+│  └── {{ name }}-methodology 스킬 호출                       │
+│      → output/{paper_topic}/methodology_draft.md            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 5: RESULTS                                           │
+│  └── {{ name }}-results 스킬 호출                           │
+│      → output/{paper_topic}/results_draft.md                │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 6: DISCUSSION                                        │
+│  └── {{ name }}-discussion 스킬 호출                        │
+│      → output/{paper_topic}/discussion_draft.md             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 7: CAPTIONS                                          │
+│  └── {{ name }}-caption 스킬 호출                           │
+│      → output/{paper_topic}/captions_draft.md               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 8: VERIFICATION                                      │
+│  └── {{ name }}-verify 스킬 호출                            │
+│      → output/{paper_topic}/consistency_check_report.md     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 9: COMPILATION                                       │
+│  └── 모든 섹션을 하나의 문서로 통합                         │
+│      → output/{paper_topic}/manuscript_complete.md          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Input Requirements
+
+### Required Input Structure
+
+```
+resource/{paper_topic}/
+├── research_summary.md       # 연구 개요 (필수)
+│   ├── System name and acronym
+│   ├── Key technology/innovation
+│   ├── Target disease/application
+│   ├── Main findings (quantitative)
+│   └── Clinical validation summary
+├── experimental_data/        # 실험 데이터
+│   ├── figures/              # Figure 이미지들
+│   └── tables/               # Table 데이터
+├── methods_details.md        # 상세 실험 방법
+├── references.bib            # 참고문헌 (optional)
+└── supplementary/            # 보충 자료
+```
+
+### Minimal Input (research_summary.md)
+
+```markdown
+# Research Summary
+
+## System Information
+- **Name**: [System Name] ([Acronym])
+- **Technology**: [Core technology/method]
+- **Application**: [Target disease/clinical use]
+
+## Key Findings
+- **Sensitivity**: [X]%
+- **Specificity**: [Y]%
+- **AUC**: [Z]
+- **Detection time**: [N] minutes
+- **Sample size**: n = [N]
+
+## Study Design
+- **Training cohort**: [N] patients, [M] controls
+- **Validation cohort**: [N] patients, [M] controls
+
+## Biomarkers
+- [Marker 1]
+- [Marker 2]
+- [Marker 3]
+
+## Figures
+- Figure 1: [Description]
+- Figure 2: [Description]
+- Figure 3: [Description]
+```
+
+## Execution Modes
+
+### Mode 1: Full Auto (Default)
+
+모든 섹션을 순차적으로 자동 생성:
+
+```
+/{{ name }}-orchestrator
+
+Input: resource/bladderCancer/
+Output: output/bladderCancer/manuscript_complete.md
+```
+
+### Mode 2: Section-by-Section (Interactive)
+
+각 섹션 생성 후 사용자 확인:
+
+```
+/{{ name }}-orchestrator --interactive
+
+각 섹션 생성 후:
+"[Section] 초안이 생성되었습니다. 계속 진행할까요? (Y/n)"
+```
+
+### Mode 3: Resume from Section
+
+특정 섹션부터 재개:
+
+```
+/{{ name }}-orchestrator --from=results
+
+Results 섹션부터 시작 (이전 섹션은 기존 파일 사용)
+```
+
+### Mode 4: Single Section
+
+단일 섹션만 생성 (개별 스킬 직접 호출과 동일):
+
+```
+/{{ name }}-orchestrator --only=methodology
+```
+
+## Section Dependencies
+
+```
+Title ─────────────────────────────────────┐
+                                           │
+Abstract ──────────────────────────────────┤
+    │                                      │
+    ▼                                      │
+Introduction ─────────────────────────────▶│
+    │                                      │
+    ▼                                      │
+Methodology ──────────────────────────────▶│
+    │                                      ▼
+    ▼                              ┌───────────────┐
+Results ──────────────────────────▶│   VERIFY      │
+    │                              │  (all files)  │
+    ▼                              └───────────────┘
+Discussion ───────────────────────────────▶│
+    │                                      │
+    ▼                                      │
+Captions ─────────────────────────────────▶│
+```
+
+### Critical Dependencies
+
+| Section | Depends On | Reason |
+|---------|------------|--------|
+| Abstract | All sections | Summarizes entire paper |
+| Introduction | Research summary | Problem statement |
+| Methodology | Methods details | Protocol descriptions |
+| Results | Experimental data, Figures | Data presentation |
+| Discussion | Results | Interpretation of findings |
+| Captions | Figures | Panel descriptions |
+| Verify | All sections | Cross-document consistency |
+
+## Cross-Section Consistency Rules
+
+### Data Consistency
+
+오케스트레이터가 자동으로 추적하는 데이터:
+
+| Data Point | Tracked Across |
+|------------|----------------|
+| Sample sizes (n=) | Abstract, Methods, Results, Captions |
+| Performance metrics | Abstract, Results, Discussion |
+| Biomarker names | Methods, Results, Captions |
+| System name | All sections |
+| Figure references | Results, Captions |
+
+### Automatic Propagation
+
+Phase 5 (Results)에서 추출된 데이터가 자동으로:
+- Phase 2 (Abstract)에 반영
+- Phase 6 (Discussion)에 전달
+- Phase 8 (Verify)에서 검증
+
+## Output Structure
+
+```
+output/{paper_topic}/
+├── title_options.md              # Phase 1
+├── abstract_draft.md             # Phase 2
+├── introduction_draft.md         # Phase 3
+├── methodology_draft.md          # Phase 4
+├── results_draft.md              # Phase 5
+├── discussion_draft.md           # Phase 6
+├── captions_draft.md             # Phase 7
+├── consistency_check_report.md   # Phase 8
+├── manuscript_complete.md        # Phase 9 (통합본)
+└── .orchestrator_state.json      # 진행 상태 저장
+```
+
+### State File (.orchestrator_state.json)
+
+```json
+{
+  "paper_topic": "bladderCancer",
+  "started_at": "2026-01-08T13:00:00",
+  "current_phase": 5,
+  "completed_phases": [1, 2, 3, 4],
+  "tracked_data": {
+    "system_name": "SCOPE2",
+    "sample_sizes": {
+      "training_patients": 63,
+      "training_controls": 42,
+      "validation_patients": 51,
+      "validation_controls": 28
+    },
+    "performance": {
+      "sensitivity": 92,
+      "specificity": 89,
+      "auc": 0.94
+    }
+  }
+}
+```
+
+## Manuscript Compilation (Phase 9)
+
+### Final Document Structure
+
+```markdown
+# [Selected Title]
+
+## Abstract
+[Generated abstract]
+
+---
+
+## Introduction
+[Generated introduction]
+
+---
+
+## Materials and Methods
+[Generated methodology]
+
+---
+
+## Results
+[Generated results]
+
+---
+
+## Discussion
+[Generated discussion]
+
+---
+
+## Figure Captions
+[Generated captions]
+
+---
+
+## References
+[Placeholder for reference list]
+```
+
+### Compilation Options
+
+| Option | Description |
+|--------|-------------|
+| `--format=docx` | Export to Word (via pandoc) |
+| `--format=latex` | Export to LaTeX |
+| `--format=pdf` | Export to PDF (via pandoc) |
+| `--split-files` | Keep sections as separate files |
+
+## Error Handling
+
+### Phase Failure Recovery
+
+```
+Phase 4 (Methodology) 실패 시:
+1. 오류 로그 저장: output/{topic}/.error_phase4.log
+2. 상태 파일 업데이트: current_phase=4, status="failed"
+3. 사용자에게 알림:
+   "Methodology 생성 중 오류 발생. 
+    수정 후 --from=methodology로 재개하세요."
+```
+
+### Consistency Check Failures
+
+```
+Phase 8 (Verify)에서 CRITICAL 이슈 발견 시:
+1. 이슈 목록 표시
+2. 사용자에게 선택권 제공:
+   a) 자동 수정 시도 (권장)
+   b) 수동 수정 후 재검증
+   c) 경고와 함께 계속 진행
+```
+
+## Usage Examples
+
+### Example 1: Complete Paper Generation
+
+```bash
+# 1. 입력 자료 준비
+mkdir -p resource/bladderCancer
+# research_summary.md, experimental_data/ 등 배치
+
+# 2. 오케스트레이터 실행
+/{{ name }}-orchestrator
+
+# 3. 출력 확인
+# output/bladderCancer/manuscript_complete.md
+```
+
+### Example 2: Interactive Mode
+
+```
+User: /{{ name }}-orchestrator --interactive

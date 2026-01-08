@@ -85,6 +85,28 @@
       "agents": [
         "./agents/interview.md"
       ]
+    },
+    {
+      "name": "paper-style-generator",
+      "source": "./plugins/paper-style-generator",
+      "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/toolbox_orientpine",
+      "repository": "https://github.com/orientpine/toolbox_orientpine",
+      "license": "MIT",
+      "keywords": ["paper-writing", "style-analysis", "skill-generator", "mineru", "pdf-to-markdown", "academic-writing"],
+      "category": "documentation",
+      "strict": true,
+      "agents": [
+        "./agents/orchestrator.md",
+        "./agents/pdf-converter.md",
+        "./agents/style-analyzer.md",
+        "./agents/skill-generator.md"
+      ]
     }
   ]
 }

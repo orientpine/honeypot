@@ -1,0 +1,232 @@
+---
+name: {{ name }}-verify
+description: |
+  {{ name | title }} 논문의 출판 전 검증 스킬.
+  섹션 간 데이터 일관성, 참조 번호 정렬, 용어 통일성, 수치 데이터 매칭,
+  플레이스홀더 검출, 스타일 준수, 서사 흐름 분석을 수행합니다.
+  Generates structured Consistency Check Report.
+---
+
+# {{ name | title }} Manuscript Verification Skill
+
+Comprehensive pre-publication verification for academic manuscripts.
+Generates detailed consistency check report combining exhaustive issue detection with modification tracking.
+
+## Core Principles
+
+1. **Systematic**: Check every verifiable element across all sections
+2. **Cross-Referenced**: Compare data points between documents
+3. **Actionable**: Provide specific locations and recommended fixes
+4. **Prioritized**: Classify issues by severity (CRITICAL, WARNING, INFO)
+5. **Trackable**: Maintain modification history for iterative review
+
+## Verification Categories
+
+### 1. Cross-Document Consistency (CRITICAL)
+
+| Check Item | Description | Sections to Compare |
+|------------|-------------|---------------------|
+| Sample sizes | Patient/control counts | Abstract, Methods, Results, Captions |
+| Platform name | System/technology naming | All sections |
+| Biomarker panel | Target names and counts | Methods, Results, Captions |
+| Performance metrics | LOD, sensitivity, specificity | Abstract, Results, Discussion |
+| Study design | Cohort breakdown | Methods, Results, Captions |
+
+### 2. Reference Number Alignment (CRITICAL)
+
+| Check Item | Description |
+|------------|-------------|
+| Sequential ordering | References appear in numerical order |
+| No gaps | No missing numbers in sequence |
+| No duplicates | Same reference not numbered differently |
+| Citation format | Consistent [#] format throughout |
+| Placeholder detection | Find unreplaced [REF-XXX] tags |
+| Unused references | References defined but never cited |
+
+### 3. Terminology Consistency (WARNING)
+
+| Check Item | Examples |
+|------------|----------|
+| Abbreviation definition | First use includes full form |
+| Consistent abbreviation | Same term, same abbreviation |
+| Platform naming | Consistent system naming |
+| Gene/protein naming | Italics for genes, roman for proteins |
+
+### 4. Numerical Data Matching (CRITICAL)
+
+| Check Item | Description |
+|------------|-------------|
+| Patient counts | Same numbers across sections |
+| Figure panel data | Text matches figure captions |
+| Statistical values | P-values, R2, AUC consistent |
+| Measurement units | Same unit format |
+| Decimal precision | Consistent significant figures |
+
+### 5. Placeholder Detection (CRITICAL)
+
+| Pattern | Meaning |
+|---------|---------|
+| `[X]`, `[#]` | Missing numerical value |
+| `[REF-XXX]` | Unreplaced reference ID |
+| `[TBD]`, `[TODO]` | Incomplete content |
+| `[FIGURE X]` | Missing figure reference |
+| `???`, `XXX` | Placeholder text |
+
+### 6. Style Compliance (WARNING)
+
+| Section | Expected Style ({{ name | title }}) |
+|---------|----------------|
+| Introduction | Present tense, {{ introduction.voice.active.mean * 100 | round }}% active |
+| Methods | Past tense, {{ methodology.voice.passive.mean * 100 | round }}% passive |
+| Results | Past/present, {{ results.voice.active.mean * 100 | round }}% active |
+| Discussion | Present/past, {{ discussion.voice.active.mean * 100 | round }}% active |
+
+### 7. Figure/Table Numbering (CRITICAL)
+
+| Check Item | Description |
+|------------|-------------|
+| Sequential figures | Fig. 1, 2, 3... in order of mention |
+| Panel references | All referenced panels exist |
+| Supplementary refs | Supplementary Fig/Table numbered correctly |
+| Caption completeness | All figures have captions |
+
+### 8. Measurement Format (WARNING)
+
+{% for mtype, mformat in measurement_format.items() %}
+| {{ mtype | title }} | `{{ mformat.pattern }}` |
+{% endfor %}
+
+## Output Format
+
+Generate a structured Consistency Check Report:
+
+```markdown
+# Consistency Check Report - [Paper Title]
+
+Generated: [Date]
+
+## Executive Summary
+
+| Category | Critical | Warning | Info | Status |
+|----------|----------|---------|------|--------|
+| Cross-Document Consistency | X | X | X | OK/WARN/CRIT |
+| Reference Alignment | X | X | X | OK/WARN/CRIT |
+| Terminology | X | X | X | OK/WARN/CRIT |
+| Numerical Data | X | X | X | OK/WARN/CRIT |
+| Placeholders | X | X | X | OK/WARN/CRIT |
+| Style Compliance | X | X | X | OK/WARN/CRIT |
+| Figure/Table Numbers | X | X | X | OK/WARN/CRIT |
+| Measurement Format | X | X | X | OK/WARN/CRIT |
+
+**Overall Status**: [PASS / NEEDS ATTENTION / CRITICAL ISSUES]
+
+---
+
+## 1. Cross-Document Consistency
+
+### Sample Size Verification
+| Data Point | Abstract | Methods | Results | Captions | Status |
+|------------|----------|---------|---------|----------|--------|
+
+### Issues Found
+[Detailed issue descriptions with location, context, and fix]
+
+---
+
+## Action Items
+
+### Critical (Must Fix Before Submission)
+1. [ ] [Action with location and specific fix]
+
+### Warning (Recommended to Fix)
+1. [ ] [Action item]
+
+### Info (Optional)
+1. [ ] [Suggestion]
+
+---
+
+## Pre-Submission Checklist
+
+### Content Completeness
+- [ ] Abstract contains key findings
+- [ ] Introduction ends with "Here, we present..."
+- [ ] Methods has ethical statement first
+- [ ] Results covers all figures mentioned
+- [ ] Discussion has limitations section
+- [ ] All figures have captions
+- [ ] Reference list is complete
+
+### Technical Accuracy
+- [ ] All sample sizes match across sections
+- [ ] All performance metrics match
+- [ ] All biomarkers listed consistently
+- [ ] Platform name used consistently
+- [ ] No unreplaced placeholders
+
+### Format Compliance
+- [ ] References numbered sequentially
+- [ ] Figures numbered in order of mention
+- [ ] Abbreviations defined on first use
+- [ ] Measurements properly formatted
+```
+
+## Verification Workflow
+
+### Phase 1: File Collection
+1. Identify all manuscript files
+2. Determine "final" version for each section
+3. Read and index all content
+
+### Phase 2: Cross-Reference Extraction
+1. Extract all numerical data points
+2. Build reference number map
+3. Collect all terminology/abbreviations
+4. Identify all figure/table references
+
+### Phase 3: Consistency Checks
+1. Compare data points across sections
+2. Verify reference sequence
+3. Check terminology uniformity
+4. Validate figure/table numbering
+
+### Phase 4: Style Analysis
+1. Analyze voice (active/passive) ratio
+2. Check tense consistency
+3. Verify measurement formats
+4. Scan for placeholders
+
+### Phase 5: Report Generation
+1. Compile findings by category
+2. Assign severity levels
+3. Generate action items
+4. Create summary table
+
+## Severity Levels
+
+| Level | Symbol | Definition | Action Required |
+|-------|--------|------------|-----------------|
+| CRITICAL | X | Factual inconsistency or missing data | Must fix before submission |
+| WARNING | ! | Style violation or minor inconsistency | Recommended to fix |
+| INFO | i | Suggestion or optional improvement | Nice to have |
+
+## Anti-Patterns (AVOID)
+
+| Pattern | Problem | Correction |
+|---------|---------|------------|
+| Checking only one file | Misses cross-document issues | Check ALL sections |
+| Ignoring draft files | May miss latest content | Check file dates |
+| Manual counting only | Error-prone | Use systematic extraction |
+| Vague issue descriptions | Not actionable | Include file, line, values |
+| Missing severity levels | Can't prioritize | Always assign severity |
+
+## Output Directory
+
+- **Report path**: `output/{paper_topic}/`
+- **File naming**: `consistency_check_report_{descriptor}.md`
+- **Example**: `output/bladderCancer/consistency_check_report_v1.md`
+
+---
+
+*Auto-generated by Paper Style Generator*
+*Based on {{ paper_count }} analyzed papers*
