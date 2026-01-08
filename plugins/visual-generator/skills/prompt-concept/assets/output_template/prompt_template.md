@@ -13,6 +13,12 @@ Visual Concept:
 - Spatial arrangement: [공간 배치]
 - Emphasis point: [강조할 부분]
 
+Domain Keywords Reference (for AI understanding only - DO NOT render in image):
+- [한글 키워드1] = [English translation]
+- [한글 키워드2] = [English translation]
+- [한글 키워드3] = [English translation]
+(AI uses this reference to understand Korean labels but must NOT render English in the image)
+
 Style:
 [3D 또는 아이콘 중 선택]
 
@@ -114,14 +120,14 @@ Visual Specifications (for AI reference only):
 소제목 (선택): "[최대 15자]" 위치: [위치]
 
 라벨:
-1. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-2. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-3. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-4. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-5. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-6. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-7. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
-8. "[라벨 텍스트]" (hint: "[영어 의미]") 위치: [위치]
+1. "[라벨 텍스트]" 위치: [위치]
+2. "[라벨 텍스트]" 위치: [위치]
+3. "[라벨 텍스트]" 위치: [위치]
+4. "[라벨 텍스트]" 위치: [위치]
+5. "[라벨 텍스트]" 위치: [위치]
+6. "[라벨 텍스트]" 위치: [위치]
+7. "[라벨 텍스트]" 위치: [위치]
+8. "[라벨 텍스트]" 위치: [위치]
 (최대 12개 라벨)
 
 **텍스트 규칙:**
@@ -129,6 +135,7 @@ Visual Specifications (for AI reference only):
 - 문장 금지, 키워드만
 - Bold 또는 SemiBold 사용
 - 도메인 키워드는 반드시 보존
+- ⚠️ 영어 힌트는 위 INSTRUCTION 블록의 Domain Keywords Reference에만 기술 (여기에 hint 포함 금지)
 
 ==================================================
 [FORBIDDEN ELEMENTS - DO NOT RENDER IN IMAGE]
@@ -155,6 +162,9 @@ Forbidden Elements:
 - Overly flashy or "startup" aesthetics
 - SF/cyberpunk visual elements
 - Gradients as primary design element
+- English text alongside Korean labels (e.g., "굴착기 Excavator" - render Korean only: "굴착기")
+- Bilingual labeling in the rendered image
+- Rendering "(hint: ...)" format text in the image
 
 ==================================================
 

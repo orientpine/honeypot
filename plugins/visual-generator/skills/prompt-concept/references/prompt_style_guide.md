@@ -363,15 +363,27 @@ Resolution:
 | Cross-Embodiment | Cross-Embodiment | 범용성, 호환성 |
 | 트랙터 | 트랙터 (유지) | 농기계, 차량 |
 
-### 영어 힌트 병기
+### 영어 힌트 처리 (⚠️ 중요)
 
-도메인 키워드에는 영어 힌트를 병기하여 렌더링 정확도를 높입니다:
+도메인 키워드의 영어 번역은 **INSTRUCTION 블록에만** 기술합니다.
+**CONTENT 블록의 라벨에는 한글만 표시**하여 영어 병기 렌더링을 방지합니다.
 
+**INSTRUCTION 블록 (렌더링 안 됨):**
 ```
-라벨: "굴착기" (hint: "Excavator") 위치: 좌측
-라벨: "4족로봇" (hint: "Quadruped Robot") 위치: 우측
-라벨: "트랙터" (hint: "Tractor") 위치: 중앙
+Domain Keywords Reference (for AI understanding only - DO NOT render in image):
+- 굴착기 = Excavator
+- 4족로봇 = Quadruped Robot
+- 트랙터 = Tractor
 ```
+
+**CONTENT 블록 (렌더링됨) - 한글만:**
+```
+라벨: "굴착기" 위치: 좌측
+라벨: "4족로봇" 위치: 우측
+라벨: "트랙터" 위치: 중앙
+```
+
+⚠️ **CONTENT 블록에 (hint: "...") 형식 사용 금지** → Gemini가 영어를 이미지에 병기함
 
 ---
 
@@ -401,6 +413,9 @@ Forbidden Elements:
 - Replacing domain keywords with generic terms
 - Overly flashy or "startup" aesthetics
 - SF/cyberpunk visual elements for academic content
+- English text alongside or under Korean labels (render Korean only, e.g., "굴착기" not "굴착기 Excavator")
+- Bilingual labeling in the rendered image
+- Rendering "(hint: ...)" format text in the image
 ```
 
 ---
@@ -427,4 +442,4 @@ Forbidden Elements:
 - [ ] 불필요한 요소 제거 완료
 - [ ] 색상 대비 충분
 - [ ] 3D/아이콘 스타일 일관성
-- [ ] 영어 힌트 병기 완료
+- [ ] 영어 힌트가 INSTRUCTION 블록에만 있음 (CONTENT 블록에 없음)
