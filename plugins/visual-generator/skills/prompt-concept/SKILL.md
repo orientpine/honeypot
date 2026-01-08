@@ -132,7 +132,8 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 +-- Step 4-2. 도메인 키워드 검증
 |   +-- 전문용어 보존 여부 확인
 |   +-- 일반화(로봇, 장비 등) 대체 금지
-|   +-- 영어 힌트 병기 확인
+|   +-- 영어 힌트가 INSTRUCTION 블록에만 있는지 확인
+|   +-- CONTENT 블록에 (hint: ...) 형식 없는지 확인
 |
 +-- Step 4-3. 텍스트 밀도 검증
 |   +-- 텍스트 요소 12-15개 범위
@@ -283,19 +284,32 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 - "트랙터 기반 자율주행" -> "자율주행 트랙터" (O)
 ```
 
-### 영어 힌트 병기
+### 영어 힌트 처리 (⚠️ 중요)
 
+영어 번역 정보는 **INSTRUCTION 블록에만** 기술합니다:
+
+**INSTRUCTION 블록 (DO NOT RENDER):**
 ```
-라벨: "굴착기" (hint: "Excavator") 위치: 좌측
-라벨: "4족로봇" (hint: "Quadruped Robot") 위치: 우측
-라벨: "트랙터" (hint: "Tractor") 위치: 중앙
+Domain Keywords Reference (for AI understanding only - DO NOT render):
+- 굴착기 = Excavator
+- 4족로봇 = Quadruped Robot
+- 트랙터 = Tractor
 ```
+
+**CONTENT 블록 (렌더링됨) - 한글만:**
+```
+라벨: "굴착기" 위치: 좌측
+라벨: "4족로봇" 위치: 우측
+라벨: "트랙터" 위치: 중앙
+```
+
+⚠️ **CONTENT 블록에 (hint: "...") 형식 절대 금지** → Gemini가 영어를 이미지에 병기함
 
 ---
 
 ## 공통 규칙
 
-- **텍스트**: 한글 기본, 핵심 용어는 영어 hint 병기
+- **텍스트**: 한글만 렌더링 (영어 hint는 INSTRUCTION 블록에만, CONTENT에 포함 금지)
 - **스타일**: 개념적 3D 또는 플랫 아이콘 (주제에 따라)
 - **시점**: 정면 또는 약한 등각(Isometric, 15-30도)
 - **배경**: 단색 또는 미니멀 그라데이션
