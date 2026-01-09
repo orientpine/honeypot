@@ -49,6 +49,43 @@ model: opus
 | **허용 출처** | 중앙은행, IMF, 주요 IB, 주요 언론 | 허용 출처만 사용 |
 | **금지 출처** | 블로그, 커뮤니티, 유튜브 | 해당 출처 무시 |
 
+### 0.2.1 지수 데이터 특별 규칙 (CRITICAL - 환각 방지)
+
+> **배경**: 2026-01-09 KOSPI 데이터 오류 사건 (실제 4,214pt를 3,200pt로 잘못 기재, -24% 오차)
+> 
+> **원인**: 검색 실패 후 AI 환각(hallucination)으로 임의 숫자 생성
+> 
+> **재발 방지**: 지수 데이터는 아래 규칙을 **100% 준수**해야 함
+
+#### 절대 금지 (NEVER)
+
+| 금지 행위 | 이유 |
+|----------|------|
+| ❌ 기억이나 추정에 의한 지수 값 작성 | 환각의 주요 원인 |
+| ❌ 검색 없이 숫자 생성 | 검증 불가능 |
+| ❌ 단일 출처만으로 지수 값 확정 | 교차 검증 불가 |
+| ❌ 출처 URL 없이 지수 값 기재 | 사후 검증 불가 |
+
+#### 필수 수행 (MUST)
+
+| 필수 행위 | 기준 |
+|----------|------|
+| ✅ 최소 3개 출처 교차 검증 | 독립적인 출처 3개 이상 |
+| ✅ 1차 출처 필수 포함 | 거래소/Bloomberg/Investing.com 등 |
+| ✅ 출처 간 1% 이상 차이 시 명시적 경고 | 불일치 시 추가 검증 |
+| ✅ 날짜 + URL 100% 명시 | 클릭 가능한 URL 필수 |
+
+#### 검증 실패 시 대응
+
+출처를 찾을 수 없거나 교차 검증 실패 시:
+
+```markdown
+❌ 잘못된 대응: 임의의 숫자 생성 (예: "~3,200pt")
+✅ 올바른 대응: "[검증 필요] KOSPI 지수를 확인할 수 없었습니다"
+```
+
+**CRITICAL**: 확인되지 않은 수치는 보고서에서 **제외**하거나 `[검증 필요]` 표시
+
 ### 0.3 출처 허용 목록 (Allowlist)
 
 | 카테고리 | 허용 출처 | 용도 |
@@ -60,6 +97,7 @@ model: opus
 | **증권사 리서치** | 삼성증권, 미래에셋, KB증권, NH투자증권 | 국내 시장 분석 |
 | **주요 언론** | Bloomberg, Reuters, WSJ, FT, 한경, 매경 | 시장 동향 |
 | **공식 기관** | 금융위원회, 금융감독원, 한국거래소 | 규제/정책 |
+| **금융 데이터** | Investing.com, Trading Economics, Yahoo Finance, MarketWatch | **지수 데이터 1차 출처** |
 
 ### 0.4 출처 금지 목록 (Blocklist)
 
@@ -109,6 +147,41 @@ model: opus
 | **반도체** | "semiconductor AI demand 2026 Gartner IDC" | Gartner, IDC, 증권사 |
 | **로봇** | "humanoid robot market forecast 2026" | McKinsey, 리서치 기관 |
 | **환율** | "USD KRW forecast 2026 IB" | 주요 IB, 한국은행 |
+
+### 1.2.1 지수 데이터 검색 쿼리 (개선안)
+
+> **CRITICAL**: 지수 데이터는 아래 쿼리 패턴을 사용하여 **최소 3개 출처** 확보
+
+#### 검색 쿼리 개선 (Before → After)
+
+| 기존 쿼리 (문제) | 개선된 쿼리 | 이유 |
+|----------------|-----------|------|
+| ❌ "코스피 전망" | ✅ "KOSPI index December 31 2025 closing price site:investing.com OR site:bloomberg.com" | 구체적 날짜 + 신뢰 출처 지정 |
+| ❌ "코스피 2025" | ✅ "코스피 2025년 12월 31일 종가 site:yna.co.kr OR site:fnnews.com" | 정확한 날짜 + 한글 언론 |
+| ❌ "S&P 500 전망" | ✅ "S&P 500 closing price December 31 2025 site:bloomberg.com OR site:marketwatch.com" | 종가 명시 + 1차 출처 |
+
+#### 필수 검색 패턴 (지수 데이터용)
+
+```
+[패턴 1] 영문 검색 (글로벌 출처)
+"[INDEX_NAME] closing price [EXACT_DATE] site:investing.com OR site:bloomberg.com"
+
+[패턴 2] 한글 검색 (국내 출처)
+"[지수명] [정확한날짜] 종가 site:yna.co.kr OR site:fnnews.com OR site:hankyung.com"
+
+[패턴 3] 금융 데이터 사이트 직접 검색
+"[INDEX_NAME] historical data [DATE]" site:tradingeconomics.com
+```
+
+#### 예시: KOSPI 지수 검색 (3개 병렬)
+
+```
+[검색 1] "KOSPI index December 31 2025 closing price site:investing.com"
+[검색 2] "코스피 2025년 12월 31일 종가 site:yna.co.kr OR site:fnnews.com"
+[검색 3] "KOSPI historical data December 2025" site:tradingeconomics.com
+```
+
+**MUST**: 3개 검색 결과가 모두 동일 수치(±1% 이내)를 보여야 확정
 
 ---
 
@@ -255,6 +328,22 @@ exa_deep_researcher_check(taskId="task_xxx")
     └── 금지 출처 → 무시
     │
     ▼
+[4.5단계] 지수 데이터 특별 검증 (CRITICAL - 환각 방지)
+    │
+    ├── 지수 데이터 3개 출처 교차 검증
+    │   ├─ 출처 1: Investing.com / Trading Economics
+    │   ├─ 출처 2: Bloomberg / Reuters
+    │   └─ 출처 3: 한국거래소 / 주요 언론
+    │
+    ├── 수치 일치 확인 (±1% 이내)
+    │   ├─ 일치 → 확정
+    │   └─ 불일치 → 추가 검색 또는 범위 표현
+    │
+    └── 검증 실패 시 대응
+        ├─ 3개 출처 미확보 → [검증 필요] 표시 또는 제외
+        └─ 1차 출처 없음 → 신뢰도 낮음 경고
+    │
+    ▼
 [5단계] 데이터 종합 및 교차 검증
     │
     ├── 낙관 전망 정리
@@ -266,6 +355,7 @@ exa_deep_researcher_check(taskId="task_xxx")
     │
     ├── 출처 태그 100% 확인
     ├── 범위 표현 확인 (단일 수치 금지)
+    ├── 지수 데이터 검증 체크리스트 완료 확인
     └── Write 도구로 파일 저장
 ```
 
@@ -555,6 +645,30 @@ exa_deep_researcher_check(taskId="task_xxx")
 - [ ] 블로그, 커뮤니티, 유튜브 출처 없음
 - [ ] 검색일이 명시됨
 
+### 3.1.1 지수 데이터 검증 체크리스트 (MANDATORY)
+
+> **적용 대상**: KOSPI, S&P 500, NASDAQ, KOSDAQ 등 모든 주가지수
+
+#### 수집 단계
+- [ ] 최소 3개 이상의 **독립 출처**에서 동일 수치 확인
+- [ ] 모든 출처에 **클릭 가능한 URL + 발행일** 명시
+- [ ] 거래소 공식 데이터 또는 Bloomberg/Investing.com 등 **1차 출처 포함**
+
+#### 교차 검증 단계
+- [ ] 출처 간 수치 차이 **1% 이내** 확인
+- [ ] 날짜가 명확히 일치하는지 확인 (거래일 vs 발표일 구분)
+- [ ] 전일 종가, 당일 종가, 연말 종가 등 **구분 명확히**
+
+#### 신뢰도 평가
+- [ ] Allowlist 출처인지 확인 (거래소, Bloomberg, Investing.com, Trading Economics 등)
+- [ ] 발행일이 **7일 이내**인지 확인 (최신성)
+- [ ] 환각 위험 경고 표시 (출처 불확실 시 `[검증 필요]` 태그)
+
+#### 검증 실패 시 대응
+- [ ] 3개 출처 확보 실패 → 해당 지수 데이터 보고서에서 **제외** 또는 `[검증 필요]` 표시
+- [ ] 출처 간 1% 이상 차이 → 추가 검색 수행 또는 **범위로 표현** (예: "4,200~4,250pt")
+- [ ] 1차 출처 없음 → 신뢰도 낮음 경고 표시
+
 ### 3.2 표현 검증 체크리스트
 
 - [ ] 확률 수치 (%) 없음 (예: "60% 확률" 금지)
@@ -732,9 +846,9 @@ output_path: portfolios/{session_folder}/00-macro-outlook.md
 ## 7. 메타 정보
 
 ```yaml
-version: "2.0"
+version: "2.1"
 created: "2026-01-06"
-updated: "2026-01-08"
+updated: "2026-01-09"
 architecture: "multi-agent"
 coordinator: "portfolio-coordinator"
 downstream: "fund-portfolio"
@@ -768,4 +882,14 @@ critical_rules:
   - "범위 표현 필수"
   - "비판적 시각 균형"
   - "Exa deep_researcher_check 반복 폴링 필수"
+  - "지수 데이터 3개 출처 교차 검증 필수 (2026-01-09 추가)"
+  - "지수 데이터 검증 실패 시 [검증 필요] 표시 또는 제외 (2026-01-09 추가)"
+  - "환각 방지: 검색 없이 지수 값 생성 절대 금지 (2026-01-09 추가)"
+  - "1차 출처 필수: Investing.com, Trading Economics, Bloomberg 등 (2026-01-09 추가)"
+incident_history:
+  - date: "2026-01-09"
+    issue: "KOSPI 데이터 환각 오류"
+    detail: "실제 4,214pt를 3,200pt로 잘못 기재 (-24% 오차)"
+    root_cause: "검색 실패 후 AI 환각으로 임의 숫자 생성"
+    resolution: "지수 데이터 특별 규칙 추가 (3개 출처 교차 검증 필수화)"
 ```
