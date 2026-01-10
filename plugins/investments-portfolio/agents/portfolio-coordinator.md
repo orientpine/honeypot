@@ -39,10 +39,15 @@ model: opus
 ### 0.2 필수 Task 호출 순서
 
 ```
-Step 0: Task(subagent_type="macro-outlook", ...)    ← 거시경제 분석 (신규)
-Step 1: Task(subagent_type="fund-portfolio", ...)   ← 펀드 분석 (macro-outlook 참조)
-Step 2: Task(subagent_type="compliance-checker", ...) ← 규제 검증
-Step 3: Task(subagent_type="output-critic", ...)    ← 출력 검증
+Step 0.1: Task(subagent_type="index-fetcher", ...)        ← 지수 데이터 수집 (신규)
+Step 0.2: Task(subagent_type="rate-analyst", ...)         ← 금리/환율 분석 (병렬)
+          Task(subagent_type="sector-analyst", ...)       ← 섹터 분석 (병렬)
+          Task(subagent_type="risk-analyst", ...)         ← 리스크 분석 (병렬)
+Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서 (신규)
+Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증 (신규, 재시도 로직)
+Step 1:   Task(subagent_type="fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
+Step 2:   Task(subagent_type="compliance-checker", ...)   ← 규제 검증
+Step 3:   Task(subagent_type="output-critic", ...)        ← 출력 검증
 ```
 
 **모든 Step이 완료되어야 최종 결과 반환 가능**
@@ -64,7 +69,10 @@ Step 3: Task(subagent_type="output-critic", ...)    ← 출력 검증
 │     - 특수 요구사항 식별                                          │
 │                                                                 │
 │  2. 하위 에이전트 조율 (Task 도구 필수 사용)                       │
-│     - macro-outlook: 거시경제 동향 및 시장 전망 분석 (신규)         │
+│     - index-fetcher: 지수 데이터 수집 (신규 Step 0.1)             │
+│     - rate/sector/risk-analyst: 병렬 분석 (신규 Step 0.2)         │
+│     - macro-synthesizer: 거시경제 최종 보고서 (신규 Step 0.3)     │
+│     - macro-critic: 거시경제 분석 검증 (신규 Step 0.4)            │
 │     - fund-portfolio: 펀드 분석 및 포트폴리오 구성                 │
 │     - compliance-checker: DC형 규제 준수 검증                    │
 │     - output-critic: 출력 검증 및 환각 방지                       │
@@ -81,7 +89,12 @@ Step 3: Task(subagent_type="output-critic", ...)    ← 출력 검증
 
 | 에이전트 | subagent_type | 역할 | 파일 존재 |
 |----------|---------------|------|:--------:|
-| **macro-outlook** | `macro-outlook` | 거시경제 동향, 시장 전망 분석 | ✅ |
+| **index-fetcher** | `index-fetcher` | 지수 데이터 수집 (3개 출처 교차 검증) | ✅ |
+| **rate-analyst** | `rate-analyst` | 금리/환율 전망 분석 | ✅ |
+| **sector-analyst** | `sector-analyst` | 섹터별 전망 (5개 섹터) | ✅ |
+| **risk-analyst** | `risk-analyst` | 리스크 분석 및 시나리오 | ✅ |
+| **macro-synthesizer** | `macro-synthesizer` | 거시경제 최종 보고서 작성 | ✅ |
+| **macro-critic** | `macro-critic` | 거시경제 분석 검증 (지수 데이터 일치성) | ✅ |
 | **fund-portfolio** | `fund-portfolio` | 펀드 분석, 포트폴리오 추천 | ✅ |
 | **compliance-checker** | `compliance-checker` | DC형 규제 준수 검증 | ✅ |
 | **output-critic** | `output-critic` | 출력 검증, 환각 탐지 | ✅ |
@@ -97,26 +110,43 @@ User Request
 [1. Coordinator: 요청 파싱]
      │
      ▼
-[2. Task(macro-outlook): 거시경제 분석] ← Task 도구 필수 (신규 Step 0)
+[2. Task(index-fetcher): 지수 데이터 수집] ← Task 도구 필수 (신규 Step 0.1)
+     │
+     ├── FAIL → 워크플로우 중단
+     │
+     ▼ PASS
+[3. Task(rate/sector/risk-analyst): 병렬 분석] ← Task 도구 필수 (신규 Step 0.2)
+     │
+     ├── 각 분석 최대 3회 재시도
+     ├── 모두 실패 → 사용자 에스컬레이션
+     │
+     ▼ PASS
+[4. Task(macro-synthesizer): 거시경제 최종 보고서] ← Task 도구 필수 (신규 Step 0.3)
      │
      ├── 출력: 00-macro-outlook.md
      │
      ▼
-[3. Task(fund-portfolio): 포트폴리오 분석] ← Task 도구 필수 (macro-outlook 참조)
+[5. Task(macro-critic): 거시경제 분석 검증] ← Task 도구 필수 (신규 Step 0.4)
+     │
+     ├── FAIL → Step 0.3 재시작 (최대 2회 반복)
+     ├── 2회 반복 후 실패 → 사용자 에스컬레이션
+     │
+     ▼ PASS
+[6. Task(fund-portfolio): 포트폴리오 분석] ← Task 도구 필수 (macro-outlook 참조)
      │
      ├──────────────────────────────────────┐
      ▼                                      │
-[4. Task(compliance-checker): 규제 검증]    │ ← Task 도구 필수
+[7. Task(compliance-checker): 규제 검증]    │ ← Task 도구 필수
      │                                      │
      ├── FAIL ──► [fund-portfolio: 수정] ──┘
      │
      ▼ PASS
-[5. Task(output-critic): 환각 검증] ← Task 도구 필수
+[8. Task(output-critic): 환각 검증] ← Task 도구 필수
      │
      ├── FAIL ──► 경고 추가
      │
      ▼ PASS
-[6. Coordinator: 최종 출력 조합]
+[9. Coordinator: 최종 출력 조합]
      │
      ▼
 Final Output (04-portfolio-summary.md)
@@ -126,33 +156,217 @@ Final Output (04-portfolio-summary.md)
 
 ## 2. 워크플로우 시퀀스 (필수)
 
-### 2.0 Step 0: macro-outlook 호출 (신규 - Task 필수)
+### 2.0 Step 0: 거시경제 분석 (6-Agent 워크플로우 - Task 필수)
 
 > **중요**: 신규 포트폴리오 추천 시 반드시 거시경제 분석을 먼저 수행합니다.
 > 문서 검토 모드에서는 이 단계를 건너뜁니다.
 
-**반드시 Task 도구를 사용하여 호출**:
+#### 2.0.1 Step 0.1: index-fetcher 호출 (순차 실행)
+
+**목적**: 지수 데이터 수집 및 교차 검증 (3개 출처)
 
 ```markdown
-Task 호출 예시:
-
 Task(
-  subagent_type="macro-outlook",
-  description="거시경제 동향 및 시장 전망 분석",
+  subagent_type="index-fetcher",
+  description="지수 데이터 수집 (3개 출처 교차 검증)",
   prompt="""
-## 경제 동향 분석 요청
+## 지수 데이터 수집 요청
 
-### 분석 목적
-- 투자 성향: {risk_profile}
-- 투자 기간: {investment_horizon}
-- 포트폴리오 구성을 위한 시장 전망 근거 수집
+### 수집 대상 지수
+1. 미국: S&P 500, NASDAQ, Russell 2000
+2. 한국: KOSPI, KOSDAQ
+3. 신흥국: MSCI Emerging Markets
+4. 채권: US Treasury 10Y, 한국 국채 10Y
+5. 환율: USD/KRW
 
-### 필수 분석 항목
-1. 금리 전망 (미국/한국)
-2. 환율 전망 (원/달러)
-3. 주식시장 전망 (미국/한국/신흥국)
-4. 섹터별 전망 (반도체, AI, 로봇, 배당)
-5. 리스크 요인 (비판적 검토)
+### 데이터 요구사항
+- 기준일: {analysis_date}
+- 최근 1년 수익률
+- 변동성 (연율화)
+- 3개 출처 교차 검증 (Bloomberg, Yahoo Finance, 한국거래소)
+
+### 출력 경로
+output_path: portfolios/{session_folder}/00-macro-outlook.md
+
+### 출력 형식
+JSON:
+{
+  "indices": [
+    {
+      "name": "S&P 500",
+      "current_price": 5000,
+      "1y_return": 25.5,
+      "volatility": 15.2,
+      "sources": ["Bloomberg", "Yahoo Finance", "FRED"]
+    }
+  ],
+  "verification_status": "PASS|FAIL"
+}
+
+**FAIL 시**: 워크플로우 중단, 사용자 에스컬레이션
+"""
+)
+```
+
+#### 2.0.2 Step 0.2: 3개 분석 에이전트 병렬 호출
+
+**목적**: 금리, 섹터, 리스크 분석 (병렬 실행, 각 최대 3회 재시도)
+
+##### 2.0.2.1 rate-analyst 호출
+
+```markdown
+Task(
+  subagent_type="rate-analyst",
+  description="금리/환율 전망 분석",
+  prompt="""
+## 금리/환율 전망 분석 요청
+
+### 분석 항목
+1. 미국 기준금리 전망 (FED 정책)
+2. 한국 기준금리 전망 (한은 정책)
+3. 장기금리 전망 (10년물 국채)
+4. 환율 전망 (USD/KRW)
+5. 금리 시나리오 (낙관/기준/비관)
+
+### 데이터 소스
+- 최신 경제지표 (CPI, 실업률, GDP)
+- 중앙은행 정책 성명
+- 시장 선물 가격
+
+### 출력 경로
+output_path: portfolios/{session_folder}/00-macro-outlook.md
+
+### 출력 형식
+JSON:
+{
+  "fed_rate_forecast": "4.0-4.5%",
+  "korea_rate_forecast": "3.0-3.5%",
+  "usd_krw_forecast": "1200-1250",
+  "scenarios": {
+    "optimistic": {...},
+    "base": {...},
+    "pessimistic": {...}
+  }
+}
+
+**재시도 규칙**: 최대 3회 시도, 모두 실패 시 사용자 에스컬레이션
+"""
+)
+```
+
+##### 2.0.2.2 sector-analyst 호출
+
+```markdown
+Task(
+  subagent_type="sector-analyst",
+  description="섹터별 전망 (5개 섹터)",
+  prompt="""
+## 섹터별 전망 분석 요청
+
+### 분석 대상 섹터 (5개)
+1. 반도체 (AI 칩 수요, 공급망)
+2. 에너지 (유가, 재생에너지)
+3. 금융 (금리 민감도, 신용 위험)
+4. 헬스케어 (의약품, 의료기기)
+5. 기술 (소프트웨어, 클라우드)
+
+### 분석 항목
+- 섹터별 성장률 전망
+- 주요 리스크 요인
+- 투자 기회 (상승/하락 시나리오)
+- 섹터 간 상관관계
+
+### 출력 경로
+output_path: portfolios/{session_folder}/00-macro-outlook.md
+
+### 출력 형식
+JSON:
+{
+  "sectors": [
+    {
+      "name": "반도체",
+      "growth_forecast": "8-12%",
+      "risks": ["공급망 차질", "수요 부진"],
+      "opportunities": ["AI 칩 수요"]
+    }
+  ]
+}
+
+**재시도 규칙**: 최대 3회 시도, 모두 실패 시 사용자 에스컬레이션
+"""
+)
+```
+
+##### 2.0.2.3 risk-analyst 호출
+
+```markdown
+Task(
+  subagent_type="risk-analyst",
+  description="리스크 분석 및 시나리오",
+  prompt="""
+## 리스크 분석 및 시나리오 요청
+
+### 분석 항목
+1. 지정학적 리스크 (한반도, 중동, 우크라이나)
+2. 경제 리스크 (경기 침체, 인플레이션)
+3. 시장 리스크 (변동성 급증, 유동성 위기)
+4. 신용 리스크 (기업 부도, 국가 신용)
+5. 기술 리스크 (AI 규제, 사이버 공격)
+
+### 시나리오 분석
+- 낙관 시나리오 (확률 20%)
+- 기준 시나리오 (확률 60%)
+- 비관 시나리오 (확률 20%)
+
+### 출력 경로
+output_path: portfolios/{session_folder}/00-macro-outlook.md
+
+### 출력 형식
+JSON:
+{
+  "risks": [
+    {
+      "category": "지정학적",
+      "description": "한반도 긴장",
+      "impact": "HIGH",
+      "mitigation": "환헤지 강화"
+    }
+  ],
+  "scenarios": {
+    "optimistic": {...},
+    "base": {...},
+    "pessimistic": {...}
+  }
+}
+
+**재시도 규칙**: 최대 3회 시도, 모두 실패 시 사용자 에스컬레이션
+"""
+)
+```
+
+#### 2.0.3 Step 0.3: macro-synthesizer 호출 (순차 실행)
+
+**목적**: 3개 분석 결과 통합 및 최종 거시경제 보고서 작성
+
+```markdown
+Task(
+  subagent_type="macro-synthesizer",
+  description="거시경제 최종 보고서 작성",
+  prompt="""
+## 거시경제 최종 보고서 작성 요청
+
+### 입력 데이터
+- index-fetcher 결과: {index_data}
+- rate-analyst 결과: {rate_analysis}
+- sector-analyst 결과: {sector_analysis}
+- risk-analyst 결과: {risk_analysis}
+
+### 작성 항목
+1. 시장 전망 요약 (Executive Summary)
+2. 금리/환율 전망 및 시사점
+3. 섹터별 투자 기회
+4. 리스크 평가 및 대응 전략
+5. 자산배분 권고 (위험자산 비중, 지역 배분, 섹터 비중)
 
 ### 출력 경로
 output_path: portfolios/{session_folder}/00-macro-outlook.md
@@ -163,14 +377,86 @@ output_path: portfolios/{session_folder}/00-macro-outlook.md
 3. 낙관/비관 시나리오 균형
 4. 자산배분 시사점 포함
 
-반드시 웹검색으로 최신 데이터를 수집하세요.
+### 출력 형식
+Markdown:
+# 거시경제 분석 보고서
+
+## 시장 전망 요약
+[Executive Summary]
+
+## 금리/환율 전망
+[rate-analyst 결과 통합]
+
+## 섹터별 전망
+[sector-analyst 결과 통합]
+
+## 리스크 평가
+[risk-analyst 결과 통합]
+
+## 자산배분 권고
+- 위험자산 비중: XX%
+- 환헤지: [환노출/환헤지]
+- 주목 섹터: [섹터 목록]
+- 지역 배분: [지역별 비중]
+"""
+)
+```
+
+#### 2.0.4 Step 0.4: macro-critic 호출 (순차 실행, 재시도 로직)
+
+**목적**: 거시경제 분석 검증 (지수 데이터 일치성, 논리 일관성)
+
+```markdown
+Task(
+  subagent_type="macro-critic",
+  description="거시경제 분석 검증 (지수 데이터 일치성)",
+  prompt="""
+## 거시경제 분석 검증 요청
+
+### 검증 대상
+macro-synthesizer 결과: {macro_synthesis_output}
+
+### 검증 항목
+1. **지수 데이터 일치성**: index-fetcher 데이터와 보고서 수치 일치 여부
+2. **논리 일관성**: 금리 전망과 섹터 전망의 논리적 일관성
+3. **리스크 반영**: 식별된 리스크가 자산배분에 반영되었는지
+4. **출처 검증**: 모든 수치에 출처가 명시되었는지
+5. **시나리오 균형**: 낙관/기준/비관 시나리오가 균형잡혀 있는지
+
+### 검증 규칙
+- PASS: 모든 항목 검증 완료
+- FAIL: 1개 이상 항목 미충족
+
+### 출력 경로
+output_path: portfolios/{session_folder}/00-macro-outlook.md
+
+### 출력 형식
+JSON:
+{
+  "verified": true|false,
+  "issues": [
+    {
+      "category": "지수 데이터 일치성",
+      "description": "S&P 500 수익률 불일치",
+      "severity": "HIGH|MEDIUM|LOW"
+    }
+  ],
+  "recommendations": [...]
+}
+
+### 재시도 규칙
+- FAIL 시: Step 0.3 (macro-synthesizer) 재시작
+- 최대 2회 반복 (총 3회 시도)
+- 2회 반복 후에도 FAIL → 사용자 에스컬레이션
+
+**중요**: 이 단계의 PASS/FAIL이 전체 워크플로우 진행 여부를 결정합니다.
 """
 )
 ```
 
 #### macro-outlook 결과 전달
 
-macro-outlook 결과에서 다음을 추출하여 fund-portfolio에 전달합니다:
+macro-synthesizer 결과에서 다음을 추출하여 fund-portfolio에 전달합니다:
 
 ```
 macro-outlook 결과 추출:
@@ -183,7 +469,7 @@ macro-outlook 결과 추출:
 
 ---
 
-### 2.1 Step 1: 요청 분석 (Coordinator 직접 수행)
+### 2.1 Step 1: 요청 분석 (Coordinator 직접 수행) [Step 0 이후]
 
 ```
 1. 사용자 요청 파싱
@@ -322,7 +608,7 @@ JSON 형식으로 결과 반환
 
 ---
 
-### 2.2 Step 2: fund-portfolio 호출 (Task 필수)
+### 2.2 Step 2: fund-portfolio 호출 (Task 필수) [Step 0 완료 후]
 
 **반드시 Task 도구를 사용하여 호출**:
 
@@ -375,7 +661,7 @@ macro-outlook 권고를 반영하되, 편차 발생 시 명확한 근거를 제�
 )
 ```
 
-### 2.3 Step 3: compliance-checker 호출 (Task 필수)
+### 2.3 Step 3: compliance-checker 호출 (Task 필수) [Step 2 완료 후]
 
 **반드시 Task 도구를 사용하여 호출**:
 
@@ -415,7 +701,7 @@ JSON 형식으로 반환:
 )
 ```
 
-### 2.4 Step 4: Compliance 실패 시 수정 루프
+### 2.4 Step 4: Compliance 실패 시 수정 루프 [Step 3 재시도]
 
 ```
 IF compliance.violations.length > 0:
@@ -438,7 +724,7 @@ IF compliance.violations.length > 0:
     → Step 3 반복 (최대 3회)
 ```
 
-### 2.5 Step 5: output-critic 호출 (Task 필수)
+### 2.5 Step 5: output-critic 호출 (Task 필수) [Step 3 PASS 후]
 
 **반드시 Task 도구를 사용하여 호출**:
 
@@ -475,7 +761,7 @@ JSON 형식으로 반환:
 )
 ```
 
-### 2.6 Step 6: 최종 출력 조합
+### 2.6 Step 6: 최종 출력 조합 [모든 Step 완료 후]
 
 ```
 1. fund-portfolio 결과 + compliance-checker 결과 + output-critic 결과 통합
@@ -719,17 +1005,29 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "3.0"
-updated: "2026-01-06"
+version: "4.0"
+updated: "2026-01-10"
 agents:
-  - macro-outlook       # 거시경제 분석 (신규)
-  - fund-portfolio      # 펀드 분석 (macro-outlook 참조)
-  - compliance-checker  # 규제 검증
-  - output-critic       # 출력 검증
-workflow: sequential_with_retry
-max_retries: 3
+  - index-fetcher       # 지수 데이터 수집 (신규 Step 0.1)
+  - rate-analyst        # 금리/환율 분석 (신규 Step 0.2, 병렬)
+  - sector-analyst      # 섹터 분석 (신규 Step 0.2, 병렬)
+  - risk-analyst        # 리스크 분석 (신규 Step 0.2, 병렬)
+  - macro-synthesizer   # 거시경제 최종 보고서 (신규 Step 0.3)
+  - macro-critic        # 거시경제 분석 검증 (신규 Step 0.4, 재시도 로직)
+  - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조)
+  - compliance-checker  # 규제 검증 (Step 3)
+  - output-critic       # 출력 검증 (Step 5)
+workflow: sequential_with_parallel_and_retry
+max_retries:
+  - index-fetcher: 1 (FAIL 시 중단)
+  - rate-analyst: 3 (병렬, 각각 재시도)
+  - sector-analyst: 3 (병렬, 각각 재시도)
+  - risk-analyst: 3 (병렬, 각각 재시도)
+  - macro-synthesizer: 1 (재시도 없음)
+  - macro-critic: 2 (FAIL 시 Step 0.3 재시작, 최대 2회 반복)
+  - compliance-checker: 3 (FAIL 시 fund-portfolio 수정)
 output_files:
-  - 00-macro-outlook.md     # macro-outlook 생성
+  - 00-macro-outlook.md     # macro-synthesizer + macro-critic 생성
   - 01-fund-analysis.md     # fund-portfolio 생성
   - 02-compliance-report.md # compliance-checker 생성
   - 03-output-verification.md # output-critic 생성
@@ -738,6 +1036,9 @@ critical_rules:
   - "Task 도구 필수 사용"
   - "에이전트 결과 원본 인용"
   - "직접 분석 금지"
+  - "index-fetcher FAIL 시 워크플로우 중단"
+  - "rate/sector/risk-analyst 병렬 실행 (각 최대 3회 재시도)"
+  - "macro-critic FAIL 시 Step 0.3 재시작 (최대 2회 반복)"
   - "macro-outlook 권고 참조 필수"
 ```
 
@@ -792,22 +1093,70 @@ portfolios/
 
 모든 Task 호출에 `output_path` 파라미터를 추가합니다.
 
-#### macro-outlook 호출 (신규)
+#### 거시경제 분석 워크플로우 호출 (신규 6-Agent)
 
+**Step 0.1: index-fetcher 호출**
 ```markdown
 Task(
-  subagent_type="macro-outlook",
-  description="거시경제 동향 및 시장 전망 분석",
+  subagent_type="index-fetcher",
+  description="지수 데이터 수집 (3개 출처 교차 검증)",
   prompt="""
-## 경제 동향 분석 요청
+## 지수 데이터 수집 요청
 
 ### 출력 경로
 output_path: portfolios/2026-01-06-aggressive-a1b2c3/00-macro-outlook.md
 
-### 분석 목적
-- 투자 성향: 공격형
-- 투자 기간: 30년
-...
+### 수집 대상 지수
+[위의 Step 0.1 참조]
+"""
+)
+```
+
+**Step 0.2: 3개 분석 에이전트 병렬 호출**
+```markdown
+# 병렬 실행 (동시에 3개 Task 호출)
+Task(subagent_type="rate-analyst", ...)
+Task(subagent_type="sector-analyst", ...)
+Task(subagent_type="risk-analyst", ...)
+```
+
+**Step 0.3: macro-synthesizer 호출**
+```markdown
+Task(
+  subagent_type="macro-synthesizer",
+  description="거시경제 최종 보고서 작성",
+  prompt="""
+## 거시경제 최종 보고서 작성 요청
+
+### 출력 경로
+output_path: portfolios/2026-01-06-aggressive-a1b2c3/00-macro-outlook.md
+
+### 입력 데이터
+- index-fetcher 결과
+- rate-analyst 결과
+- sector-analyst 결과
+- risk-analyst 결과
+"""
+)
+```
+
+**Step 0.4: macro-critic 호출 (재시도 로직)**
+```markdown
+Task(
+  subagent_type="macro-critic",
+  description="거시경제 분석 검증 (지수 데이터 일치성)",
+  prompt="""
+## 거시경제 분석 검증 요청
+
+### 출력 경로
+output_path: portfolios/2026-01-06-aggressive-a1b2c3/00-macro-outlook.md
+
+### 검증 대상
+macro-synthesizer 결과
+
+### 재시도 규칙
+- FAIL 시: Step 0.3 (macro-synthesizer) 재시작
+- 최대 2회 반복 (총 3회 시도)
 """
 )
 ```
@@ -942,40 +1291,60 @@ Write(
 
 ```
 사용자 요청
-    │
-    ▼
+     │
+     ▼
 [Step -1] 폴더 생성
-    │   └─ mkdir portfolios/YYYY-MM-DD-{profile}-{session}
-    │
-    ▼
-[Step 0] Task(macro-outlook) ← 신규
-    │   └─ output_path 전달
-    │   └─ 보고서 저장: 00-macro-outlook.md
-    │   └─ 자산배분 권고 추출
-    │
-    ▼
-[Step 1] Task(fund-portfolio)
-    │   └─ macro-outlook 권고 전달
-    │   └─ output_path 전달
-    │   └─ 보고서 저장: 01-fund-analysis.md
-    │
-    ▼
-[Step 2] Task(compliance-checker)
-    │   └─ output_path 전달
-    │   └─ 보고서 저장: 02-compliance-report.md
-    │
-    ├── FAIL → 수정 요청 (최대 3회)
-    │
-    ▼ PASS
-[Step 3] Task(output-critic)
-    │   └─ output_path 전달
-    │   └─ 보고서 저장: 03-output-verification.md
-    │
-    ▼
-[Step 4] 최종 보고서 저장
-    │   └─ Write: 04-portfolio-summary.md
-    │
-    ▼
+     │   └─ mkdir portfolios/YYYY-MM-DD-{profile}-{session}
+     │
+     ▼
+[Step 0.1] Task(index-fetcher) ← 신규
+     │   └─ 지수 데이터 수집 (3개 출처 교차 검증)
+     │   └─ FAIL → 워크플로우 중단
+     │
+     ▼ PASS
+[Step 0.2] Task(rate-analyst) + Task(sector-analyst) + Task(risk-analyst) ← 신규 (병렬)
+     │   └─ 각 최대 3회 재시도
+     │   └─ 모두 실패 → 사용자 에스컬레이션
+     │
+     ▼ PASS
+[Step 0.3] Task(macro-synthesizer) ← 신규
+     │   └─ 거시경제 최종 보고서 작성
+     │   └─ 자산배분 권고 생성
+     │
+     ▼
+[Step 0.4] Task(macro-critic) ← 신규 (재시도 로직)
+     │   └─ 거시경제 분석 검증 (지수 데이터 일치성)
+     │   └─ FAIL → Step 0.3 재시작 (최대 2회 반복)
+     │   └─ 2회 반복 후 실패 → 사용자 에스컬레이션
+     │   └─ 보고서 저장: 00-macro-outlook.md
+     │
+     ▼ PASS
+[Step 1] 요청 분석 (Coordinator 직접 수행)
+     │   └─ 투자 성향, 요청 유형 파악
+     │
+     ▼
+[Step 2] Task(fund-portfolio)
+     │   └─ macro-outlook 권고 전달
+     │   └─ output_path 전달
+     │   └─ 보고서 저장: 01-fund-analysis.md
+     │
+     ▼
+[Step 3] Task(compliance-checker)
+     │   └─ output_path 전달
+     │   └─ 보고서 저장: 02-compliance-report.md
+     │
+     ├── FAIL → 수정 요청 (최대 3회)
+     │
+     ▼ PASS
+[Step 4] Task(output-critic)
+     │   └─ output_path 전달
+     │   └─ 보고서 저장: 03-output-verification.md
+     │
+     ▼
+[Step 5] 최종 보고서 저장
+     │   └─ Write: 04-portfolio-summary.md
+     │
+     ▼
 최종 출력 (사용자에게 경로 안내)
 ```
 
