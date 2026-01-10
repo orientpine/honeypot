@@ -77,7 +77,7 @@ model: sonnet
   },
   "bok_outlook": {
     "current_rate": "X.XX%",
-    "policy_direction": "[인상/동결/인하] 예상",
+    "policy_direction": "[인상/동절/인하] 예상",
     "scenario": {
       "optimistic": "금리 인하 가능성",
       "base": "현 수준 유지",
@@ -87,16 +87,8 @@ model: sonnet
   },
   "fx_outlook": {
     "current_rate": 1410,
-    "six_month": {
-      "optimistic": "1,380~1,400원",
-      "base": "1,400~1,420원",
-      "pessimistic": "1,420~1,450원"
-    },
-    "twelve_month": {
-      "optimistic": "1,370~1,390원",
-      "base": "1,390~1,430원",
-      "pessimistic": "1,430~1,480원"
-    },
+    "six_month": {"optimistic": "1,380~1,400원", "base": "1,400~1,420원", "pessimistic": "1,420~1,450원"},
+    "twelve_month": {"optimistic": "1,370~1,390원", "base": "1,390~1,430원", "pessimistic": "1,430~1,480원"},
     "rationale": "Fed-BOK 금리차 확대 시 원화 약세 가능성",
     "sources": ["[출처: ...]"]
   },
@@ -168,52 +160,3 @@ model: sonnet
 4. **환율 전망**: 금리차 기반 6개월/12개월 시나리오 작성
 5. **환헤지 전략**: 현재 상황에 맞는 전략 권고
 6. **JSON 포장**: 출력 스키마에 맞춰 반환
-
----
-
-## 예시 출력
-
-```json
-{
-  "fed_outlook": {
-    "current_rate": "4.25-4.50%",
-    "fomc_projection": "2026년 2회 인하 예상",
-    "scenario": {
-      "optimistic": "인플레이션 급락으로 3회 인하 가능",
-      "base": "2회 인하 (3월, 6월)",
-      "pessimistic": "인플레이션 재상승으로 인하 연기"
-    },
-    "sources": ["[출처: Fed, FOMC Statement, https://www.federalreserve.gov, 2026-01-15]"]
-  },
-  "bok_outlook": {
-    "current_rate": "3.00%",
-    "policy_direction": "2026년 1회 인하 가능",
-    "scenario": {
-      "optimistic": "경기 약세로 2회 인하",
-      "base": "1회 인하 (상반기)",
-      "pessimistic": "인플레이션으로 현 수준 유지"
-    },
-    "sources": ["[출처: 한국은행, 금융통화위원회 결정, https://www.bok.or.kr, 2026-01-16]"]
-  },
-  "fx_outlook": {
-    "current_rate": 1410,
-    "six_month": {
-      "optimistic": "1,380~1,400원 (원화 강세)",
-      "base": "1,400~1,420원 (현 수준)",
-      "pessimistic": "1,420~1,450원 (원화 약세)"
-    },
-    "twelve_month": {
-      "optimistic": "1,370~1,390원",
-      "base": "1,390~1,430원",
-      "pessimistic": "1,430~1,480원"
-    },
-    "rationale": "Fed 인하 시 금리차 축소로 원화 강세 가능",
-    "sources": ["[출처: Trading Economics, USD/KRW, https://tradingeconomics.com, 2026-01-10]"]
-  },
-  "hedge_strategy": {
-    "recommendation": "환헤지 60% / 환노출 40%",
-    "rationale": "금리차 축소 추세이나 지정학적 리스크 존재",
-    "sources": ["[출처: Morgan Stanley, FX Outlook, 2026-01-10]"]
-  }
-}
-```
