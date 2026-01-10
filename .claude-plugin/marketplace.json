@@ -68,7 +68,12 @@
       "strict": true,
       "agents": [
         "./agents/portfolio-coordinator.md",
-        "./agents/macro-outlook.md",
+        "./agents/index-fetcher.md",
+        "./agents/macro-critic.md",
+        "./agents/rate-analyst.md",
+        "./agents/sector-analyst.md",
+        "./agents/risk-analyst.md",
+        "./agents/macro-synthesizer.md",
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
         "./agents/output-critic.md",
