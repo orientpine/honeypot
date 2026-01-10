@@ -299,6 +299,124 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorActio
 - [ ] All marketplace entries have `"strict": true`
 - [ ] Paths use `./skills` not `./skills/` or `./skills/SKILL.md`
 
+### CRITICAL: Agent/Skill File Changes Checklist
+
+**⚠️ MANDATORY: When adding, removing, or renaming agent/skill files, you MUST update marketplace.json**
+
+This is the #1 source of plugin registration issues. Follow this checklist for EVERY agent/skill file operation:
+
+#### When Adding New Agent Files
+
+1. **Create the agent file:**
+   ```bash
+   # Example: Adding new-agent.md to investments-portfolio
+   vim plugins/investments-portfolio/agents/new-agent.md
+   ```
+
+2. **Update marketplace.json IMMEDIATELY:**
+   ```bash
+   # Edit .claude-plugin/marketplace.json
+   # Find the plugin's "agents" array
+   # Add: "./agents/new-agent.md"
+   ```
+
+3. **Verify the update:**
+   ```bash
+   # Check that the new agent is listed
+   grep -A 20 '"investments-portfolio"' .claude-plugin/marketplace.json | grep "new-agent"
+   ```
+
+4. **Clear cache and re-register:**
+   ```powershell
+   Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorAction SilentlyContinue
+   # Then: /plugin marketplace remove honeypot
+   # Then: /plugin marketplace add C:\path\to\toolbox_orientpine
+   ```
+
+#### When Removing Agent Files
+
+1. **Archive or delete the file:**
+   ```bash
+   # Example: Archiving macro-outlook.md
+   mkdir -p plugins/investments-portfolio/agents/archive/
+   mv plugins/investments-portfolio/agents/macro-outlook.md \
+      plugins/investments-portfolio/agents/archive/
+   ```
+
+2. **Update marketplace.json IMMEDIATELY:**
+   ```bash
+   # Edit .claude-plugin/marketplace.json
+   # Remove the line: "./agents/macro-outlook.md"
+   ```
+
+3. **Verify the update:**
+   ```bash
+   # Ensure the removed agent is NOT listed
+   grep -A 20 '"investments-portfolio"' .claude-plugin/marketplace.json | grep -v "macro-outlook"
+   ```
+
+4. **Clear cache and re-register** (same as above)
+
+#### When Renaming Agent Files
+
+1. **Rename the file:**
+   ```bash
+   mv plugins/investments-portfolio/agents/old-name.md \
+      plugins/investments-portfolio/agents/new-name.md
+   ```
+
+2. **Update marketplace.json IMMEDIATELY:**
+   ```bash
+   # Change: "./agents/old-name.md" → "./agents/new-name.md"
+   ```
+
+3. **Verify and re-register** (same as above)
+
+#### Common Mistakes to Avoid
+
+| Mistake | Impact | Prevention |
+|---------|--------|------------|
+| Creating agent file but forgetting marketplace.json | Agent not visible in Claude | Always edit marketplace.json IMMEDIATELY after file creation |
+| Deleting agent file but leaving it in marketplace.json | Plugin fails to load | Always remove from marketplace.json IMMEDIATELY after deletion |
+| Updating multiple agents but only updating some in marketplace.json | Partial registration, confusing behavior | Update marketplace.json for EVERY file change |
+| Not clearing cache after marketplace.json changes | Old registration persists | ALWAYS clear cache + re-register |
+
+#### Example: Real-World Case (2026-01-10)
+
+**Problem:** Created 6 new agents (index-fetcher, macro-critic, rate/sector/risk-analyst, macro-synthesizer) and archived macro-outlook.md, but forgot to update marketplace.json.
+
+**Symptom:** New agents not visible in Claude, old macro-outlook.md still registered.
+
+**Fix:**
+```json
+// Before (WRONG):
+"agents": [
+  "./agents/portfolio-coordinator.md",
+  "./agents/macro-outlook.md",  // ← Archived but still listed
+  "./agents/fund-portfolio.md",
+  "./agents/compliance-checker.md",
+  "./agents/output-critic.md",
+  "./agents/leadership-outlook.md"
+]
+
+// After (CORRECT):
+"agents": [
+  "./agents/portfolio-coordinator.md",
+  "./agents/index-fetcher.md",        // ← Added
+  "./agents/macro-critic.md",         // ← Added
+  "./agents/rate-analyst.md",         // ← Added
+  "./agents/sector-analyst.md",       // ← Added
+  "./agents/risk-analyst.md",         // ← Added
+  "./agents/macro-synthesizer.md",    // ← Added
+  "./agents/fund-portfolio.md",
+  "./agents/compliance-checker.md",
+  "./agents/output-critic.md",
+  "./agents/leadership-outlook.md"
+]
+```
+
+**Lesson:** marketplace.json is NOT automatically synced with file system. You MUST manually update it.
+
 ---
 
 ## NEW SKILL/PLUGIN ADDITION GUIDE
