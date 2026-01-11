@@ -1,150 +1,229 @@
-﻿# Toolbox
+# Honeypot
 
-AI 에이전트 스킬/플러그인 코드 저장소입니다.
-한국 R&D 부설연구소(ISD) 코드 자산 및 프레젠테이션 이미지 생성을 위한 Claude 플러그인 컬렉션을 제공합니다.
+> Claude Code 플러그인 마켓플레이스 - ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석
+
+**Version**: 2.0.0  
+**Author**: [Baekdong Cha](https://github.com/orientpine)  
+**License**: MIT
 
 ---
 
-## Submodule로 사용하기
+## 주요 기능
+
+| 플러그인 | 설명 | 유형 |
+|----------|------|:----:|
+| **isd-generator** | ISD 연구계획서 전체 생성 (5개 Chapter + 이미지) | Agent |
+| **visual-generator** | TED/정부 스타일 시각자료 프롬프트 생성 + Gemini 렌더링 | Skill |
+| **paper-style-generator** | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 | Agent |
+| **report-generator** | 연구 노트 → 국가기관 제출용 연구 보고서 자동 생성 | Agent |
+| **investments-portfolio** | DC 연금 포트폴리오 분석 멀티 에이전트 시스템 | Agent |
+| **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
+
+---
+
+## 빠른 시작
+
+### 1. 마켓플레이스 등록
+
+```bash
+# Claude Code에서 실행
+/plugin marketplace add C:\path\to\honeypot
+```
+
+### 2. 플러그인 사용
+
+```bash
+# 예: ISD 연구계획서 생성
+@isd-generator 오케스트레이터를 사용해서 연구계획서를 생성해줘
+
+# 예: DC 연금 포트폴리오 분석
+@investments-portfolio 포트폴리오 분석을 시작해줘
+```
+
+---
+
+## 프로젝트 구조
+
+```
+honeypot/
+├── .claude-plugin/
+│   └── marketplace.json          # 마켓플레이스 레지스트리 (6개 플러그인)
+├── plugins/
+│   ├── isd-generator/            # ISD 연구계획서 생성
+│   │   ├── agents/               # 7 agents (orchestrator, chapter1-5, figure)
+│   │   ├── references/           # 템플릿, 예시, 가이드
+│   │   ├── assets/               # 출력 템플릿
+│   │   └── scripts/              # Gemini 이미지 생성 스크립트
+│   ├── visual-generator/         # 시각자료 생성
+│   │   ├── skills/               # 3 skills (prompt-concept, prompt-gov, renderer)
+│   │   └── scripts/              # 이미지 생성 스크립트
+│   ├── paper-style-generator/    # 논문 스타일 스킬 생성
+│   │   ├── agents/               # 4 agents (orchestrator, pdf-converter, style-analyzer, skill-generator)
+│   │   ├── scripts/              # MinerU 변환, 스타일 추출
+│   │   └── templates/            # Jinja2 스킬 템플릿 (10개)
+│   ├── report-generator/         # 연구 보고서 생성
+│   │   ├── agents/               # 5 agents (orchestrator, input-analyzer, content-mapper, chapter-writer, quality-checker)
+│   │   ├── references/           # 문서 템플릿, 키워드
+│   │   └── assets/               # 출력 템플릿
+│   ├── investments-portfolio/    # DC 연금 포트폴리오
+│   │   └── agents/               # 11 agents (coordinator, analysts, critics)
+│   └── general-agents/           # 범용 에이전트
+│       └── agents/               # interview.md
+├── resource/                     # 개발 참고 자료
+├── AGENTS.md                     # 프로젝트 상세 문서
+└── README.md                     # 이 문서
+```
+
+---
+
+## 플러그인 상세
+
+### isd-generator
+
+**ISD (기업부설연구소) 연구계획서 자동 생성**
+
+- **워크플로우**: Chapter 3 → 1 → 2 → 4 → 5 순서로 생성
+- **출력**: `output/[프로젝트명]/chapter_{1-5}/`
+- **이미지 생성**: Gemini API로 캡션 기반 이미지 자동 생성
+
+| Agent | 역할 |
+|-------|------|
+| orchestrator | 전체 워크플로우 조율 |
+| chapter1-5 | 각 챕터별 콘텐츠 생성 |
+| figure | 캡션 추출 + 이미지 프롬프트 생성 |
+
+### visual-generator
+
+**시각자료 프롬프트 생성 및 렌더링**
+
+| Skill | 스타일 | 용도 |
+|-------|--------|------|
+| prompt-concept | TED 스타일 | 미니멀 인포그래픽 |
+| prompt-gov | 정부/공공기관 | PPT 슬라이드 |
+| renderer | - | Gemini API 이미지 생성 |
+
+### paper-style-generator
+
+**PDF 논문 → 논문 작성 스킬 세트 생성 (메타-플러그인)**
+
+1. MinerU로 PDF → Markdown 변환
+2. 스타일 패턴 추출 (Voice, Tense, 전환어 등)
+3. 10개 독립 스킬 세트 생성:
+   - `{name}-common`, `{name}-abstract`, `{name}-introduction`
+   - `{name}-methodology`, `{name}-results`, `{name}-discussion`
+   - `{name}-caption`, `{name}-title`, `{name}-verify`
+   - `{name}-orchestrator` (전체 논문 자동 생성)
+
+### report-generator
+
+**연구 노트 → 국가기관 제출용 연구 보고서 생성**
+
+- **입력**: 폴더, 파일, 코드베이스
+- **출력**: 최대 9개 챕터 전문 보고서
+- **문장 패턴**: 4단계 패턴 적용 (What → Why → How → Impact)
+
+### investments-portfolio
+
+**DC형 퇴직연금 포트폴리오 분석 멀티 에이전트 시스템**
+
+| Agent Group | Agents | 역할 |
+|-------------|--------|------|
+| Coordinator | portfolio-coordinator | 전체 워크플로우 조율 |
+| Macro Analysts | index-fetcher, rate-analyst, sector-analyst, risk-analyst | 거시경제 분석 |
+| Synthesizers | macro-synthesizer, macro-critic | 분석 종합 및 검증 |
+| Portfolio | fund-portfolio, compliance-checker | 펀드 추천 및 규제 검증 |
+| Verification | output-critic, leadership-outlook | 출력 검증 및 리더십 분석 |
+
+---
+
+## Submodule 사용법
 
 이 저장소를 다른 프로젝트의 하위 디렉토리로 추가하여 사용할 수 있습니다.
 
-### 1. Submodule 추가
+### Submodule 추가
 
-프로젝트 루트에서 실행:
-
-    cd your-project
-    git submodule add https://github.com/orientpine/toolbox_orientpine.git toolbox_orientpine
-    git commit -m "Add toolbox as submodule"
-
-결과: your-project/toolbox_orientpine/ 폴더가 생성되고, 원본 저장소와 연결됩니다.
-
-### 2. Submodule이 포함된 프로젝트 클론하기
-
-방법 A (권장): 처음부터 submodule과 함께 가져오기
-
-    git clone --recurse-submodules https://github.com/username/your-project.git
-
-방법 B: 이미 클론한 후 submodule 초기화
-
-    cd your-project
-    git submodule update --init --recursive
-
-### 3. Submodule 최신 버전으로 업데이트
-
-    cd your-project
-    git submodule update --remote --merge
-
-주의: 업데이트 후 반드시 메인 프로젝트에 반영해야 합니다!
-
-    git add toolbox_orientpine
-    git commit -m "Update toolbox submodule to latest"
-    git push
-
-### 4. Toolbox 코드를 직접 수정하고 Push하기
-
-Step 1: toolbox 원본 저장소에 push
-
-    cd your-project/toolbox_orientpine
-    git add .
-    git commit -m "feat: 새 기능 추가"
-    git push origin main
-
-Step 2: 메인 프로젝트에서 submodule 참조 업데이트
-
-    cd ..
-    git add toolbox_orientpine
-    git commit -m "Update toolbox submodule reference"
-    git push
-
-### 5. 자주 사용하는 명령어 모음
-
-- Submodule 상태 확인: git submodule status
-- 모든 Submodule 초기화: git submodule update --init --recursive
-- 모든 Submodule 최신화: git submodule update --remote --merge
-- Submodule 변경사항 확인: git diff --submodule
-
-### 6. git submodule init / update가 필요한 상황
-
-#### 언제 필요한가?
-
-다음 상황에서는 `git submodule init`과 `git submodule update`를 실행해야 합니다:
-
-**상황 1: 일반 git clone으로 프로젝트를 받은 경우**
 ```bash
-git clone https://github.com/username/your-project.git
 cd your-project
-ls toolbox_orientpine/  # 폴더가 비어있음!
+git submodule add https://github.com/orientpine/honeypot.git honeypot
+git commit -m "Add honeypot as submodule"
 ```
-→ `--recurse-submodules` 옵션 없이 클론하면 submodule 폴더는 생성되지만 내용이 비어있습니다.
 
-**상황 2: git pull 후 새로운 submodule이 추가된 경우**
+### Submodule 클론
+
 ```bash
-git pull origin main  # 다른 팀원이 추가한 새 submodule 정보가 포함됨
-ls new_submodule/     # 폴더가 비어있음!
-```
-→ pull로는 submodule 메타정보만 받아오고, 실제 내용은 별도로 초기화해야 합니다.
+# 방법 A: 처음부터 submodule과 함께
+git clone --recurse-submodules https://github.com/username/your-project.git
 
-**상황 3: submodule 폴더 안이 비어있는 모든 경우**
-→ `.gitmodules` 파일에 submodule 정보는 있지만 실제 내용이 없는 상태
-
-#### 해결 방법
-
-**방법 A: 한 줄로 해결 (권장)**
-```bash
+# 방법 B: 이미 클론 후 초기화
 git submodule update --init --recursive
 ```
-이 명령은 `git submodule init` + `git submodule update`를 한번에 수행합니다.
 
-**방법 B: 단계별 실행 (이해를 위해)**
+### Submodule 업데이트
+
 ```bash
-# 1단계: submodule 정보를 .git/config에 등록
-git submodule init
+# 최신 버전으로 업데이트
+git submodule update --remote --merge
 
-# 2단계: 등록된 submodule의 실제 내용을 가져옴
-git submodule update
+# 메인 프로젝트에 반영 (필수!)
+git add honeypot
+git commit -m "Update honeypot submodule"
+git push
 ```
 
-**각 명령의 역할:**
-- `git submodule init`: `.gitmodules` 파일을 읽어 로컬 `.git/config`에 submodule URL 등록
-- `git submodule update`: 등록된 URL에서 커밋된 버전의 submodule 내용을 체크아웃
+### 자주 사용하는 명령어
 
-#### 실무 팁
+| 명령어 | 설명 |
+|--------|------|
+| `git submodule status` | 상태 확인 |
+| `git submodule update --init --recursive` | 초기화 |
+| `git submodule update --remote --merge` | 최신화 |
+| `git diff --submodule` | 변경사항 확인 |
+
+### 전역 설정 (권장)
 
 ```bash
-# 앞으로 git clone할 때 항상 submodule도 함께 가져오기
+# 앞으로 git 작업 시 submodule 자동 업데이트
 git config --global submodule.recurse true
 ```
-이 설정을 하면 `git clone`, `git pull`, `git checkout` 시 submodule이 자동으로 업데이트됩니다.
-
-### 7. 헷갈리기 쉬운 포인트
-
-- submodule만 업데이트하고 끝냄 -> 메인 프로젝트에서도 커밋 필요!
-- git clone 했는데 submodule 폴더가 비어있음 -> git submodule update --init --recursive 실행
-- 최신 toolbox를 가져오고 싶음 -> git submodule update --remote --merge
-
-### 8. 주의사항
-
-중요: Submodule을 업데이트한 후에는 반드시 메인 프로젝트에서도 커밋해야 합니다.
-그렇지 않으면 다른 사용자가 클론할 때 이전 버전의 submodule을 받게 됩니다.
 
 ---
 
-## 구조
+## 개발 가이드
 
-    toolbox/
-    ├── .claude-plugin/         # 플러그인 마켓플레이스 프로젝트들
-    ├── agents/                 # 범용 에이전트 정의
-    ├── isd-research-proposals/ # ISD 연구 제안 시스템
-    │   ├── isd-orchestrator/   # 오케스트라 오케스트레이터
-    │   └── chapter{1-5}-generator/  # 연구 챕터 생성기
-    └── presentations/          # 이미지/슬라이드 생성
-        ├── figure-generator/   # 캡션 기반 이미지 생성
-        └── slide-*-generator/  # 슬라이드 생성기
+### 새 플러그인 추가 시
+
+1. `plugins/{plugin-name}/` 디렉토리 생성
+2. `agents/` 또는 `skills/` 하위에 `.md` 파일 작성
+3. `.claude-plugin/marketplace.json`에 플러그인 등록
+4. 캐시 클리어 후 재등록:
+
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorAction SilentlyContinue
+# Claude Code: /plugin marketplace remove honeypot
+# Claude Code: /plugin marketplace add C:\path\to\honeypot
+```
+
+### 주의사항
+
+- marketplace.json은 **루트에 하나만** 유지
+- 모든 `.md` 파일은 **LF 줄바꿈** 사용
+- description에 특수문자 포함 시 **큰따옴표**로 감싸기
+- Agent/Skill 파일 추가/삭제 시 **marketplace.json 동기화 필수**
+
+상세 개발 가이드는 [AGENTS.md](./AGENTS.md) 참조
 
 ---
 
 ## 참고 링크
 
-- Git Submodule 공식 문서: https://git-scm.com/book/ko/v2/Git-도구-서브모듈
+- [Git Submodule 공식 문서](https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-%EC%84%9C%EB%B8%8C%EB%AA%A8%EB%93%88)
+- [Claude Code 플러그인 문서](https://docs.anthropic.com/claude-code/plugins)
 
+---
+
+## 변경 이력
+
+| 버전 | 날짜 | 변경 내용 |
+|:----:|:----:|----------|
+| 2.0.0 | 2026-01-11 | README 완전 재작성, 6개 플러그인 문서화 |
+| 1.0.0 | 2026-01-08 | 최초 작성 |
