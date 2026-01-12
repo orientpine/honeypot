@@ -1,0 +1,312 @@
+# Introduction Template
+
+이 문서는 {{ name | title }} 논문의 Introduction 작성 템플릿입니다.
+
+## Structure
+
+{% if introduction_structure %}
+{{ introduction_structure }}
+{% else %}
+**Standard Structure** (Funnel approach):
+
+1. **Broad Context** (1-2 paragraphs): General background and importance
+2. **Specific Problem** (1-2 paragraphs): Current challenges and limitations
+3. **Previous Work** (1-2 paragraphs): Existing approaches and their gaps
+4. **Research Objective** (1 paragraph): Study goals and hypotheses
+5. **Contributions** (1 paragraph): Key innovations and significance
+6. **Paper Organization** (optional): Brief outline of remaining sections
+{% endif %}
+
+## Length Guidelines
+
+{% if introduction_length %}
+- **Word count**: {{ introduction_length.min }}-{{ introduction_length.max }} words
+- **Recommended**: {{ introduction_length.recommended }} words
+- **Paragraphs**: {{ introduction_length.paragraphs_min }}-{{ introduction_length.paragraphs_max }}
+{% else %}
+- **Word count**: 800-1200 words
+- **Recommended**: 1000 words
+- **Paragraphs**: 5-7 paragraphs
+{% endif %}
+
+## Voice and Tense
+
+{% if introduction_voice_tense %}
+**Voice Ratio**:
+- Active: {{ introduction_voice_tense.active }}%
+- Passive: {{ introduction_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ introduction_voice_tense.past }}% (previous work)
+- Present: {{ introduction_voice_tense.present }}% (current state, objectives)
+
+**Recommended Pattern**:
+- Broad context: Present tense
+- Previous work: Past tense
+- Current challenges: Present tense
+- Research objective: Present or past tense
+- Contributions: Present tense
+{% else %}
+**Voice Ratio**:
+- Active: 60%
+- Passive: 40%
+
+**Tense Distribution**:
+- Past: 40% (previous work)
+- Present: 60% (current state, objectives)
+{% endif %}
+
+## Section-by-Section Guide
+
+### 1. Broad Context (1-2 paragraphs)
+
+**Purpose**: Establish importance and general background
+
+**Tense**: Present (for current state)
+
+**Voice**: Active or Passive
+
+**Content**:
+- Why is this topic important?
+- What is the broader impact?
+- What are the key concepts?
+
+**Examples**:
+- "[Topic] plays a crucial role in [application]."
+- "Understanding [phenomenon] is essential for [goal]."
+- "Recent advances in [field] have enabled [capability]."
+
+**Common Verbs**: play, enable, require, demonstrate, show
+
+**Transition to next section**: "However, current approaches face..."
+
+---
+
+### 2. Specific Problem (1-2 paragraphs)
+
+**Purpose**: Define the problem and its challenges
+
+**Tense**: Present (for current challenges)
+
+**Voice**: Active or Passive
+
+**Content**:
+- What are the current limitations?
+- Why are existing methods insufficient?
+- What gaps exist in knowledge?
+
+**Examples**:
+- "Current methods for [task] face significant challenges in [aspect]."
+- "A major limitation of existing approaches is [problem]."
+- "Despite progress, [challenge] remains unresolved."
+
+**Common Verbs**: face, limit, challenge, hinder, prevent
+
+**Transition to next section**: "Several approaches have been proposed..."
+
+---
+
+### 3. Previous Work (1-2 paragraphs)
+
+**Purpose**: Review existing approaches and identify gaps
+
+**Tense**: Past (for previous studies)
+
+**Voice**: Active (for attribution) or Passive
+
+**Content**:
+- What have others done?
+- What are the strengths and weaknesses?
+- What gaps remain?
+
+**Examples**:
+- "Smith et al. [1] developed [method] to address [problem]."
+- "Previous studies have focused on [aspect] but overlooked [gap]."
+- "While [method A] achieved [result], it suffers from [limitation]."
+
+**Common Verbs**: develop, propose, demonstrate, show, report
+
+**Citation patterns**: See [references/citation.md](references/citation.md)
+
+**Transition to next section**: "To address these limitations, we..."
+
+---
+
+### 4. Research Objective (1 paragraph)
+
+**Purpose**: Clearly state study goals and hypotheses
+
+**Tense**: Present ("We present...") or Past ("We developed...")
+
+**Voice**: Active (strongly preferred)
+
+**Content**:
+- What is the specific goal?
+- What is the hypothesis (if applicable)?
+- What is the scope?
+
+**Examples**:
+- "Here, we present a novel approach to [objective]."
+- "We developed [method] to overcome [limitation]."
+- "This study aimed to [objective] by [approach]."
+
+**Common Verbs**: present, develop, propose, aim, investigate
+
+**Key phrases**: "Here, we...", "In this study, we...", "We aimed to..."
+
+---
+
+### 5. Contributions (1 paragraph)
+
+**Purpose**: Highlight key innovations and significance
+
+**Tense**: Present
+
+**Voice**: Active
+
+**Content**:
+- What is novel about this work?
+- What are the main contributions?
+- What is the significance?
+
+**Examples**:
+- "Our approach offers several advantages: (1) [advantage 1], (2) [advantage 2], (3) [advantage 3]."
+- "The key innovation is [innovation], which enables [capability]."
+- "This work makes the following contributions: First, ... Second, ... Third, ..."
+
+**Common Verbs**: offer, enable, provide, demonstrate, show
+
+**Format**: Numbered or bulleted list (optional)
+
+---
+
+### 6. Paper Organization (optional)
+
+**Purpose**: Briefly outline remaining sections
+
+**Tense**: Present
+
+**Voice**: Passive
+
+**Content**:
+- What is covered in each section?
+
+**Examples**:
+- "The remainder of this paper is organized as follows. Section 2 describes [methods]. Section 3 presents [results]. Section 4 discusses [implications]."
+- "In Section 2, we describe... Section 3 presents... Section 4 discusses..."
+
+**Note**: Some journals discourage this section. Check guidelines.
+
+## Writing Guidelines
+
+### Do's
+
+- ✓ Use funnel structure (broad → specific)
+- ✓ Cite relevant previous work
+- ✓ Clearly state research gap
+- ✓ Use active voice for your contributions
+- ✓ Include specific examples and numbers
+- ✓ Use transition phrases between paragraphs
+
+### Don'ts
+
+- ✗ Include methods or results details
+- ✗ Overcite (focus on most relevant work)
+- ✗ Use vague statements ("many studies", "some researchers")
+- ✗ Criticize previous work harshly
+- ✗ Include unnecessary background
+- ✗ Repeat abstract verbatim
+
+## Example Template
+
+```
+[Paragraph 1: Broad Context - Present tense]
+[Topic] plays a crucial role in [application]. Understanding [phenomenon] 
+is essential for [goal]. Recent advances in [field] have enabled [capability], 
+but [challenge] remains.
+
+[Paragraph 2: Specific Problem - Present tense]
+Current methods for [task] face significant challenges in [aspect]. 
+A major limitation is [problem], which hinders [application]. 
+Despite progress, [challenge] remains unresolved.
+
+[Paragraph 3: Previous Work - Past tense]
+Several approaches have been proposed to address [problem]. Smith et al. [1] 
+developed [method A], which achieved [result]. Jones et al. [2] proposed 
+[method B], demonstrating [finding]. However, these methods suffer from 
+[limitation] and do not address [gap].
+
+[Paragraph 4: Research Objective - Present/Past tense, Active voice]
+Here, we present a novel approach to [objective]. We developed [method] 
+to overcome [limitation] by [innovation]. Our approach combines [technique A] 
+with [technique B] to achieve [goal].
+
+[Paragraph 5: Contributions - Present tense, Active voice]
+Our work makes the following contributions: First, we introduce [contribution 1]. 
+Second, we demonstrate [contribution 2]. Third, we show [contribution 3]. 
+These contributions enable [application] and provide insights into [topic].
+
+[Paragraph 6: Paper Organization - Present tense, Passive voice (optional)]
+The remainder of this paper is organized as follows. Section 2 describes 
+the methods. Section 3 presents the results. Section 4 discusses the 
+implications and limitations.
+```
+
+## Transition Phrases
+
+### Between Paragraphs
+
+- "However, current approaches face..."
+- "Despite these advances, [challenge] remains..."
+- "To address these limitations, we..."
+- "Building on this work, we..."
+- "In contrast to previous methods, our approach..."
+
+### Within Paragraphs
+
+- "Furthermore, ..."
+- "In addition, ..."
+- "Moreover, ..."
+- "For example, ..."
+- "Specifically, ..."
+
+See [references/vocabulary.md](references/vocabulary.md) for more transition phrases.
+
+## Checklist
+
+Before finalizing your introduction, check:
+
+- [ ] Funnel structure (broad → specific) is followed
+- [ ] Research gap is clearly identified
+- [ ] Objective is stated clearly and specifically
+- [ ] Key contributions are highlighted
+- [ ] Relevant previous work is cited
+- [ ] Voice/Tense ratios match target (Active ~60%, Present ~60%)
+- [ ] Transition phrases connect paragraphs smoothly
+- [ ] No methods or results details included
+- [ ] Length is within recommended range (800-1200 words)
+- [ ] All citations are formatted correctly
+
+## Common Mistakes to Avoid
+
+1. **Too much background**: Focus on what's directly relevant
+   - Bad: "Proteins were discovered in 1838..."
+   - Good: "Protein structure prediction is crucial for drug design..."
+
+2. **Vague problem statement**: Be specific
+   - Bad: "Current methods have some problems."
+   - Good: "Current methods achieve only 60% accuracy on complex structures."
+
+3. **Missing research gap**: Clearly state what's missing
+   - Bad: "We developed a new method."
+   - Good: "Existing methods do not account for [factor]. We developed a method that addresses this gap."
+
+4. **Weak contributions**: Highlight what's novel
+   - Bad: "We applied machine learning to protein folding."
+   - Good: "We introduce a novel architecture that improves accuracy by 20%."
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*

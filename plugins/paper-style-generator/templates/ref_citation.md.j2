@@ -1,0 +1,240 @@
+# Citation Style
+
+이 문서는 {{ name | title }} 논문에서 사용되는 인용 스타일을 정리한 것입니다.
+
+## Detected Citation Style
+
+{% if citation_style %}
+**Format**: {{ citation_style.format }}
+
+**Pattern**: `{{ citation_style.pattern }}`
+
+**Examples**:
+{% for example in citation_style.examples %}
+- {{ example }}
+{% endfor %}
+{% else %}
+**No citation style data available.**
+{% endif %}
+
+## In-Text Citations
+
+### Single Citation
+
+{% if citation_style.format == 'Numeric' %}
+**Format**: `[1]`
+
+**Examples**:
+- "Previous studies [1] have shown..."
+- "Smith et al. [1] demonstrated..."
+- "As reported previously [1], the method..."
+{% elif citation_style.format == 'Author-Year' %}
+**Format**: `(Smith et al., 2024)`
+
+**Examples**:
+- "Previous studies (Smith et al., 2024) have shown..."
+- "Smith et al. (2024) demonstrated..."
+- "As reported previously (Smith et al., 2024), the method..."
+{% elif citation_style.format == 'Superscript' %}
+**Format**: `^1` or `¹`
+
+**Examples**:
+- "Previous studies^1 have shown..."
+- "Smith et al.^1 demonstrated..."
+- "As reported previously^1, the method..."
+{% else %}
+**Format**: [Unknown]
+
+**Examples**:
+- [No examples available]
+{% endif %}
+
+### Multiple Citations
+
+{% if citation_style.format == 'Numeric' %}
+**Consecutive**: `[1-3]` or `[1, 2, 3]`
+
+**Non-consecutive**: `[1, 5, 7]`
+
+**Examples**:
+- "Multiple studies [1-3] have confirmed..."
+- "Several approaches [1, 5, 7] have been proposed..."
+{% elif citation_style.format == 'Author-Year' %}
+**Multiple authors**: `(Smith et al., 2024; Jones et al., 2023)`
+
+**Same author, different years**: `(Smith et al., 2023, 2024)`
+
+**Examples**:
+- "Multiple studies (Smith et al., 2024; Jones et al., 2023) have confirmed..."
+- "Several approaches (Smith et al., 2023, 2024; Lee et al., 2022) have been proposed..."
+{% elif citation_style.format == 'Superscript' %}
+**Consecutive**: `^1-3` or `^1,2,3`
+
+**Non-consecutive**: `^1,5,7`
+
+**Examples**:
+- "Multiple studies^1-3 have confirmed..."
+- "Several approaches^1,5,7 have been proposed..."
+{% endif %}
+
+### Citation Placement
+
+**End of sentence**:
+- "The method was validated in previous work [1]."
+- "The method was validated in previous work (Smith et al., 2024)."
+
+**Mid-sentence**:
+- "As shown by Smith et al. [1], the approach is effective."
+- "As shown by Smith et al. (2024), the approach is effective."
+
+**Author as subject**:
+- "Smith et al. [1] demonstrated that..."
+- "Smith et al. (2024) demonstrated that..."
+
+## Reference List Format
+
+{% if citation_style.format == 'Numeric' %}
+### Numeric Style
+
+**Journal Article**:
+```
+[1] Smith, J.; Jones, A.; Lee, K. Title of the Article. Journal Name 2024, 123, 456-789.
+```
+
+**Book**:
+```
+[2] Author, A. Book Title; Publisher: City, Country, 2024.
+```
+
+**Book Chapter**:
+```
+[3] Author, A. Chapter Title. In Book Title; Editor, E., Ed.; Publisher: City, Country, 2024; pp 123-145.
+```
+
+**Conference Paper**:
+```
+[4] Author, A.; Author, B. Paper Title. In Proceedings of Conference Name, City, Country, Date; pp 123-130.
+```
+
+{% elif citation_style.format == 'Author-Year' %}
+### Author-Year Style
+
+**Journal Article**:
+```
+Smith, J., Jones, A., & Lee, K. (2024). Title of the article. Journal Name, 123, 456-789.
+```
+
+**Book**:
+```
+Author, A. (2024). Book title. Publisher.
+```
+
+**Book Chapter**:
+```
+Author, A. (2024). Chapter title. In E. Editor (Ed.), Book title (pp. 123-145). Publisher.
+```
+
+**Conference Paper**:
+```
+Author, A., & Author, B. (2024). Paper title. In Proceedings of Conference Name (pp. 123-130).
+```
+
+{% elif citation_style.format == 'Superscript' %}
+### Superscript Style
+
+**Journal Article**:
+```
+1. Smith J, Jones A, Lee K. Title of the article. Journal Name. 2024;123:456-789.
+```
+
+**Book**:
+```
+2. Author A. Book title. Publisher; 2024.
+```
+
+**Book Chapter**:
+```
+3. Author A. Chapter title. In: Editor E, editor. Book title. Publisher; 2024. p. 123-145.
+```
+
+**Conference Paper**:
+```
+4. Author A, Author B. Paper title. In: Proceedings of Conference Name; 2024. p. 123-130.
+```
+
+{% endif %}
+
+## Special Cases
+
+### Multiple Authors
+
+**1-2 authors**: List all
+- "Smith and Jones [1]"
+- "Smith, J.; Jones, A."
+
+**3+ authors**: Use "et al."
+- "Smith et al. [1]"
+- "Smith, J.; Jones, A.; Lee, K.; et al."
+
+**Threshold**: Typically 3+ authors, but check journal guidelines
+
+### Same First Author, Same Year
+
+{% if citation_style.format == 'Author-Year' %}
+Use letters: `(Smith et al., 2024a)`, `(Smith et al., 2024b)`
+{% else %}
+Use separate numbers: `[1]`, `[2]`
+{% endif %}
+
+### Online Resources
+
+**With DOI**:
+```
+Author, A. Title. Journal Name 2024, 123, 456. DOI: 10.1234/journal.2024.123456
+```
+
+**Without DOI (with URL)**:
+```
+Author, A. Title. Website Name. Available online: https://example.com (accessed on 1 January 2024).
+```
+
+### Preprints
+
+```
+Author, A. Title. Preprint Server 2024. DOI: 10.1234/preprint.2024.123456
+```
+
+## Citation Management
+
+### Consistency Checks
+
+- [ ] All in-text citations have corresponding references
+- [ ] All references are cited in text
+- [ ] Citation format is consistent throughout
+- [ ] Author names are formatted consistently
+- [ ] Journal abbreviations follow standard (if applicable)
+- [ ] DOIs are included (if required)
+
+### Common Errors to Avoid
+
+1. **Inconsistent format**: Mixing `[1]` and `(Smith, 2024)`
+2. **Missing citations**: References without in-text citations
+3. **Orphan citations**: In-text citations without references
+4. **Incorrect author names**: Typos or inconsistent spelling
+5. **Missing information**: Incomplete reference details
+
+## Journal-Specific Guidelines
+
+**Important**: Always check target journal's author guidelines for:
+- Citation style (Numeric/Author-Year/Superscript)
+- Reference list format
+- Author name format (initials vs. full names)
+- Journal name abbreviations
+- DOI requirements
+- Maximum reference count
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*

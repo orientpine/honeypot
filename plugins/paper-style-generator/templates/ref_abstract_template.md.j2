@@ -1,0 +1,221 @@
+# Abstract Template
+
+이 문서는 {{ name | title }} 논문의 Abstract 작성 템플릿입니다.
+
+## Structure
+
+{% if abstract_structure %}
+{{ abstract_structure }}
+{% else %}
+**Standard Structure** (4-5 sentences):
+
+1. **Background** (1-2 sentences): Context and motivation
+2. **Objective** (1 sentence): Research goal or hypothesis
+3. **Methods** (1-2 sentences): Approach and key techniques
+4. **Results** (1-2 sentences): Main findings
+5. **Conclusions** (1 sentence): Implications and significance
+{% endif %}
+
+## Length Guidelines
+
+{% if abstract_length %}
+- **Word count**: {{ abstract_length.min }}-{{ abstract_length.max }} words
+- **Recommended**: {{ abstract_length.recommended }} words
+- **Sentences**: {{ abstract_length.sentences_min }}-{{ abstract_length.sentences_max }}
+{% else %}
+- **Word count**: 150-250 words
+- **Recommended**: 200 words
+- **Sentences**: 5-7 sentences
+{% endif %}
+
+## Voice and Tense
+
+{% if abstract_voice_tense %}
+**Voice Ratio**:
+- Active: {{ abstract_voice_tense.active }}%
+- Passive: {{ abstract_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ abstract_voice_tense.past }}%
+- Present: {{ abstract_voice_tense.present }}%
+
+**Recommended Pattern**:
+- Background: Present tense
+- Objective: Past or present tense
+- Methods: Past tense (passive voice preferred)
+- Results: Past tense
+- Conclusions: Present tense
+{% else %}
+**Voice Ratio**:
+- Active: 70%
+- Passive: 30%
+
+**Tense Distribution**:
+- Past: 60% (methods, results)
+- Present: 40% (background, conclusions)
+{% endif %}
+
+## Section-by-Section Guide
+
+### 1. Background (1-2 sentences)
+
+**Purpose**: Establish context and motivation
+
+**Tense**: Present (for current state) or Past (for previous work)
+
+**Voice**: Active or Passive
+
+**Examples**:
+- "Current methods for [topic] face significant challenges in [problem]."
+- "Understanding [phenomenon] is crucial for [application]."
+- "Recent advances in [field] have enabled [capability]."
+
+**Common Verbs**: face, require, enable, demonstrate, show
+
+---
+
+### 2. Objective (1 sentence)
+
+**Purpose**: State research goal clearly
+
+**Tense**: Past ("We developed...") or Present ("We present...")
+
+**Voice**: Active (preferred)
+
+**Examples**:
+- "Here, we developed a novel approach to [objective]."
+- "We present a comprehensive method for [objective]."
+- "This study aimed to [objective]."
+
+**Common Verbs**: develop, present, propose, aim, investigate
+
+---
+
+### 3. Methods (1-2 sentences)
+
+**Purpose**: Describe approach and key techniques
+
+**Tense**: Past
+
+**Voice**: Passive (preferred) or Active
+
+**Examples**:
+- "We applied [method] to [dataset/system]."
+- "[Method] was used to analyze [data]."
+- "The approach combines [technique A] with [technique B]."
+
+**Common Verbs**: apply, use, analyze, combine, employ
+
+---
+
+### 4. Results (1-2 sentences)
+
+**Purpose**: Highlight main findings
+
+**Tense**: Past
+
+**Voice**: Active (for attribution) or Passive (for observations)
+
+**Examples**:
+- "We identified [number] [entities] associated with [outcome]."
+- "The analysis revealed [finding]."
+- "Our approach achieved [performance metric]."
+
+**Common Verbs**: identify, reveal, demonstrate, show, achieve
+
+---
+
+### 5. Conclusions (1 sentence)
+
+**Purpose**: State implications and significance
+
+**Tense**: Present
+
+**Voice**: Active or Passive
+
+**Examples**:
+- "These findings suggest [implication]."
+- "This approach enables [application]."
+- "Our results provide insights into [topic]."
+
+**Common Verbs**: suggest, enable, provide, demonstrate, indicate
+
+## Writing Guidelines
+
+### Do's
+
+- ✓ Start with broad context, narrow to specific objective
+- ✓ Use concrete numbers and metrics
+- ✓ Highlight key innovation or finding
+- ✓ End with clear take-home message
+- ✓ Use active voice for main contributions
+- ✓ Keep sentences concise and clear
+
+### Don'ts
+
+- ✗ Include citations (most journals prohibit)
+- ✗ Use abbreviations without definition
+- ✗ Include background information not directly relevant
+- ✗ Overuse hedging language ("may", "might", "possibly")
+- ✗ Include details better suited for Methods or Results
+- ✗ End with vague statements
+
+## Example Template
+
+```
+[Background: Present tense, 1-2 sentences]
+Current approaches to [topic] face challenges in [problem]. 
+Understanding [phenomenon] is crucial for [application].
+
+[Objective: Past/Present tense, active voice, 1 sentence]
+Here, we developed [method] to [objective].
+
+[Methods: Past tense, passive voice preferred, 1-2 sentences]
+We applied [technique] to [dataset/system]. 
+The approach combines [method A] with [method B].
+
+[Results: Past tense, 1-2 sentences]
+We identified [number] [entities] associated with [outcome]. 
+Our approach achieved [performance metric].
+
+[Conclusions: Present tense, 1 sentence]
+These findings suggest [implication] and enable [application].
+```
+
+## Checklist
+
+Before finalizing your abstract, check:
+
+- [ ] Length is within journal limits (typically 150-250 words)
+- [ ] All 5 components are present (Background, Objective, Methods, Results, Conclusions)
+- [ ] Voice/Tense ratios match target (Active ~70%, Past ~60%)
+- [ ] No citations included
+- [ ] Abbreviations are defined on first use
+- [ ] Key findings are quantified with numbers
+- [ ] Take-home message is clear
+- [ ] Stands alone without reading full paper
+- [ ] Accurately represents paper content
+
+## Common Mistakes to Avoid
+
+1. **Too much background**: Focus on what's directly relevant
+   - Bad: "Protein folding has been studied for decades..."
+   - Good: "Current protein folding methods face accuracy challenges..."
+
+2. **Vague objectives**: Be specific
+   - Bad: "We studied protein folding."
+   - Good: "We developed a deep learning method to predict protein structures."
+
+3. **Missing quantitative results**: Include numbers
+   - Bad: "Our method performed well."
+   - Good: "Our method achieved 95% accuracy."
+
+4. **Weak conclusions**: State clear implications
+   - Bad: "Our results are interesting."
+   - Good: "These findings enable rapid drug target identification."
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*
