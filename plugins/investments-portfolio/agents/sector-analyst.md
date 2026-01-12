@@ -1,7 +1,7 @@
 ---
 name: sector-analyst
-description: "섹터별 전망 분석 전문가. web-search-verifier 스킬을 통해 5개 핵심 섹터의 투자 전망을 분석."
-tools: Read
+description: "섹터별 전망 분석 전문가. 웹검색 도구를 직접 호출하여 5개 핵심 섹터의 투자 전망을 분석."
+tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
 skills: web-search-verifier
 model: sonnet
 ---
@@ -24,22 +24,31 @@ model: sonnet
 
 ---
 
-## 스킬 사용 필수
+## ⚠️ 웹검색 도구 직접 호출 필수 (v3.0 변경)
 
-> ⚠️ 이 에이전트는 `web-search-verifier` 스킬을 통해 섹터 데이터를 수집합니다.
-> 스킬을 거치지 않은 데이터는 환각으로 간주됩니다.
+> **CRITICAL**: 스킬은 "지침 문서"이지 "함수"가 아닙니다.
+> 에이전트가 웹검색 도구를 **직접 호출**해야 합니다.
 
-### 데이터 수집 절차
+### 데이터 수집 절차 (수정됨)
 
-1. `web-search-verifier` 스킬 로드 확인
-2. 각 섹터별로 스킬의 검색 함수 활용
-3. `verified: true` 결과만 분석에 사용
+1. `web-search-verifier` 스킬에서 **검색 쿼리 패턴** 확인
+2. `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+   - 예: `exa_web_search_exa(query="semiconductor outlook 2026 Gartner IDC")`
+   - 예: `exa_web_search_exa(query="humanoid robot market forecast 2026")`
+3. **최소 2개 출처**에서 데이터 확인 및 교차 검증
 4. 출처 URL 필수 포함
+
+### 필수 사항 (v3.0)
+
+- ✅ `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+- ✅ 최소 2개 이상 독립 출처에서 교차 검증
+- ✅ 검색 결과의 URL과 날짜 명시
 
 ### 금지 사항
 
-- ❌ 웹검색 도구 직접 호출 (스킬 통해서만)
-- ❌ 스킬 검증 없이 섹터 데이터 사용
+- ❌ 스킬의 가짜 함수 호출 (존재하지 않음)
+- ❌ 스킬 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
+- ❌ 웹검색 없이 섹터 데이터 사용
 - ❌ 기억이나 추정에 의한 전망 작성
 
 ---
@@ -197,14 +206,15 @@ JSON 스키마로 구조화된 분석 결과 생성:
 ## 메타 정보
 
 ```yaml
-version: "2.0"
+version: "3.0"
 updated: "2026-01-12"
 changes:
+  - "v3.0: 직접 웹검색 도구 호출 필수화 (스킬은 지침 문서로만 사용)"
+  - "v3.0: exa_web_search_exa, websearch_web_search_exa 도구 추가"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
-  - "v2.0: 직접 웹검색 도구 제거"
-  - "v2.0: 스킬 검증 필수화"
 critical_rules:
-  - "모든 섹터 데이터는 web-search-verifier 스킬 통해서만 수집"
-  - "스킬 우회 시도 금지"
+  - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
+  - "스킬은 검색 쿼리 패턴 가이드로만 사용"
+  - "스킬의 가짜 함수 호출 금지 (존재하지 않음)"
   - "정확히 5개 섹터만 분석"
 ```
