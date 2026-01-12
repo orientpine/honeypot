@@ -1,0 +1,375 @@
+# Caption Template
+
+이 문서는 {{ name | title }} 논문의 Figure 및 Table Caption 작성 템플릿입니다.
+
+## Structure
+
+{% if caption_structure %}
+{{ caption_structure }}
+{% else %}
+**Standard Structure**:
+
+1. **Title** (1 sentence): What is shown
+2. **Description** (1-3 sentences): Details of what is displayed
+3. **Methods** (optional): Brief methods if not in main text
+4. **Statistics** (optional): Sample sizes, P-values, error bars
+5. **Abbreviations** (optional): Define abbreviations used
+{% endif %}
+
+## Length Guidelines
+
+{% if caption_length %}
+- **Figure captions**: {{ caption_length.figure_min }}-{{ caption_length.figure_max }} words
+- **Table captions**: {{ caption_length.table_min }}-{{ caption_length.table_max }} words
+- **Recommended**: {{ caption_length.recommended }} words
+{% else %}
+- **Figure captions**: 50-150 words
+- **Table captions**: 20-50 words
+- **Recommended**: 80 words (figures), 30 words (tables)
+{% endif %}
+
+## Voice and Tense
+
+{% if caption_voice_tense %}
+**Voice Ratio**:
+- Active: {{ caption_voice_tense.active }}%
+- Passive: {{ caption_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ caption_voice_tense.past }}%
+- Present: {{ caption_voice_tense.present }}%
+
+**Recommended Pattern**:
+- Title: Present tense
+- Description: Present tense
+- Methods: Past tense
+{% else %}
+**Voice Ratio**:
+- Active: 30%
+- Passive: 70%
+
+**Tense Distribution**:
+- Past: 30% (methods)
+- Present: 70% (description)
+{% endif %}
+
+## Figure Captions
+
+### Basic Structure
+
+```
+Figure [X]. [Title sentence]. [Description sentences]. [Optional methods]. 
+[Optional statistics]. [Optional abbreviations].
+```
+
+### Title Sentence
+
+**Purpose**: Concisely state what is shown
+
+**Tense**: Present
+
+**Voice**: Passive (preferred)
+
+**Examples**:
+- "Distribution of [parameter] across [conditions]."
+- "Effect of [treatment] on [outcome]."
+- "Correlation between [variable A] and [variable B]."
+- "Comparison of [method A] and [method B]."
+
+**Patterns**:
+- Distribution: "Distribution of X across Y"
+- Effect: "Effect of X on Y"
+- Correlation: "Correlation between X and Y"
+- Comparison: "Comparison of X and Y"
+- Time course: "Time course of X"
+- Schematic: "Schematic representation of X"
+
+### Description Sentences
+
+**Purpose**: Provide details about what is displayed
+
+**Tense**: Present
+
+**Voice**: Passive (preferred)
+
+**Content**:
+- What does each panel show?
+- What are the axes?
+- What do colors/symbols represent?
+
+**Examples**:
+- "(A) [Description of panel A]. (B) [Description of panel B]."
+- "Each point represents [entity]. Colors indicate [category]."
+- "The x-axis shows [variable], and the y-axis shows [variable]."
+
+**Multi-panel figures**:
+- Use (A), (B), (C) to label panels
+- Describe each panel separately
+- Maintain consistent order (left to right, top to bottom)
+
+### Methods (optional)
+
+**Purpose**: Briefly describe methods if not in main text
+
+**Tense**: Past
+
+**Voice**: Passive
+
+**Examples**:
+- "Samples were analyzed using [method]."
+- "Data were collected from [n] independent experiments."
+- "Measurements were performed in triplicate."
+
+**When to include**:
+- Methods specific to this figure
+- Methods not described in main text
+- Important technical details
+
+### Statistics (optional)
+
+**Purpose**: Provide statistical information
+
+**Tense**: Present
+
+**Voice**: Passive
+
+**Examples**:
+- "Error bars represent mean ± SD (n = [X])."
+- "Asterisks indicate statistical significance (*P < 0.05, **P < 0.01, ***P < 0.001)."
+- "Data are from [n] independent experiments."
+
+**Common elements**:
+- Sample size: `n = X`
+- Error bars: `mean ± SD` or `mean ± SEM`
+- Significance: `*P < 0.05`
+- Replicates: `n = X independent experiments`
+
+### Abbreviations (optional)
+
+**Purpose**: Define abbreviations used in figure
+
+**Format**: "Abbreviations: [ABBR1], [full name 1]; [ABBR2], [full name 2]."
+
+**Examples**:
+- "Abbreviations: SD, standard deviation; SEM, standard error of the mean."
+- "Abbreviations: WT, wild type; KO, knockout; OE, overexpression."
+
+---
+
+## Table Captions
+
+### Basic Structure
+
+```
+Table [X]. [Title sentence]. [Optional description]. [Optional abbreviations].
+```
+
+### Title Sentence
+
+**Purpose**: Concisely state what is shown
+
+**Tense**: Present
+
+**Voice**: Passive (preferred)
+
+**Examples**:
+- "Summary statistics for [dataset]."
+- "Comparison of [parameter] across [groups]."
+- "Characteristics of [samples]."
+- "Results of [analysis]."
+
+**Patterns**:
+- Summary: "Summary of X"
+- Comparison: "Comparison of X across Y"
+- Characteristics: "Characteristics of X"
+- Results: "Results of X analysis"
+
+### Description (optional)
+
+**Purpose**: Provide additional context
+
+**Tense**: Present
+
+**Voice**: Passive
+
+**Examples**:
+- "Values are presented as mean ± SD."
+- "P-values were calculated using [test]."
+- "Data are from [n] independent experiments."
+
+### Abbreviations (optional)
+
+**Format**: Same as figure captions
+
+---
+
+## Writing Guidelines
+
+### Do's
+
+- ✓ Use present tense for descriptions
+- ✓ Use past tense for methods
+- ✓ Define all abbreviations
+- ✓ Specify sample sizes and error bars
+- ✓ Describe each panel in multi-panel figures
+- ✓ Use consistent terminology with main text
+- ✓ Make captions self-contained (understandable without reading main text)
+
+### Don'ts
+
+- ✗ Interpret results (save for main text)
+- ✗ Use vague terms ("various", "several")
+- ✗ Omit statistical information
+- ✗ Use undefined abbreviations
+- ✗ Repeat main text verbatim
+- ✗ Include unnecessary details
+
+## Example Templates
+
+### Single-Panel Figure
+
+```
+Figure 1. Distribution of [parameter] across [conditions]. Each point 
+represents [entity] (n = [X]). Colors indicate [category]. Error bars 
+represent mean ± SD. Asterisks indicate statistical significance 
+(*P < 0.05, **P < 0.01).
+```
+
+### Multi-Panel Figure
+
+```
+Figure 2. Effect of [treatment] on [outcome]. (A) [Description of panel A]. 
+(B) [Description of panel B]. (C) [Description of panel C]. Data are from 
+n = [X] independent experiments. Error bars represent mean ± SEM. 
+Abbreviations: [ABBR1], [full name 1]; [ABBR2], [full name 2].
+```
+
+### Schematic Figure
+
+```
+Figure 3. Schematic representation of [process/system]. [Description of 
+key components and their relationships]. Arrows indicate [direction/flow]. 
+Colors represent [categories].
+```
+
+### Correlation Figure
+
+```
+Figure 4. Correlation between [variable A] and [variable B]. Each point 
+represents [entity] (n = [X]). The solid line represents linear regression 
+(r = [value], P < 0.001). The shaded area represents 95% confidence interval.
+```
+
+### Simple Table
+
+```
+Table 1. Summary statistics for [dataset]. Values are presented as 
+mean ± SD (n = [X]).
+```
+
+### Comparison Table
+
+```
+Table 2. Comparison of [parameter] across [groups]. P-values were 
+calculated using [test]. Abbreviations: [ABBR1], [full name 1]; 
+[ABBR2], [full name 2].
+```
+
+---
+
+## Panel Labeling
+
+### Multi-Panel Figures
+
+**Format**: (A), (B), (C), etc.
+
+**Placement**: Top-left corner of each panel (in figure) or at start of description (in caption)
+
+**Description order**: Left to right, top to bottom
+
+**Example**:
+```
+Figure 5. [Title]. (A) [Panel A description]. (B) [Panel B description]. 
+(C) [Panel C description]. (D) [Panel D description].
+```
+
+### Sub-Panels
+
+**Format**: (A1), (A2), (B1), (B2), etc.
+
+**Example**:
+```
+Figure 6. [Title]. (A) [Main panel A]. (A1) [Sub-panel A1]. (A2) [Sub-panel A2]. 
+(B) [Main panel B]. (B1) [Sub-panel B1]. (B2) [Sub-panel B2].
+```
+
+---
+
+## Statistical Notation in Captions
+
+### Error Bars
+
+**Format**: "Error bars represent [type] (n = [X])"
+
+**Examples**:
+- "Error bars represent mean ± SD (n = 30)."
+- "Error bars represent mean ± SEM from n = 3 independent experiments."
+- "Error bars represent 95% confidence intervals."
+
+### Significance Indicators
+
+**Format**: "Asterisks indicate statistical significance ([levels])"
+
+**Examples**:
+- "*P < 0.05, **P < 0.01, ***P < 0.001"
+- "*P < 0.05 vs. control"
+- "Different letters indicate significant differences (P < 0.05)"
+
+### Sample Sizes
+
+**Format**: "n = [X]" or "(n = [X])"
+
+**Examples**:
+- "Data are from n = 30 samples."
+- "Each group contained n = 10 animals."
+- "Results are from n = 3 independent experiments."
+
+---
+
+## Checklist
+
+Before finalizing your captions, check:
+
+- [ ] Title sentence clearly states what is shown
+- [ ] All panels are described (for multi-panel figures)
+- [ ] Sample sizes are provided (n = X)
+- [ ] Error bars are defined (mean ± SD or SEM)
+- [ ] Statistical significance is indicated
+- [ ] All abbreviations are defined
+- [ ] Voice/Tense ratios match target (Passive ~70%, Present ~70%)
+- [ ] Captions are self-contained (understandable without main text)
+- [ ] Terminology is consistent with main text
+- [ ] No interpretation included (only description)
+
+## Common Mistakes to Avoid
+
+1. **Vague titles**: "Results of experiment."
+   - Better: "Effect of temperature on enzyme activity."
+
+2. **Missing panel descriptions**: "Figure shows results."
+   - Better: "(A) Control group. (B) Treatment group."
+
+3. **Undefined error bars**: "Error bars are shown."
+   - Better: "Error bars represent mean ± SD (n = 30)."
+
+4. **Undefined abbreviations**: "WT and KO samples."
+   - Better: "Wild type (WT) and knockout (KO) samples."
+
+5. **Including interpretation**: "This shows that treatment is effective."
+   - Better: "Effect of treatment on outcome." (Interpretation goes in main text)
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*

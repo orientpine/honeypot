@@ -1,0 +1,360 @@
+# Results Template
+
+이 문서는 {{ name | title }} 논문의 Results 작성 템플릿입니다.
+
+## Structure
+
+{% if results_structure %}
+{{ results_structure }}
+{% else %}
+**Standard Structure**:
+
+1. **Overview** (optional): Brief summary of main findings
+2. **Primary Results** (2-3 subsections): Main experimental findings
+3. **Secondary Results** (1-2 subsections): Supporting or additional findings
+4. **Validation Results** (optional): Control experiments or validation
+
+**Organization strategies**:
+- By research question
+- By experimental approach
+- By chronological order
+- By importance (most significant first)
+{% endif %}
+
+## Length Guidelines
+
+{% if results_length %}
+- **Word count**: {{ results_length.min }}-{{ results_length.max }} words
+- **Recommended**: {{ results_length.recommended }} words
+- **Subsections**: {{ results_length.subsections_min }}-{{ results_length.subsections_max }}
+- **Figures/Tables**: {{ results_length.figures_min }}-{{ results_length.figures_max }}
+{% else %}
+- **Word count**: 1000-2000 words
+- **Recommended**: 1500 words
+- **Subsections**: 3-5 subsections
+- **Figures/Tables**: 4-6 items
+{% endif %}
+
+## Voice and Tense
+
+{% if results_voice_tense %}
+**Voice Ratio**:
+- Active: {{ results_voice_tense.active }}%
+- Passive: {{ results_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ results_voice_tense.past }}%
+- Present: {{ results_voice_tense.present }}%
+
+**"We" Usage**: {{ results_voice_tense.we_usage }}% (target: ≤30%)
+
+**Recommended Pattern**:
+- Observations: Past tense, passive voice
+- Actions: Past tense, active voice
+- Figure references: Present tense
+{% else %}
+**Voice Ratio**:
+- Active: 70%
+- Passive: 30%
+
+**Tense Distribution**:
+- Past: 80%
+- Present: 20%
+
+**"We" Usage**: ≤30%
+{% endif %}
+
+## Writing Guidelines
+
+### Voice and Attribution
+
+**Use Active Voice when**:
+- Attributing findings to your work: "We observed...", "We identified..."
+- Describing your actions: "We analyzed...", "We compared..."
+
+**Use Passive Voice when**:
+- Describing observations: "A significant increase was observed..."
+- Stating results objectively: "The correlation was found to be..."
+
+**Limit "We" Usage**:
+- Target: ≤30% of sentences
+- Alternate between active and passive
+- Use passive for variety: "Analysis revealed..." instead of "We found..."
+
+### Tense Usage
+
+**Past Tense** (primary):
+- Specific findings: "The analysis revealed..."
+- Observations: "We observed..."
+- Measurements: "The concentration was measured..."
+
+**Present Tense** (secondary):
+- Figure references: "Figure 1 shows..."
+- General statements: "The data indicate..."
+- Current state: "The results demonstrate..."
+
+## Section-by-Section Guide
+
+### 1. Overview (optional)
+
+**Purpose**: Briefly summarize main findings
+
+**Tense**: Past or Present
+
+**Voice**: Active or Passive
+
+**Content**:
+- What are the key findings?
+- How do they address the research question?
+
+**Examples**:
+- "We identified [number] [entities] associated with [outcome]."
+- "The analysis revealed [finding 1], [finding 2], and [finding 3]."
+- "Our approach achieved [performance metric] on [dataset]."
+
+**Length**: 1-2 sentences
+
+---
+
+### 2. Primary Results
+
+**Purpose**: Present main experimental findings
+
+**Tense**: Past (primary)
+
+**Voice**: Mix of Active and Passive
+
+**Content**:
+- What was observed?
+- What are the quantitative results?
+- How do results relate to figures/tables?
+
+#### Subsection Structure
+
+Each subsection should:
+1. State the objective or question
+2. Describe the approach (briefly)
+3. Present the findings with data
+4. Reference figures/tables
+5. Provide statistical support
+
+#### Example Subsection
+
+```
+### [Subsection Title]
+
+[Objective - 1 sentence]
+To investigate [question], we [approach].
+
+[Findings - 2-3 sentences with data]
+We observed [finding] (Figure 1A). Specifically, [detail] 
+([quantitative result], n = [X], P < 0.05). This finding 
+was consistent across [conditions] (Figure 1B).
+
+[Statistical support]
+Statistical analysis revealed [result] (mean ± SD: [value], 
+95% CI: [range], P = [value]).
+```
+
+---
+
+### 3. Figure and Table References
+
+**Format**: "Figure X shows...", "Table X presents...", "As shown in Figure X..."
+
+**Tense**: Present (for figure references)
+
+**Examples**:
+- "Figure 1 shows the distribution of [data]."
+- "As shown in Figure 2A, [finding]."
+- "Table 1 presents the summary statistics."
+- "The correlation is illustrated in Figure 3."
+
+**Integration**: Reference figures/tables in context, not in isolation
+
+**Bad**: "Figure 1 shows the results."
+**Good**: "We observed a significant increase in [parameter] (Figure 1)."
+
+---
+
+### 4. Quantitative Results
+
+**Always include**:
+- Specific numbers
+- Statistical measures (mean, SD, SEM)
+- Sample sizes (n = X)
+- P-values
+- Effect sizes (when appropriate)
+
+**Format examples**:
+- "The concentration increased from [X] to [Y] ([Z]%, n = [N], P < 0.05)."
+- "We observed a significant correlation (r = 0.85, P < 0.001, n = 100)."
+- "The mean value was [X] ± [Y] (SD) across [n] samples."
+
+See [references/measurement.md](references/measurement.md) for formatting.
+
+---
+
+### 5. Statistical Reporting
+
+**P-values**:
+- Format: `P < 0.05`, `P = 0.023`, `P < 0.001`
+- Always include in parentheses after claim
+- Report exact values when P > 0.001
+
+**Descriptive statistics**:
+- Format: `mean ± SD` or `mean ± SEM`
+- Always specify which measure is used
+- Include sample size: `n = X`
+
+**Confidence intervals**:
+- Format: `95% CI: [lower]-[upper]`
+- Include with effect sizes
+
+**Examples**:
+- "Group A showed higher values than Group B (25.3 ± 2.1 vs. 18.7 ± 1.8, P < 0.001, n = 30 per group)."
+- "The correlation was significant (r = 0.85, 95% CI: 0.78-0.90, P < 0.001)."
+
+---
+
+## Writing Patterns
+
+### Presenting Findings
+
+**Pattern 1: Observation + Data + Figure**
+```
+We observed [finding]. Specifically, [detail] ([quantitative result], 
+n = [X], P < 0.05, Figure 1A).
+```
+
+**Pattern 2: Comparison + Statistics**
+```
+[Group A] showed significantly higher [parameter] compared to [Group B] 
+([value A] vs. [value B], P < 0.001, n = [X]).
+```
+
+**Pattern 3: Trend + Evidence**
+```
+[Parameter] increased with [variable] (r = 0.85, P < 0.001, Figure 2). 
+This trend was consistent across [conditions].
+```
+
+### Describing Relationships
+
+**Correlation**:
+- "We found a significant positive correlation between [X] and [Y] (r = 0.85, P < 0.001)."
+- "[X] was positively correlated with [Y] (Figure 3)."
+
+**Comparison**:
+- "[Group A] showed significantly higher [parameter] than [Group B] (P < 0.001)."
+- "No significant difference was observed between [Group A] and [Group B] (P = 0.15)."
+
+**Trend**:
+- "[Parameter] increased with [variable] (Figure 4)."
+- "A dose-dependent response was observed (Figure 5)."
+
+### Negative Results
+
+**Report objectively**:
+- "No significant difference was observed between [A] and [B] (P = 0.15)."
+- "We did not detect [entity] in [sample]."
+- "[Treatment] had no effect on [parameter] (P = 0.42)."
+
+**Avoid**:
+- "Unfortunately, we did not find..."
+- "The experiment failed to show..."
+
+---
+
+## Do's and Don'ts
+
+### Do's
+
+- ✓ Present results objectively without interpretation
+- ✓ Include quantitative data with statistics
+- ✓ Reference all figures and tables
+- ✓ Use consistent terminology
+- ✓ Report negative results
+- ✓ Provide sample sizes
+- ✓ Use past tense for findings
+- ✓ Alternate between active and passive voice
+
+### Don'ts
+
+- ✗ Interpret results (save for Discussion)
+- ✗ Include methods details
+- ✗ Cite literature (except for methods)
+- ✗ Use vague terms ("high", "low", "many")
+- ✗ Overuse "we" (target: ≤30%)
+- ✗ Include raw data (use figures/tables)
+- ✗ Repeat figure captions verbatim
+- ✗ Speculate about mechanisms
+
+---
+
+## Example Template
+
+```
+[Optional Overview - Past/Present tense]
+We identified [number] [entities] associated with [outcome]. 
+The analysis revealed [finding 1], [finding 2], and [finding 3].
+
+### [Primary Result 1]
+
+[Objective]
+To investigate [question], we [approach].
+
+[Findings with data]
+We observed [finding] (Figure 1A). Specifically, [parameter] was 
+[value] ± [SD] in [condition A] compared to [value] ± [SD] in 
+[condition B] (n = [X], P < 0.001). This difference was consistent 
+across [conditions] (Figure 1B).
+
+[Statistical support]
+Statistical analysis revealed a significant effect of [factor] 
+(F([df1], [df2]) = [value], P < 0.001). Post-hoc tests showed 
+[specific comparisons].
+
+### [Primary Result 2]
+
+[Continue with same pattern...]
+
+### [Secondary Result]
+
+[Supporting findings...]
+
+### [Validation Result]
+
+[Control experiments...]
+```
+
+## Checklist
+
+Before finalizing your results, check:
+
+- [ ] All findings are presented objectively without interpretation
+- [ ] Quantitative data are included with statistics
+- [ ] All figures and tables are referenced in text
+- [ ] Voice/Tense ratios match target (Active ~70%, Past ~80%)
+- [ ] "We" usage is ≤30%
+- [ ] Sample sizes are provided (n = X)
+- [ ] P-values are reported correctly
+- [ ] Measurements follow standard format
+- [ ] Negative results are reported
+- [ ] No methods details included
+- [ ] No interpretation or speculation included
+- [ ] Consistent terminology throughout
+
+## Common Mistakes to Avoid
+
+1. **Interpretation in Results**: "This suggests that..." → Move to Discussion
+2. **Vague descriptions**: "The value was high." → "The value was 25.3 ± 2.1 mg/dL."
+3. **Missing statistics**: "Group A was higher than Group B." → "Group A was significantly higher than Group B (P < 0.001)."
+4. **Overusing "we"**: "We found... We observed... We analyzed..." → Mix with passive voice
+5. **Unreferenced figures**: "The results are shown in Figure 1." → "We observed [finding] (Figure 1)."
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*

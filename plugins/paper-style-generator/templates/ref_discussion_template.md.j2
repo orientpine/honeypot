@@ -1,0 +1,392 @@
+# Discussion Template
+
+이 문서는 {{ name | title }} 논문의 Discussion 작성 템플릿입니다.
+
+## Structure
+
+{% if discussion_structure %}
+{{ discussion_structure }}
+{% else %}
+**Standard Structure** (Inverted funnel approach):
+
+1. **Summary of Key Findings** (1 paragraph): Restate main results
+2. **Interpretation** (2-3 paragraphs): Explain findings and mechanisms
+3. **Comparison with Previous Work** (1-2 paragraphs): Context and novelty
+4. **Implications** (1-2 paragraphs): Significance and applications
+5. **Limitations** (1 paragraph): Acknowledge constraints
+6. **Future Directions** (1 paragraph): Suggest next steps
+7. **Conclusions** (1 paragraph): Final take-home message
+{% endif %}
+
+## Length Guidelines
+
+{% if discussion_length %}
+- **Word count**: {{ discussion_length.min }}-{{ discussion_length.max }} words
+- **Recommended**: {{ discussion_length.recommended }} words
+- **Paragraphs**: {{ discussion_length.paragraphs_min }}-{{ discussion_length.paragraphs_max }}
+{% else %}
+- **Word count**: 1000-1500 words
+- **Recommended**: 1200 words
+- **Paragraphs**: 6-8 paragraphs
+{% endif %}
+
+## Voice and Tense
+
+{% if discussion_voice_tense %}
+**Voice Ratio**:
+- Active: {{ discussion_voice_tense.active }}%
+- Passive: {{ discussion_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ discussion_voice_tense.past }}% (your findings)
+- Present: {{ discussion_voice_tense.present }}% (implications, generalizations)
+
+**Recommended Pattern**:
+- Summary: Past tense
+- Interpretation: Present tense (generalizations) + Past tense (your findings)
+- Comparison: Past tense (previous work) + Present tense (current state)
+- Implications: Present tense
+- Limitations: Past tense
+- Future directions: Future tense or Present tense
+- Conclusions: Present tense
+{% else %}
+**Voice Ratio**:
+- Active: 50%
+- Passive: 50%
+
+**Tense Distribution**:
+- Past: 50% (findings, previous work)
+- Present: 50% (implications, generalizations)
+{% endif %}
+
+## Section-by-Section Guide
+
+### 1. Summary of Key Findings (1 paragraph)
+
+**Purpose**: Restate main results without repeating Results section verbatim
+
+**Tense**: Past
+
+**Voice**: Active (preferred)
+
+**Content**:
+- What were the main findings?
+- How do they address the research question?
+
+**Examples**:
+- "In this study, we identified [number] [entities] associated with [outcome]."
+- "Our analysis revealed [finding 1], [finding 2], and [finding 3]."
+- "We demonstrated that [method] achieves [performance] on [task]."
+
+**Common Verbs**: identify, reveal, demonstrate, show, find
+
+**Avoid**: Repeating Results section word-for-word
+
+---
+
+### 2. Interpretation (2-3 paragraphs)
+
+**Purpose**: Explain what findings mean and propose mechanisms
+
+**Tense**: Present (generalizations) + Past (your findings)
+
+**Voice**: Active or Passive
+
+**Content**:
+- What do the findings mean?
+- What mechanisms might explain them?
+- How do they fit into broader context?
+
+**Examples**:
+- "These findings suggest that [interpretation]."
+- "The observed [result] may be explained by [mechanism]."
+- "One possible explanation is that [hypothesis]."
+
+**Common Verbs**: suggest, indicate, imply, demonstrate, support
+
+**Hedging**: Use appropriate hedging language (see [references/vocabulary.md](references/vocabulary.md))
+- "may", "might", "could", "possibly"
+- "suggests", "indicates", "appears to"
+
+**Avoid**: Overstating conclusions beyond data
+
+---
+
+### 3. Comparison with Previous Work (1-2 paragraphs)
+
+**Purpose**: Place findings in context of existing literature
+
+**Tense**: Past (previous work) + Present (current state)
+
+**Voice**: Active (for attribution)
+
+**Content**:
+- How do findings compare to previous studies?
+- What is novel or different?
+- Do findings confirm or contradict previous work?
+
+**Examples**:
+- "Our findings are consistent with previous studies showing [result] [1, 2]."
+- "In contrast to [previous work], we observed [difference]."
+- "While [Author et al.] reported [finding], our results suggest [alternative]."
+
+**Common Verbs**: report, show, demonstrate, find, observe
+
+**Citation**: Cite relevant previous work
+
+**Patterns**:
+- Agreement: "consistent with", "in line with", "support"
+- Disagreement: "in contrast to", "differ from", "contradict"
+- Extension: "extend", "build upon", "complement"
+
+---
+
+### 4. Implications (1-2 paragraphs)
+
+**Purpose**: Discuss significance and potential applications
+
+**Tense**: Present
+
+**Voice**: Active or Passive
+
+**Content**:
+- Why are findings important?
+- What are potential applications?
+- What broader impact might they have?
+
+**Examples**:
+- "These findings have important implications for [field/application]."
+- "Our approach enables [capability], which could facilitate [application]."
+- "This work provides insights into [topic] that may inform [application]."
+
+**Common Verbs**: enable, facilitate, provide, inform, contribute
+
+**Scope**: Balance enthusiasm with appropriate hedging
+
+---
+
+### 5. Limitations (1 paragraph)
+
+**Purpose**: Acknowledge constraints and potential weaknesses
+
+**Tense**: Past (what was done) + Present (general limitations)
+
+**Voice**: Active or Passive
+
+**Content**:
+- What are the study limitations?
+- How might they affect interpretation?
+- What cautions should readers consider?
+
+**Examples**:
+- "This study has several limitations. First, [limitation 1]. Second, [limitation 2]."
+- "A limitation of our approach is [constraint]."
+- "Our findings should be interpreted with caution due to [limitation]."
+
+**Common limitations**:
+- Sample size
+- Scope of study
+- Methodological constraints
+- Generalizability
+
+**Tone**: Honest but not apologetic
+
+**Avoid**: Undermining your entire study
+
+---
+
+### 6. Future Directions (1 paragraph)
+
+**Purpose**: Suggest next steps and future research
+
+**Tense**: Future or Present
+
+**Voice**: Active or Passive
+
+**Content**:
+- What questions remain?
+- What should be done next?
+- How can findings be extended?
+
+**Examples**:
+- "Future studies should investigate [question]."
+- "Further work is needed to [objective]."
+- "An important next step would be to [action]."
+
+**Common Verbs**: investigate, explore, examine, extend, validate
+
+**Scope**: Specific and actionable suggestions
+
+---
+
+### 7. Conclusions (1 paragraph)
+
+**Purpose**: Provide final take-home message
+
+**Tense**: Present
+
+**Voice**: Active (preferred)
+
+**Content**:
+- What is the main conclusion?
+- What is the significance?
+- What is the final message?
+
+**Examples**:
+- "In conclusion, we demonstrated [main finding]."
+- "This work provides [contribution] and opens new avenues for [application]."
+- "Our findings suggest [implication] and highlight [significance]."
+
+**Common Verbs**: demonstrate, provide, suggest, highlight, show
+
+**Avoid**: Introducing new information
+
+---
+
+## Writing Guidelines
+
+### Do's
+
+- ✓ Interpret findings in context
+- ✓ Compare with previous work
+- ✓ Discuss implications and significance
+- ✓ Acknowledge limitations honestly
+- ✓ Suggest specific future directions
+- ✓ Use hedging language appropriately
+- ✓ Balance enthusiasm with objectivity
+- ✓ Cite relevant literature
+
+### Don'ts
+
+- ✗ Repeat Results section verbatim
+- ✗ Introduce new results
+- ✗ Overstate conclusions
+- ✗ Ignore contradictory findings
+- ✗ Be overly apologetic about limitations
+- ✗ Make unsupported claims
+- ✗ Use vague language ("interesting", "important")
+- ✗ End with weak conclusions
+
+## Example Template
+
+```
+[Paragraph 1: Summary - Past tense, Active voice]
+In this study, we identified [number] [entities] associated with [outcome]. 
+Our analysis revealed [finding 1], [finding 2], and [finding 3]. 
+These findings address [research question] and demonstrate [main point].
+
+[Paragraph 2: Interpretation - Present/Past tense]
+These findings suggest that [interpretation]. The observed [result] may be 
+explained by [mechanism]. Specifically, [detail] indicates that [implication]. 
+This interpretation is supported by [evidence].
+
+[Paragraph 3: Comparison - Past/Present tense]
+Our findings are consistent with previous studies showing [result] [1, 2]. 
+However, in contrast to [previous work], we observed [difference]. This 
+discrepancy may be due to [reason]. Our work extends [previous findings] 
+by [contribution].
+
+[Paragraph 4: Implications - Present tense]
+These findings have important implications for [field/application]. 
+Our approach enables [capability], which could facilitate [application]. 
+Furthermore, this work provides insights into [topic] that may inform 
+[future research/application].
+
+[Paragraph 5: Limitations - Past/Present tense]
+This study has several limitations. First, [limitation 1], which may 
+affect [aspect]. Second, [limitation 2], limiting [generalizability]. 
+Despite these limitations, our findings provide [contribution].
+
+[Paragraph 6: Future Directions - Future/Present tense]
+Future studies should investigate [question 1] and explore [question 2]. 
+An important next step would be to [action]. Further work is needed to 
+validate [finding] in [context].
+
+[Paragraph 7: Conclusions - Present tense]
+In conclusion, we demonstrated [main finding] and showed [significance]. 
+This work provides [contribution] and opens new avenues for [application]. 
+Our findings suggest [final message].
+```
+
+## Transition Phrases
+
+### Between Paragraphs
+
+- "These findings suggest..."
+- "In the context of previous work..."
+- "The implications of these results..."
+- "Despite these strengths, several limitations..."
+- "Future research should..."
+- "In conclusion..."
+
+### Within Paragraphs
+
+- "Furthermore, ..."
+- "In addition, ..."
+- "However, ..."
+- "In contrast, ..."
+- "Specifically, ..."
+- "For example, ..."
+
+See [references/vocabulary.md](references/vocabulary.md) for more transition phrases.
+
+## Hedging Language
+
+Use hedging to avoid overstating conclusions:
+
+**High certainty**:
+- "likely", "probably", "appears to", "seems to"
+
+**Moderate certainty**:
+- "may", "might", "could", "possibly"
+
+**Low certainty**:
+- "suggests", "indicates", "implies", "potentially"
+
+**Examples**:
+- Strong: "This causes [effect]."
+- Hedged: "This may contribute to [effect]."
+- Strong: "The results prove [claim]."
+- Hedged: "The results suggest [claim]."
+
+See [references/vocabulary.md](references/vocabulary.md) for complete list.
+
+## Checklist
+
+Before finalizing your discussion, check:
+
+- [ ] Key findings are summarized (not repeated verbatim)
+- [ ] Findings are interpreted in context
+- [ ] Comparison with previous work is included
+- [ ] Implications and significance are discussed
+- [ ] Limitations are acknowledged honestly
+- [ ] Future directions are specific and actionable
+- [ ] Conclusions are clear and supported by data
+- [ ] Voice/Tense ratios match target (Balanced 50:50)
+- [ ] Hedging language is used appropriately
+- [ ] All claims are supported by data or citations
+- [ ] No new results are introduced
+- [ ] Transition phrases connect paragraphs smoothly
+
+## Common Mistakes to Avoid
+
+1. **Repeating Results**: "We found X, Y, and Z." (already in Results)
+   - Better: "These findings suggest that [interpretation]."
+
+2. **Overstating conclusions**: "This proves that..."
+   - Better: "These results suggest that..."
+
+3. **Ignoring limitations**: Not mentioning any constraints
+   - Better: "This study has several limitations. First, ..."
+
+4. **Vague implications**: "This is important."
+   - Better: "This enables [specific application] by [mechanism]."
+
+5. **Weak conclusions**: "More research is needed."
+   - Better: "Future studies should investigate [specific question] to [objective]."
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*
