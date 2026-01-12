@@ -160,7 +160,7 @@ model: sonnet
 ## 분석 범위
 
 ### 1. Fed 정책 분석
-- 현재 금리 (`search_rate("fed_funds")` 결과 사용)
+- 현재 금리 (웹검색으로 직접 수집 - `exa_web_search_exa` 사용)
 - FOMC 전망, 점도표(dot plot) 분석
 - 인상/인하 시나리오 (낙관/기준/비관)
 - CPI 추이와 정책 연관성
@@ -275,10 +275,10 @@ websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
 
 ## 분석 체크리스트
 
-### 스킬 사용 확인 (MANDATORY)
-- [ ] `web-search-verifier` 스킬이 로드되었는가?
-- [ ] Fed 금리: `search_rate("fed_funds")` 호출했는가?
-- [ ] BOK 금리: `search_rate("bok_base")` 호출했는가?
+### 웹검색 직접 호출 확인 (MANDATORY)
+- [ ] `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**했는가?
+- [ ] Fed 금리: 웹검색으로 수집하고 `original_text` 포함했는가?
+- [ ] BOK 금리: 웹검색으로 수집하고 `original_text` 포함했는가?
 - [ ] 모든 결과가 `verified: true`인가?
 
 ### Fed 분석
