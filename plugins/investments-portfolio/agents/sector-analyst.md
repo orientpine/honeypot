@@ -38,9 +38,10 @@ model: sonnet
 3. **최소 2개 출처**에서 데이터 확인 및 교차 검증
 4. 출처 URL 필수 포함
 
-### 필수 사항 (v3.0)
+### 필수 사항 (v3.1)
 
 - ✅ `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+- ✅ **원문 인용 필수** - 수치가 포함된 검색 결과 문장을 그대로 복사 ← v3.1 신규
 - ✅ 최소 2개 이상 독립 출처에서 교차 검증
 - ✅ 검색 결과의 URL과 날짜 명시
 
@@ -50,6 +51,37 @@ model: sonnet
 - ❌ 스킬 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
 - ❌ 웹검색 없이 섹터 데이터 사용
 - ❌ 기억이나 추정에 의한 전망 작성
+- ❌ **원문 없이 숫자만 보고** (v3.1 신규 - 환각 위험)
+
+---
+
+## ⚠️ 원문 인용 규칙 (v3.1 신규 - CRITICAL)
+
+> **환각 방지의 핵심**: 검색 결과에서 수치를 추출할 때 반드시 **원문을 그대로 인용**해야 합니다.
+
+### 수치 추출 방법
+
+```
+1. 웹검색 결과에서 수치가 포함된 문장 찾기
+2. 해당 문장을 **그대로 복사** (original_text 필드에)
+3. 원문에서 수치 추출하여 value 필드에 기록
+4. value와 original_text 내 수치가 일치하는지 확인
+```
+
+### 예시
+
+**검색 결과 원문**:
+> "Global semiconductor market is expected to reach $700 billion by 2026, growing at 8.2% CAGR"
+
+**올바른 출력**:
+```json
+{
+  "sector": "기술/반도체",
+  "market_size": "$700 billion",
+  "growth_rate": "8.2% CAGR",
+  "original_text": "Global semiconductor market is expected to reach $700 billion by 2026, growing at 8.2% CAGR"
+}
+```
 
 ---
 
@@ -147,7 +179,8 @@ JSON 스키마로 구조화된 분석 결과 생성:
           "title": "Semiconductor Outlook 2025",
           "publisher": "Gartner",
           "date": "YYYY-MM-DD",
-          "url": "https://..."
+          "url": "https://...",
+          "original_text": "[REQUIRED - 수치가 포함된 검색 결과 원문]"
         }
       ]
     }
@@ -206,13 +239,16 @@ JSON 스키마로 구조화된 분석 결과 생성:
 ## 메타 정보
 
 ```yaml
-version: "3.0"
+version: "3.1"
 updated: "2026-01-12"
 changes:
+  - "v3.1: 원문 인용 필수화 (original_text 필드)"
+  - "v3.1: index-fetcher와 동일한 환각 방지 규칙 적용"
   - "v3.0: 직접 웹검색 도구 호출 필수화 (스킬은 지침 문서로만 사용)"
   - "v3.0: exa_web_search_exa, websearch_web_search_exa 도구 추가"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
 critical_rules:
+  - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
   - "스킬은 검색 쿼리 패턴 가이드로만 사용"
   - "스킬의 가짜 함수 호출 금지 (존재하지 않음)"

@@ -26,9 +26,10 @@ model: sonnet
    - 쿼리: `"한국은행 기준금리"` 또는 `"korea interest rate site:tradingeconomics.com"`
 4. **최소 2개 출처**에서 교차 검증 후 사용
 
-### 필수 사항 (v4.0)
+### 필수 사항 (v4.1)
 
 - ✅ `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+- ✅ **원문 인용 필수** - 금리 수치가 포함된 검색 결과 문장을 그대로 복사 ← v4.1 신규
 - ✅ 최소 2개 이상 독립 출처에서 교차 검증
 - ✅ 검색 결과의 URL과 날짜 명시
 - ✅ 출처 간 값이 일치하는지 확인
@@ -39,6 +40,46 @@ model: sonnet
 - ❌ 스킬 문서의 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
 - ❌ 웹검색 없이 금리 데이터 사용
 - ❌ 기억이나 추정에 의한 금리 값 작성
+- ❌ **원문 없이 숫자만 보고** (v4.1 신규 - 환각 위험)
+
+---
+
+## ⚠️ 원문 인용 규칙 (v4.1 신규 - CRITICAL)
+
+> **환각 방지의 핵심**: 검색 결과에서 금리를 추출할 때 반드시 **원문을 그대로 인용**해야 합니다.
+
+### 금리 추출 방법
+
+```
+1. 웹검색 결과에서 금리 수치가 포함된 문장 찾기
+2. 해당 문장을 **그대로 복사** (original_text 필드에)
+3. 원문에서 금리 추출하여 value 필드에 기록
+4. value와 original_text 내 금리가 일치하는지 확인
+```
+
+### 예시
+
+**검색 결과 원문**:
+> "The December meeting saw a reduction in the federal funds rate by 25bps to a range of 3.5%–3.75%"
+
+**올바른 출력**:
+```json
+{
+  "rate_type": "fed_funds",
+  "value": "3.50%-3.75%",
+  "original_text": "The December meeting saw a reduction in the federal funds rate by 25bps to a range of 3.5%–3.75%"
+}
+```
+
+**잘못된 출력 (환각)**:
+```json
+{
+  "rate_type": "fed_funds",
+  "value": "4.25%",
+  "original_text": null
+}
+```
+→ 원문 없이 잘못된 금리를 보고하면 환각
 
 ---
 
@@ -163,13 +204,14 @@ websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
 
 ---
 
-## 출력 스키마 (JSON)
+## 출력 스키마 (JSON) - v4.1 업데이트
 
 ```json
 {
   "skill_used": "web-search-verifier",
   "fed_outlook": {
     "current_rate": "X.XX%",
+    "original_text": "[REQUIRED - 금리 수치가 포함된 검색 결과 원문]",
     "rate_decision_date": "YYYY-MM-DD",
     "fomc_projection": "[인상/동결/인하] 예상",
     "scenario": {
@@ -178,10 +220,18 @@ websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
       "pessimistic": "금리 인상 가능성 있음"
     },
     "verified": true,
-    "sources": ["[출처: Fed, FOMC Statement, URL, YYYY-MM-DD]"]
+    "sources": [
+      {
+        "name": "Fed",
+        "url": "[ACTUAL_URL]",
+        "value": "[ACTUAL_VALUE]",
+        "original_text": "[EXACT_QUOTE - 이 출처에서 금리가 언급된 문장]"
+      }
+    ]
   },
   "bok_outlook": {
     "current_rate": "X.XX%",
+    "original_text": "[REQUIRED - 금리 수치가 포함된 검색 결과 원문]",
     "rate_decision_date": "YYYY-MM-DD",
     "policy_direction": "[인상/동결/인하] 예상",
     "next_mpc_date": "YYYY-MM-DD",
@@ -192,8 +242,12 @@ websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
     },
     "verified": true,
     "sources": [
-      "[출처: 한국은행 공식, URL, YYYY-MM-DD]",
-      "[출처: Trading Economics, URL, YYYY-MM-DD]"
+      {
+        "name": "한국은행",
+        "url": "[ACTUAL_URL]",
+        "value": "[ACTUAL_VALUE]",
+        "original_text": "[EXACT_QUOTE - 이 출처에서 금리가 언급된 문장]"
+      }
     ]
   },
   "fx_outlook": {
@@ -285,15 +339,18 @@ websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
 ## 메타 정보
 
 ```yaml
-version: "4.0"
+version: "4.1"
 updated: "2026-01-12"
 changes:
+  - "v4.1: 원문 인용 필수화 (original_text 필드)"
+  - "v4.1: index-fetcher와 동일한 환각 방지 규칙 적용"
   - "v4.0: 직접 웹검색 도구 호출 필수화 (스킬은 지침 문서로만 사용)"
   - "v4.0: search_rate() 같은 가짜 함수 호출 금지 명시"
   - "v4.0: exa_web_search_exa, websearch_web_search_exa 도구 추가"
   - "v3.0: web-search-verifier 스킬 기반으로 전환"
   - "v2.0: 기준금리 교차 검증 프로세스 추가"
 critical_rules:
+  - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
   - "스킬은 검색 쿼리 패턴 가이드로만 사용"
   - "search_rate() 같은 함수 호출 금지 (존재하지 않음)"
