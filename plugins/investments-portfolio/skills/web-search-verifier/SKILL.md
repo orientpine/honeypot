@@ -56,6 +56,67 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 - ✅ 출처 간 ±1% 이내 일치 확인
 - ✅ 모든 데이터에 [출처: URL, 날짜] 태그 포함
 - ✅ 검증 실패 시 FAIL 반환 (추정값 금지)
+- ✅ **원문 인용 필수** (v2.0 신규) - 숫자를 포함한 검색 결과 원문을 그대로 인용
+
+---
+
+## ⚠️ 원문 인용 규칙 (v2.0 신규 - CRITICAL)
+
+> **환각 방지의 핵심**: 검색 결과에서 숫자를 추출할 때 반드시 **원문을 그대로 인용**해야 합니다.
+> 원문과 보고 값이 일치하지 않으면 **FAIL**입니다.
+
+### 올바른 숫자 추출 방법
+
+```
+1. 웹검색 실행
+2. 검색 결과에서 숫자가 포함된 문장을 **그대로 복사**
+3. 원문에서 숫자 추출
+4. 추출한 숫자와 원문을 함께 보고
+```
+
+### 출력 형식 (필수)
+
+모든 수치 데이터는 다음 형식으로 보고해야 합니다:
+
+```json
+{
+  "value": 6936,
+  "original_text": "The US500 fell to 6936 points on January 12, 2026",
+  "source": "Trading Economics",
+  "url": "https://tradingeconomics.com/united-states/stock-market"
+}
+```
+
+### 검증 규칙
+
+| 규칙 | 설명 | 위반 시 |
+|:-----|:-----|:--------|
+| **원문 필수** | `original_text` 필드 없으면 무효 | FAIL |
+| **숫자 일치** | `value`가 `original_text` 내 숫자와 일치해야 함 | FAIL |
+| **복사 금지** | 이전 결과나 예시 값을 복사하면 안 됨 | FAIL |
+
+### 원문 인용 예시
+
+**✅ 올바른 예시**:
+```json
+{
+  "index": "S&P 500",
+  "value": 6936,
+  "original_text": "The main stock market index of United States, the US500, fell to 6936 points on January 12, 2026",
+  "source_url": "https://tradingeconomics.com/united-states/stock-market"
+}
+```
+
+**❌ 잘못된 예시 (환각 위험)**:
+```json
+{
+  "index": "S&P 500",
+  "value": 5906,
+  "original_text": null,
+  "source_url": "https://tradingeconomics.com/united-states/stock-market"
+}
+```
+→ 원문 없이 숫자만 보고하면 검증 불가능
 
 ---
 
@@ -84,7 +145,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 3. 값 일치 확인 (±1% 이내)
 4. 1차 출처 포함 확인
 
-**출력 스키마**:
+**출력 스키마 (v2.0 업데이트)**:
 ```json
 {
   "index": "S&P 500",
@@ -93,15 +154,29 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
   "date": "[SEARCH_DATE - 검색 시점 날짜]",
   "verified": true,
   "variance": "[CALCULATED - 출처 간 편차 계산]",
+  "original_text": "[REQUIRED - 숫자를 포함한 검색 결과 원문]",
   "sources": [
-    {"name": "Trading Economics", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 2},
-    {"name": "Bloomberg", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 1},
-    {"name": "Yahoo Finance", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 2}
+    {
+      "name": "Trading Economics",
+      "url": "[ACTUAL_URL]",
+      "value": "[ACTUAL_VALUE]",
+      "original_text": "[EXACT_QUOTE - 이 출처에서 숫자가 포함된 문장]",
+      "tier": 2
+    },
+    {
+      "name": "Bloomberg",
+      "url": "[ACTUAL_URL]",
+      "value": "[ACTUAL_VALUE]",
+      "original_text": "[EXACT_QUOTE]",
+      "tier": 1
+    }
   ]
 }
 
-⚠️ 주의: 위 예시의 모든 [PLACEHOLDER] 값은 실제 웹검색 결과로 대체해야 합니다.
-절대로 예시 값을 그대로 사용하지 마세요.
+⚠️ CRITICAL (v2.0):
+1. `original_text` 필드는 **필수**입니다. 없으면 FAIL.
+2. `value`는 반드시 `original_text` 내의 숫자와 일치해야 합니다.
+3. 예시 값을 그대로 사용하지 마세요.
 ```
 
 ### 2. 금리 데이터 검색
@@ -127,7 +202,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 4. FOMC/금통위 결정일 확인
 5. 다음 회의 일정 확인
 
-**출력 스키마**:
+**출력 스키마 (v2.0 업데이트)**:
 ```json
 {
   "rate_type": "fed_funds",
@@ -135,15 +210,30 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
   "decision_date": "[SEARCH_RESULT - 최근 FOMC/금통위 결정일]",
   "next_meeting": "[SEARCH_RESULT - 다음 회의 예정일]",
   "verified": true,
+  "original_text": "[REQUIRED - 금리 수치가 포함된 검색 결과 원문]",
   "sources": [
-    {"name": "Federal Reserve", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "official": true},
-    {"name": "Trading Economics", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "official": false}
+    {
+      "name": "Federal Reserve",
+      "url": "[ACTUAL_URL]",
+      "value": "[ACTUAL_VALUE]",
+      "original_text": "[EXACT_QUOTE - 공식 출처의 금리 언급 원문]",
+      "official": true
+    },
+    {
+      "name": "Trading Economics",
+      "url": "[ACTUAL_URL]",
+      "value": "[ACTUAL_VALUE]",
+      "original_text": "[EXACT_QUOTE]",
+      "official": false
+    }
   ]
 }
 
-⚠️ CRITICAL: 위 예시의 모든 [PLACEHOLDER] 값은 반드시 웹검색 결과로 대체해야 합니다.
-예시 값("4.25-4.50%")을 그대로 사용하면 환각(hallucination)이 발생합니다.
-기준금리는 수시로 변경되므로 반드시 실시간 검색이 필요합니다.
+⚠️ CRITICAL (v2.0):
+1. `original_text` 필드는 **필수**입니다. 없으면 FAIL.
+2. `value`는 반드시 `original_text` 내의 숫자와 일치해야 합니다.
+3. 금리의 경우 "3.50-3.75%" 형식으로 범위 표기 가능.
+4. 예시 값을 그대로 사용하면 환각(hallucination)이 발생합니다.
 ```
 
 ---
@@ -259,8 +349,9 @@ verified: false인 경우:
 ## 메타 정보
 
 ```yaml
-version: "1.0"
+version: "2.1"
 created: "2026-01-12"
+updated: "2026-01-12"
 author: "Claude"
 purpose: "환각 방지 웹검색 표준화"
 dependencies:
@@ -271,4 +362,9 @@ consumers:
   - index-fetcher
   - rate-analyst
   - sector-analyst
+changes_v2.1:
+  - "범위 검증 (Sanity Check) 제거 - 대폭락 시 정상 데이터 reject 문제"
+changes_v2.0:
+  - "원문 인용 필수화 (original_text 필드)"
+  - "S&P 500 첫자리 오류 환각 방지"
 ```

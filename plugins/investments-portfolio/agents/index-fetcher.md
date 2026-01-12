@@ -14,23 +14,26 @@ model: opus
 
 ---
 
-## ⚠️ 웹검색 도구 직접 호출 필수 (v3.0 변경)
+## ⚠️ 웹검색 도구 직접 호출 필수 (v4.0 변경)
 
 > **CRITICAL**: 스킬은 "지침 문서"이지 "함수"가 아닙니다.
 > 에이전트가 웹검색 도구를 **직접 호출**해야 합니다.
 
-### 데이터 수집 절차 (수정됨)
+### 데이터 수집 절차 (v4.0 업데이트)
 
 1. `web-search-verifier` 스킬에서 **검색 쿼리 패턴** 확인
 2. `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
    - 예: `exa_web_search_exa(query="S&P 500 price today")`
    - 예: `exa_web_search_exa(query="KOSPI 지수 현재")`
-3. **최소 2개 출처**에서 값 확인 및 교차 검증
-4. 출처 간 ±1% 이내 일치 시 사용, 불일치 시 FAIL
+3. **검색 결과에서 숫자가 포함된 원문을 그대로 복사** ← v4.0 신규
+4. **원문에서 숫자 추출** (직접 해석하지 말고 원문 그대로 인용)
+5. **최소 2개 출처**에서 값 확인 및 교차 검증
+7. 출처 간 ±1% 이내 일치 시 사용, 불일치 시 FAIL
 
-### 필수 사항 (v3.0)
+### 필수 사항 (v4.0)
 
 - ✅ `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+- ✅ **원문 인용 필수** - 숫자가 포함된 검색 결과 문장을 그대로 복사
 - ✅ 최소 2개 이상 독립 출처에서 교차 검증
 - ✅ 검색 결과의 URL과 날짜 명시
 - ✅ 출처 간 값이 일치하는지 확인 (±1% 이내)
@@ -41,6 +44,46 @@ model: opus
 - ❌ 스킬 문서의 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
 - ❌ 웹검색 없이 지수 데이터 사용
 - ❌ 기억이나 추정에 의한 지수 값 작성
+- ❌ **원문 없이 숫자만 보고** (v4.0 신규 - 환각 위험)
+
+---
+
+## ⚠️ 원문 인용 규칙 (v4.0 신규 - CRITICAL)
+
+> **S&P 500 환각 방지의 핵심**: 검색 결과에서 숫자를 추출할 때 반드시 **원문을 그대로 인용**해야 합니다.
+
+### 숫자 추출 방법
+
+```
+1. 웹검색 결과에서 숫자가 포함된 문장 찾기
+2. 해당 문장을 **그대로 복사** (original_text 필드에)
+3. 원문에서 숫자 추출하여 value 필드에 기록
+4. value와 original_text 내 숫자가 일치하는지 확인
+```
+
+### 예시
+
+**검색 결과 원문**:
+> "The main stock market index of United States, the US500, fell to 6936 points on January 12, 2026"
+
+**올바른 출력**:
+```json
+{
+  "index": "S&P 500",
+  "value": 6936,
+  "original_text": "The main stock market index of United States, the US500, fell to 6936 points on January 12, 2026"
+}
+```
+
+**잘못된 출력 (환각)**:
+```json
+{
+  "index": "S&P 500",
+  "value": 5906,
+  "original_text": null
+}
+```
+→ 원문 없이 잘못된 숫자(5906)를 보고하면 환각
 
 ---
 
@@ -101,7 +144,7 @@ model: opus
 
 ---
 
-## Output Schema (JSON)
+## Output Schema (JSON) - v4.0 업데이트
 
 ```json
 {
@@ -109,13 +152,38 @@ model: opus
   "skill_used": "web-search-verifier",
   "indices": [
     {
+      "name": "S&P 500",
+      "value": 6936,
+      "unit": "pt",
+      "original_text": "The US500 fell to 6936 points on January 12, 2026",
+      "sources": [
+        {
+          "name": "Trading Economics",
+          "url": "https://tradingeconomics.com/united-states/stock-market",
+          "observed_value": 6936,
+          "original_text": "The US500 fell to 6936 points on January 12, 2026"
+        },
+        {
+          "name": "FRED",
+          "url": "https://fred.stlouisfed.org/series/SP500",
+          "observed_value": 6944.82,
+          "original_text": "S&P 500 (SP500) was 6944.82 on 2026-01-06"
+        }
+      ],
+      "verified": true
+    },
+    {
       "name": "KOSPI",
       "value": 4586,
       "unit": "pt",
+      "original_text": "KOSPI rose to 4586 points on January 9, 2026",
       "sources": [
-        {"name": "Investing.com", "url": "https://www.investing.com/indices/kospi", "observed_value": 4586.23},
-        {"name": "Bloomberg", "url": "https://www.bloomberg.com/quote/KOSPI:IND", "observed_value": 4585.90},
-        {"name": "Trading Economics", "url": "https://tradingeconomics.com/south-korea/stock-market", "observed_value": 4586.10}
+        {
+          "name": "Trading Economics",
+          "url": "https://tradingeconomics.com/south-korea/stock-market",
+          "observed_value": 4586,
+          "original_text": "KOSPI rose to 4586 points on January 9, 2026"
+        }
       ],
       "verified": true
     }
@@ -124,6 +192,13 @@ model: opus
   "failed_indices": []
 }
 ```
+
+### 필수 필드 (v4.0)
+
+| 필드 | 필수 | 설명 |
+|:-----|:----:|:-----|
+| `original_text` | **필수** | 숫자가 포함된 검색 결과 원문 |
+| `sources[].original_text` | **필수** | 각 출처의 원문 인용 |
 
 ### Status 정의
 - **SUCCESS**: 모든 지수 스킬 검증 완료
@@ -168,14 +243,17 @@ model: opus
 ## 메타 정보
 
 ```yaml
-version: "3.0"
+version: "4.1"
 updated: "2026-01-12"
 changes:
+  - "v4.1: 범위 검증 (Sanity Check) 제거 - 대폭락 시 정상 데이터 reject 문제"
+  - "v4.0: 원문 인용 필수화 (original_text 필드)"
+  - "v4.0: S&P 500 첫자리 오류(6936→5906) 환각 방지"
   - "v3.0: 직접 웹검색 도구 호출 필수화 (스킬은 지침 문서로만 사용)"
   - "v3.0: search_index() 같은 가짜 함수 호출 금지 명시"
-  - "v3.0: exa_web_search_exa, websearch_web_search_exa 도구 추가"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
 critical_rules:
+  - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
   - "스킬은 검색 쿼리 패턴 가이드로만 사용"
   - "search_index() 같은 함수 호출 금지 (존재하지 않음)"
