@@ -6,10 +6,38 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 # 웹검색 교차검증 스킬
 
+## ⚠️ CRITICAL: 스킬 사용 방법 (반드시 숙지)
+
+> **이 스킬은 "함수"가 아닙니다. 지침 문서입니다.**
+> 
+> - ❌ `search_rate("fed_funds")` 같은 함수 호출은 **작동하지 않습니다**
+> - ✅ 에이전트가 `exa_web_search_exa` 또는 `websearch_web_search_exa` 도구를 **직접 호출**해야 합니다
+> - ✅ 이 스킬은 **검색 쿼리 패턴과 검증 절차**를 안내하는 문서입니다
+
+### 올바른 사용 방법
+
+```
+1. 이 스킬 문서를 읽고 검색 쿼리 패턴 파악
+2. exa_web_search_exa 또는 websearch_web_search_exa 도구를 직접 호출
+3. 검색 결과에서 데이터 추출
+4. 3개 출처 교차 검증 수행
+5. 출력 스키마에 맞춰 결과 포장
+```
+
+### 잘못된 사용 방법 (환각 발생)
+
+```
+❌ "search_rate() 호출" (존재하지 않는 함수)
+❌ "스킬이 알아서 검색해줌" (스킬은 문서일 뿐)
+❌ 예시 데이터의 숫자를 그대로 사용 (하드코딩된 오래된 값)
+```
+
+---
+
 ## Overview
 
 이 스킬은 거시경제 데이터(지수, 금리, 환율) 수집 시 **환각을 방지**하기 위한 표준 프로토콜입니다.
-모든 수치 데이터는 이 스킬을 통해 **3개 이상의 독립 출처에서 교차 검증** 후에만 사용 가능합니다.
+모든 수치 데이터는 **에이전트가 직접 웹검색 도구를 호출**하여 **3개 이상의 독립 출처에서 교차 검증** 후에만 사용 가능합니다.
 
 ---
 
@@ -60,17 +88,20 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 ```json
 {
   "index": "S&P 500",
-  "value": 6966.28,
+  "value": "[SEARCH_RESULT - 웹검색 결과로 대체]",
   "unit": "pt",
-  "date": "2026-01-09",
+  "date": "[SEARCH_DATE - 검색 시점 날짜]",
   "verified": true,
-  "variance": "0.01%",
+  "variance": "[CALCULATED - 출처 간 편차 계산]",
   "sources": [
-    {"name": "Trading Economics", "url": "https://...", "value": 6966.70, "tier": 2},
-    {"name": "Bloomberg", "url": "https://...", "value": 6966.28, "tier": 1},
-    {"name": "Yahoo Finance", "url": "https://...", "value": 6966.28, "tier": 2}
+    {"name": "Trading Economics", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 2},
+    {"name": "Bloomberg", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 1},
+    {"name": "Yahoo Finance", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "tier": 2}
   ]
 }
+
+⚠️ 주의: 위 예시의 모든 [PLACEHOLDER] 값은 실제 웹검색 결과로 대체해야 합니다.
+절대로 예시 값을 그대로 사용하지 마세요.
 ```
 
 ### 2. 금리 데이터 검색
@@ -100,15 +131,19 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 ```json
 {
   "rate_type": "fed_funds",
-  "value": "4.25-4.50%",
-  "decision_date": "2025-12-18",
-  "next_meeting": "2026-01-29",
+  "value": "[SEARCH_RESULT - 웹검색으로 확인한 실제 금리]",
+  "decision_date": "[SEARCH_RESULT - 최근 FOMC/금통위 결정일]",
+  "next_meeting": "[SEARCH_RESULT - 다음 회의 예정일]",
   "verified": true,
   "sources": [
-    {"name": "Federal Reserve", "url": "https://...", "value": "4.25-4.50%", "official": true},
-    {"name": "Trading Economics", "url": "https://...", "value": "4.25%", "official": false}
+    {"name": "Federal Reserve", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "official": true},
+    {"name": "Trading Economics", "url": "[ACTUAL_URL]", "value": "[ACTUAL_VALUE]", "official": false}
   ]
 }
+
+⚠️ CRITICAL: 위 예시의 모든 [PLACEHOLDER] 값은 반드시 웹검색 결과로 대체해야 합니다.
+예시 값("4.25-4.50%")을 그대로 사용하면 환각(hallucination)이 발생합니다.
+기준금리는 수시로 변경되므로 반드시 실시간 검색이 필요합니다.
 ```
 
 ---
