@@ -1,0 +1,341 @@
+# Methodology Template
+
+이 문서는 {{ name | title }} 논문의 Methodology 작성 템플릿입니다.
+
+## Structure
+
+{% if methodology_structure %}
+{{ methodology_structure }}
+{% else %}
+**Standard Structure**:
+
+1. **Overview** (1 paragraph): High-level description of approach
+2. **Materials/Data** (1-2 subsections): Samples, datasets, reagents
+3. **Experimental Procedures** (2-4 subsections): Step-by-step methods
+4. **Analysis Methods** (1-2 subsections): Data processing and statistical analysis
+5. **Validation** (optional): Quality control and validation procedures
+{% endif %}
+
+## Length Guidelines
+
+{% if methodology_length %}
+- **Word count**: {{ methodology_length.min }}-{{ methodology_length.max }} words
+- **Recommended**: {{ methodology_length.recommended }} words
+- **Subsections**: {{ methodology_length.subsections_min }}-{{ methodology_length.subsections_max }}
+{% else %}
+- **Word count**: 1000-2000 words
+- **Recommended**: 1500 words
+- **Subsections**: 4-6 subsections
+{% endif %}
+
+## Voice and Tense
+
+{% if methodology_voice_tense %}
+**Voice Ratio**:
+- Active: {{ methodology_voice_tense.active }}%
+- Passive: {{ methodology_voice_tense.passive }}%
+
+**Tense Distribution**:
+- Past: {{ methodology_voice_tense.past }}%
+- Present: {{ methodology_voice_tense.present }}%
+
+**Recommended Pattern**:
+- Procedures: Past tense, passive voice
+- General methods: Present tense
+- Specific actions: Past tense
+{% else %}
+**Voice Ratio**:
+- Active: 20%
+- Passive: 80%
+
+**Tense Distribution**:
+- Past: 90%
+- Present: 10%
+{% endif %}
+
+## Section-by-Section Guide
+
+### 1. Overview (1 paragraph)
+
+**Purpose**: Provide high-level description of approach
+
+**Tense**: Past or Present
+
+**Voice**: Active or Passive
+
+**Content**:
+- What is the overall strategy?
+- What are the main steps?
+- What is the rationale?
+
+**Examples**:
+- "We employed a [approach] to [objective]."
+- "The study consisted of [number] main steps: (1) [step 1], (2) [step 2], (3) [step 3]."
+- "Our approach combines [method A] with [method B] to achieve [goal]."
+
+**Common Verbs**: employ, consist, combine, use, apply
+
+---
+
+### 2. Materials/Data
+
+**Purpose**: Describe samples, datasets, reagents, or materials
+
+**Tense**: Past (for what was used)
+
+**Voice**: Passive (preferred)
+
+**Content**:
+- What materials were used?
+- Where were they obtained?
+- What are the specifications?
+
+#### For Experimental Studies
+
+**Examples**:
+- "Samples were collected from [source] between [dates]."
+- "[Reagent] was purchased from [supplier] (catalog number: [number])."
+- "Cell lines were obtained from [source] and cultured in [medium]."
+
+**Key information to include**:
+- Source/supplier
+- Catalog numbers
+- Specifications (purity, concentration, etc.)
+- Storage conditions
+
+#### For Computational Studies
+
+**Examples**:
+- "Data were obtained from [database] (version [X], accessed [date])."
+- "The dataset consists of [number] samples with [features]."
+- "Training data were split into [X]% training and [Y]% validation sets."
+
+**Key information to include**:
+- Data source
+- Version/access date
+- Sample size
+- Data splits (train/validation/test)
+
+---
+
+### 3. Experimental Procedures
+
+**Purpose**: Describe step-by-step methods
+
+**Tense**: Past
+
+**Voice**: Passive (strongly preferred)
+
+**Content**:
+- What was done?
+- How was it done?
+- What were the parameters?
+
+**Examples**:
+- "Samples were prepared by [procedure]."
+- "The reaction was performed at [temperature] for [time]."
+- "Data were processed using [software] (version [X])."
+
+**Common Verbs**: prepare, perform, conduct, measure, analyze
+
+**Level of detail**: Sufficient for replication
+
+#### Subsection Organization
+
+Organize by:
+- **Chronological order**: Step 1 → Step 2 → Step 3
+- **Functional groups**: Sample preparation → Measurement → Analysis
+- **Experimental phases**: Phase 1 → Phase 2 → Phase 3
+
+#### Parameter Specification
+
+Always include:
+- Temperatures: `25 °C`
+- Times: `2 h`, `30 min`
+- Concentrations: `10 mM`, `5 μg/mL`
+- Volumes: `100 μL`, `1 mL`
+- Sample sizes: `n = 30`
+
+See [references/measurement.md](references/measurement.md) for formatting.
+
+---
+
+### 4. Analysis Methods
+
+**Purpose**: Describe data processing and statistical analysis
+
+**Tense**: Past (for what was done) or Present (for general methods)
+
+**Voice**: Passive (preferred)
+
+**Content**:
+- How were data processed?
+- What statistical tests were used?
+- What software was used?
+
+**Examples**:
+- "Data were analyzed using [software] (version [X])."
+- "Statistical significance was determined using [test] (α = 0.05)."
+- "Results are presented as mean ± SD from [n] independent experiments."
+
+**Key information to include**:
+- Software/tools (with versions)
+- Statistical tests
+- Significance thresholds
+- Number of replicates
+
+#### Statistical Analysis
+
+**Common tests**:
+- t-test: "Student's t-test was used to compare..."
+- ANOVA: "One-way ANOVA followed by Tukey's post-hoc test..."
+- Correlation: "Pearson correlation coefficient was calculated..."
+- Regression: "Linear regression was performed..."
+
+**Reporting format**:
+- "P < 0.05 was considered statistically significant."
+- "Results are presented as mean ± SD from n = 3 independent experiments."
+- "All analyses were performed using [software] (version [X])."
+
+---
+
+### 5. Validation (optional)
+
+**Purpose**: Describe quality control and validation procedures
+
+**Tense**: Past
+
+**Voice**: Passive
+
+**Content**:
+- How was quality ensured?
+- What controls were used?
+- How was the method validated?
+
+**Examples**:
+- "Method accuracy was validated using [standard]."
+- "Positive and negative controls were included in each experiment."
+- "Reproducibility was assessed by performing [n] independent replicates."
+
+---
+
+## Writing Guidelines
+
+### Do's
+
+- ✓ Use passive voice for procedures
+- ✓ Use past tense for actions performed
+- ✓ Include sufficient detail for replication
+- ✓ Specify all parameters (temperature, time, concentration)
+- ✓ Cite methods from previous studies when appropriate
+- ✓ Use subsections to organize content
+- ✓ Include sample sizes and replicates
+
+### Don'ts
+
+- ✗ Include results or interpretation
+- ✗ Use vague descriptions ("appropriate amount", "suitable conditions")
+- ✗ Omit critical parameters
+- ✗ Mix methods and results
+- ✗ Use first person excessively ("I did", "we performed")
+- ✗ Include unnecessary background
+
+## Example Template
+
+```
+[Overview paragraph - Past/Present tense]
+We employed a [approach] to [objective]. The study consisted of three 
+main steps: (1) [step 1], (2) [step 2], and (3) [step 3].
+
+### Materials and Reagents
+
+[Past tense, Passive voice]
+Samples were collected from [source] between [dates]. [Reagent A] was 
+purchased from [supplier] (catalog number: [number]). [Reagent B] was 
+obtained from [supplier] and stored at [temperature].
+
+### Sample Preparation
+
+[Past tense, Passive voice]
+Samples were prepared by [procedure]. Briefly, [detailed steps]. 
+The reaction was performed at [temperature] for [time]. 
+
+### Measurement
+
+[Past tense, Passive voice]
+Measurements were performed using [instrument] (model [X], manufacturer). 
+Parameters were set as follows: [parameter 1] = [value], [parameter 2] = [value]. 
+Each sample was measured in triplicate.
+
+### Data Analysis
+
+[Past tense, Passive voice]
+Data were analyzed using [software] (version [X]). Statistical significance 
+was determined using [test] (α = 0.05). Results are presented as mean ± SD 
+from n = [X] independent experiments.
+```
+
+## Supplier and Instrument Information
+
+### Reagents and Materials
+
+**Format**: `[Item] was purchased from [Supplier] ([Location]; catalog number: [Number])`
+
+**Examples**:
+- "Antibodies were purchased from Abcam (Cambridge, UK; catalog number: ab12345)."
+- "Cell culture media were obtained from Gibco (Thermo Fisher Scientific, Waltham, MA, USA)."
+
+### Instruments and Equipment
+
+**Format**: `[Measurement] was performed using [Instrument] (model [X], [Manufacturer], [Location])`
+
+**Examples**:
+- "Absorbance was measured using a microplate reader (SpectraMax M5, Molecular Devices, San Jose, CA, USA)."
+- "Images were acquired using a confocal microscope (LSM 880, Carl Zeiss, Oberkochen, Germany)."
+
+### Software
+
+**Format**: `[Analysis] was performed using [Software] (version [X], [Developer], [Location])`
+
+**Examples**:
+- "Data were analyzed using GraphPad Prism (version 9.0, GraphPad Software, San Diego, CA, USA)."
+- "Statistical analysis was performed using R (version 4.0.0, R Foundation for Statistical Computing, Vienna, Austria)."
+
+## Checklist
+
+Before finalizing your methodology, check:
+
+- [ ] All procedures are described in sufficient detail for replication
+- [ ] Voice/Tense ratios match target (Passive ~80%, Past ~90%)
+- [ ] All parameters are specified (temperature, time, concentration, etc.)
+- [ ] Sample sizes and replicates are stated
+- [ ] Suppliers and catalog numbers are provided for reagents
+- [ ] Instrument models and manufacturers are specified
+- [ ] Software versions are included
+- [ ] Statistical methods are clearly described
+- [ ] Subsections are logically organized
+- [ ] No results or interpretation included
+- [ ] All measurements follow standard format (see references/measurement.md)
+
+## Common Mistakes to Avoid
+
+1. **Insufficient detail**: "Samples were prepared appropriately."
+   - Better: "Samples were diluted to 1 mg/mL in PBS and incubated at 37 °C for 1 h."
+
+2. **Missing parameters**: "The reaction was performed."
+   - Better: "The reaction was performed at 25 °C for 2 h with stirring at 500 rpm."
+
+3. **Vague quantities**: "A small amount of reagent was added."
+   - Better: "10 μL of reagent (10 mM) was added."
+
+4. **Missing supplier information**: "Antibodies were purchased."
+   - Better: "Antibodies were purchased from Abcam (Cambridge, UK; catalog number: ab12345)."
+
+5. **Including results**: "Samples were analyzed and showed high purity."
+   - Better: "Sample purity was analyzed using HPLC." (Results go in Results section)
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*
