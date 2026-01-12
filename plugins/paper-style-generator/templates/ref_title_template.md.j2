@@ -1,0 +1,189 @@
+# Title Template
+
+이 문서는 {{ name | title }} 논문의 제목 작성 템플릿입니다.
+
+## Structure
+
+{% if title_structure %}
+{{ title_structure }}
+{% else %}
+**Typical Structure**:
+1. Main topic or method
+2. Key innovation or finding
+3. Application or context (optional)
+
+**Format Options**:
+- Single-line: "Main Topic: Key Innovation"
+- Two-part: "Main Topic | Application Context"
+- Descriptive: "Adjective + Noun + Prepositional Phrase"
+{% endif %}
+
+## Length Guidelines
+
+{% if title_length %}
+- **Typical length**: {{ title_length.min }}-{{ title_length.max }} words
+- **Character count**: {{ title_length.char_min }}-{{ title_length.char_max }} characters
+- **Recommended**: {{ title_length.recommended }} words
+{% else %}
+- **Typical length**: 10-15 words
+- **Character count**: 80-120 characters
+- **Recommended**: 12 words
+{% endif %}
+
+## Key Components
+
+### Essential Elements
+
+1. **Main Topic**: What is the paper about?
+   - Example: "Machine Learning", "Protein Folding", "Drug Discovery"
+
+2. **Key Innovation**: What is new or different?
+   - Example: "Novel Approach", "Deep Learning-Based", "High-Throughput"
+
+3. **Application/Context** (optional): Where is it applied?
+   - Example: "for Cancer Diagnosis", "in Alzheimer's Disease", "using Single-Cell Data"
+
+### Optional Elements
+
+- **Method indicator**: "A Novel Method for...", "An Approach to..."
+- **Outcome indicator**: "Enables...", "Reveals...", "Demonstrates..."
+- **Scope indicator**: "Comprehensive", "Systematic", "Comparative"
+
+## Style Guidelines
+
+### Capitalization
+
+{% if title_capitalization %}
+**Style**: {{ title_capitalization }}
+{% else %}
+**Title Case** (most common):
+- Capitalize: First word, last word, all major words
+- Lowercase: Articles (a, an, the), conjunctions (and, but, or), prepositions (in, on, at)
+- Example: "A Novel Approach to Machine Learning for Cancer Diagnosis"
+
+**Sentence case** (alternative):
+- Capitalize: First word only (plus proper nouns)
+- Example: "A novel approach to machine learning for cancer diagnosis"
+{% endif %}
+
+### Punctuation
+
+- **Colon**: Separate main topic from subtitle
+  - "Main Topic: Detailed Description"
+- **Hyphen**: Connect compound modifiers
+  - "Deep Learning-Based Approach"
+- **Avoid**: Question marks, exclamation points, periods
+
+### Word Choice
+
+**Preferred**:
+- Novel, innovative, advanced, comprehensive
+- Enables, reveals, demonstrates, identifies
+- High-throughput, large-scale, multi-modal
+
+**Avoid**:
+- Vague terms: "study of", "investigation of"
+- Redundant phrases: "a study on the study of"
+- Jargon without context
+
+## Common Patterns
+
+{% if title_patterns %}
+{% for pattern in title_patterns %}
+### Pattern {{ loop.index }}: {{ pattern.name }}
+
+**Structure**: {{ pattern.structure }}
+
+**Example**: {{ pattern.example }}
+
+**When to use**: {{ pattern.usage }}
+
+---
+
+{% endfor %}
+{% else %}
+### Pattern 1: Method + Application
+
+**Structure**: "[Method] for [Application]"
+
+**Example**: "Deep Learning for Protein Structure Prediction"
+
+**When to use**: When method is the main contribution
+
+---
+
+### Pattern 2: Topic + Innovation
+
+**Structure**: "[Topic]: [Innovation]"
+
+**Example**: "Cancer Diagnosis: A Machine Learning Approach"
+
+**When to use**: When innovation is the main contribution
+
+---
+
+### Pattern 3: Outcome + Method
+
+**Structure**: "[Outcome] using [Method]"
+
+**Example**: "Identifying Drug Targets using Network Analysis"
+
+**When to use**: When outcome is the main focus
+
+---
+
+### Pattern 4: Comprehensive Description
+
+**Structure**: "[Adjective] [Method] for [Application] in [Context]"
+
+**Example**: "A Comprehensive Machine Learning Framework for Drug Discovery in Oncology"
+
+**When to use**: When full context is needed
+
+{% endif %}
+
+## Examples from {{ name | title }}
+
+{% if title_examples %}
+{% for example in title_examples %}
+{{ loop.index }}. {{ example }}
+{% endfor %}
+{% else %}
+1. [Example 1: Method-focused title]
+2. [Example 2: Application-focused title]
+3. [Example 3: Outcome-focused title]
+{% endif %}
+
+## Checklist
+
+Before finalizing your title, check:
+
+- [ ] Length is within recommended range (10-15 words)
+- [ ] Main topic is clear and specific
+- [ ] Key innovation is highlighted
+- [ ] Capitalization follows journal style
+- [ ] No unnecessary words ("study of", "investigation of")
+- [ ] No jargon without context
+- [ ] Accurately reflects paper content
+- [ ] Engaging and informative
+- [ ] Searchable keywords included
+
+## Common Mistakes to Avoid
+
+1. **Too vague**: "A Study on Machine Learning"
+   - Better: "Deep Learning for Protein Structure Prediction"
+
+2. **Too long**: "A Comprehensive Investigation of the Application of Novel Machine Learning Techniques to the Problem of Protein Structure Prediction in the Context of Drug Discovery"
+   - Better: "Machine Learning for Protein Structure Prediction in Drug Discovery"
+
+3. **Too technical**: "LSTM-CNN Hybrid Architecture for QSAR Modeling"
+   - Better: "Deep Learning for Drug Activity Prediction"
+
+4. **Missing key information**: "A Novel Approach"
+   - Better: "A Novel Machine Learning Approach for Cancer Diagnosis"
+
+---
+
+*Auto-generated by Paper Style Generator*  
+*Analysis confidence: {{ confidence }}%*  
+*Source papers: {{ paper_count }}*
