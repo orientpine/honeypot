@@ -124,7 +124,10 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ### 1. 지수 데이터 검색
 
-**함수**: `search_index(index_name)`
+**데이터 유형**: 지수 (Index)
+
+> ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_index()`라는 함수는 **존재하지 않습니다**.
+> 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 지수**:
 - S&P 500, NASDAQ, Dow Jones
@@ -181,7 +184,10 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ### 2. 금리 데이터 검색
 
-**함수**: `search_rate(rate_type)`
+**데이터 유형**: 금리 (Interest Rate)
+
+> ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_rate()`라는 함수는 **존재하지 않습니다**.
+> 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 금리**:
 - fed_funds: 미국 기준금리
@@ -319,15 +325,15 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ## 데이터 수집
 
-1. web-search-verifier 스킬 로드 확인
+1. web-search-verifier 스킬 로드 확인 (검색 패턴 가이드로 참조)
 2. S&P 500 수집:
-   - search_index("S&P 500") 호출
+   - exa_web_search_exa(query="S&P 500 price today") **직접 호출**
+   - 검색 결과에서 original_text 추출
    - verified: true 확인
-   - 결과 사용
 3. KOSPI 수집:
-   - search_index("KOSPI") 호출
+   - exa_web_search_exa(query="KOSPI 지수 현재") **직접 호출**
+   - 검색 결과에서 original_text 추출
    - verified: true 확인
-   - 결과 사용
 
 ## 검증 실패 시
 
