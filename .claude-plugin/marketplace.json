@@ -54,8 +54,8 @@
     {
       "name": "investments-portfolio",
       "source": "./plugins/investments-portfolio",
-      "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템",
-      "version": "1.0.0",
+      "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템. web-search-verifier 스킬로 환각 방지.",
+      "version": "2.0.0",
       "author": {
         "name": "Baekdong Cha",
         "url": "https://github.com/orientpine"
@@ -63,7 +63,7 @@
       "homepage": "https://github.com/orientpine/honeypot",
       "repository": "https://github.com/orientpine/honeypot",
       "license": "MIT",
-      "keywords": ["finance", "portfolio", "dc-pension", "multi-agent"],
+      "keywords": ["finance", "portfolio", "dc-pension", "multi-agent", "hallucination-prevention"],
       "category": "finance",
       "strict": true,
       "agents": [
@@ -78,7 +78,8 @@
         "./agents/compliance-checker.md",
         "./agents/output-critic.md",
         "./agents/leadership-outlook.md"
-      ]
+      ],
+      "skills": ["./skills"]
     },
     {
       "name": "general-agents",
