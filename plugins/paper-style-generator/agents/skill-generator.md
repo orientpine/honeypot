@@ -14,61 +14,53 @@ model: sonnet
 
 ## 1. Overview
 
-### 1.1 생성되는 스킬 (10개)
+### 1.1 생성되는 에이전트 및 스킬 (Hybrid 구조)
 
-| 스킬 | 파일명 | 목적 |
-|------|--------|------|
-| Common | `{name}-common` | 공통 스타일 가이드 |
-| Abstract | `{name}-abstract` | Abstract 작성 |
-| Introduction | `{name}-introduction` | Introduction 작성 |
-| Methodology | `{name}-methodology` | Methods 작성 |
-| Results | `{name}-results` | Results 작성 |
-| Discussion | `{name}-discussion` | Discussion 작성 |
-| Caption | `{name}-caption` | Figure/Table 캡션 |
-| Title | `{name}-title` | 논문 제목 생성 |
-| Verify | `{name}-verify` | 검증 스킬 |
-| **Orchestrator** | `{name}-orchestrator` | **논문 전체 자동 생성** |
+| 유형 | 이름 | 파일 위치 | 목적 |
+|------|------|----------|------|
+| **Agent** | Orchestrator | `agents/{name}-paper-orchestrator.md` | 논문 전체 자동 생성 |
+| **Agent** | Title Writer | `agents/{name}-title-writer.md` | 논문 제목 생성 |
+| **Agent** | Abstract Writer | `agents/{name}-abstract-writer.md` | Abstract 작성 |
+| **Agent** | Introduction Writer | `agents/{name}-introduction-writer.md` | Introduction 작성 |
+| **Agent** | Methodology Writer | `agents/{name}-methodology-writer.md` | Methods 작성 |
+| **Agent** | Results Writer | `agents/{name}-results-writer.md` | Results 작성 |
+| **Agent** | Discussion Writer | `agents/{name}-discussion-writer.md` | Discussion 작성 |
+| **Agent** | Caption Writer | `agents/{name}-caption-writer.md` | Figure/Table 캡션 |
+| **Agent** | Verify | `agents/{name}-verify.md` | 검증 에이전트 |
+| **Skill** | Style Guide | `skills/{name}-style-guide/SKILL.md` | 공통 스타일 가이드 (9개 에이전트가 참조) |
 
-### 1.2 출력 구조
+### 1.2 출력 구조 (Hybrid Architecture)
 
 ```
 ~/.claude/skills/{name}-paper-skills/
 ├── .claude-plugin/
-│   └── marketplace.json
-├── {name}-common/
-│   ├── .claude-plugin/
-│   │   └── plugin.json
-│   └── skills/
-│       ├── SKILL.md
+│   └── marketplace.json                    # 9 agents + 1 skill 등록
+├── agents/
+│   ├── {name}-paper-orchestrator.md        # 전체 워크플로우 조율
+│   ├── {name}-title-writer.md              # 제목 생성
+│   ├── {name}-abstract-writer.md           # Abstract 작성
+│   ├── {name}-introduction-writer.md       # Introduction 작성
+│   ├── {name}-methodology-writer.md        # Methodology 작성
+│   ├── {name}-results-writer.md            # Results 작성
+│   ├── {name}-discussion-writer.md         # Discussion 작성
+│   ├── {name}-caption-writer.md            # Caption 작성
+│   └── {name}-verify.md                    # 검증 에이전트
+├── skills/
+│   └── {name}-style-guide/
+│       ├── SKILL.md                        # 스타일 가이드 진입점
 │       └── references/
-│           ├── style-guide.md
-│           └── vocabulary-patterns.md
-├── {name}-abstract/
-│   ├── .claude-plugin/
-│   │   └── plugin.json
-│   └── skills/
-│       ├── SKILL.md
-│       └── assets/
-│           └── input-template.md
-├── {name}-introduction/
-│   └── skills/...
-├── {name}-methodology/
-│   └── skills/...
-├── {name}-results/
-│   └── skills/...
-├── {name}-discussion/
-│   └── skills/...
-├── {name}-caption/
-│   └── skills/...
-├── {name}-title/
-│   └── skills/...
-├── {name}-verify/
-│   └── skills/...
-├── {name}-orchestrator/           # 논문 전체 자동 생성
-│   └── skills/
-│       ├── SKILL.md
-│       └── assets/
-│           └── input-template.md
+│           ├── voice-tense-patterns.md
+│           ├── vocabulary-patterns.md
+│           ├── measurement-formats.md
+│           ├── citation-style.md
+│           └── section-templates/
+│               ├── abstract.md
+│               ├── introduction.md
+│               ├── methodology.md
+│               ├── results.md
+│               ├── discussion.md
+│               ├── caption.md
+│               └── title.md
 └── README.md
 ```
 
@@ -88,8 +80,9 @@ model: sonnet
 
 | 항목 | 설명 |
 |------|------|
-| 10개 스킬 폴더 | 각 섹션별 완전한 스킬 구조 + Orchestrator |
-| `marketplace.json` | 플러그인 등록 메타데이터 |
+| 9개 에이전트 | Orchestrator + 7개 Writer + Verify |
+| 1개 스킬 | Style Guide (공통 참조) |
+| `marketplace.json` | 플러그인 등록 메타데이터 (9 agents + 1 skill) |
 | `README.md` | 사용 가이드 |
 
 ---
@@ -270,24 +263,31 @@ output = template.render(
 )
 ```
 
-### 4.2 템플릿 파일 구조
+### 4.2 템플릿 파일 구조 (16개 템플릿)
 
 ```
 templates/
-├── skill_common.md.j2
-├── skill_abstract.md.j2
-├── skill_introduction.md.j2
-├── skill_methodology.md.j2
-├── skill_results.md.j2
-├── skill_discussion.md.j2
-├── skill_caption.md.j2
-├── skill_title.md.j2
-├── skill_verify.md.j2
-├── skill_orchestrator.md.j2    # 논문 전체 자동 생성
-├── marketplace.json.j2
-├── plugin.json.j2
-└── readme.md.j2
+├── marketplace_hybrid.json.j2          # 1. Marketplace 등록 (9 agents + 1 skill)
+├── agent_orchestrator.md.j2            # 2. Orchestrator 에이전트
+├── agent_writer.md.j2                  # 3. Writer 에이전트 (7번 렌더링)
+├── agent_verify.md.j2                  # 4. Verify 에이전트
+├── skill_style_guide.md.j2             # 5. Style Guide 스킬 진입점
+├── ref_voice_tense.md.j2               # 6. Voice/Tense 참조
+├── ref_vocabulary.md.j2                # 7. Vocabulary 참조
+├── ref_measurement.md.j2               # 8. Measurement 참조
+├── ref_citation.md.j2                  # 9. Citation 참조
+├── ref_section_abstract.md.j2          # 10. Abstract 템플릿
+├── ref_section_introduction.md.j2      # 11. Introduction 템플릿
+├── ref_section_methodology.md.j2       # 12. Methodology 템플릿
+├── ref_section_results.md.j2           # 13. Results 템플릿
+├── ref_section_discussion.md.j2        # 14. Discussion 템플릿
+├── ref_section_caption.md.j2           # 15. Caption 템플릿
+└── ref_section_title.md.j2             # 16. Title 템플릿
 ```
+
+**렌더링 규칙**:
+- `agent_writer.md.j2`: 7번 렌더링 (section 변수: title, abstract, introduction, methodology, results, discussion, caption)
+- `ref_section_*.md.j2`: 각 섹션별 1번씩 렌더링
 
 ---
 
@@ -297,13 +297,13 @@ templates/
 
 ```bash
 mkdir -p ~/.claude/skills/{name}-paper-skills/.claude-plugin
-mkdir -p ~/.claude/skills/{name}-paper-skills/{name}-common/skills/references
-mkdir -p ~/.claude/skills/{name}-paper-skills/{name}-abstract/skills/assets
-mkdir -p ~/.claude/skills/{name}-paper-skills/{name}-orchestrator/skills/assets
-# ... 나머지 10개 스킬 폴더
+mkdir -p ~/.claude/skills/{name}-paper-skills/agents/
+mkdir -p ~/.claude/skills/{name}-paper-skills/skills/{name}-style-guide/
+mkdir -p ~/.claude/skills/{name}-paper-skills/skills/{name}-style-guide/references/
+mkdir -p ~/.claude/skills/{name}-paper-skills/skills/{name}-style-guide/references/section-templates/
 ```
 
-### Phase 2: marketplace.json 생성
+### Phase 2: marketplace.json 생성 (Hybrid)
 
 ```json
 {
@@ -312,31 +312,103 @@ mkdir -p ~/.claude/skills/{name}-paper-skills/{name}-orchestrator/skills/assets
     "name": "Auto-generated by Paper Style Generator"
   },
   "metadata": {
-    "version": "1.0.0",
-    "description": "{Name} 스타일 논문 작성 스킬 세트",
+    "version": "2.0.0",
+    "description": "{Name} 스타일 논문 작성 스킬 세트 (Hybrid Architecture)",
     "generated": "{timestamp}",
     "source_papers": {paper_count},
     "confidence": {confidence_score}
   },
   "plugins": [
     {
-      "name": "{name}-common",
-      "source": "./{name}-common",
-      "description": "공통 스타일 가이드",
+      "name": "{name}-paper-skills",
+      "source": "./plugins/{name}-paper-skills",
+      "description": "{Name} 스타일 논문 작성 (9 agents + 1 skill)",
       "strict": true,
+      "agents": [
+        "./agents/{name}-paper-orchestrator.md",
+        "./agents/{name}-title-writer.md",
+        "./agents/{name}-abstract-writer.md",
+        "./agents/{name}-introduction-writer.md",
+        "./agents/{name}-methodology-writer.md",
+        "./agents/{name}-results-writer.md",
+        "./agents/{name}-discussion-writer.md",
+        "./agents/{name}-caption-writer.md",
+        "./agents/{name}-verify.md"
+      ],
       "skills": ["./skills"]
-    },
-    // ... 나머지 8개 플러그인
+    }
   ]
 }
 ```
 
-### Phase 3: 각 스킬 생성
+### Phase 3: 템플릿 렌더링
 
-각 스킬에 대해:
-1. plugin.json 생성
-2. SKILL.md 생성 (템플릿 + 분석 데이터)
-3. references/ 또는 assets/ 생성
+**3.1 Marketplace 등록**
+```python
+template = env.get_template('marketplace_hybrid.json.j2')
+output = template.render(name=name, **metadata)
+write_file('.claude-plugin/marketplace.json', output)
+```
+
+**3.2 Orchestrator 에이전트**
+```python
+template = env.get_template('agent_orchestrator.md.j2')
+output = template.render(name=name, **analysis)
+write_file(f'agents/{name}-paper-orchestrator.md', output)
+```
+
+**3.3 Writer 에이전트 (7번 렌더링)**
+```python
+sections = ['title', 'abstract', 'introduction', 'methodology', 'results', 'discussion', 'caption']
+template = env.get_template('agent_writer.md.j2')
+for section in sections:
+    output = template.render(name=name, section=section, **analysis)
+    write_file(f'agents/{name}-{section}-writer.md', output)
+```
+
+**3.4 Verify 에이전트**
+```python
+template = env.get_template('agent_verify.md.j2')
+output = template.render(name=name, **analysis)
+write_file(f'agents/{name}-verify.md', output)
+```
+
+**3.5 Style Guide 스킬**
+```python
+template = env.get_template('skill_style_guide.md.j2')
+output = template.render(name=name, **analysis)
+write_file(f'skills/{name}-style-guide/SKILL.md', output)
+```
+
+**3.6 Reference 파일 (11개)**
+```python
+# Voice/Tense
+template = env.get_template('ref_voice_tense.md.j2')
+output = template.render(**analysis['voice_tense'])
+write_file(f'skills/{name}-style-guide/references/voice-tense-patterns.md', output)
+
+# Vocabulary
+template = env.get_template('ref_vocabulary.md.j2')
+output = template.render(**analysis['vocabulary'])
+write_file(f'skills/{name}-style-guide/references/vocabulary-patterns.md', output)
+
+# Measurement
+template = env.get_template('ref_measurement.md.j2')
+output = template.render(**analysis['measurement'])
+write_file(f'skills/{name}-style-guide/references/measurement-formats.md', output)
+
+# Citation
+template = env.get_template('ref_citation.md.j2')
+output = template.render(**analysis['citation'])
+write_file(f'skills/{name}-style-guide/references/citation-style.md', output)
+
+# Section Templates (7개)
+sections = ['abstract', 'introduction', 'methodology', 'results', 'discussion', 'caption', 'title']
+for section in sections:
+    template = env.get_template(f'ref_section_{section}.md.j2')
+    output = template.render(**analysis['sections'][section])
+    write_file(f'skills/{name}-style-guide/references/section-templates/{section}.md', output)
+```
 
 ### Phase 4: README.md 생성
 
@@ -359,18 +431,18 @@ Auto-generated by Paper Style Generator
 
 ## Available Skills
 
-| Skill | Command | Description |
-|-------|---------|-------------|
-| Common | `/{name}-common` | 스타일 가이드 참조 |
-| Abstract | `/{name}-abstract` | Abstract 작성 |
-| Introduction | `/{name}-introduction` | Introduction 작성 |
-| Methodology | `/{name}-methodology` | Methods 작성 |
-| Results | `/{name}-results` | Results 작성 |
-| Discussion | `/{name}-discussion` | Discussion 작성 |
-| Caption | `/{name}-caption` | Figure/Table 캡션 |
-| Title | `/{name}-title` | 논문 제목 생성 |
-| Verify | `/{name}-verify` | 일관성 검증 |
-| **Orchestrator** | `/{name}-orchestrator` | **논문 전체 자동 생성** |
+| Type | Name | Command | Description |
+|------|------|---------|-------------|
+| Agent | Orchestrator | `@{name}-paper-orchestrator` | 논문 전체 자동 생성 |
+| Agent | Title Writer | `@{name}-title-writer` | 논문 제목 생성 |
+| Agent | Abstract Writer | `@{name}-abstract-writer` | Abstract 작성 |
+| Agent | Introduction Writer | `@{name}-introduction-writer` | Introduction 작성 |
+| Agent | Methodology Writer | `@{name}-methodology-writer` | Methods 작성 |
+| Agent | Results Writer | `@{name}-results-writer` | Results 작성 |
+| Agent | Discussion Writer | `@{name}-discussion-writer` | Discussion 작성 |
+| Agent | Caption Writer | `@{name}-caption-writer` | Figure/Table 캡션 |
+| Agent | Verify | `@{name}-verify` | 일관성 검증 |
+| Skill | Style Guide | `/{name}-style-guide` | 스타일 가이드 참조 (에이전트가 자동 로드) |
 
 ## Style Characteristics
 
@@ -393,13 +465,14 @@ Auto-generated by Paper Style Generator
 
 ## 6. 품질 검증
 
-### 6.1 생성된 스킬 검증
+### 6.1 생성된 파일 검증
 
-- [ ] 모든 10개 스킬 폴더 존재 (orchestrator 포함)
-- [ ] 각 스킬의 SKILL.md 존재
+- [ ] 9개 에이전트 파일 존재 (`agents/` 디렉토리)
+- [ ] 1개 스킬 폴더 존재 (`skills/{name}-style-guide/`)
+- [ ] 11개 참조 파일 존재 (`references/` 디렉토리)
 - [ ] marketplace.json 유효한 JSON
-- [ ] plugin.json 각 스킬에 존재
-- [ ] SKILL.md frontmatter 유효
+- [ ] 모든 .md 파일 frontmatter 유효
+- [ ] README.md 생성됨
 
 ### 6.2 내용 검증
 
@@ -412,15 +485,20 @@ Auto-generated by Paper Style Generator
 ## 7. 메타데이터
 
 ```yaml
-version: "1.1.0"
+version: "2.0.0"
+architecture: "hybrid"
 template_engine: "jinja2"
-skills_generated: 10
+templates_count: 16
+agents_generated: 9
+skills_generated: 1
 output_structure:
-  - marketplace.json
-  - 10 skill folders (including orchestrator)
+  - marketplace.json (9 agents + 1 skill)
+  - agents/ (9 files)
+  - skills/{name}-style-guide/ (1 SKILL.md + 11 references)
   - README.md
 validation:
   - json_validity
   - frontmatter_validity
   - content_completeness
+  - agent_skill_linking
 ```
