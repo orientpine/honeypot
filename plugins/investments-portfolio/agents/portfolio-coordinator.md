@@ -469,21 +469,180 @@ macro-outlook 결과 추출:
 
 ---
 
+### 2.0.5 Macro-Only 모드 워크플로우 (v4.1 신규)
+
+> **사용 시기**: "macro 보고서만 작성해줘", "거시경제 분석만" 요청 시
+> **특징**: fund-portfolio 이후 단계 생략, 거시경제 분석만 수행
+> **⚠️ CRITICAL**: macro-only 요청에서도 **index-fetcher는 필수 실행**
+
+#### Macro-Only 판단 키워드
+
+```
+- "macro 보고서만"
+- "거시경제 분석만"
+- "시장 전망만"
+- "macro outlook만"
+- "매크로만"
+```
+
+#### Macro-Only 워크플로우 (MANDATORY)
+
+```
+User Request ("macro 보고서만")
+     │
+     ▼
+[Step 0: 모드 판단]
+     │   └─ macro-only 키워드 감지
+     │
+     ▼
+[Step 0.1] Task(index-fetcher)     ← 🔴 필수 (현재 지수값)
+     │   └─ S&P 500, KOSPI, NASDAQ 현재값 수집
+     │   └─ USD/KRW 현재 환율 수집
+     │   └─ FAIL → 워크플로우 중단
+     │
+     ▼ PASS
+[Step 0.2] Task(rate/sector/risk-analyst)  ← 🔴 필수 (병렬)
+     │   └─ rate-analyst: Fed/BOK 현재 금리 + 전망
+     │   └─ sector-analyst: 5개 섹터 전망
+     │   └─ risk-analyst: 리스크 + 시나리오
+     │
+     ▼ PASS
+[Step 0.3] Task(macro-synthesizer) ← 🔴 필수 (상세 보고서)
+     │   └─ Executive Summary 필수 (현재값 테이블)
+     │   └─ 7개 섹션 모두 작성
+     │   └─ 26개 체크리스트 통과 필수
+     │
+     ▼
+[Step 0.4] Task(macro-critic)      ← 🔴 필수 (검증)
+     │   └─ 현재값 포함 검증
+     │   └─ 출처 커버리지 검증
+     │   └─ FAIL → Step 0.3 재시작 (최대 2회)
+     │
+     ▼ PASS
+[Final] 보고서 저장
+     │   └─ Write: 00-macro-outlook.md (또는 지정 경로)
+     │
+     ▼
+사용자에게 결과 반환 (경로 안내)
+```
+
+#### Macro-Only 전용 폴더 생성
+
+```bash
+# 폴더명 규칙: YYYY-MM-DD-macro-only-{session_id}
+mkdir -p "portfolios/2026-01-13-macro-only-a1b2c3"
+
+# 생성 파일
+portfolios/2026-01-13-macro-only-a1b2c3/
+└── macro-outlook-YYYY-QN.md    # 최종 보고서 (단일 파일)
+```
+
+#### Macro-Only vs Full 워크플로우 비교
+
+| 단계 | Full 워크플로우 | Macro-Only |
+|------|:---------------:|:----------:|
+| Step 0.1 (index-fetcher) | ✅ 필수 | ✅ **필수** |
+| Step 0.2 (rate/sector/risk) | ✅ 필수 | ✅ **필수** |
+| Step 0.3 (macro-synthesizer) | ✅ 필수 | ✅ **필수** |
+| Step 0.4 (macro-critic) | ✅ 필수 | ✅ **필수** |
+| Step 1 (fund-portfolio) | ✅ 필수 | ❌ 생략 |
+| Step 2 (compliance-checker) | ✅ 필수 | ❌ 생략 |
+| Step 3 (output-critic) | ✅ 필수 | ❌ 생략 |
+| Step 4 (최종 보고서) | ✅ 필수 | ❌ 생략 |
+
+> **⚠️ 중요**: Macro-Only 모드에서도 Step 0.1~0.4는 **절대 생략 불가**
+> 이 단계들이 현재 지수값 수집과 검증을 담당합니다.
+
+#### Macro-Only Task 호출 템플릿
+
+```markdown
+# Step 0.1: index-fetcher 호출
+Task(
+  subagent_type="index-fetcher",
+  description="[Macro-Only] 지수 데이터 수집",
+  prompt="""
+## [Macro-Only 모드] 지수 데이터 수집 요청
+
+### 수집 대상 (필수)
+1. **미국 지수**: S&P 500, NASDAQ, Dow Jones
+2. **한국 지수**: KOSPI, KOSDAQ
+3. **환율**: USD/KRW
+
+### 필수 데이터 포인트
+- 현재값 (current value)
+- YTD 수익률
+- 1년 수익률
+- 52주 고가/저가 (가능 시)
+
+### 출력 요구사항
+- 모든 값에 출처 URL 필수
+- 3개 출처 교차 검증
+- original_text 포함 (환각 방지)
+"""
+)
+
+# Step 0.3: macro-synthesizer 호출
+Task(
+  subagent_type="macro-synthesizer",
+  description="[Macro-Only] 거시경제 상세 보고서 작성",
+  prompt="""
+## [Macro-Only 모드] 거시경제 보고서 작성 요청
+
+### 입력 데이터
+- index-fetcher 결과: {index_data}
+- rate-analyst 결과: {rate_analysis}
+- sector-analyst 결과: {sector_analysis}
+- risk-analyst 결과: {risk_analysis}
+
+### 필수 포함 항목 (MANDATORY)
+1. **Executive Summary** (보고서 최상단)
+   - 현재 지수 테이블 (S&P 500, KOSPI, NASDAQ 현재값)
+   - 현재 금리/환율 테이블 (Fed, BOK, USD/KRW)
+   - 핵심 전망 4개 항목
+
+2. **7개 섹션 모두 작성**
+   - 섹션 0: Executive Summary
+   - 섹션 1: 주요 지수 현황 (상세)
+   - 섹션 2: 금리 전망 (상세)
+   - 섹션 3: 환율 전망 (상세)
+   - 섹션 4: 섹터별 전망 (상세)
+   - 섹션 5: 리스크 요인 (상세)
+   - 섹션 6: 시나리오 분석
+   - 섹션 7: 자산배분 시사점
+
+3. **26개 체크리스트 모두 통과**
+
+### 출력 경로
+output_path: portfolios/{session_folder}/macro-outlook-YYYY-QN.md
+
+### ⚠️ 현재값 포함 필수
+- S&P 500 현재값 누락 시 FAIL
+- KOSPI 현재값 누락 시 FAIL
+- USD/KRW 현재값 누락 시 FAIL
+- Fed/BOK 현재 금리 누락 시 FAIL
+"""
+)
+```
+
+---
+
 ### 2.1 Step 1: 요청 분석 (Coordinator 직접 수행) [Step 0 이후]
 
 ```
 1. 사용자 요청 파싱
    - 투자 성향: 공격형 / 중립형 / 안정형
-   - 요청 유형: 신규 추천 / 리밸런싱 / 리뷰
+   - 요청 유형: 신규 추천 / 리밸런싱 / 리뷰 / **Macro-Only (신규)**
    - 특수 조건: 섹터 선호, 비용 제한 등
 
 2. 필요 에이전트 결정
    - 신규 추천: fund-portfolio → compliance → output-critic
    - 문서 검토: compliance → output-critic (fund-portfolio 생략)
+   - **Macro-Only**: index-fetcher → analysts → synthesizer → critic (fund-portfolio 이후 생략)
 
 3. 요청 유형 판단 키워드
    - 신규 추천: "추천해줘", "포트폴리오 만들어", "구성해줘"
    - 문서 검토: "검토해줘", "평가해줘", "리뷰해줘", "검증해줘", "확인해줘"
+   - **Macro-Only**: "macro 보고서만", "거시경제 분석만", "시장 전망만"
 ```
 
 ### 2.1.1 문서 검토 모드 워크플로우 (신규)
@@ -1005,19 +1164,22 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "4.0"
-updated: "2026-01-10"
+version: "4.1"
+updated: "2026-01-13"
 agents:
-  - index-fetcher       # 지수 데이터 수집 (신규 Step 0.1)
-  - rate-analyst        # 금리/환율 분석 (신규 Step 0.2, 병렬)
-  - sector-analyst      # 섹터 분석 (신규 Step 0.2, 병렬)
-  - risk-analyst        # 리스크 분석 (신규 Step 0.2, 병렬)
-  - macro-synthesizer   # 거시경제 최종 보고서 (신규 Step 0.3)
-  - macro-critic        # 거시경제 분석 검증 (신규 Step 0.4, 재시도 로직)
-  - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조)
-  - compliance-checker  # 규제 검증 (Step 3)
-  - output-critic       # 출력 검증 (Step 5)
-workflow: sequential_with_parallel_and_retry
+  - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
+  - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - Macro-Only에서도 필수
+  - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - Macro-Only에서도 필수
+  - risk-analyst        # 리스크 분석 (Step 0.2, 병렬) - Macro-Only에서도 필수
+  - macro-synthesizer   # 거시경제 최종 보고서 (Step 0.3) - Macro-Only에서도 필수
+  - macro-critic        # 거시경제 분석 검증 (Step 0.4, 재시도 로직) - Macro-Only에서도 필수
+  - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조) - Macro-Only에서 생략
+  - compliance-checker  # 규제 검증 (Step 3) - Macro-Only에서 생략
+  - output-critic       # 출력 검증 (Step 5) - Macro-Only에서 생략
+workflow_modes:
+  full: "index-fetcher → analysts → synthesizer → critic → fund-portfolio → compliance → output-critic"
+  macro_only: "index-fetcher → analysts → synthesizer → critic (v4.1 신규)"
+  document_review: "compliance → output-critic"
 max_retries:
   - index-fetcher: 1 (FAIL 시 중단)
   - rate-analyst: 3 (병렬, 각각 재시도)
@@ -1027,17 +1189,27 @@ max_retries:
   - macro-critic: 2 (FAIL 시 Step 0.3 재시작, 최대 2회 반복)
   - compliance-checker: 3 (FAIL 시 fund-portfolio 수정)
 output_files:
-  - 00-macro-outlook.md     # macro-synthesizer + macro-critic 생성
-  - 01-fund-analysis.md     # fund-portfolio 생성
-  - 02-compliance-report.md # compliance-checker 생성
-  - 03-output-verification.md # output-critic 생성
-  - 04-portfolio-summary.md # coordinator 생성
+  full:
+    - 00-macro-outlook.md
+    - 01-fund-analysis.md
+    - 02-compliance-report.md
+    - 03-output-verification.md
+    - 04-portfolio-summary.md
+  macro_only:
+    - macro-outlook-YYYY-QN.md  # 단일 파일 (v4.1)
+changes:
+  - "v4.1: Macro-Only 모드 워크플로우 추가"
+  - "v4.1: Macro-Only 모드에서도 index-fetcher 필수 실행 명시"
+  - "v4.1: Macro-Only 전용 폴더 생성 규칙 추가"
+  - "v4.1: Macro-Only Task 호출 템플릿 추가"
+  - "v4.0: 6-Agent 거시경제 분석 워크플로우 추가"
 critical_rules:
   - "Task 도구 필수 사용"
   - "에이전트 결과 원본 인용"
   - "직접 분석 금지"
   - "index-fetcher FAIL 시 워크플로우 중단"
-  - "rate/sector/risk-analyst 병렬 실행 (각 최대 3회 재시도)"
+  - "⚠️ Macro-Only 모드에서도 Step 0.1~0.4 절대 생략 불가"
+  - "⚠️ 현재 지수값(S&P 500, KOSPI) 누락 시 FAIL"
   - "macro-critic FAIL 시 Step 0.3 재시작 (최대 2회 반복)"
   - "macro-outlook 권고 참조 필수"
 ```

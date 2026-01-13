@@ -20,7 +20,73 @@ macro-synthesizer 출력의 **검증 전문가**입니다. 지수 데이터 정�
 
 ---
 
-## 검증 범위 (6가지 영역)
+## 검증 범위 (7가지 영역) - v4.1 확장
+
+### 0. ⚠️ Executive Summary 현재값 검증 (v4.1 신규 - CRITICAL)
+
+> **BLOCKING**: Executive Summary에 현재 지수값이 포함되어 있는지 **가장 먼저** 검증합니다.
+> 이 검증이 실패하면 다른 검증을 진행하지 않고 즉시 FAIL 처리합니다.
+
+#### 필수 현재값 항목 (7개)
+
+| # | 항목 | 필수 | 검증 방법 |
+|:-:|------|:----:|----------|
+| 1 | **S&P 500 현재값** | ✅ | Executive Summary 테이블에 존재 확인 |
+| 2 | **NASDAQ 현재값** | ✅ | Executive Summary 테이블에 존재 확인 |
+| 3 | **KOSPI 현재값** | ✅ | Executive Summary 테이블에 존재 확인 |
+| 4 | **KOSDAQ 현재값** | ⭕ | 가능하면 포함 |
+| 5 | **USD/KRW 현재값** | ✅ | Executive Summary 테이블에 존재 확인 |
+| 6 | **Fed 현재 기준금리** | ✅ | Executive Summary 테이블에 존재 확인 |
+| 7 | **BOK 현재 기준금리** | ✅ | Executive Summary 테이블에 존재 확인 |
+
+#### 검증 프로세스 (Step 0 - 최우선)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│          Executive Summary 현재값 검증 (v4.1 - BLOCKING)         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Step 0.1: Executive Summary 섹션 존재 확인                      │
+│  └─ 보고서 최상단에 "Executive Summary" 섹션 있는가?              │
+│  └─ 없으면 → CRITICAL_FAIL                                      │
+│                                                                 │
+│  Step 0.2: 현재 지수 테이블 확인                                 │
+│  └─ "현재 주요 지수" 테이블 존재하는가?                           │
+│  └─ S&P 500 현재값 존재하는가? (숫자 형식)                        │
+│  └─ KOSPI 현재값 존재하는가? (숫자 형식)                          │
+│  └─ 하나라도 누락 → CRITICAL_FAIL                                │
+│                                                                 │
+│  Step 0.3: 현재 금리/환율 테이블 확인                            │
+│  └─ "현재 금리/환율" 테이블 존재하는가?                           │
+│  └─ Fed 기준금리 존재하는가? (X.XX% 형식)                         │
+│  └─ BOK 기준금리 존재하는가? (X.XX% 형식)                         │
+│  └─ USD/KRW 존재하는가? (X,XXX원 형식)                           │
+│  └─ 하나라도 누락 → CRITICAL_FAIL                                │
+│                                                                 │
+│  Step 0.4: 현재값 vs index-fetcher 일치 확인                     │
+│  └─ Executive Summary의 S&P 500 == index-fetcher 값?             │
+│  └─ Executive Summary의 KOSPI == index-fetcher 값?               │
+│  └─ 불일치 → CRITICAL_FAIL                                       │
+│                                                                 │
+│  Step 0.5: 출처 확인                                            │
+│  └─ 모든 현재값에 출처 URL 또는 출처명 있는가?                     │
+│  └─ 누락 → FAIL (CRITICAL은 아님)                                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### CRITICAL_FAIL 조건 (현재값 관련)
+
+| 조건 | 결과 | 조치 |
+|------|------|------|
+| Executive Summary 섹션 없음 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+| S&P 500 현재값 누락 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+| KOSPI 현재값 누락 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+| Fed/BOK 현재 금리 누락 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+| USD/KRW 현재값 누락 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+| 현재값이 index-fetcher와 불일치 | CRITICAL_FAIL | macro-synthesizer 재실행 |
+
+---
 
 ### 1. ⚠️ 스킬 사용 검증 (v3.0 신규 - CRITICAL)
 
@@ -93,18 +159,34 @@ Step 3: 일치 여부 판단
 ## PASS/FAIL 기준
 
 ### PASS 조건 (모두 충족)
-1. **스킬 사용**: 모든 데이터 수집 에이전트가 `web-search-verifier` 스킬 사용 (v3.0 신규)
+0. **Executive Summary 현재값** (v4.1 신규 - 최우선 검증)
+   - Executive Summary 섹션 존재
+   - S&P 500, KOSPI, NASDAQ 현재값 포함
+   - Fed, BOK 현재 기준금리 포함
+   - USD/KRW 현재값 포함
+   - 모든 현재값이 index-fetcher 결과와 일치
+1. **스킬 사용**: 모든 데이터 수집 에이전트가 `web-search-verifier` 스킬 사용
 2. **지수 일치**: `matched_indices / total_indices == 1.0` (100%)
 3. **기준금리 검증**: `bok_rate_verified == true`
 4. **출처 커버리지**: `sourced_claims / total_claims >= 0.8` (≥80%)
 5. **과신 표현**: `overconfidence_check.count == 0` (0개)
 
 ### FAIL 조건 (하나라도 미충족)
-- **스킬 미사용** (⚠️ v3.0 신규 - CRITICAL)
+- **Executive Summary 현재값 누락** (⚠️ v4.1 신규 - CRITICAL)
+- **스킬 미사용** (⚠️ CRITICAL)
 - 지수 불일치 발견
 - 기준금리 불일치
 - 출처 커버리지 <80%
 - 과신 표현 발견
+
+### CRITICAL_FAIL 우선순위 (v4.1)
+
+| 순위 | 조건 | 이유 |
+|:----:|------|------|
+| 1 | Executive Summary 현재값 누락 | 보고서 핵심 데이터 부재 |
+| 2 | 현재값 ↔ index-fetcher 불일치 | 데이터 무결성 위반 |
+| 3 | 스킬 미사용 | 검증되지 않은 데이터 |
+| 4 | 기준금리 불일치 | 핵심 지표 오류 |
 
 ### CRITICAL_FAIL: 스킬 미사용 (v3.0 신규)
 
@@ -130,11 +212,29 @@ IF bok_rate_verified == false:
 
 ---
 
-## JSON 출력 스키마
+## JSON 출력 스키마 (v4.1 확장)
 
 ```json
 {
   "verdict": "PASS" or "FAIL" or "CRITICAL_FAIL",
+  
+  "executive_summary_verification": {
+    "section_exists": true or false,
+    "current_values": {
+      "sp500": {"exists": true, "value": "6,921.46", "matches_index_fetcher": true},
+      "nasdaq": {"exists": true, "value": "XX,XXX.XX", "matches_index_fetcher": true},
+      "kospi": {"exists": true, "value": "4,586", "matches_index_fetcher": true},
+      "kosdaq": {"exists": true, "value": "X,XXX", "matches_index_fetcher": true},
+      "usd_krw": {"exists": true, "value": "1,454", "matches_index_fetcher": true},
+      "fed_rate": {"exists": true, "value": "3.5-3.75%", "matches_rate_analyst": true},
+      "bok_rate": {"exists": true, "value": "2.50%", "matches_rate_analyst": true}
+    },
+    "all_required_present": true or false,
+    "all_values_match": true or false,
+    "missing_items": [],
+    "mismatched_items": []
+  },
+  
   "skill_verification": {
     "all_agents_used_skill": true or false,
     "agents": [
@@ -144,6 +244,7 @@ IF bok_rate_verified == false:
     ],
     "missing_skill_agents": []
   },
+  
   "index_verification": {
     "total_indices": number,
     "matched_indices": number,
@@ -151,6 +252,7 @@ IF bok_rate_verified == false:
       {"index": "KOSPI", "expected": 4586, "found": 4200, "location": "섹션 1.1"}
     ]
   },
+  
   "interest_rate_verification": {
     "bok_rate_verified": true or false,
     "rate_analyst_value": "X.XX%",
@@ -159,18 +261,96 @@ IF bok_rate_verified == false:
     "source": "[출처: Trading Economics, URL, YYYY-MM-DD]",
     "last_decision_date": "YYYY-MM-DD"
   },
+  
   "source_coverage": {
     "total_claims": number,
     "sourced_claims": number,
     "coverage_percent": number,
+    "executive_summary_coverage": number,
     "unsourced_claims": ["출처 없는 주장"]
   },
+  
   "overconfidence_check": {
     "found_expressions": ["확실히 상승할 것입니다"],
     "count": number
   },
+  
+  "section_completeness": {
+    "total_sections": 8,
+    "completed_sections": number,
+    "missing_sections": [],
+    "incomplete_sections": [
+      {"section": "섹션 4", "missing": ["리스크 테이블"]}
+    ]
+  },
+  
   "issues": ["구체적 문제 설명"],
+  "critical_issues": ["CRITICAL_FAIL 원인"],
   "iteration": number
+}
+```
+
+### 필수 필드 설명 (v4.1)
+
+| 필드 | 필수 | 설명 |
+|------|:----:|------|
+| `executive_summary_verification` | ✅ | v4.1 신규 - Executive Summary 현재값 검증 |
+| `executive_summary_verification.current_values` | ✅ | 7개 필수 현재값 검증 결과 |
+| `executive_summary_verification.all_required_present` | ✅ | 모든 필수 현재값 존재 여부 |
+| `executive_summary_verification.all_values_match` | ✅ | index-fetcher/rate-analyst와 일치 여부 |
+| `section_completeness` | ✅ | v4.1 신규 - 8개 섹션 완성도 검증 |
+
+---
+
+## 예시: CRITICAL_FAIL (Executive Summary 현재값 누락 - v4.1)
+
+```json
+{
+  "verdict": "CRITICAL_FAIL",
+  "executive_summary_verification": {
+    "section_exists": true,
+    "current_values": {
+      "sp500": {"exists": false, "value": null, "matches_index_fetcher": false},
+      "nasdaq": {"exists": true, "value": "XX,XXX", "matches_index_fetcher": true},
+      "kospi": {"exists": true, "value": "4,586", "matches_index_fetcher": true},
+      "kosdaq": {"exists": false, "value": null, "matches_index_fetcher": false},
+      "usd_krw": {"exists": true, "value": "1,454", "matches_index_fetcher": true},
+      "fed_rate": {"exists": true, "value": "3.5-3.75%", "matches_rate_analyst": true},
+      "bok_rate": {"exists": true, "value": "2.50%", "matches_rate_analyst": true}
+    },
+    "all_required_present": false,
+    "all_values_match": false,
+    "missing_items": ["sp500"],
+    "mismatched_items": []
+  },
+  "skill_verification": {
+    "all_agents_used_skill": true,
+    "agents": [
+      {"name": "index-fetcher", "skill_used": "web-search-verifier", "verified": true},
+      {"name": "rate-analyst", "skill_used": "web-search-verifier", "verified": true},
+      {"name": "sector-analyst", "skill_used": "web-search-verifier", "verified": true}
+    ],
+    "missing_skill_agents": []
+  },
+  "index_verification": {"total_indices": 7, "matched_indices": 7, "mismatched": []},
+  "interest_rate_verification": {
+    "bok_rate_verified": true,
+    "rate_analyst_value": "2.50%",
+    "independent_value": "2.50%",
+    "match": true,
+    "source": "[출처: Trading Economics]",
+    "last_decision_date": "2024-11-28"
+  },
+  "source_coverage": {"total_claims": 45, "sourced_claims": 40, "coverage_percent": 88.9, "unsourced_claims": []},
+  "overconfidence_check": {"found_expressions": [], "count": 0},
+  "issues": [],
+  "critical_issues": [
+    "⚠️ CRITICAL: Executive Summary에 S&P 500 현재값 누락",
+    "Executive Summary 현재값 테이블에서 S&P 500 행이 존재하지 않음",
+    "index-fetcher 결과에는 S&P 500: 6,921.46 존재함",
+    "macro-synthesizer 재실행하여 Executive Summary에 S&P 500 현재값 포함 필요"
+  ],
+  "iteration": 1
 }
 ```
 
@@ -305,18 +485,24 @@ IF bok_rate_verified == false:
 ## 메타 정보
 
 ```yaml
-version: "4.0"
-updated: "2026-01-12"
+version: "4.1"
+updated: "2026-01-13"
 changes:
+  - "v4.1: Executive Summary 현재값 검증 추가 (최우선 검증)"
+  - "v4.1: 7개 필수 현재값 항목 정의 (S&P500, KOSPI, NASDAQ, USD/KRW, Fed, BOK)"
+  - "v4.1: executive_summary_verification 필드 JSON 스키마에 추가"
+  - "v4.1: section_completeness 필드 추가 (8개 섹션 완성도 검증)"
+  - "v4.1: CRITICAL_FAIL 우선순위 정의"
   - "v4.0: 독립 검증 시 직접 웹검색 도구 호출 필수화"
   - "v4.0: 독립 검증 시 스킬/다른 에이전트 결과 참조 금지"
   - "v3.0: 스킬 사용 검증 프로세스 추가"
-  - "v3.0: skill_verification 필드 필수화"
-  - "v3.0: 스킬 미사용 시 CRITICAL_FAIL 처리"
   - "v2.0: 기준금리 독립 검증 프로세스 추가"
 critical_rules:
+  - "⚠️ Executive Summary 현재값 검증 최우선 (v4.1)"
+  - "⚠️ S&P 500, KOSPI, USD/KRW 현재값 누락 = CRITICAL_FAIL"
+  - "⚠️ Fed, BOK 현재 기준금리 누락 = CRITICAL_FAIL"
+  - "⚠️ 현재값 ↔ index-fetcher 불일치 = CRITICAL_FAIL"
   - "독립 검증 시 exa_web_search_exa 직접 호출 필수"
-  - "독립 검증 시 스킬/다른 에이전트 결과 참조 금지 (동일 오류 방지)"
   - "스킬 미사용 = CRITICAL_FAIL"
   - "기준금리 불일치 = CRITICAL_FAIL"
   - "데이터 수정 금지, 검증만 수행"
