@@ -2,7 +2,7 @@
 name: macro-synthesizer
 description: "거시경제 분석 종합 보고서 작성 전문가. 하위 에이전트 결과를 통합하여 최종 보고서 생성. 스킬 검증 상태 확인 필수. 원문 인용만 수행 - 재해석 금지. 직접 호출 금지 - portfolio-coordinator를 통해서만 호출."
 tools: Read, Write
-model: sonnet
+model: opus
 ---
 
 # 거시경제 분석 종합 보고서 작성 전문가
