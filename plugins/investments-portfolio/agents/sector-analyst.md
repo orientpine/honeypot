@@ -3,7 +3,7 @@ name: sector-analyst
 description: "섹터별 전망 분석 전문가. 웹검색 도구를 직접 호출하여 5개 핵심 섹터의 투자 전망을 분석."
 tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
 skills: web-search-verifier
-model: sonnet
+model: opus
 ---
 
 # 섹터 분석 전문가 (Sector Analyst)

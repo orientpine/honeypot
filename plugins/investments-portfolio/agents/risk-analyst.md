@@ -3,7 +3,7 @@ name: risk-analyst
 description: "리스크 분석 및 시나리오 전문가. 웹검색 도구를 직접 호출하여 글로벌 리스크와 Bull/Base/Bear 시나리오를 분석."
 tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
 skills: web-search-verifier
-model: sonnet
+model: opus
 ---
 
 # Risk Analyst Agent

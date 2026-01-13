@@ -3,7 +3,7 @@ name: rate-analyst
 description: "금리 및 환율 전망 분석 전문가. 웹검색 도구를 직접 호출하여 Fed/BOK 정책과 USD/KRW 환율 동향을 분석하여 환헤지 전략을 제시합니다."
 tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
 skills: web-search-verifier
-model: sonnet
+model: opus
 ---
 
 # 금리 및 환율 전망 분석 전문가
