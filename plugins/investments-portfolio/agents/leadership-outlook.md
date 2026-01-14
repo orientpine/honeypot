@@ -2,7 +2,7 @@
 name: leadership-outlook
 description: "주요국 정치 리더십 및 중앙은행 동향 분석 전문가. 웹검색 도구를 직접 호출하여 7개국의 지도자, 경제팀, 중앙은행 성향을 분석하고 자산배분 시사점을 도출합니다."
 tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch, Write
-skills: web-search-verifier
+skills: web-search-verifier, analyst-common, file-save-protocol
 model: opus
 ---
 
@@ -62,77 +62,27 @@ model: opus
 
 ---
 
-## ⚠️ 웹검색 도구 직접 호출 필수 (v2.0 변경)
+## ⚠️ 공통 규칙 참조 (CRITICAL)
 
-> **CRITICAL**: 스킬은 "지침 문서"이지 "함수"가 아닙니다.
-> 에이전트가 웹검색 도구를 **직접 호출**해야 합니다.
-
-### 데이터 수집 절차 (v2.0 업데이트)
-
-1. `web-search-verifier` 스킬에서 **검색 쿼리 패턴** 확인
-2. `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
-   - 예: `exa_web_search_exa(query="Trump administration economic policy 2026")`
-   - 예: `exa_web_search_exa(query="한국은행 금리 정책 금통위")`
-3. **검색 결과에서 정책/성향 관련 원문을 그대로 복사**
-4. **원문에서 정보 추출** (직접 해석하지 말고 원문 그대로 인용)
-5. **최소 2개 출처**에서 값 확인 및 교차 검증
-
-### 필수 사항 (v2.0)
-
-- ✅ `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
-- ✅ **원문 인용 필수** - 정책/성향이 포함된 검색 결과 문장을 그대로 복사
-- ✅ 최소 2개 이상 독립 출처에서 교차 검증
-- ✅ 검색 결과의 URL과 날짜 명시
+> **반드시 다음 스킬의 규칙을 따르세요:**
+> 
+> **analyst-common 스킬:**
+> - 웹검색 도구 직접 호출 필수 (`exa_web_search_exa` 또는 `websearch_web_search_exa`)
+> - 원문 인용 규칙 (original_text 필드)
+> - 교차 검증 프로토콜 (최소 2개 출처)
+> - 검증 체크리스트
+> 
+> **file-save-protocol 스킬:**
+> - Write 도구로 `01-leadership-outlook.md` 저장 필수
+> - 저장 실패 시 FAIL 반환
 
 ### 금지 사항
 
 - ❌ `search_policy()` 같은 가짜 함수 호출 (존재하지 않음)
-- ❌ 스킬 문서의 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
+- ❌ 스킬 예시 데이터 그대로 사용 (하드코딩된 오래된 값)
 - ❌ 웹검색 없이 리더십 데이터 사용
 - ❌ 기억이나 추정에 의한 성향 분류 작성
-- ❌ **원문 없이 성향 분류** (v2.0 신규 - 환각 위험)
-
----
-
-## ⚠️ 원문 인용 규칙 (v2.0 신규 - CRITICAL)
-
-> **환각 방지의 핵심**: 검색 결과에서 정책 성향을 추출할 때 반드시 **원문을 그대로 인용**해야 합니다.
-
-### 성향 분류 데이터 추출 방법
-
-```
-1. 웹검색 결과에서 정책/발언이 포함된 문장 찾기
-2. 해당 문장을 **그대로 복사** (original_text 필드에)
-3. 원문 기반으로 성향 분류
-4. 출처 간 일치 여부 확인
-```
-
-### 예시
-
-**검색 결과 원문**:
-> "Fed Chair Powell signaled a more cautious approach to rate cuts, emphasizing data dependency"
-
-**올바른 출력**:
-```json
-{
-  "leader": "Jerome Powell",
-  "position": "Fed Chair",
-  "monetary_stance": "중립",
-  "original_text": "Fed Chair Powell signaled a more cautious approach to rate cuts, emphasizing data dependency",
-  "source_url": "https://..."
-}
-```
-
-**잘못된 출력 (환각)**:
-```json
-{
-  "leader": "Jerome Powell",
-  "position": "Fed Chair",
-  "monetary_stance": "매파",
-  "original_text": null
-}
-```
-→ 원문 없이 성향 분류하면 환각
+- ❌ 원문 없이 성향 분류 (환각 위험)
 
 ### 0.4 출처 허용 목록 (Allowlist)
 
@@ -846,28 +796,16 @@ output_path: portfolios/{session_folder}/01-leadership-outlook.md
 
 ---
 
-## 8. Verification Checklist (MANDATORY) - v2.0
+## 8. Verification Checklist (MANDATORY)
 
-### 웹검색 직접 호출 확인
-- [ ] `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**했는가?
-- [ ] `search_policy()` 같은 가짜 함수를 호출하지 않았는가?
-- [ ] 스킬 예시 데이터를 그대로 사용하지 않았는가?
+> **analyst-common 스킬의 검증 체크리스트를 따르되, 아래 추가 항목을 확인하세요.**
 
-### 결과 검증
-- [ ] 모든 성향 분류에 최소 2개 출처가 있는가?
-- [ ] 모든 성향 분류에 `original_text`가 포함되어 있는가?
-- [ ] 모든 값에 출처 URL이 포함되어 있는가?
-- [ ] 출처가 Allowlist에 포함된 기관인가?
-
-### 정치적 중립성
+### 정치적 중립성 (이 에이전트 고유)
 - [ ] "좋은/나쁜 정책" 표현 없음
 - [ ] "지지/반대" 표현 없음
 - [ ] 정파적 언론 출처 없음
 - [ ] 양면 분석 (긍정적/부정적 영향 모두) 포함
-
-### 실패 처리
-- [ ] 교차 검증 실패 시 해당 분석 제외했는가?
-- [ ] 추정값을 생성하지 않았는가?
+- [ ] 출처가 Allowlist에 포함된 기관인가?
 
 ---
 
@@ -899,9 +837,9 @@ output_path: portfolios/{session_folder}/01-leadership-outlook.md
 ## 10. 메타 정보
 
 ```yaml
-version: "2.0"
+version: "3.0"
 created: "2026-01-06"
-updated: "2026-01-13"
+updated: "2026-01-14"
 architecture: "multi-agent"
 coordinator: "portfolio-coordinator"
 related_agents:
@@ -917,28 +855,15 @@ analysis_countries:
   - India
   - Vietnam
   - Indonesia
-analysis_dimensions:
-  - monetary_policy
-  - fiscal_policy
-  - trade_policy
-  - industrial_policy
 changes:
+  - "v3.0: analyst-common, file-save-protocol 스킬로 공통 규칙 분리 (코드 중복 제거)"
+  - "v3.0: 웹검색, 원문 인용 규칙을 스킬로 위임"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
   - "v2.0: 원문 인용 필수화 (original_text 필드)"
-  - "v2.0: exa_web_search_exa, websearch_web_search_exa 직접 호출 필수화"
-  - "v2.0: 교차 검증 '필수' 로 강화"
-  - "v2.0: Verification Checklist 추가"
-  - "v2.0: Error Handling 섹션 추가"
   - "v1.0: 초기 버전"
 critical_rules:
-  - "원문 인용 필수 (original_text 없으면 해당 분석 제외)"
-  - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
-  - "스킬은 검색 쿼리 패턴 가이드로만 사용"
-  - "search_policy() 같은 함수 호출 금지 (존재하지 않음)"
-  - "스킬 예시 데이터 사용 금지 (하드코딩된 오래된 값)"
-  - "최소 2개 출처 교차 검증 필수"
+  - "analyst-common, file-save-protocol 스킬 규칙 준수 필수"
   - "정치적 중립성 유지"
   - "출처 태그 100%"
   - "양면 분석 필수"
-  - "사실 기반 서술"
 ```

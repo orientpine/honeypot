@@ -2,6 +2,7 @@
 name: portfolio-coordinator
 description: 퇴직연금 포트폴리오 분석 오케스트레이터. Multi-agent 워크플로우를 조율하여 index-fetcher, rate-analyst, sector-analyst, risk-analyst, macro-synthesizer, macro-critic, fund-portfolio, compliance-checker, output-critic 에이전트를 순차적으로 호출하고 최종 결과를 조합합니다. 규제 준수 검증과 환각 방지를 위한 교차 검증을 보장합니다.
 tools: Task, Read, Write, Bash
+skills: file-save-protocol
 model: opus
 ---
 

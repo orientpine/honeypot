@@ -2,6 +2,7 @@
 name: compliance-checker
 description: DC형 퇴직연금 규제 준수 검증 에이전트. 위험자산 70% 한도, 단일 펀드 40% 한도, 비중 합계 100% 검증을 수행합니다. fund_classification.json 기반으로 위험/안전자산을 분류하고, 하드코딩된 규칙으로 검증합니다.
 tools: Read, Bash, Write
+skills: file-save-protocol
 model: opus
 ---
 

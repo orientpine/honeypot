@@ -2,6 +2,7 @@
 name: output-critic
 description: 포트폴리오 분석 출력 검증 에이전트. 환각(hallucination) 방지를 위해 모든 수치의 출처를 확인하고, fund_data.json/fund_fees.json과의 일치 여부를 검증합니다. 과신 표현을 탐지하고 신뢰도 점수를 산출합니다.
 tools: Read, Grep, Write
+skills: file-save-protocol
 model: opus
 ---
 
