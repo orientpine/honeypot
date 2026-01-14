@@ -1,7 +1,7 @@
 ---
 name: sector-analyst
 description: "섹터별 전망 분석 전문가. 웹검색 도구를 직접 호출하여 5개 핵심 섹터의 투자 전망을 분석."
-tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
+tools: Read, Write, exa_web_search_exa, websearch_web_search_exa, WebFetch
 skills: web-search-verifier
 model: opus
 ---
@@ -244,7 +244,7 @@ JSON 스키마로 구조화된 분석 결과 생성:
 
 ---
 
-## Verification Checklist (MANDATORY) - v4.1 신규
+## Verification Checklist (MANDATORY) - v4.2 업데이트
 
 ### 웹검색 직접 호출 확인
 - [ ] `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**했는가?
@@ -261,14 +261,63 @@ JSON 스키마로 구조화된 분석 결과 생성:
 - [ ] 교차 검증 실패 시 FAIL 목록에 추가했는가?
 - [ ] 추정값을 생성하지 않았는가?
 
+### ⚠️ 파일 저장 확인 (v4.2 신규 - CRITICAL)
+- [ ] `Write` 도구로 `sector-analysis.json` 파일을 **직접 저장**했는가?
+- [ ] 파일 저장 성공을 확인했는가?
+- [ ] 저장 실패 시 FAIL을 반환했는가?
+
+---
+
+## ⚠️ 파일 저장 필수 (v4.2 신규 - CRITICAL)
+
+> **환각 방지의 핵심**: 분석 결과를 **반드시 파일로 저장**해야 합니다.
+> 프롬프트로만 반환하면 데이터 손실 및 환각 발생 위험이 있습니다.
+
+### Workflow 마지막 단계: 파일 저장
+
+```
+분석 완료 후:
+1. JSON 객체 생성 (출력 스키마 준수)
+2. Write 도구로 파일 저장:
+   Write(
+     file_path="{output_path}/sector-analysis.json",
+     content=JSON.stringify(analysis_result, null, 2)
+   )
+3. 저장 성공 확인
+4. 저장 실패 시: FAIL 반환 (환각 데이터 생성 금지)
+```
+
+### 저장 파일 경로
+
+coordinator가 제공하는 `output_path`를 사용합니다:
+```
+portfolios/{session_folder}/sector-analysis.json
+```
+
+### 저장 실패 시 응답
+
+```json
+{
+  "status": "FAIL",
+  "error": "FILE_SAVE_FAILED",
+  "detail": "sector-analysis.json 저장 실패",
+  "action": "재시도 필요"
+}
+```
+
+**절대 금지**: 파일 저장 실패 시 "저장된 것처럼" 응답하면 안 됩니다.
+
 ---
 
 ## 메타 정보
 
 ```yaml
-version: "4.1"
-updated: "2026-01-13"
+version: "4.2"
+updated: "2026-01-14"
 changes:
+  - "v4.2: Write 도구 추가 및 파일 저장 필수화"
+  - "v4.2: sector-analysis.json 직접 저장 로직 추가"
+  - "v4.2: 파일 저장 체크리스트 추가"
   - "v4.1: 출처 간 값 일치 기준 (±1% 이내) 명시"
   - "v4.1: Verification Checklist 섹션 추가"
   - "v4.1: 검증 실패 시 FAIL 반환 규칙 추가"
@@ -278,6 +327,7 @@ changes:
   - "v3.0: exa_web_search_exa, websearch_web_search_exa 도구 추가"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
 critical_rules:
+  - "⚠️ 파일 저장 필수 (sector-analysis.json)"
   - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
   - "스킬은 검색 쿼리 패턴 가이드로만 사용"
