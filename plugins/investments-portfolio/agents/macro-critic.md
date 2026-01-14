@@ -2,6 +2,7 @@
 name: macro-critic
 description: "거시경제 분석 출력 검증 전문가. 지수 데이터 일치성, 기준금리 교차 검증, 출처 커버리지, 스킬 사용 여부를 검증."
 tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
+skills: analyst-common
 model: opus
 ---
 
@@ -485,25 +486,19 @@ IF bok_rate_verified == false:
 ## 메타 정보
 
 ```yaml
-version: "4.1"
-updated: "2026-01-13"
+version: "5.0"
+updated: "2026-01-14"
 changes:
+  - "v5.0: analyst-common 스킬로 웹검색 공통 규칙 분리 (코드 중복 제거)"
+  - "v5.0: 독립 검증 시 analyst-common 스킬의 웹검색 규칙 준수"
   - "v4.1: Executive Summary 현재값 검증 추가 (최우선 검증)"
   - "v4.1: 7개 필수 현재값 항목 정의 (S&P500, KOSPI, NASDAQ, USD/KRW, Fed, BOK)"
-  - "v4.1: executive_summary_verification 필드 JSON 스키마에 추가"
-  - "v4.1: section_completeness 필드 추가 (8개 섹션 완성도 검증)"
-  - "v4.1: CRITICAL_FAIL 우선순위 정의"
   - "v4.0: 독립 검증 시 직접 웹검색 도구 호출 필수화"
-  - "v4.0: 독립 검증 시 스킬/다른 에이전트 결과 참조 금지"
   - "v3.0: 스킬 사용 검증 프로세스 추가"
-  - "v2.0: 기준금리 독립 검증 프로세스 추가"
 critical_rules:
-  - "⚠️ Executive Summary 현재값 검증 최우선 (v4.1)"
+  - "analyst-common 스킬 규칙 준수 필수 (독립 검증 시)"
+  - "⚠️ Executive Summary 현재값 검증 최우선"
   - "⚠️ S&P 500, KOSPI, USD/KRW 현재값 누락 = CRITICAL_FAIL"
   - "⚠️ Fed, BOK 현재 기준금리 누락 = CRITICAL_FAIL"
-  - "⚠️ 현재값 ↔ index-fetcher 불일치 = CRITICAL_FAIL"
-  - "독립 검증 시 exa_web_search_exa 직접 호출 필수"
-  - "스킬 미사용 = CRITICAL_FAIL"
-  - "기준금리 불일치 = CRITICAL_FAIL"
   - "데이터 수정 금지, 검증만 수행"
 ```
