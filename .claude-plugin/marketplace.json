@@ -142,6 +142,30 @@
         "./agents/chapter-writer.md",
         "./agents/quality-checker.md"
       ]
+    },
+    {
+      "name": "stock-consultation",
+      "source": "./plugins/stock-consultation",
+      "description": "주식/ETF 투자 상담 Multi-Agent 시스템. 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증 워크플로우. Bogle/Vanguard 철학 기반.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/honeypot",
+      "repository": "https://github.com/orientpine/honeypot",
+      "license": "MIT",
+      "keywords": ["stock-analysis", "etf-analysis", "valuation", "multi-agent", "bogle-vanguard", "hallucination-prevention"],
+      "category": "finance",
+      "strict": true,
+      "agents": [
+        "./agents/stock-consultant.md",
+        "./agents/stock-screener.md",
+        "./agents/stock-valuation.md",
+        "./agents/bear-case-critic.md",
+        "./agents/stock-critic.md"
+      ],
+      "skills": ["./skills"]
     }
   ]
 }
