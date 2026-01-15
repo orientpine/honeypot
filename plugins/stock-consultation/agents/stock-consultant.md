@@ -47,6 +47,8 @@ Step 0: 거시경제 분석 (investments-portfolio 에이전트 재사용)
   Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서
   Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증
 
+Step 0.5: Task(subagent_type="materials-organizer", ...)    ← 자료 정리 (materials_path 제공 시)
+
 Step 1: Task(subagent_type="stock-screener", ...)           ← 종목 스크리닝
 Step 2: Task(subagent_type="stock-valuation", ...)          ← 밸류에이션 분석
 Step 3: Task(subagent_type="bear-case-critic", ...)         ← 반대 논거
@@ -103,6 +105,7 @@ Step 4: Task(subagent_type="stock-critic", ...)             ← 최종 검증
 
 | 에이전트 | subagent_type | 역할 |
 |----------|---------------|------|
+| **materials-organizer** | `materials-organizer` | 사용자 제공 마크다운 자료 정리 (요약/분류/키포인트) |
 | **stock-screener** | `stock-screener` | 종목 스크리닝 (섹터/테마/밸류에이션 기준) |
 | **stock-valuation** | `stock-valuation` | 개별 종목 밸류에이션 분석 (PER/PBR/PEG) |
 | **bear-case-critic** | `bear-case-critic` | 반대 논거 전문가 (리스크 분석) |
@@ -111,7 +114,7 @@ Step 4: Task(subagent_type="stock-critic", ...)             ← 최종 검증
 ### 1.3 에이전트 간 데이터 흐름
 
 ```
-User Request
+User Request (+ materials_path 옵션)
      │
      ▼
 [1. Coordinator: 요청 파싱]
@@ -125,8 +128,14 @@ User Request
      │   └─ FAIL → 워크플로우 중단
      │
      ▼ PASS
+[2.5. Task(materials-organizer): 자료 정리] (materials_path 제공 시)
+     │   └─ 마크다운 파일 요약/분류/키포인트 추출
+     │   └─ SKIP (materials_path 없음) → 기존 워크플로우 계속
+     │
+     ▼
 [3. Task(stock-screener): 종목 스크리닝]
      │   └─ 섹터/테마/밸류에이션 기준으로 후보군 선정
+     │   └─ macro + materials context 활용
      │
      ▼
 [4. Task(stock-valuation): 밸류에이션 분석]
@@ -470,6 +479,7 @@ mkdir -p "consultations/2026-01-14-portfolio-AI-a1b2c3"
 consultations/
 └── YYYY-MM-DD-{ticker}-{session}/
     ├── 00-macro-outlook.md          # 거시경제 분석
+    ├── 00-materials-summary.md      # 자료 정리 (materials_path 제공 시)
     ├── 01-stock-screening.md        # 종목 스크리닝 (포트폴리오인 경우)
     ├── 02-valuation-report.md       # 밸류에이션 분석
     ├── 03-bear-case.md              # 반대 논거
@@ -608,8 +618,9 @@ IF stock_critic.verified == false OR stock_critic.confidence_score < 50:
 ## 8. 메타 정보
 
 ```yaml
-version: "1.0"
+version: "1.1"
 created: "2026-01-14"
+updated: "2026-01-15"
 agents:
   # 거시경제 (재사용)
   - index-fetcher       # 지수 데이터 수집
@@ -619,6 +630,7 @@ agents:
   - macro-synthesizer   # 거시경제 보고서
   - macro-critic        # 거시경제 검증
   # 종목 분석 (신규)
+  - materials-organizer # 자료 정리 (v1.1 추가)
   - stock-screener      # 종목 스크리닝
   - stock-valuation     # 밸류에이션 분석
   - bear-case-critic    # 반대 논거
@@ -626,6 +638,7 @@ agents:
 
 workflow:
   step_0: "거시경제 분석 (index-fetcher → analysts → synthesizer → critic)"
+  step_0.5: "materials-organizer (materials_path 제공 시, SKIP 가능)"
   step_1: "stock-screener (포트폴리오인 경우)"
   step_2: "stock-valuation (각 종목)"
   step_3: "bear-case-critic (각 종목)"
@@ -633,6 +646,7 @@ workflow:
 
 output_files:
   - 00-macro-outlook.md
+  - 00-materials-summary.md  # v1.1 추가 (옵션)
   - 01-stock-screening.md
   - 02-valuation-report.md
   - 03-bear-case.md

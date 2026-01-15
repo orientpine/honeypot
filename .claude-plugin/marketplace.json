@@ -160,6 +160,7 @@
       "strict": true,
       "agents": [
         "./agents/stock-consultant.md",
+        "./agents/materials-organizer.md",
         "./agents/stock-screener.md",
         "./agents/stock-valuation.md",
         "./agents/bear-case-critic.md",
