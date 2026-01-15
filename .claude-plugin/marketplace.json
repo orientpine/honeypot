@@ -77,7 +77,8 @@
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
         "./agents/output-critic.md",
-        "./agents/leadership-outlook.md"
+        "./agents/leadership-outlook.md",
+        "./agents/material-organizer.md"
       ],
       "skills": ["./skills"]
     },

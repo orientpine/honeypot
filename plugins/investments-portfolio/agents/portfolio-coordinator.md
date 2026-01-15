@@ -99,6 +99,7 @@ Step 3:   Task(subagent_type="output-critic", ...)        ← 출력 검증
 | **fund-portfolio** | `fund-portfolio` | 펀드 분석, 포트폴리오 추천 | ✅ |
 | **compliance-checker** | `compliance-checker` | DC형 규제 준수 검증 | ✅ |
 | **output-critic** | `output-critic` | 출력 검증, 환각 탐지 | ✅ |
+| **material-organizer** | `material-organizer` | 수집 자료 정리 (옵셔널) | ✅ |
 
 > ⚠️ `fund-analyst`는 존재하지 않습니다. `fund-portfolio`를 사용하세요.
 
@@ -341,6 +342,34 @@ JSON:
 }
 
 **재시도 규칙**: 최대 3회 시도, 모두 실패 시 사용자 에스컬레이션
+"""
+)
+```
+
+##### 2.0.2.4 material-organizer 호출 (옵셔널)
+
+```markdown
+Task(
+  subagent_type="material-organizer",
+  description="수집 자료 정리 (옵셔널)",
+  prompt="""
+## 수집 자료 정리 요청
+
+### 입력 폴더
+material_path: {user_provided_path}
+
+**옵셔널 입력**: material_path가 제공되지 않으면 SKIP
+
+### 출력 경로
+output_path: portfolios/{session_folder}/material-summary.md
+
+### 출력 요구사항
+1. 주제별 정리 (시장 전망, 금리/환율, 섹터, 리스크)
+2. 투자 인사이트 (긍정/부정 요인, 주목 섹터)
+3. 출처 파일 목록
+
+### material 미제공 시
+SKIP (에러 아님) - fund-portfolio는 material 없이 정상 동작
 """
 )
 ```
@@ -843,6 +872,14 @@ Task(
 - 주목 섹터: {recommended_sectors}
 - 지역 배분: {region_allocation}
 - 섹터별 비중 제한: {sector_limits}
+
+### 수집 자료 참조 (material-organizer 결과, 옵셔널)
+{material_summary}
+
+**옵셔널**: material-summary가 제공되지 않아도 정상 분석 진행
+제공 시 추가 컨텍스트로 활용:
+- 사용자가 수집한 자료에서 언급된 섹터/종목 우선 검토
+- 긍정/부정 요인을 포트폴리오 분석에 반영
 
 ### 투자자 정보
 - 투자 성향: {risk_profile}
