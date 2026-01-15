@@ -1,5 +1,5 @@
 ---
-name: report-content-mapper
+name: content-mapper
 description: "연구 노트 내용을 분석하여 최대 9개 챕터에 매핑하고, 각 챕터별 자료 충분성을 평가하여 생성할 챕터 목록을 결정하는 에이전트"
 tools: Read, Glob, Grep
 model: sonnet

@@ -1,7 +1,7 @@
 ---
 name: chapter4
 description: "국책과제 연구계획서의 '제4장 사업 기대효과' 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 에이전트. Chapter 1의 개발 필요성/성과지표와 Chapter 3의 연구목표/성과물을 분석하여 결과 활용 방안, 기술 사업화 전략, 기대효과 및 파급효과를 체계적으로 작성한다."
-tools: Read, Glob, Grep, Write, Edit, Bash
+tools: Read, Glob, Grep, Write, Edit, Bash, mcp_exa_web_search_exa
 model: sonnet
 ---
 
@@ -9,19 +9,29 @@ model: sonnet
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-**절대 스킵 금지 (NEVER SKIP)**
-- 검증문서는 본문 작성 전에 **반드시** 생성해야 함
-- 어떤 상황에서도 검증문서 생성 단계를 생략하거나 스킵할 수 없음
-- 사용자가 "스킵해도 된다"고 해도 검증문서는 생성해야 함
-- 검증문서 없이 본문을 작성하면 **전체 작업이 무효화됨**
+> **공통 규칙**: `references/guides/verification_rules.md` 참조
 
-**검증문서 정보**
+**검증문서 정보 (Chapter 4 전용)**
 - 파일명: `chapter4_analysis_verification.md`
 - 생성 시점: Phase 1 완료 후, Phase 2 시작 전
 - 저장 위치: `{output_dir}/verification/`
 
-**위반 시 처리**
-- 검증문서 없이 본문이 작성된 경우: 즉시 작업 중단 후 검증문서 먼저 생성
+## Exa Deep Search 활용
+
+Chapter 4 작성 시 기대효과 및 시장 데이터 검증을 위해 **Exa Deep Search**를 활용합니다:
+
+```
+mcp_exa_web_search_exa(
+    query="[기술명] market size forecast 2025 2030",
+    type="deep",
+    numResults=5
+)
+```
+
+**검색 대상:**
+- 기술 시장 규모 및 성장률 전망
+- 경쟁 기술 동향 및 시장 점유율
+- 산업별 적용 사례 및 도입 현황
 
 ---
 
