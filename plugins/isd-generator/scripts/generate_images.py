@@ -24,7 +24,7 @@ from google.genai import types
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-MODEL_NAME = "gemini-3-pro-image-preview"
+MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3-pro-image-preview")
 
 if not GEMINI_API_KEY:
     print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -40,7 +40,7 @@ def extract_prompt_content(md_file_path: str) -> str:
     포함: 섹션 1~12 (캡션, 유형, 색상, 레이아웃, 텍스트 등)
     제외: 섹션 13~14 (출처 테이블, 체크리스트)
     """
-    with open(md_file_path, 'r', encoding='utf-8') as f:
+    with open(md_file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     # 제외할 섹션 시작점
@@ -57,7 +57,9 @@ def extract_prompt_content(md_file_path: str) -> str:
     return content.strip()
 
 
-def generate_image(client, prompt_text: str, output_path: str, max_retries: int = 3) -> bool:
+def generate_image(
+    client, prompt_text: str, output_path: str, max_retries: int = 3
+) -> bool:
     """
     Gemini API를 호출하여 이미지 생성
 
@@ -76,17 +78,16 @@ def generate_image(client, prompt_text: str, output_path: str, max_retries: int 
                 model=MODEL_NAME,
                 contents=prompt_text,
                 config=types.GenerateContentConfig(
-                    response_modalities=['TEXT', 'IMAGE'],
+                    response_modalities=["TEXT", "IMAGE"],
                     image_config=types.ImageConfig(
-                        aspect_ratio="16:9",
-                        image_size="4K"
+                        aspect_ratio="16:9", image_size="4K"
                     ),
-                )
+                ),
             )
 
             # 사고 과정 출력 (있는 경우)
             for part in response.parts:
-                if hasattr(part, 'thought') and part.thought:
+                if hasattr(part, "thought") and part.thought:
                     if part.text:
                         print(f"  [사고 과정] {part.text[:100]}...")
 
@@ -125,10 +126,9 @@ def process_prompts(prompts_dir: str, output_dir: str) -> dict:
     output_path.mkdir(parents=True, exist_ok=True)
 
     # 프롬프트 파일 목록 (prompt_index.md 제외)
-    prompt_files = sorted([
-        f for f in prompts_path.glob("*.md")
-        if f.name != "prompt_index.md"
-    ])
+    prompt_files = sorted(
+        [f for f in prompts_path.glob("*.md") if f.name != "prompt_index.md"]
+    )
 
     if not prompt_files:
         print(f"[에러] 프롬프트 파일이 없습니다: {prompts_dir}")
@@ -183,17 +183,24 @@ def main():
         description="Gemini API를 사용하여 프롬프트 파일에서 이미지 생성"
     )
     parser.add_argument(
-        "--prompts-dir", "-p",
-        required=True,
-        help="프롬프트 파일이 있는 폴더 경로"
+        "--prompts-dir", "-p", required=True, help="프롬프트 파일이 있는 폴더 경로"
     )
     parser.add_argument(
-        "--output-dir", "-o",
-        required=True,
-        help="생성된 이미지를 저장할 폴더 경로"
+        "--output-dir", "-o", required=True, help="생성된 이미지를 저장할 폴더 경로"
+    )
+    parser.add_argument(
+        "--model",
+        "-m",
+        default=None,
+        help="Gemini 모델명 (기본값: GEMINI_MODEL 환경변수 또는 gemini-3-pro-image-preview)",
     )
 
     args = parser.parse_args()
+
+    # 모델명 오버라이드
+    global MODEL_NAME
+    if args.model:
+        MODEL_NAME = args.model
 
     if not os.path.isdir(args.prompts_dir):
         print(f"[에러] 프롬프트 폴더가 존재하지 않습니다: {args.prompts_dir}")

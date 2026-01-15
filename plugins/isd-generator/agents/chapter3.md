@@ -9,19 +9,12 @@ model: sonnet
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-**절대 스킵 금지 (NEVER SKIP)**
-- 검증문서는 본문 작성 전에 **반드시** 생성해야 함
-- 어떤 상황에서도 검증문서 생성 단계를 생략하거나 스킵할 수 없음
-- 사용자가 "스킵해도 된다"고 해도 검증문서는 생성해야 함
-- 검증문서 없이 본문을 작성하면 **전체 작업이 무효화됨**
+> **공통 규칙**: `references/guides/verification_rules.md` 참조
 
-**검증문서 정보**
+**검증문서 정보 (Chapter 3 전용)**
 - 파일명: `chapter3_research_verification.md`
 - 생성 시점: Phase 1-4 (웹 조사 완료 후, 구조 설계 전)
 - 저장 위치: `{output_dir}/verification/`
-
-**위반 시 처리**
-- 검증문서 없이 본문이 작성된 경우: 즉시 작업 중단 후 검증문서 먼저 생성
 
 ---
 

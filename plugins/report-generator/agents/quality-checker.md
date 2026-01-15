@@ -1,5 +1,5 @@
 ---
-name: report-quality-checker
+name: quality-checker
 description: "생성된 보고서의 품질을 검증하는 에이전트. 4단계 패턴 적용 여부, 용어 일관성, 기술적 정확성, 문서 구조 완성도를 검사하고 검증 보고서를 생성함"
 tools: Read, Write, Glob, Grep
 model: sonnet

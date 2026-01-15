@@ -1,0 +1,57 @@
+{
+  "passive_patterns": [
+    "\\b(was|were|been|being|is|are)\\s+\\w+ed\\b",
+    "\\b(was|were|been|being|is|are)\\s+\\w+en\\b"
+  ],
+  "we_patterns": [
+    "^We\\s+\\w+",
+    "^we\\s+\\w+"
+  ],
+  "past_tense_patterns": [
+    "\\b\\w+ed\\b",
+    "\\bwas\\b",
+    "\\bwere\\b",
+    "\\bhad\\b"
+  ],
+  "present_tense_patterns": [
+    "\\bis\\b",
+    "\\bare\\b",
+    "\\bhas\\b",
+    "\\bhave\\b",
+    "\\b\\w+s\\b"
+  ],
+  "academic_verbs": [
+    "demonstrated", "showed", "revealed", "achieved", "obtained",
+    "validated", "confirmed", "established", "determined", "measured",
+    "detected", "observed", "found", "identified", "characterized",
+    "developed", "designed", "constructed", "fabricated", "prepared",
+    "analyzed", "evaluated", "assessed", "compared", "tested",
+    "optimized", "enhanced", "improved", "increased", "reduced",
+    "enabled", "facilitated", "allowed", "provided", "offered",
+    "suggests", "indicates", "implies", "supports", "demonstrates"
+  ],
+  "transition_phrases": {
+    "introduction": [
+      "Here, we present", "Here, we report", "Here, we describe",
+      "In this study", "In this work", "To address this",
+      "Addressing", "To meet this need"
+    ],
+    "methods": [
+      "Briefly,", "Following", "According to", "As previously described"
+    ],
+    "results": [
+      "We first", "We next", "We then", "Finally,",
+      "To further", "To validate", "To demonstrate"
+    ],
+    "discussion": [
+      "Our results", "These findings", "This study",
+      "One limitation", "Future work", "In conclusion"
+    ]
+  },
+  "hedging_expressions": [
+    "may", "might", "could", "would",
+    "suggests", "indicates", "implies", "appears",
+    "possibly", "potentially", "likely", "presumably",
+    "it is possible", "it is likely"
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-name: report-input-analyzer
+name: input-analyzer
 description: "연구 노트 입력을 분석하여 입력 형식(폴더/파일/코드베이스)을 감지하고, 연구 도메인을 자동 추론하며, 파일 구조를 분류하는 에이전트"
 tools: Read, Glob, Grep
 model: sonnet
@@ -61,6 +61,8 @@ Step 1-2. 입력 형식별 처리
 Step 2-1. 키워드 빈도 분석
 ├── 모든 파일 내용에서 키워드 추출
 ├── references/field_keywords/*.json 로드
+│   ├── 파일명 형식: {domain_normalized}_keywords.json
+│   └── 예: ros2_keywords.json, ai_ml_keywords.json, general_keywords.json
 └── 각 도메인별 키워드 매칭 점수 계산
 
 Step 2-2. 도메인 판정
@@ -69,6 +71,12 @@ Step 2-2. 도메인 판정
 ├── 물리학 지표: quantum, particle, field, energy, wave
 ├── 생명공학 지표: gene, protein, cell, DNA, RNA
 └── 최고 점수 도메인 선택 (동점 시 GENERAL)
+
+Step 2-2a. 도메인명 정규화 (키워드 파일 로드용)
+├── 도메인명을 소문자로 변환
+├── 특수문자 "/" → "_" 치환
+├── 예시: "ROS2" → "ros2", "AI/ML" → "ai_ml", "GENERAL" → "general"
+└── 정규화된 이름으로 {domain}_keywords.json 파일 로드
 
 Step 2-3. 도메인 확정
 ├── 점수 차이가 30% 이상이면 단일 도메인
@@ -219,3 +227,13 @@ domain_score =
 - `references/field_keywords/ros2_keywords.json`: ROS2 도메인 키워드
 - `references/field_keywords/ai_ml_keywords.json`: AI/ML 도메인 키워드
 - `references/field_keywords/general_keywords.json`: 범용 키워드 및 도메인 감지 힌트
+
+### 도메인명-파일명 매핑
+
+| 도메인명 (표시용) | 정규화된 이름 | 키워드 파일 |
+|------------------|---------------|-------------|
+| ROS2 | ros2 | ros2_keywords.json |
+| AI/ML | ai_ml | ai_ml_keywords.json |
+| GENERAL | general | general_keywords.json |
+
+**정규화 규칙**: `domain.lower().replace("/", "_") + "_keywords.json"`

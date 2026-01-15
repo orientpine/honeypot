@@ -1,5 +1,5 @@
 ---
-name: report-chapter-writer
+name: chapter-writer
 description: "4단계 문장 패턴을 적용하여 공학 박사 수준의 국가기관 제출용 챕터를 작성하는 에이전트. 연구 노트에서 추출한 내용을 전문적 보고서 형식으로 변환함"
 tools: Read, Write, Glob
 model: sonnet
