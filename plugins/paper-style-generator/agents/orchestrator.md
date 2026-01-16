@@ -17,7 +17,7 @@ Claude Code 스킬 세트를 자동 생성하는 메타-플러그인 오케스�
 ### 1.1 목적
 
 - **입력**: PDF 논문 10편 이상 (동일 저자 또는 동일 분야)
-- **출력**: `~/.claude/skills/{name}-paper-skills/` 에 9개 섹션별 스킬 세트
+- **출력**: `{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 9개 섹션별 스킬 세트
 
 ### 1.2 생성되는 스킬 세트
 
@@ -64,7 +64,7 @@ Claude Code 스킬 세트를 자동 생성하는 메타-플러그인 오케스�
 │  Phase 3: 스킬 생성 [skill-generator agent]                         │
 │  ├── 템플릿 기반 9개 스킬 생성                                       │
 │  ├── 분석 결과를 스킬에 반영                                         │
-│  └── ~/.claude/skills/{name}-paper-skills/ 에 저장                  │
+│  └── {CWD}/my-marketplace/plugins/{name}-paper-skills/ 에 저장     │
 │           ↓                                                         │
 │  OUTPUT: 사용 가능한 논문 작성 스킬 세트                              │
 │                                                                     │
@@ -86,7 +86,7 @@ Claude Code 스킬 세트를 자동 생성하는 메타-플러그인 오케스�
 
 | 항목 | 설명 | 기본값 |
 |------|------|--------|
-| `output_path` | 스킬 저장 경로 | `~/.claude/skills/` |
+| `output_path` | 스킬 저장 경로 | `{CWD}/my-marketplace/` |
 | `min_papers` | 최소 논문 수 | `10` |
 | `language` | 분석 언어 | `en` (영어) |
 
@@ -178,7 +178,7 @@ Task(subagent_type="paper-style-generator:skill-generator")
 입력:
 - style_analysis: Phase 2의 분석 결과
 - style_name: 사용자 제공 이름
-- output_path: ~/.claude/skills/{style_name}-paper-skills/
+- output_path: {CWD}/my-marketplace/plugins/{style_name}-paper-skills/
 
 출력:
 - 9개 스킬 폴더
@@ -186,42 +186,37 @@ Task(subagent_type="paper-style-generator:skill-generator")
 - README.md
 ```
 
-### 6.2 생성 구조
+### 6.2 생성 구조 (my-marketplace 패턴)
 
 ```
-~/.claude/skills/{name}-paper-skills/
+{CWD}/my-marketplace/                        # 마켓플레이스 루트
 ├── .claude-plugin/
-│   └── marketplace.json
-├── {name}-common/
-│   └── skills/
-│       ├── SKILL.md
-│       └── references/
-│           ├── style-guide.md
-│           └── vocabulary-patterns.md
-├── {name}-abstract/
-│   └── skills/
-│       ├── SKILL.md
-│       └── assets/
-│           └── input-template.md
-├── {name}-introduction/
-│   └── skills/
-│       ├── SKILL.md
-│       ├── references/
-│       └── assets/
-├── {name}-methodology/
-│   └── skills/...
-├── {name}-results/
-│   └── skills/...
-├── {name}-discussion/
-│   └── skills/...
-├── {name}-caption/
-│   └── skills/...
-├── {name}-title/
-│   └── skills/...
-├── {name}-verify/
-│   └── skills/...
-└── README.md
+│   └── marketplace.json                     # plugins[] 배열 (honeypot 패턴)
+└── plugins/
+    └── {name}-paper-skills/                 # 플러그인 폴더
+        ├── agents/                          # 9 Agents
+        │   ├── {name}-paper-orchestrator.md
+        │   ├── {name}-title-writer.md
+        │   ├── {name}-abstract-writer.md
+        │   ├── {name}-introduction-writer.md
+        │   ├── {name}-methodology-writer.md
+        │   ├── {name}-results-writer.md
+        │   ├── {name}-discussion-writer.md
+        │   ├── {name}-caption-writer.md
+        │   └── {name}-verify.md
+        ├── skills/                          # 1 Skill (공통 참조)
+        │   └── {name}-style-guide/
+        │       ├── SKILL.md
+        │       └── references/
+        │           ├── voice-tense-patterns.md
+        │           ├── vocabulary-patterns.md
+        │           ├── measurement-formats.md
+        │           ├── citation-style.md
+        │           └── section-templates/...
+        └── README.md
 ```
+
+> **Note**: `my-marketplace/` 가 없으면 자동 생성됩니다. 이미 있으면 `plugins[]` 배열에 추가됩니다.
 
 ---
 
@@ -263,7 +258,7 @@ Task(subagent_type="paper-style-generator:skill-generator")
 ✅ Paper Style Generator 완료!
 
 📁 생성된 스킬 세트:
-   ~/.claude/skills/hakho-paper-skills/
+   ./my-marketplace/plugins/hakho-paper-skills/
 
 📊 분석 통계:
    - 분석 논문: 12편
@@ -271,12 +266,17 @@ Task(subagent_type="paper-style-generator:skill-generator")
    - 신뢰도: 92.3%
 
 🚀 사용 방법:
-   1. Claude Code에서 스킬 등록:
-      /plugin marketplace add ~/.claude/skills/hakho-paper-skills
+   1. Claude Code에서 my-marketplace 등록:
+      /plugin marketplace add ./my-marketplace
 
-   2. 스킬 사용:
-      /hakho-introduction
-      /hakho-methodology
+   2. (이미 등록된 경우 재등록):
+      /plugin marketplace remove my-marketplace
+      /plugin marketplace add ./my-marketplace
+
+   3. 스킬 사용:
+      @hakho-paper-orchestrator (전체 논문 자동 생성)
+      @hakho-introduction-writer
+      @hakho-methodology-writer
       ...
 ```
 
@@ -321,17 +321,20 @@ Task(subagent_type="paper-style-generator:skill-generator")
 ## 9. 메타데이터
 
 ```yaml
-version: "1.0.0"
+version: "2.0.0"
 created: "2026-01-08"
+updated: "2026-01-16"
 category: "documentation"
 workflow:
   - PDF 변환 (MinerU)
   - 스타일 분석 (깊은 분석)
-  - 스킬 생성 (9개 섹션)
+  - 스킬 생성 (9 agents + 1 skill)
 dependencies:
   - mineru (pip install mineru)
   - jinja2 (템플릿 렌더링)
 output:
-  location: "~/.claude/skills/{name}-paper-skills/"
-  skills_count: 9
+  location: "{CWD}/my-marketplace/plugins/{name}-paper-skills/"
+  marketplace_pattern: "honeypot plugins[] array"
+  agents_count: 9
+  skills_count: 1
 ```
