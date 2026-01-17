@@ -168,6 +168,23 @@
         "./agents/stock-critic.md"
       ],
       "skills": ["./skills"]
+    },
+    {
+      "name": "equity-research",
+      "source": "./plugins/equity-research",
+      "description": "Professional equity research analysis with institutional-grade formatting. 티커와 함께 호출하면 기관급 주식 분석 리포트를 생성합니다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/honeypot",
+      "repository": "https://github.com/orientpine/honeypot",
+      "license": "MIT",
+      "keywords": ["equity-research", "stock-analysis", "trading", "institutional-grade"],
+      "category": "finance",
+      "strict": true,
+      "agents": ["./agents/equity-research-analyst.md"]
     }
   ]
 }
