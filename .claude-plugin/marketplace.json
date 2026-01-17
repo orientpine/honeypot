@@ -185,6 +185,23 @@
       "category": "finance",
       "strict": true,
       "agents": ["./agents/equity-research-analyst.md"]
+    },
+    {
+      "name": "hwpx-converter",
+      "source": "./plugins/hwpx-converter",
+      "description": "Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반. 단일 파일 및 폴더 배치 변환 지원.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/honeypot",
+      "repository": "https://github.com/orientpine/honeypot",
+      "license": "MIT",
+      "keywords": ["markdown", "hwpx", "hangeul", "document-conversion", "pandoc"],
+      "category": "utilities",
+      "strict": true,
+      "skills": ["./skills"]
     }
   ]
 }
