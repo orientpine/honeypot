@@ -29,8 +29,18 @@ Markdown 파일을 한글 문서(HWPX)로 변환합니다.
 
 ⚠️ **이 스킬을 사용하려면 아래 프로그램이 설치되어 있어야 합니다.**
 
+### 자동 설치 (권장)
+
+**`hwpx-setup` 스킬을 호출하면 의존성을 자동으로 설치합니다.**
+
+```
+hwpx-setup 스킬을 사용해서 의존성을 설치해줘
+```
+
+### 수동 설치
+
 **1. Pandoc 설치** (시스템 의존성)
-- Windows: [Pandoc 공식 다운로드](https://pandoc.org/installing.html) 또는 `winget install pandoc`
+- Windows: `winget install pandoc` 또는 [공식 다운로드](https://pandoc.org/installing.html)
 - macOS: `brew install pandoc`
 - Linux: `sudo apt install pandoc`
 
