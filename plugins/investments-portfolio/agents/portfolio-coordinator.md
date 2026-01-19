@@ -374,62 +374,94 @@ SKIP (에러 아님) - fund-portfolio는 material 없이 정상 동작
 )
 ```
 
-#### 2.0.2.5 Step 0.2.5: 파일 존재 확인 (v4.2 신규 - MANDATORY)
+#### 2.0.2.5 Step 0.2.5: 파일 존재 + 내용 검증 (v4.3 강화 - MANDATORY)
 
-> **⚠️ CRITICAL**: macro-synthesizer 호출 전 반드시 분석 파일 존재를 확인합니다.
-> 파일이 없으면 환각 데이터로 보고서가 작성될 위험이 있습니다.
+> **⚠️ CRITICAL**: macro-synthesizer 호출 전 반드시 분석 파일을 **읽고 내용을 검증**합니다.
+> 파일이 없거나 **내용이 불완전하면** 환각 데이터로 보고서가 작성될 위험이 있습니다.
 
-**목적**: 분석 에이전트가 저장한 JSON 파일 존재 확인
+**목적**: 분석 에이전트가 저장한 JSON 파일 존재 + **품질 검증**
 
 ```markdown
-## 파일 존재 확인 (Coordinator 직접 수행)
+## 파일 존재 + 내용 검증 (Coordinator 직접 수행)
 
 ### 확인 대상 파일
-1. {output_path}/rate-analysis.json
-2. {output_path}/sector-analysis.json
-3. {output_path}/risk-analysis.json
+1. {output_path}/index-data.json (v4.3 추가)
+2. {output_path}/rate-analysis.json
+3. {output_path}/sector-analysis.json
+4. {output_path}/risk-analysis.json
 
-### 확인 방법
-Read 도구로 각 파일 읽기 시도:
+### 확인 방법 (2단계)
+
+#### 1단계: 파일 Read
+Read 도구로 각 파일 읽기:
+- Read(file_path="{output_path}/index-data.json")
 - Read(file_path="{output_path}/rate-analysis.json")
 - Read(file_path="{output_path}/sector-analysis.json")
 - Read(file_path="{output_path}/risk-analysis.json")
 
-### 파일 누락 시 처리 (BLOCKING)
-IF 파일이 하나라도 없음:
-  1. 누락된 파일 목록 기록
-  2. 해당 에이전트 재실행 요청
-  3. 재실행 후에도 실패 → 사용자 에스컬레이션
-  4. **절대 환각 데이터로 대체하지 않음**
+#### 2단계: 내용 검증 (v4.3 신규 - 환각 방지 핵심)
+각 파일에 대해 다음을 확인:
 
-### 파일 존재 확인 결과 로그
+| 검증 항목 | 기준 | 실패 시 |
+|----------|------|--------|
+| JSON 파싱 | 유효한 JSON인가? | FAIL |
+| status 필드 | `"SUCCESS"` 인가? | FAIL |
+| original_text | 최소 1개 이상 존재하는가? | FAIL (환각 데이터) |
+| sources 배열 | URL이 포함된 출처가 있는가? | FAIL |
+| 빈 값 검사 | 핵심 필드가 null/빈값이 아닌가? | FAIL |
+
+### 환각 감지 패턴 (v4.3 신규)
+다음 패턴이 발견되면 **환각 데이터로 간주**:
+- `original_text: null` 또는 누락
+- `status: "FAIL"` 또는 누락
+- `sources: []` (빈 배열)
+- 예시 값 그대로 존재 (예: "X,XXX.XX", "X.XX%")
+
+### 파일 검증 결과 로그 (v4.3 확장)
 ```json
 {
   "file_verification": {
-    "rate-analysis.json": "EXISTS|MISSING",
-    "sector-analysis.json": "EXISTS|MISSING",
-    "risk-analysis.json": "EXISTS|MISSING",
-    "all_files_present": true|false,
+    "index-data.json": {
+      "exists": true,
+      "json_valid": true,
+      "status": "SUCCESS",
+      "has_original_text": true,
+      "has_sources": true,
+      "hallucination_detected": false,
+      "verdict": "PASS"
+    },
+    "rate-analysis.json": { ... },
+    "sector-analysis.json": { ... },
+    "risk-analysis.json": { ... },
+    "all_files_valid": true|false,
+    "hallucination_risk": "NONE|LOW|HIGH",
     "verification_timestamp": "YYYY-MM-DD HH:MM:SS"
   }
 }
 ```
 
-### 모든 파일 존재 시
+### 검증 통과 시
 → Step 0.3 (macro-synthesizer) 진행
+→ **파일 경로만 전달** (데이터는 synthesizer가 직접 Read)
 
-### 파일 누락 시
+### 검증 실패 시 (BLOCKING)
 → **FAIL 반환**, 워크플로우 중단
-→ 에러 메시지: "분석 파일 누락: [파일명]. 에이전트 재실행 필요."
+→ 해당 에이전트 재실행 요청
+→ 에러 메시지: "분석 파일 검증 실패: [파일명]. [실패 사유]. 에이전트 재실행 필요."
+→ **절대 환각 데이터로 대체하지 않음**
 ```
 
 ---
 
-#### 2.0.3 Step 0.3: macro-synthesizer 호출 (순차 실행)
+#### 2.0.3 Step 0.3: macro-synthesizer 호출 (v4.3 - 파일 경로만 전달)
 
-**목적**: 3개 분석 결과 통합 및 최종 거시경제 보고서 작성
+**목적**: 4개 분석 결과 통합 및 최종 거시경제 보고서 작성
 
-**전제 조건**: Step 0.2.5에서 모든 분석 파일 존재 확인 완료
+**전제 조건**: Step 0.2.5에서 모든 분석 파일 **존재 + 내용 검증** 완료
+
+> **⚠️ CRITICAL (v4.3)**: 데이터를 prompt로 전달하지 마세요!
+> **파일 경로만 전달**하고, synthesizer가 **직접 Read**하도록 합니다.
+> 이것이 환각 방지의 핵심입니다.
 
 ```markdown
 Task(
@@ -438,11 +470,25 @@ Task(
   prompt="""
 ## 거시경제 최종 보고서 작성 요청
 
-### 입력 데이터 (파일에서 읽기)
-- index-fetcher 결과: {index_data}
-- rate-analyst 결과: Read("{output_path}/rate-analysis.json")
-- sector-analyst 결과: Read("{output_path}/sector-analysis.json")
-- risk-analyst 결과: Read("{output_path}/risk-analysis.json")
+### ⚠️ 입력 데이터 수집 방법 (환각 방지 CRITICAL)
+
+**coordinator가 데이터를 제공하지 않습니다!**
+**당신이 직접 Read 도구로 파일을 읽어야 합니다.**
+
+### 파일 경로 (Read 도구로 직접 읽기)
+output_path: {output_path}
+
+읽어야 할 파일:
+1. Read("{output_path}/index-data.json")
+2. Read("{output_path}/rate-analysis.json")
+3. Read("{output_path}/sector-analysis.json")
+4. Read("{output_path}/risk-analysis.json")
+
+### 파일 읽기 실패 시 행동
+- 파일이 없거나 읽기 실패 → FAIL 반환, 보고서 작성 금지
+- JSON 파싱 실패 → FAIL 반환, 보고서 작성 금지
+- original_text 없음 → 해당 데이터 사용 금지 (환각 위험)
+- **절대 환각 데이터를 생성하지 마세요!**
 
 ### 작성 항목
 1. 시장 전망 요약 (Executive Summary)
@@ -455,17 +501,18 @@ Task(
 output_path: portfolios/{session_folder}/00-macro-outlook.md
 
 ### 출력 요구사항
-1. 모든 수치에 출처 명시
-2. 확률 수치 사용 금지 (범위로 표현)
-3. 낙관/비관 시나리오 균형
-4. 자산배분 시사점 포함
+1. 모든 수치는 JSON 파일에서 **그대로 복사** (수정 금지)
+2. 모든 URL은 JSON 파일의 sources에서 **그대로 복사** (새 URL 생성 금지)
+3. 확률 수치 사용 금지 (범위로 표현)
+4. 낙관/비관 시나리오 균형
+5. 자산배분 시사점 포함
 
 ### 출력 형식
 Markdown:
 # 거시경제 분석 보고서
 
 ## 시장 전망 요약
-[Executive Summary]
+[Executive Summary - index-data.json에서 현재 지수 복사]
 
 ## 금리/환율 전망
 [rate-analyst 결과 통합]
@@ -1255,33 +1302,34 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "4.2"
-updated: "2026-01-14"
+version: "4.3"
+updated: "2026-01-19"
 agents:
   - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
   - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - risk-analyst        # 리스크 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
-  - macro-synthesizer   # 거시경제 최종 보고서 (Step 0.3) - Macro-Only에서도 필수
+  - macro-synthesizer   # 거시경제 최종 보고서 (Step 0.3) - 파일 직접 Read 필수 (v4.3)
   - macro-critic        # 거시경제 분석 검증 (Step 0.4, 재시도 로직) - Macro-Only에서도 필수
   - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조) - Macro-Only에서 생략
   - compliance-checker  # 규제 검증 (Step 3) - Macro-Only에서 생략
   - output-critic       # 출력 검증 (Step 5) - Macro-Only에서 생략
 workflow_modes:
-  full: "index-fetcher → analysts → FILE_CHECK → synthesizer → critic → fund-portfolio → compliance → output-critic"
-  macro_only: "index-fetcher → analysts → FILE_CHECK → synthesizer → critic (v4.2)"
+  full: "index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
+  macro_only: "index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.3)"
   document_review: "compliance → output-critic"
 max_retries:
   - index-fetcher: 1 (FAIL 시 중단)
   - rate-analyst: 3 (병렬, 각각 재시도)
   - sector-analyst: 3 (병렬, 각각 재시도)
   - risk-analyst: 3 (병렬, 각각 재시도)
-  - file_verification: 1 (파일 누락 시 에이전트 재실행)
+  - file_verification: 1 (파일 누락/검증 실패 시 에이전트 재실행)
   - macro-synthesizer: 1 (재시도 없음)
   - macro-critic: 2 (FAIL 시 Step 0.3 재시작, 최대 2회 반복)
   - compliance-checker: 3 (FAIL 시 fund-portfolio 수정)
 output_files:
   full:
+    - index-data.json        # v4.3 추가
     - rate-analysis.json     # v4.2 신규
     - sector-analysis.json   # v4.2 신규
     - risk-analysis.json     # v4.2 신규
@@ -1291,11 +1339,17 @@ output_files:
     - 03-output-verification.md
     - 04-portfolio-summary.md
   macro_only:
+    - index-data.json        # v4.3 추가
     - rate-analysis.json     # v4.2 신규
     - sector-analysis.json   # v4.2 신규
     - risk-analysis.json     # v4.2 신규
     - macro-outlook-YYYY-QN.md
 changes:
+  - "v4.3: 파일 내용 검증 강화 (환각 방지 핵심 개선)"
+  - "v4.3: Step 0.2.5에서 JSON 파싱, original_text, status 필드 검증 추가"
+  - "v4.3: macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지)"
+  - "v4.3: 환각 감지 패턴 추가 (null, 빈 배열, 예시 값)"
+  - "v4.3: index-data.json 검증 대상 추가"
   - "v4.2: 분석 에이전트 파일 저장 필수화 (환각 방지)"
   - "v4.2: Step 0.2.5 파일 존재 확인 로직 추가"
   - "v4.2: rate/sector/risk-analyst JSON 파일 직접 저장"
@@ -1310,8 +1364,10 @@ critical_rules:
   - "에이전트 결과 원본 인용"
   - "직접 분석 금지"
   - "index-fetcher FAIL 시 워크플로우 중단"
-  - "⚠️ Step 0.2.5 파일 존재 확인 필수 (v4.2)"
-  - "⚠️ 분석 파일 누락 시 환각 데이터 생성 절대 금지"
+  - "⚠️ Step 0.2.5 파일 존재 + 내용 검증 필수 (v4.3 강화)"
+  - "⚠️ macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지, v4.3)"
+  - "⚠️ JSON 파일에 original_text 없으면 환각 데이터로 간주 (v4.3)"
+  - "⚠️ 분석 파일 누락/검증실패 시 환각 데이터 생성 절대 금지"
   - "⚠️ Macro-Only 모드에서도 Step 0.1~0.4 절대 생략 불가"
   - "⚠️ 현재 지수값(S&P 500, KOSPI) 누락 시 FAIL"
   - "macro-critic FAIL 시 Step 0.3 재시작 (최대 2회 반복)"
