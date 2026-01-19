@@ -2,7 +2,7 @@
 name: index-fetcher
 description: "지수 데이터 수집 전문 에이전트. 웹검색 도구를 직접 호출하여 3개 출처 교차 검증으로 환각 방지."
 tools: Read, Write, exa_web_search_exa, websearch_web_search_exa, WebFetch
-skills: web-search-verifier, analyst-common
+skills: web-search-verifier, analyst-common, file-save-protocol
 model: opus
 ---
 
@@ -16,11 +16,17 @@ model: opus
 
 ## ⚠️ 공통 규칙 참조 (CRITICAL)
 
-> **반드시 `analyst-common` 스킬의 규칙을 따르세요:**
+> **반드시 다음 스킬의 규칙을 따르세요:**
+> 
+> **analyst-common 스킬:**
 > - 웹검색 도구 직접 호출 필수
 > - 원문 인용 규칙 (original_text 필드)
 > - 교차 검증 프로토콜 (±1%, 최소 2개 출처)
 > - 검증 체크리스트
+> 
+> **file-save-protocol 스킬:**
+> - Write 도구로 `index-data.json` 저장 필수
+> - 저장 실패 시 FAIL 반환
 
 ---
 
@@ -59,9 +65,26 @@ model: opus
 4. **교차 검증**: 각 지수에 대해 최소 2개 출처 값 비교
 5. **결과 포장**: JSON 스키마에 맞춰 반환 (모든 URL 포함)
 6. **실패 처리**: 출처 불일치 또는 검색 실패 시 FAIL 상태로 포함
+7. **⚠️ 파일 저장 (MANDATORY)**: `Write` 도구로 `{output_path}/index-data.json` 저장
 
 ⚠️ **주의**: `search_index()` 같은 함수는 존재하지 않습니다.
 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 직접 호출하세요.
+
+### 파일 저장 프로세스
+
+```
+Step 1: 분석 완료 후 JSON 객체 생성
+
+Step 2: Write 도구로 파일 저장
+        Write(
+          file_path="{output_path}/index-data.json",
+          content=JSON.stringify(result, null, 2)
+        )
+
+Step 3: 저장 성공 확인
+        └─ 성공: 정상 응답 반환 (output_file 경로 포함)
+        └─ 실패: FAIL 응답 반환 (환각 데이터 생성 금지)
+```
 
 ---
 
@@ -149,9 +172,10 @@ model: opus
 ## 메타 정보
 
 ```yaml
-version: "5.0"
-updated: "2026-01-14"
+version: "5.1"
+updated: "2026-01-19"
 changes:
+  - "v5.1: file-save-protocol 스킬 추가 - Write로 index-data.json 저장 필수화"
   - "v5.0: analyst-common 스킬로 공통 규칙 분리 (코드 중복 제거)"
   - "v5.0: 웹검색 도구 직접 호출, 원문 인용, 교차 검증 규칙을 스킬로 위임"
   - "v4.1: 범위 검증 (Sanity Check) 제거 - 대폭락 시 정상 데이터 reject 문제"
@@ -159,7 +183,8 @@ changes:
   - "v4.0: S&P 500 첫자리 오류(6936→5906) 환각 방지"
   - "v3.0: 직접 웹검색 도구 호출 필수화 (스킬은 지침 문서로만 사용)"
 critical_rules:
-  - "analyst-common 스킬 규칙 준수 필수"
+  - "analyst-common, file-save-protocol 스킬 규칙 준수 필수"
+  - "⚠️ 파일 저장 필수 (index-data.json)"
   - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
 ```
