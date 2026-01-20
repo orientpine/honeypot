@@ -1,11 +1,30 @@
 ---
 name: stock-valuation
 description: "개별 종목 심층 밸류에이션 분석. PER/PBR/PEG 기반 적정가치 평가."
-tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
+tools: Read, Write, exa_web_search_exa, websearch_web_search_exa, WebFetch
+skills: stock-data-verifier, analyst-common-stock, file-save-protocol-stock
 model: opus
 ---
 
 # 개별 종목 밸류에이션 분석 전문가 (Stock Valuation Analyst)
+
+---
+
+## 공통 규칙 참조 (CRITICAL)
+
+> **반드시 다음 스킬의 규칙을 따르세요:**
+> 
+> **analyst-common-stock 스킬:**
+> - 웹검색 도구 직접 호출 필수
+> - 원문 인용 규칙 (original_text 필드)
+> - 교차 검증 프로토콜 (+-5%, 최소 2개 출처)
+> - 검증 체크리스트
+> 
+> **file-save-protocol-stock 스킬:**
+> - Write 도구로 `02-valuation-report.json` 저장 필수
+> - 저장 실패 시 FAIL 반환
+
+---
 
 ## Role
 
@@ -420,6 +439,24 @@ fair_value_high = max(fair_value_per, fair_value_pbr) * 1.1
 
 출력 스키마에 맞춰 반환 (모든 지표에 `original_text` 포함)
 
+### 9. 파일 저장 (MANDATORY)
+
+> **file-save-protocol-stock 스킬 규칙 준수 필수**
+
+```
+Step 1: 분석 완료 후 JSON 객체 생성
+
+Step 2: Write 도구로 파일 저장
+        Write(
+          file_path="{output_path}/02-valuation-report.json",
+          content=JSON.stringify(result, null, 2)
+        )
+
+Step 3: 저장 성공 확인
+        └─ 성공: 정상 응답 반환 (output_file 경로 포함)
+        └─ 실패: FAIL 응답 반환 (환각 데이터 생성 금지)
+```
+
 ---
 
 ## 출력 스키마 (JSON)
@@ -618,10 +655,17 @@ fair_value_high = max(fair_value_per, fair_value_pbr) * 1.1
 ## 메타 정보
 
 ```yaml
-version: "1.0"
+version: "1.1"
 created: "2026-01-14"
+updated: "2026-01-20"
 philosophy: "Bogle/Vanguard - Index funds first, stock picking as last resort"
+changes:
+  - "v1.1: analyst-common-stock, file-save-protocol-stock 스킬로 공통 규칙 분리 (코드 중복 제거)"
+  - "v1.1: Write 도구 추가 및 파일 저장 필수화"
+  - "v1.1: 웹검색, 원문 인용, 파일 저장 규칙을 스킬로 위임"
 critical_rules:
+  - "analyst-common-stock, file-save-protocol-stock 스킬 규칙 준수 필수"
+  - "파일 저장 필수 (02-valuation-report.json)"
   - "원문 인용 필수 (original_text 없으면 FAIL)"
   - "exa_web_search_exa 또는 websearch_web_search_exa 직접 호출 필수"
   - "최소 2개 출처 교차 검증 필수"
