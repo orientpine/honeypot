@@ -45,11 +45,11 @@ Visual-generator 플러그인의 3개 prompt-* 스킬을 현대화하고, 공통
 6. 업데이트된 각 스킬의 `prompt_template.md` - 4블록 구조 통일
 
 ### Definition of Done
-- [ ] `grep -rE "\d+pt|\d+px" plugins/visual-generator/skills/*/` CONTENT 블록에서 0건
-- [ ] 모든 SKILL.md에 `[INSTRUCTION BLOCK]`, `[CONFIGURATION BLOCK]`, `[CONTENT BLOCK]`, `[FORBIDDEN ELEMENTS]` 존재
-- [ ] 공통 레이아웃 파일에 24종 레이아웃 존재
-- [ ] 각 prompt_style_guide.md에 9개 테마 정의
-- [ ] 각 SKILL.md에 "렌더링 방지 체크리스트" 섹션 존재
+- [x] `grep -rE "\d+pt|\d+px" plugins/visual-generator/skills/*/` CONTENT 블록에서 0건
+- [x] 모든 SKILL.md에 `[INSTRUCTION BLOCK]`, `[CONFIGURATION BLOCK]`, `[CONTENT BLOCK]`, `[FORBIDDEN ELEMENTS]` 존재
+- [x] 공통 레이아웃 파일에 24종 레이아웃 존재
+- [x] 각 prompt_style_guide.md에 9개 테마 정의
+- [x] 각 SKILL.md에 "렌더링 방지 체크리스트" 섹션 존재
 
 ### Must Have
 - pt/px 값이 CONTENT 블록에 포함되지 않음 (크기 등급제: 대형/중형/소형)
@@ -380,10 +380,10 @@ grep -c "테마.*:" plugins/visual-generator/skills/*/references/prompt_style_gu
 ```
 
 ### Final Checklist
-- [ ] 공통 레이아웃 파일 (24종) 존재
-- [ ] 모든 스킬 4블록 구조 적용
-- [ ] 모든 스킬 pt/px 제거 (CONTENT 블록)
-- [ ] 모든 스킬 9개 테마 정의
-- [ ] 모든 스킬 렌더링 방지 체크리스트 존재
-- [ ] 스킬별 중복 layout_types.md 삭제됨
-- [ ] 모든 "Must NOT Have" 항목 준수
+- [x] 공통 레이아웃 파일 (24종) 존재
+- [x] 모든 스킬 4블록 구조 적용
+- [x] 모든 스킬 pt/px 제거 (CONTENT 블록)
+- [x] 모든 스킬 9개 테마 정의
+- [x] 모든 스킬 렌더링 방지 체크리스트 존재
+- [x] 스킬별 중복 layout_types.md 삭제됨
+- [x] 모든 "Must NOT Have" 항목 준수
