@@ -311,7 +311,7 @@ Task 1  Task 2      Task 3
 
 ---
 
-- [ ] 4. 최종 검증 및 정리
+- [x] 4. 최종 검증 및 정리
 
   **What to do**:
   - 전체 pt/px 패턴 검색 (CONTENT 블록)
@@ -333,11 +333,11 @@ Task 1  Task 2      Task 3
   **Acceptance Criteria**:
   
   **전체 검증**:
-  - [ ] `grep -rE "\d+pt|\d+px" plugins/visual-generator/skills/*/` → CONTENT 블록에서 0건
-  - [ ] 3개 스킬 모두 공통 레이아웃 파일 참조
-  - [ ] 3개 스킬 모두 9개 테마 정의
-  - [ ] 3개 스킬 모두 렌더링 방지 체크리스트 존재
-  - [ ] `ls plugins/visual-generator/skills/*/references/layout_types.md` → 0건 (모두 삭제됨)
+  - [x] `grep -rE "\d+pt|\d+px" plugins/visual-generator/skills/*/` → CONTENT 블록에서 0건
+  - [x] 3개 스킬 모두 공통 레이아웃 파일 참조
+  - [x] 3개 스킬 모두 9개 테마 정의
+  - [x] 3개 스킬 모두 렌더링 방지 체크리스트 존재
+  - [x] `ls plugins/visual-generator/skills/*/references/layout_types.md` → 0건 (모두 삭제됨)
   
   **Gemini API 테스트 (선택)**:
   - [ ] 각 스킬로 샘플 프롬프트 생성
