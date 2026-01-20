@@ -36,7 +36,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 | 항목 | 설명 | 기본값 |
 |------|------|--------|
 | 시각화 유형 | 선호하는 시각화 방식 (12종) | 자동 선택 |
-| 무드 테마 | 6가지 무드 중 선택 | `technical-report` |
+| 무드 테마 | 9가지 무드 중 선택 | `technical-report` |
 | 도메인 키워드 | 보존해야 할 전문용어 목록 | - |
 | 약어 허용 | 긴 용어의 약어 사용 허용 | true |
 | 출력 폴더 | 프롬프트 저장 위치 | `concept_image_gen/prompts/` |
@@ -99,7 +99,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 
 ### Phase 3: 시각화 유형 선택
 
-[references/layout_types.md](references/layout_types.md) 참조하여 개념에 맞는 시각화 선택:
+[../../references/layout_types.md](../../references/layout_types.md) 참조하여 개념에 맞는 시각화 선택 (공유 레이아웃):
 
 | 개념 유형 | 시각화 유형 |
 |:---|:---|
@@ -175,7 +175,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 ==================================================
 [CONTENT BLOCK - FOR IMAGE RENDERING]
 7. 핵심 메시지 (한글)
-8. 도메인 키워드 (한글 + 영어 hint)
+8. 도메인 키워드 (한글, 번역 힌트는 INSTRUCTION 블록에만)
 9. 시각 구성 (한글)
 10. 텍스트 요소 (한글) ⚠️ 폰트 크기(pt/px) 명시 금지, 내용과 위치만 기술
 ==================================================
@@ -327,6 +327,8 @@ Domain Keywords Reference (for AI understanding only - DO NOT render):
 
 프롬프트 완성 후 아래 항목이 포함되어 있지 **않은지** 반드시 확인:
 
+- **CONTENT 블록 렌더링 규칙**: 병기 금지는 **CONTENT 블록에만** 적용 (INSTRUCTION 블록의 번역/설명 힌트는 허용)
+
 | 금지 패턴 | 예시 | 대체 표현 |
 |:---|:---|:---|
 | 폰트 크기 숫자+단위 | `14pt`, `32px`, `48pt` | `large`, `medium`, `small` |
@@ -335,10 +337,12 @@ Domain Keywords Reference (for AI understanding only - DO NOT render):
 | 퍼센트 단위 | `50%`, `100%` | `half`, `full` |
 | 설정 텍스트 | `DO NOT RENDER` | 섹션 제목으로만 사용 |
 | 비한글 아시아 문자 | `汎用`, `技术` | 해당 없음 (제거) |
+| 언어 병기 | `굴착기 (Excavator)` | 단일 언어만 사용 |
 
 **프롬프트 검증 방법:**
 ```
 프롬프트 내용에서 "\d+pt" 또는 "\d+px" 패턴 검색 → 0건이어야 함
+프롬프트 내용에서 "\([A-Z][a-z]+\)" 패턴 검색 → 0건이어야 함 (병기 검증)
 ```
 
 **올바른 텍스트 요소 테이블 형식:**
@@ -356,8 +360,8 @@ Domain Keywords Reference (for AI understanding only - DO NOT render):
 
 ## 리소스
 
-- `references/prompt_style_guide.md`: 프롬프트 스타일 가이드 (무드 테마 6종 + 시각 원칙)
-- `references/layout_types.md`: 시각화 유형별 상세 가이드 (12종 메타포)
+- `references/prompt_style_guide.md`: 프롬프트 스타일 가이드 (무드 테마 9종 + 시각 원칙)
+- `../../references/layout_types.md`: 시각화 유형별 상세 가이드 (공유 레이아웃)
 - `assets/output_template/prompt_template.md`: 프롬프트 템플릿 (4블록 구조)
 
 ---
