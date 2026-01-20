@@ -161,7 +161,7 @@ Task 1  Task 2      Task 3
 
 ---
 
-- [ ] 1. prompt-seminar 업데이트 (공통 레이아웃 참조)
+- [x] 1. prompt-seminar 업데이트 (공통 레이아웃 참조)
 
   **What to do**:
   - SKILL.md에서 레이아웃 참조 경로 변경: `references/layout_types.md` → `../../references/layout_types.md`
@@ -190,7 +190,7 @@ Task 1  Task 2      Task 3
 
 ---
 
-- [ ] 2. prompt-concept 업데이트 (최신 기법 적용)
+- [x] 2. prompt-concept 업데이트 (최신 기법 적용)
 
   **What to do**:
   - **SKILL.md 업데이트**:
@@ -243,7 +243,7 @@ Task 1  Task 2      Task 3
 
 ---
 
-- [ ] 3. prompt-gov 업데이트 (4블록 구조 + 최신 기법)
+- [x] 3. prompt-gov 업데이트 (4블록 구조 + 최신 기법)
 
   **What to do**:
   - **SKILL.md 대폭 업데이트**:
