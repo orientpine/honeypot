@@ -158,6 +158,103 @@ Final Output (04-portfolio-summary.md)
 
 ## 2. 워크플로우 시퀀스 (필수)
 
+### 2.-1 Step -1: 데이터 신선도 검사 (Data Freshness Check)
+
+> **목적**: 분석 전 fund_data.json의 데이터 기준일을 확인하여 오래된 데이터로 분석하는 것을 방지합니다.
+> **실행 시점**: 모든 워크플로우(Full, Macro-Only, Document Review) 시작 전 **첫 번째로** 실행
+
+#### 2.-1.1 검사 프로세스
+
+```
+[Step -1: Data Freshness Check]
+     │
+     ▼
+Read("funds/fund_data.json")
+     │
+     ├─ _meta.version 필드 확인
+     │   └─ 형식: "YYYY-MM-DD" (예: "2026-01-02")
+     │
+     ├─ 현재 날짜와 비교
+     │   └─ 경과일 = today - version_date
+     │
+     ▼
+[Freshness 판정]
+     │
+     ├── ≤30일: ✅ FRESH → 워크플로우 진행
+     │
+     ├── 31~60일: ⚠️ STALE → 경고 표시 후 진행
+     │   └─ "데이터가 {N}일 경과했습니다. 최신 데이터 업데이트를 권장합니다."
+     │
+     └── >60일: 🔴 OUTDATED → 사용자 확인 요청
+         └─ "데이터가 {N}일 경과했습니다. 진행하시겠습니까?"
+         └─ 사용자가 승인하면 진행, 거부하면 중단
+```
+
+#### 2.-1.2 Coordinator 직접 수행 (Task 불필요)
+
+```python
+# Coordinator가 직접 Read 도구로 확인
+Read("funds/fund_data.json")
+
+# JSON에서 _meta.version 추출
+# 예시: { "_meta": { "version": "2026-01-02", ... }, "funds": [...] }
+
+# 경과일 계산
+from datetime import date
+version_date = date.fromisoformat(fund_data["_meta"]["version"])
+today = date.today()
+days_elapsed = (today - version_date).days
+```
+
+#### 2.-1.3 판정 기준 및 액션
+
+| 경과일 | 상태 | 액션 | 메시지 |
+|:------:|:----:|------|--------|
+| 0~30일 | ✅ FRESH | 워크플로우 진행 | (없음) |
+| 31~60일 | ⚠️ STALE | 경고 후 진행 | "펀드 데이터가 {N}일 경과했습니다. 정확한 분석을 위해 data-updater 에이전트로 업데이트를 권장합니다." |
+| 61일+ | 🔴 OUTDATED | 사용자 확인 요청 | "펀드 데이터가 {N}일 이상 경과하여 오래되었습니다. 진행하시겠습니까? (업데이트 권장)" |
+
+#### 2.-1.4 데이터 업데이트 안내 (STALE/OUTDATED 시)
+
+```markdown
+## 데이터 업데이트 방법
+
+펀드 데이터가 오래되었습니다. 최신 데이터로 업데이트하려면:
+
+1. 과학기술인공제회에서 최신 CSV 파일을 다운로드합니다.
+2. data-updater 에이전트를 호출합니다:
+
+   ```
+   Task(
+     subagent_type="data-updater",
+     description="펀드 데이터 업데이트",
+     prompt="CSV 파일 경로: resource/YYYY년MM월_상품제안서_퇴직연금(DCIRP).csv"
+   )
+   ```
+
+3. 업데이트 완료 후 포트폴리오 분석을 다시 요청하세요.
+```
+
+#### 2.-1.5 version 필드 누락 시 처리
+
+```
+IF fund_data["_meta"]["version"] 누락:
+    경고: "fund_data.json에 버전 정보가 없습니다. 데이터 신선도를 확인할 수 없습니다."
+    → 워크플로우 진행 (경고만 표시)
+```
+
+#### 2.-1.6 최종 보고서에 데이터 기준일 명시
+
+모든 보고서에 다음 정보를 포함합니다:
+
+```markdown
+**데이터 기준일**: YYYY-MM-DD (fund_data.json _meta.version)
+**분석 실행일**: YYYY-MM-DD HH:MM:SS
+**데이터 경과일**: N일
+```
+
+---
+
 ### 2.0 Step 0: 거시경제 분석 (6-Agent 워크플로우 - Task 필수)
 
 > **중요**: 신규 포트폴리오 추천 시 반드시 거시경제 분석을 먼저 수행합니다.
@@ -1302,9 +1399,10 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "4.3"
-updated: "2026-01-19"
+version: "4.4"
+updated: "2026-01-21"
 agents:
+  - data-updater        # CSV → JSON 데이터 업데이트 (v4.4 신규)
   - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
   - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
@@ -1315,9 +1413,9 @@ agents:
   - compliance-checker  # 규제 검증 (Step 3) - Macro-Only에서 생략
   - output-critic       # 출력 검증 (Step 5) - Macro-Only에서 생략
 workflow_modes:
-  full: "index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
-  macro_only: "index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.3)"
-  document_review: "compliance → output-critic"
+  full: "FRESHNESS_CHECK → index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
+  macro_only: "FRESHNESS_CHECK → index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.4)"
+  document_review: "FRESHNESS_CHECK → compliance → output-critic (v4.4)"
 max_retries:
   - index-fetcher: 1 (FAIL 시 중단)
   - rate-analyst: 3 (병렬, 각각 재시도)
@@ -1345,6 +1443,11 @@ output_files:
     - risk-analysis.json     # v4.2 신규
     - macro-outlook-YYYY-QN.md
 changes:
+  - "v4.4: Step -1 데이터 신선도 검사 (Data Freshness Check) 추가"
+  - "v4.4: fund_data.json _meta.version 기반 경과일 검사"
+  - "v4.4: 30일 이내=FRESH, 31-60일=STALE(경고), 61일+=OUTDATED(확인요청)"
+  - "v4.4: data-updater 에이전트 연동 안내 추가"
+  - "v4.4: 모든 보고서에 데이터 기준일 명시 필수화"
   - "v4.3: 파일 내용 검증 강화 (환각 방지 핵심 개선)"
   - "v4.3: Step 0.2.5에서 JSON 파싱, original_text, status 필드 검증 추가"
   - "v4.3: macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지)"
@@ -1360,6 +1463,8 @@ changes:
   - "v4.1: Macro-Only Task 호출 템플릿 추가"
   - "v4.0: 6-Agent 거시경제 분석 워크플로우 추가"
 critical_rules:
+  - "⚠️ Step -1 데이터 신선도 검사 필수 (v4.4)"
+  - "⚠️ 데이터 60일+ 경과 시 사용자 확인 필수 (v4.4)"
   - "Task 도구 필수 사용"
   - "에이전트 결과 원본 인용"
   - "직접 분석 금지"
