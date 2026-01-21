@@ -58,7 +58,7 @@ model: opus
 
 | 데이터 유형 | 소스 파일 | 검증 방법 |
 |------------|----------|----------|
-| **수익률** | `fund_data.json` | 펀드명 → return1m/3m/6m/1y/3y 일치 |
+| **수익률** | `fund_data.json` | 펀드명 → return10y/7y/5y/3y/1y/6m 일치 |
 | **총보수** | `fund_fees.json` | 펀드명 → totalFee 일치 |
 | **위험등급** | `fund_data.json` | 펀드명 → riskLevel 일치 |
 | **순자산** | `fund_data.json` | 펀드명 → netAssets 일치 |
@@ -282,7 +282,7 @@ function verifyReturns(output, fundData) {
     }
     
     // 수익률 비교 (허용 오차: 0.1%)
-    const fields = ['return1m', 'return3m', 'return6m', 'return1y', 'return3y'];
+    const fields = ['return10y', 'return7y', 'return5y', 'return3y', 'return1y', 'return6m'];
     for (const field of fields) {
       if (returns[field] && fundInfo[field]) {
         const diff = Math.abs(parseFloat(returns[field]) - parseFloat(fundInfo[field]));

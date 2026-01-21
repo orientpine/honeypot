@@ -208,7 +208,7 @@ IF macro-outlook 권고가 프롬프트에 포함되지 않음:
     "weightedFee": 0.85
   },
   "sources": [
-    { "type": "local", "file": "fund_data.json", "fields": ["return3m"] },
+    { "type": "local", "file": "fund_data.json", "fields": ["return10y", "return7y", "return5y", "return3y", "return1y", "return6m"] },
     { "type": "web", "url": "https://...", "title": "..." }
   ],
   "output_markdown": "... 전체 마크다운 출력 ..."

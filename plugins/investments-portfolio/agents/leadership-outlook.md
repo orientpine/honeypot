@@ -55,7 +55,8 @@ model: opus
 |------|------|--------|
 | **출처 필수** | 모든 분석에 `[출처: ...]` 태그 필수 | 해당 내용 삭제 |
 | **원문 인용 필수** | 수치/성향 분류에 `original_text` 포함 (v2.0 신규) | FAIL 반환 |
-| **최신 데이터** | 6개월 이내 자료 우선 | 날짜 명시 |
+| **최신 데이터 (정치)** | **1개월 이내 자료 필수** (정치 상황 급변 반영) | FAIL 반환 |
+| **최신 데이터 (경제)** | 3개월 이내 자료 우선 | 날짜 명시 |
 | **교차 검증** | 최소 2개 이상 출처 확인 (필수) | FAIL 반환 |
 | **허용 출처** | 정부 공식 발표, 중앙은행, 주요 언론, IB 리서치 | 허용 출처만 사용 |
 | **금지 출처** | 블로그, 커뮤니티, 유튜브, 정파적 매체 | 해당 출처 무시 |
@@ -125,6 +126,30 @@ Step 4: 정권 교체/선거가 진행 중인 경우
 }
 ```
 
+### 0.5 한국 정치 상황 특별 검증 규칙 (v3.1 신규)
+
+> **⚠️ CRITICAL**: 한국 정치 상황은 빠르게 변동합니다. 아래 규칙을 필수로 따르세요.
+
+| 항목 | 검증 방법 | 필수 |
+|------|----------|:----:|
+| **현직 대통령** | 공식 정부 사이트(president.go.kr) 또는 최신 뉴스 확인 | O |
+| **여대야소/여소야대** | **현재 국회의원 의석수** 확인 (국회의장단 소속 정당 기준) | O |
+| **정권 안정성** | 최신 여론조사, 국회 법안 처리 현황 참조 | O |
+| **탄핵/권한대행** | 해당 여부 반드시 확인 (2024-2025 사례 참조) | O |
+
+**여대야소/여소야대 판단 로직**:
+```
+1. 현직 대통령의 소속 정당 확인
+2. 국회 과반(151석 이상) 보유 정당 확인
+3. 대통령 소속 정당 == 국회 과반 정당 → 여대야소
+4. 대통령 소속 정당 != 국회 과반 정당 → 여소야대
+```
+
+**예시 (2026년 1월 기준)**:
+- 현직 대통령: 이재명 (더불어민주당)
+- 국회 과반: 더불어민주당 (170석+)
+- 판단: **여대야소** (여당이 국회 다수)
+
 ---
 
 ## ⚠️ 공통 규칙 참조 (CRITICAL)
@@ -149,7 +174,7 @@ Step 4: 정권 교체/선거가 진행 중인 경우
 - ❌ 기억이나 추정에 의한 성향 분류 작성
 - ❌ 원문 없이 성향 분류 (환각 위험)
 
-### 0.4 출처 허용 목록 (Allowlist)
+### 0.5 출처 허용 목록 (Allowlist)
 
 | 카테고리 | 허용 출처 | 용도 |
 |----------|----------|------|
@@ -241,38 +266,52 @@ Step 4: 정권 교체/선거가 진행 중인 경우
 
 ### 3.1 웹검색 카테고리 (병렬 실행)
 
+> **⚠️ CRITICAL (v3.1)**: 검색 쿼리에 **연도를 하드코딩하지 마세요**.
+> 대신 `current`, `latest`, `최신`, `현재` 키워드를 사용하세요.
+> 연도가 필요하면 **현재 연도**를 동적으로 사용하세요.
+
 ```
-[Step 1] 웹검색 병렬 실행 (7+ 카테고리)
+[Step 1] 웹검색 병렬 실행 (8+ 카테고리)
     │
     ├─ 카테고리 1: 미국 정권 정책 방향
-    │     └─ "Trump administration economic policy 2025"
-    │     └─ "Bessent Treasury policy direction"
+    │     └─ "Trump administration economic policy current"
+    │     └─ "US Treasury Secretary policy latest"
+    │     └─ "White House economic agenda {current_year}"
     │
     ├─ 카테고리 2: 중국 경제정책 동향
-    │     └─ "China economic policy Xi Jinping 2025"
-    │     └─ "PBOC monetary policy direction"
+    │     └─ "China economic policy Xi Jinping latest"
+    │     └─ "PBOC monetary policy direction current"
     │
-    ├─ 카테고리 3: 한국 경제정책 동향
-    │     └─ "한국 경제정책 방향 2025"
-    │     └─ "한국은행 금리 정책 금통위"
+    ├─ 카테고리 3: 한국 정치/경제 동향 ⚠️ (특별 주의)
+    │     └─ "한국 대통령 현재" (현직 대통령 확인 필수!)
+    │     └─ "대한민국 국회 의석수 현황" (여대야소/여소야대 판단용)
+    │     └─ "한국 경제정책 방향 최신"
+    │     └─ "한국은행 금리 정책 금통위 최근"
     │
     ├─ 카테고리 4: 일본 경제정책 동향
-    │     └─ "Japan economic policy Ishiba"
-    │     └─ "BOJ monetary policy Ueda"
+    │     └─ "Japan Prime Minister economic policy current"
+    │     └─ "BOJ monetary policy Ueda latest"
     │
     ├─ 카테고리 5: 신흥국 정책 동향
-    │     └─ "India Modi economic policy"
-    │     └─ "Indonesia Prabowo economic policy"
-    │     └─ "Vietnam economic policy direction"
+    │     └─ "India Modi economic policy current"
+    │     └─ "Indonesia Prabowo economic policy latest"
+    │     └─ "Vietnam economic policy direction {current_year}"
     │
     ├─ 카테고리 6: 중앙은행 투표 성향
-    │     └─ "FOMC members voting hawk dove 2025"
-    │     └─ "한국은행 금통위 위원 성향"
+    │     └─ "FOMC members voting hawk dove current"
+    │     └─ "한국은행 금통위 위원 성향 최근"
     │
-    └─ 카테고리 7: 정책 변화/리스크
-          └─ "US China trade war tariff 2025"
-          └─ "geopolitical risk Asia 2025"
+    ├─ 카테고리 7: 정책 변화/리스크
+    │     └─ "US China trade war tariff latest"
+    │     └─ "geopolitical risk Asia current"
+    │
+    └─ 카테고리 8: 한국 정치 상황 검증 (v3.1 신규)
+          └─ "대한민국 대통령 누구" (현직 확인)
+          └─ "국회 다수당 현재" (여대야소/여소야대 판단)
+          └─ "한국 정치 상황 최신 뉴스"
 ```
+
+**{current_year} 처리**: 검색 실행 시점의 연도를 자동으로 대입 (예: 2026)
 
 ### 3.2 분석 흐름
 
@@ -1039,7 +1078,7 @@ related_agents:
 output_files:
   - "leadership-analysis.json"
   - "01-leadership-outlook.md"
-required_searches: 7
+required_searches: 8
 analysis_countries:
   - USA
   - China
@@ -1052,10 +1091,15 @@ changes:
   - "v3.2: JSON Output Schema 추가 (환각 방지용 구조화된 데이터)"
   - "v3.2: 2개 파일 출력 필수화 (JSON + Markdown)"
   - "v3.2: original_text 필드 위치 명시 (모든 분석 항목에 필수)"
+  - "v3.2: 한국 정치 상황 특별 검증 규칙 추가 (0.5 섹션)"
   - "v3.1: ⚠️ 정치 정보 환각 방지 규칙 추가 (CRITICAL)"
   - "v3.1: 현직 지도자 확인 절차 (3개 출처 필수)"
   - "v3.1: 미래 사건 사실화 금지, 가짜 original_text 생성 금지"
   - "v3.1: 환각 탐지 체크리스트 추가"
+  - "v3.1: 검색 쿼리 연도 하드코딩 제거 → 동적 연도 + 'current/latest/최신' 키워드 사용"
+  - "v3.1: 정치 상황 데이터 신선도 강화 (6개월 → 1개월 이내 필수)"
+  - "v3.1: 여대야소/여소야대 판단 로직 명시 (국회 의석수 기반)"
+  - "v3.1: 카테고리 8 추가 (한국 정치 상황 검증)"
   - "v3.0: analyst-common, file-save-protocol 스킬로 공통 규칙 분리 (코드 중복 제거)"
   - "v3.0: 웹검색, 원문 인용 규칙을 스킬로 위임"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
@@ -1070,4 +1114,6 @@ critical_rules:
   - "정치적 중립성 유지"
   - "출처 태그 100%"
   - "양면 분석 필수"
+  - "⚠️ 검색 쿼리에 연도 하드코딩 금지 (current/latest 사용)"
+  - "⚠️ 한국 정치 상황: 1개월 이내 자료 필수, 여대야소/여소야대 국회 의석수로 판단"
 ```
