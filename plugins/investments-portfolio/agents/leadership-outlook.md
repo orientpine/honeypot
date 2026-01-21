@@ -60,6 +60,71 @@ model: opus
 | **허용 출처** | 정부 공식 발표, 중앙은행, 주요 언론, IB 리서치 | 허용 출처만 사용 |
 | **금지 출처** | 블로그, 커뮤니티, 유튜브, 정파적 매체 | 해당 출처 무시 |
 
+### 0.4 ⚠️ 정치 정보 환각 방지 규칙 (CRITICAL - v3.1 신규)
+
+**문제 배경**: 모델이 미래 정치 이벤트(선거 결과, 정권 교체)를 추론하여 사실처럼 기술하거나, 가짜 `original_text`를 생성하는 환각 문제 발생.
+
+#### 절대 금지 (Zero Tolerance)
+
+| 금지 사항 | 상세 | 위반 시 |
+|----------|------|--------|
+| **미래 사건 사실화** | 아직 발생하지 않은 선거/탄핵/정권 교체를 확정 사실처럼 기술 금지 | **CRITICAL FAIL** |
+| **가짜 인용문 생성** | `original_text`를 모델이 생성하지 않고 웹검색 결과 원문 그대로 복사 | **CRITICAL FAIL** |
+| **추론의 사실화** | "~로 예상됨", "~가 유력함"을 "~이다"로 단정 금지 | FAIL 반환 |
+| **단일 출처 의존** | 정권 교체/선거 결과는 **3개 이상** 공식 출처 필수 | FAIL 반환 |
+
+#### 현직 지도자 확인 절차 (MANDATORY)
+
+각 국가의 현직 지도자 분석 전 **반드시** 다음 절차 수행:
+
+```
+Step 1: 웹검색으로 현재 시점 확인
+        → "current president of [country] [current year]"
+        → "[country] 현재 대통령 [현재연월]"
+
+Step 2: 3개 이상 공식 출처에서 동일 인물 확인
+        → 정부 공식 사이트, 주요 통신사, 국제기구
+
+Step 3: 불일치 또는 불확실 시
+        → "현재 정치 상황 불명확" 또는 "확인 필요"로 표기
+        → 절대 추론으로 채우지 않음
+
+Step 4: 정권 교체/선거가 진행 중인 경우
+        → "선거 진행 중", "헌재 심판 중" 등 현재 상태만 기술
+        → 결과 예측 금지
+```
+
+#### 환각 탐지 체크리스트
+
+분석 완료 전 다음 항목 확인 (하나라도 해당되면 FAIL):
+
+- [ ] `original_text`가 웹검색 결과에서 직접 복사된 것인가? (모델 생성 금지)
+- [ ] 선거 결과/정권 교체가 언급된 경우 3개+ 공식 출처가 있는가?
+- [ ] "당선", "취임", "파면" 등 확정 표현에 날짜와 출처가 있는가?
+- [ ] 출처 URL이 실제 접근 가능하고 내용이 일치하는가?
+- [ ] 미래 시제 사건이 과거 시제로 기술되지 않았는가?
+
+#### 안전한 표현 예시
+
+| 상황 | ❌ 금지 (환각 위험) | ✅ 허용 (안전) |
+|------|-------------------|---------------|
+| 선거 전 | "이재명이 당선되었다" | "대선이 [날짜]에 예정되어 있다" |
+| 탄핵 심판 중 | "윤석열이 파면되었다" | "헌재에서 탄핵 심판이 진행 중이다" |
+| 정권 교체 예상 | "새 정부가 출범했다" | "정권 교체 가능성이 있다" |
+| 인물 불확실 | "[이름]이 재무장관이다" | "재무장관 확인 필요" |
+
+#### Error Response (환각 탐지 시)
+
+```json
+{
+  "status": "CRITICAL_FAIL",
+  "error_type": "POLITICAL_HALLUCINATION_DETECTED",
+  "detail": "현직 지도자 정보 검증 실패 - 3개 출처 미확보",
+  "affected_country": "한국",
+  "action_required": "웹검색으로 현재 정치 상황 재확인 필요"
+}
+```
+
 ---
 
 ## ⚠️ 공통 규칙 참조 (CRITICAL)
@@ -248,7 +313,126 @@ model: opus
 
 ## 4. 출력 형식
 
-### 4.1 보고서 템플릿
+### 4.0 JSON Output Schema (환각 방지 - CRITICAL)
+
+> **⚠️ 필수**: Markdown 보고서 외에 **JSON 데이터 파일**도 반드시 저장해야 합니다.
+> JSON 파일에는 모든 분석의 `original_text` 필드가 포함되어 환각 검증이 가능합니다.
+
+**파일명**: `{output_path}/leadership-analysis.json`
+
+```json
+{
+  "analysis_date": "YYYY-MM-DD",
+  "skill_used": "web-search-verifier",
+  "countries": [
+    {
+      "country": "미국",
+      "leader": {
+        "name": "[현직 지도자 이름]",
+        "title": "대통령",
+        "term_start": "YYYY-MM",
+        "original_text": "[REQUIRED - 현직 지도자 확인 원문, 3개 출처 중 1개]",
+        "verified": true,
+        "verification_sources": [
+          {"name": "출처1", "url": "[URL]", "date": "YYYY-MM-DD"},
+          {"name": "출처2", "url": "[URL]", "date": "YYYY-MM-DD"},
+          {"name": "출처3", "url": "[URL]", "date": "YYYY-MM-DD"}
+        ]
+      },
+      "economic_team": {
+        "name": "[재무장관 이름]",
+        "title": "재무장관",
+        "original_text": "[REQUIRED - 인물 정보 원문]",
+        "verified": true,
+        "sources": [{"name": "출처", "url": "[URL]"}]
+      },
+      "policy_orientation": {
+        "monetary": "매파/중립/비둘기",
+        "fiscal": "긴축/균형/확장",
+        "trade": "보호주의/중립/자유무역",
+        "industrial": "규제강화/중립/친기업",
+        "original_text": "[REQUIRED - 정책 성향 근거 원문]",
+        "sources": [{"name": "출처", "url": "[URL]", "date": "YYYY-MM-DD"}]
+      },
+      "central_bank": {
+        "name": "Fed",
+        "governor": "[의장 이름]",
+        "current_rate": "X.XX%",
+        "rate_direction": "인하/동결/인상",
+        "committee_composition": {
+          "hawkish": 0,
+          "neutral": 0,
+          "dovish": 0
+        },
+        "original_text": "[REQUIRED - 금리/성향 원문]",
+        "sources": [{"name": "Fed", "url": "[URL]"}]
+      },
+      "stability": {
+        "political_stability": "높음/중간/낮음",
+        "stability_rationale": "[안정성 근거 - 사실 기반만]",
+        "original_text": "[REQUIRED - 정치 상황 원문, 추측 금지]"
+      }
+    }
+  ],
+  "allocation_implications": {
+    "regional": [
+      {"region": "미국", "recommendation": "확대/유지/축소", "rationale": "[근거]"}
+    ],
+    "sector": [
+      {"sector": "반도체/AI", "impact": "긍정/중립/부정", "policy_factor": "[관련 정책]"}
+    ],
+    "currency": [
+      {"pair": "USD/KRW", "recommendation": "환노출/환헤지/분산", "rationale": "[근거]"}
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "정권 교체 시나리오",
+      "trigger": "[발생 조건]",
+      "timing": "[예상 시점]",
+      "portfolio_response": "[대응안]",
+      "original_text": "[REQUIRED - 시나리오 근거 원문, 미래 사건 사실화 금지]"
+    }
+  ],
+  "data_quality": {
+    "skill_verified": true,
+    "all_leaders_verified": true,
+    "political_neutrality_checked": true,
+    "hallucination_check_passed": true,
+    "verification_timestamp": "YYYY-MM-DD HH:MM:SS"
+  },
+  "status": "SUCCESS"
+}
+```
+
+#### ⚠️ JSON 스키마 필수 규칙
+
+| 필드 | 규칙 |
+|------|------|
+| `original_text` | **모든 분석 항목에 필수** - 웹검색 결과 원문 직접 복사 |
+| `leader.verification_sources` | 현직 지도자는 **3개 이상 출처** 필수 |
+| `stability.original_text` | 정치 상황은 **사실 기반만** - 추측/예측 금지 |
+| `scenarios[].original_text` | 시나리오는 **조건부 표현만** - "~된다" 금지, "~가능성 있음" 허용 |
+
+#### Error Response (환각 탐지 시)
+
+```json
+{
+  "status": "CRITICAL_FAIL",
+  "error_type": "POLITICAL_HALLUCINATION_DETECTED",
+  "detail": "현직 지도자 정보 검증 실패",
+  "affected_country": "한국",
+  "failed_checks": [
+    "3개 출처 미확보",
+    "original_text가 모델 생성으로 의심됨"
+  ],
+  "action_required": "웹검색으로 현재 정치 상황 재확인 필요"
+}
+```
+
+---
+
+### 4.1 Markdown 보고서 템플릿
 
 ```markdown
 # 정치 리더십 및 중앙은행 동향 분석
@@ -703,20 +887,25 @@ model: opus
 
 ## 6. 보고서 저장 규칙
 
-### 6.1 파일 출력
+### 6.1 파일 출력 (2개 파일 필수)
 
-coordinator가 `output_path` 파라미터를 전달하면, 분석 완료 후 해당 경로에 보고서를 저장합니다.
+coordinator가 `output_path` 파라미터를 전달하면, 분석 완료 후 **2개 파일**을 저장합니다:
 
-#### 입력 형식
-
-```markdown
-### 출력 경로
-output_path: portfolios/YYYY-MM-DD-{profile}-{session}/01-leadership-outlook.md
-```
+| 파일 | 용도 | 필수 |
+|------|------|:----:|
+| `leadership-analysis.json` | 환각 방지용 원천 데이터 (original_text 포함) | ✅ |
+| `01-leadership-outlook.md` | 사람이 읽는 Markdown 보고서 | ✅ |
 
 #### 출력 방법
 
 ```
+# Step 1: JSON 데이터 저장 (환각 방지 - CRITICAL)
+Write(
+  file_path="portfolios/YYYY-MM-DD-{profile}-{session}/leadership-analysis.json",
+  content=JSON.stringify(analysis_data, null, 2)
+)
+
+# Step 2: Markdown 보고서 저장
 Write(
   file_path="portfolios/YYYY-MM-DD-{profile}-{session}/01-leadership-outlook.md",
   content="[보고서 내용]"
@@ -728,7 +917,9 @@ Write(
 파일 저장 완료 후 coordinator에게 다음 형식으로 알립니다:
 
 ```
-보고서 저장 완료: portfolios/YYYY-MM-DD-{profile}-{session}/01-leadership-outlook.md
+보고서 저장 완료:
+- JSON: portfolios/YYYY-MM-DD-{profile}-{session}/leadership-analysis.json
+- Markdown: portfolios/YYYY-MM-DD-{profile}-{session}/01-leadership-outlook.md
 ```
 
 ---
@@ -837,15 +1028,17 @@ output_path: portfolios/{session_folder}/01-leadership-outlook.md
 ## 10. 메타 정보
 
 ```yaml
-version: "3.0"
+version: "3.2"
 created: "2026-01-06"
-updated: "2026-01-14"
+updated: "2026-01-21"
 architecture: "multi-agent"
 coordinator: "portfolio-coordinator"
 related_agents:
   - "macro-outlook"
   - "fund-portfolio"
-output_file: "01-leadership-outlook.md"
+output_files:
+  - "leadership-analysis.json"
+  - "01-leadership-outlook.md"
 required_searches: 7
 analysis_countries:
   - USA
@@ -856,6 +1049,13 @@ analysis_countries:
   - Vietnam
   - Indonesia
 changes:
+  - "v3.2: JSON Output Schema 추가 (환각 방지용 구조화된 데이터)"
+  - "v3.2: 2개 파일 출력 필수화 (JSON + Markdown)"
+  - "v3.2: original_text 필드 위치 명시 (모든 분석 항목에 필수)"
+  - "v3.1: ⚠️ 정치 정보 환각 방지 규칙 추가 (CRITICAL)"
+  - "v3.1: 현직 지도자 확인 절차 (3개 출처 필수)"
+  - "v3.1: 미래 사건 사실화 금지, 가짜 original_text 생성 금지"
+  - "v3.1: 환각 탐지 체크리스트 추가"
   - "v3.0: analyst-common, file-save-protocol 스킬로 공통 규칙 분리 (코드 중복 제거)"
   - "v3.0: 웹검색, 원문 인용 규칙을 스킬로 위임"
   - "v2.0: web-search-verifier 스킬 기반으로 전환"
@@ -863,6 +1063,10 @@ changes:
   - "v1.0: 초기 버전"
 critical_rules:
   - "analyst-common, file-save-protocol 스킬 규칙 준수 필수"
+  - "⚠️ JSON 파일 저장 필수 (leadership-analysis.json)"
+  - "⚠️ 정치 정보 환각 방지 - 현직 지도자 3개 출처 확인 필수"
+  - "⚠️ 미래 정치 이벤트 사실화 금지"
+  - "⚠️ 가짜 original_text 생성 금지 - 웹검색 결과 직접 복사만 허용"
   - "정치적 중립성 유지"
   - "출처 태그 100%"
   - "양면 분석 필수"
