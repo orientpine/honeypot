@@ -1,7 +1,7 @@
 ---
 name: stock-data-verifier
 description: "주식/ETF 데이터 3개 출처 교차검증 프로토콜. 환각 방지 첫 번째 방어선."
-tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
+tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 ---
 
 # 주식/ETF 데이터 교차검증 스킬
@@ -11,14 +11,14 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 > **이 스킬은 "함수"가 아닙니다. 지침 문서입니다.**
 > 
 > - ❌ `search_stock("삼성전자")` 같은 함수 호출은 **작동하지 않습니다**
-> - ✅ 에이전트가 `exa_web_search_exa` 또는 `websearch_web_search_exa` 도구를 **직접 호출**해야 합니다
+> - ✅ 에이전트가 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa` 도구를 **직접 호출**해야 합니다
 > - ✅ 이 스킬은 **검색 쿼리 패턴과 검증 절차**를 안내하는 문서입니다
 
 ### 올바른 사용 방법
 
 ```
 1. 이 스킬 문서를 읽고 검색 쿼리 패턴 파악
-2. exa_web_search_exa 또는 websearch_web_search_exa 도구를 직접 호출
+2. mcp_exa_web_search_exa 또는 mcp_websearch_web_search_exa 도구를 직접 호출
 3. 검색 결과에서 데이터 추출
 4. 최소 2개 출처 교차 검증 수행
 5. 출력 스키마에 맞춰 결과 포장
@@ -133,7 +133,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 **데이터 유형**: 한국 상장 주식 (KOSPI, KOSDAQ)
 
 > ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_korean_stock()`라는 함수는 **존재하지 않습니다**.
-> 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**하세요.
+> 반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 데이터**:
 - 현재가, 시가, 고가, 저가, 거래량
@@ -210,7 +210,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 **데이터 유형**: 미국 상장 주식 (NYSE, NASDAQ)
 
 > ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_us_stock()`라는 함수는 **존재하지 않습니다**.
-> 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**하세요.
+> 반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 데이터**:
 - Price, Open, High, Low, Volume
@@ -287,7 +287,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 **데이터 유형**: ETF (상장지수펀드)
 
 > ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_etf()`라는 함수는 **존재하지 않습니다**.
-> 반드시 `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**하세요.
+> 반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 데이터**:
 - NAV (순자산가치), 시장가격
@@ -537,11 +537,11 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 1. stock-data-verifier 스킬 로드 확인 (검색 패턴 가이드로 참조)
 2. 삼성전자 데이터 수집:
-   - exa_web_search_exa(query="삼성전자 주가 site:finance.naver.com") **직접 호출**
+   - mcp_exa_web_search_exa(query="삼성전자 주가 site:finance.naver.com") **직접 호출**
    - 검색 결과에서 original_text 추출
    - verified: true 확인
 3. NVIDIA 데이터 수집:
-   - exa_web_search_exa(query="NVDA stock price site:finance.yahoo.com") **직접 호출**
+   - mcp_exa_web_search_exa(query="NVDA stock price site:finance.yahoo.com") **직접 호출**
    - 검색 결과에서 original_text 추출
    - verified: true 확인
 
@@ -564,8 +564,8 @@ updated: "2026-01-14"
 author: "Claude"
 purpose: "주식/ETF 데이터 환각 방지 표준화"
 dependencies:
-  - exa_web_search_exa
-  - websearch_web_search_exa
+  - mcp_exa_web_search_exa
+  - mcp_websearch_web_search_exa
   - WebFetch
 consumers:
   - stock-analyzer
