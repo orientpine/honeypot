@@ -1,7 +1,7 @@
 ---
 name: analyst-common
 description: "분석 에이전트 공통 규칙. 웹검색 직접 호출, 원문 인용, 교차 검증 프로토콜을 정의합니다. 환각 방지의 핵심 방어선."
-tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
+tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 ---
 
 # 분석 에이전트 공통 규칙
@@ -23,9 +23,9 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ```
 1. web-search-verifier 스킬에서 검색 쿼리 패턴 확인
-2. exa_web_search_exa 또는 websearch_web_search_exa 직접 호출
-   - 예: exa_web_search_exa(query="S&P 500 price today")
-   - 예: websearch_web_search_exa(query="한국은행 기준금리")
+2. mcp_exa_web_search_exa 또는 mcp_websearch_web_search_exa 직접 호출
+   - 예: mcp_exa_web_search_exa(query="S&P 500 price today")
+   - 예: mcp_websearch_web_search_exa(query="한국은행 기준금리")
 3. 검색 결과에서 숫자가 포함된 원문을 그대로 복사
 4. 최소 2개 출처에서 값 확인 및 교차 검증
 5. 출처 간 ±1% 이내 일치 시 사용, 불일치 시 FAIL
@@ -33,7 +33,7 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ### 필수 사항 (MUST)
 
-- `exa_web_search_exa` 또는 `websearch_web_search_exa` **직접 호출**
+- `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa` **직접 호출**
 - **원문 인용 필수** - 숫자가 포함된 검색 결과 문장을 그대로 복사
 - 최소 2개 이상 독립 출처에서 교차 검증
 - 검색 결과의 URL과 날짜 명시
@@ -125,10 +125,10 @@ tools: exa_web_search_exa, websearch_web_search_exa, WebFetch
 
 ```
 Step 1: 첫 번째 출처에서 값 수집
-        └─ exa_web_search_exa(query="...")
-        
+└─ mcp_exa_web_search_exa(query="...")
+         
 Step 2: 두 번째 출처에서 값 수집
-        └─ exa_web_search_exa(query="... site:다른출처")
+         └─ mcp_exa_web_search_exa(query="... site:다른출처")
         
 Step 3: 값 비교
         └─ 차이 = |값1 - 값2| / 평균값 * 100
@@ -162,7 +162,7 @@ Step 4: 판정
 모든 분석 에이전트는 결과 제출 전 아래 체크리스트를 확인해야 합니다.
 
 ### 웹검색 직접 호출 확인
-- [ ] `exa_web_search_exa` 또는 `websearch_web_search_exa`를 **직접 호출**했는가?
+- [ ] `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**했는가?
 - [ ] `search_index()`, `search_rate()` 같은 가짜 함수를 호출하지 않았는가?
 - [ ] 스킬 예시 데이터를 그대로 사용하지 않았는가?
 
@@ -240,7 +240,7 @@ extracted_from:
   - "교차 검증 프로토콜"
   - "Verification Checklist"
 dependencies:
-  - exa_web_search_exa
-  - websearch_web_search_exa
+  - mcp_exa_web_search_exa
+  - mcp_websearch_web_search_exa
   - WebFetch
 ```

@@ -1,7 +1,7 @@
 ---
 name: macro-critic
 description: "거시경제 분석 출력 검증 전문가. 지수 데이터 일치성, 기준금리 교차 검증, 출처 커버리지, 스킬 사용 여부를 검증."
-tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch
+tools: Read, mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 skills: analyst-common
 model: opus
 ---
@@ -131,8 +131,8 @@ Step 1: rate-analyst 결과에서 BOK 기준금리 추출
 └─ data_quality.bok_rate_verified 필드 확인
 
 Step 2: 독립적으로 기준금리 검증 (웹검색 도구 직접 호출 필수!)
-└─ exa_web_search_exa(query="한국은행 기준금리 site:tradingeconomics.com")
-└─ exa_web_search_exa(query="korea interest rate current 2026")
+└─ mcp_exa_web_search_exa(query="한국은행 기준금리 site:tradingeconomics.com")
+└─ mcp_exa_web_search_exa(query="korea interest rate current 2026")
 └─ ⚠️ 스킬을 통한 검색 금지 (동일 오류 방지)
 └─ ⚠️ 최소 2개 독립 출처에서 값 확인
 
@@ -467,7 +467,7 @@ IF bok_rate_verified == false:
 ## 행동 규칙
 
 ### 필수 규칙
-1. **독립 검증 시 직접 웹검색**: 기준금리 검증 시 `exa_web_search_exa` 직접 호출 (v4.0 필수)
+1. **독립 검증 시 직접 웹검색**: 기준금리 검증 시 `mcp_exa_web_search_exa` 직접 호출 (v4.0 필수)
 2. **스킬 사용 검증**: 모든 에이전트의 skill_used 필드 확인
 3. **엄격한 검증**: 모든 항목 검증 필수
 4. **객관적 판정**: 규칙 기반 검증
