@@ -68,9 +68,9 @@ visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(
 [Phase 2: 이미지 생성]
     |
     +-- Step 2-1. Python 스크립트 실행
-    |   +-- 스크립트 경로: ./toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py
+    |   +-- 스크립트 경로: plugins/visual-generator/scripts/generate_slide_images.py
     |   +-- 실행 명령어:
-    |       python ./toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
+    |       python plugins/visual-generator/scripts/generate_slide_images.py \
     |         --prompts-dir [prompts_folder]/ \
     |         --output-dir [output_folder]/
     |
@@ -115,13 +115,18 @@ visual-prompt-gov 또는 visual-prompt-concept로 생성된 프롬프트 파일(
 ### 실행 명령어
 
 ```bash
-# 프로젝트 루트 기준 상대 경로 (toolbox_orientpine이 submodule로 포함된 경우)
-python toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py \
+# 프로젝트 루트 기준 상대 경로
+python plugins/visual-generator/scripts/generate_slide_images.py \
+  --prompts-dir [prompts_folder]/ \
+  --output-dir [output_folder]/
+
+# submodule로 사용하는 경우 (예: honeypot을 submodule로 추가한 경우)
+python honeypot/plugins/visual-generator/scripts/generate_slide_images.py \
   --prompts-dir [prompts_folder]/ \
   --output-dir [output_folder]/
 ```
 
-**주의**: 스크립트는 프로젝트 내 `toolbox_orientpine/plugins/visual-generator/scripts/` 폴더에 위치합니다.
+**주의**: 스크립트는 이 플러그인의 `scripts/` 폴더에 위치합니다. 프로젝트 구조에 맞게 경로를 조정하세요.
 
 ### API 설정
 
@@ -243,5 +248,6 @@ visual-prompt-gov 또는 visual-prompt-concept에서 정의한 스타일을 따�
 
 ### 스크립트 위치
 
-- **프로젝트 내 경로**: `toolbox_orientpine/plugins/visual-generator/scripts/generate_slide_images.py`
+- **플러그인 내 경로**: `plugins/visual-generator/scripts/generate_slide_images.py`
+- **스킬 파일 기준 상대 경로**: `../../scripts/generate_slide_images.py`
 - **설명**: Gemini API를 사용한 슬라이드 이미지 생성 스크립트
