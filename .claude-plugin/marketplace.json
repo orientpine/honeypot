@@ -203,6 +203,23 @@
       "category": "utilities",
       "strict": true,
       "skills": ["./skills"]
+    },
+    {
+      "name": "worktree-workflow",
+      "source": "./plugins/worktree-workflow",
+      "description": "Git worktree를 활용한 Claude Code 병렬 실행 워크플로우",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/honeypot",
+      "repository": "https://github.com/orientpine/honeypot",
+      "license": "MIT",
+      "keywords": ["git", "worktree", "workflow", "tmux", "parallel-execution"],
+      "category": "utilities",
+      "strict": true,
+      "agents": ["./agents/worktree.md"]
     }
   ]
 }
