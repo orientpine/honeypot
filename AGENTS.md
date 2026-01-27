@@ -26,8 +26,10 @@ toolbox/
     │   │   └── figure.md             # Caption extraction + Gemini API image gen
     │   ├── references/
     │   │   ├── document_templates/   # Chapter 1-5 document templates
-    │   │   ├── examples/             # Example documents (aiagent, ultracold, multiagent)
+    │   │   ├── writing_patterns/     # Section-specific writing patterns (5 files)
+    │   │   ├── content_requirements/ # Chapter-specific content requirements (5 files)
     │   │   ├── guides/               # Web search, image, caption guides
+    │   │   ├── example_prompts.md    # Example prompts for each chapter
     │   │   └── input_template.md     # Orchestrator input template
     │   ├── assets/
     │   │   └── output_templates/     # Output templates for all chapters
@@ -85,6 +87,8 @@ toolbox/
 | Portfolio analysis agents | `plugins/investments-portfolio/` | Korean DC pension multi-agent |
 | General interview agent | `plugins/general-agents/` | Deep interview + execution |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 5 plugins listed |
+
+**Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
 ## SKILLS VS AGENTS: 개념적 구분 (개발 지침)
 
