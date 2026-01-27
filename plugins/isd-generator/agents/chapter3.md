@@ -210,8 +210,7 @@ model: sonnet
 ### references/ (Read 도구로 로드)
 
 - `plugins/isd-generator/references/document_templates/chapter3_template.md`: 연구목표및내용.md 작성 템플릿
-- `plugins/isd-generator/references/examples/chapter3_example_aiagent.md`: AI Agent 분야 예시
-- `plugins/isd-generator/references/examples/chapter3_example_multiagent.md`: 다개체 협업 분야 예시
+- `plugins/isd-generator/references/content_requirements/chapter3_requirements.md`: Chapter 3 콘텐츠 요구사항
 
 ### assets/ (Read 도구로 로드)
 

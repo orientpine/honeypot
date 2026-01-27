@@ -174,7 +174,7 @@ output/[프로젝트명]/
 
 - `plugins/isd-generator/references/guides/prompt_guide.md`: 이미지 프롬프트 작성 상세 가이드
 - `plugins/isd-generator/references/guides/caption_patterns.md`: 캡션 추출 패턴 및 분류 가이드
-- `plugins/isd-generator/references/examples/example_prompts.md`: 캡션 유형별 예시 프롬프트
+- `plugins/isd-generator/references/example_prompts.md`: 캡션 유형별 예시 프롬프트
 
 ### assets/ (Read 도구로 로드)
 

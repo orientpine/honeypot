@@ -373,8 +373,7 @@ model: sonnet
 - `plugins/isd-generator/references/document_templates/chapter1_template.md`: Chapter 1 작성 템플릿
 - `plugins/isd-generator/references/guides/image_reference_guide.md`: 이미지/도표 수집 가이드
 - `plugins/isd-generator/references/guides/chapter1_web_search_guide.md`: 정책/시장/기술 검색어 가이드
-- `plugins/isd-generator/references/examples/chapter1_example_aiagent.md`: AI Agent 분야 예시
-- `plugins/isd-generator/references/examples/chapter1_example_ultracold.md`: 극저온 냉각 분야 예시
+- `plugins/isd-generator/references/content_requirements/chapter1_requirements.md`: Chapter 1 콘텐츠 요구사항
 
 ### assets/ (Read 도구로 로드)
 

@@ -131,8 +131,7 @@ Chapter 3(사업 목표 및 추진 전략)와 Chapter 1(개발 대상 및 필요
 - `plugins/isd-generator/references/document_templates/chapter2_template.md`: Chapter 2 문서 구조 템플릿
 - `plugins/isd-generator/references/guides/chapter2_web_search_guide.md`: 시장/기술/특허 검색 가이드
 - `plugins/isd-generator/references/guides/data_collection_guide.md`: 데이터 수집 품질 기준
-- `plugins/isd-generator/references/examples/chapter2_example_aiagent.md`: AI Agent 분야 예시
-- `plugins/isd-generator/references/examples/chapter2_example_ultracold.md`: 극저온 냉각 분야 예시
+- `plugins/isd-generator/references/content_requirements/chapter2_requirements.md`: Chapter 2 콘텐츠 요구사항
 
 ### assets/ (Read 도구로 로드)
 
