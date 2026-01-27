@@ -217,8 +217,7 @@ model: sonnet
 ### references/ (Read 도구로 로드)
 
 - `plugins/isd-generator/references/document_templates/chapter5_template.md`: Chapter 5 작성 템플릿
-- `plugins/isd-generator/references/examples/chapter5_example_ultracold.md`: 극저온 냉각 예시 (기존 사업 차별성 포함)
-- `plugins/isd-generator/references/examples/chapter5_example_aiagent.md`: AI Agent 예시 (기존 사업 없음)
+- `plugins/isd-generator/references/content_requirements/chapter5_requirements.md`: Chapter 5 콘텐츠 요구사항
 
 ### assets/ (Read 도구로 로드)
 
