@@ -487,10 +487,6 @@ description: "이미지 생성 프롬프트 작성 가이드 - 프롬프트 가�
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/guides/prompt_guide.md
-  - references/guides/caption_patterns.md
-  - references/example_prompts.md
 consumers:
   - figure
 ```

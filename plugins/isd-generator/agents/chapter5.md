@@ -10,7 +10,7 @@ skills: [chapter5-guide, verification-rules]
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-> **공통 규칙**: `references/guides/verification_rules.md` 참조
+> **공통 규칙**: `verification-rules` 스킬 참조
 
 **검증문서 정보 (Chapter 5 전용)**
 - 파일명: `chapter5_ntis_verification.md`
@@ -215,10 +215,11 @@ skills: [chapter5-guide, verification-rules]
 
 ## Resources
 
-### references/ (Read 도구로 로드)
+### Skills (자동 로드)
 
-- `plugins/isd-generator/references/document_templates/chapter5_template.md`: Chapter 5 작성 템플릿
-- `plugins/isd-generator/references/content_requirements/chapter5_requirements.md`: Chapter 5 콘텐츠 요구사항
+이 에이전트는 다음 스킬을 자동으로 로드합니다:
+- `chapter5-guide`: Chapter 5 작성 가이드 (템플릿, 요구사항 포함)
+- `verification-rules`: 검증문서 생성 필수 규칙
 
 ### writing_patterns/ (Read 도구로 로드)
 

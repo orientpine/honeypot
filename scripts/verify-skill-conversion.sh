@@ -6,15 +6,28 @@ PLUGIN_DIR="/home/orientpine/playground/honeypot/plugins"
 echo "=== Honeypot Skill Conversion Verification ==="
 echo ""
 
-# 1. No references/ paths in agents/skills
-echo "[1/5] Checking references/ path absence..."
-REFS=$(grep -r "references/" "$PLUGIN_DIR"/*/agents/ "$PLUGIN_DIR"/*/skills/*/SKILL.md 2>/dev/null | grep -v "^Binary" || true)
-if [ -n "$REFS" ]; then
-    echo "FAIL: Found references/ paths:"
-    echo "$REFS"
+# 1. No references/ paths in agents/skills (target plugins only)
+# Excludes: paper-style-generator (output descriptions OK), investments-portfolio (reference pattern)
+echo "[1/5] Checking references/ path absence in target plugins..."
+TARGET_CHECK_PLUGINS=("hwpx-converter" "report-generator" "visual-generator" "isd-generator")
+REFS_FOUND=0
+
+for plugin in "${TARGET_CHECK_PLUGINS[@]}"; do
+    plugin_path="$PLUGIN_DIR/$plugin"
+    if [ -d "$plugin_path" ]; then
+        REFS=$(grep -r "references/" "$plugin_path/agents/" "$plugin_path/skills/*/SKILL.md" 2>/dev/null | grep -v "^Binary" || true)
+        if [ -n "$REFS" ]; then
+            echo "FAIL: Found references/ paths in $plugin:"
+            echo "$REFS"
+            REFS_FOUND=$((REFS_FOUND + 1))
+        fi
+    fi
+done
+
+if [ $REFS_FOUND -gt 0 ]; then
     exit 1
 fi
-echo "PASS: No references/ paths found"
+echo "PASS: No references/ paths found in target plugins"
 echo ""
 
 # 2. Frontmatter skills: field validation

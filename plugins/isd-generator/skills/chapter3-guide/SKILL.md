@@ -575,9 +575,6 @@ Chapter 3 (사업 목표 및 추진 전략) 작성을 위한 통합 가이드. �
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/document_templates/chapter3_template.md
-  - references/content_requirements/chapter3_requirements.md
 consumers:
   - chapter3
 ```

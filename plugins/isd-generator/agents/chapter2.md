@@ -14,7 +14,7 @@ skills: [chapter2-guide, verification-rules, data-collection-guide]
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-> **공통 규칙**: `references/guides/verification_rules.md` 참조
+> **공통 규칙**: `verification-rules` 스킬 참조
 
 **검증문서 정보 (Chapter 2 전용)**
 - 파일명: `chapter2_research_verification.md`
@@ -127,12 +127,12 @@ Chapter 3(사업 목표 및 추진 전략)와 Chapter 1(개발 대상 및 필요
 
 ## Resources
 
-### references/ (Read 도구로 로드)
+### Skills (자동 로드)
 
-- `plugins/isd-generator/references/document_templates/chapter2_template.md`: Chapter 2 문서 구조 템플릿
-- `plugins/isd-generator/references/guides/chapter2_web_search_guide.md`: 시장/기술/특허 검색 가이드
-- `plugins/isd-generator/references/guides/data_collection_guide.md`: 데이터 수집 품질 기준
-- `plugins/isd-generator/references/content_requirements/chapter2_requirements.md`: Chapter 2 콘텐츠 요구사항
+이 에이전트는 다음 스킬을 자동으로 로드합니다:
+- `chapter2-guide`: Chapter 2 작성 가이드 (템플릿, 요구사항, 웹검색 가이드 포함)
+- `verification-rules`: 검증문서 생성 필수 규칙
+- `data-collection-guide`: 데이터 수집 품질 기준
 
 ### writing_patterns/ (Read 도구로 로드)
 

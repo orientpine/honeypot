@@ -41,7 +41,7 @@ skills: [input-template, verification-rules]
 
 ## Input Requirements
 
-사용자는 `plugins/isd-generator/references/input_template.md` 양식에 맞춰 통합 입력 파일을 작성해야 한다. Read 도구를 사용하여 템플릿을 로드하세요.
+사용자는 `input-template` 스킬의 양식에 맞춰 통합 입력 파일을 작성해야 한다.
 
 ### 필수 입력 섹션
 
@@ -368,9 +368,11 @@ isd-orchestrator 에이전트를 사용해서 ISD 연구계획서를 생성해�
 
 ## Resources
 
-### 참조 파일 (Read 도구로 로드)
+### Skills (자동 로드)
 
-- `plugins/isd-generator/references/input_template.md`: 사용자 입력 양식 템플릿
+이 에이전트는 다음 스킬을 자동으로 로드합니다:
+- `input-template`: 사용자 입력 양식 템플릿
+- `verification-rules`: 검증문서 생성 필수 규칙
 
 ### 출력 템플릿 (Read 도구로 로드)
 
