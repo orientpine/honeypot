@@ -280,9 +280,6 @@ Chapter 5 (기타 참고자료) 작성을 위한 통합 가이드. 문서 템플
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/document_templates/chapter5_template.md
-  - references/content_requirements/chapter5_requirements.md
 consumers:
   - chapter5
 ```

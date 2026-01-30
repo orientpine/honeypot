@@ -853,10 +853,6 @@ Chapter 3와 Chapter 1에서 추출한 키워드로 검색어 구성
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/document_templates/chapter2_template.md
-  - references/content_requirements/chapter2_requirements.md
-  - references/guides/chapter2_web_search_guide.md
 consumers:
   - chapter2
 ```

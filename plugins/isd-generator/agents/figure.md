@@ -171,11 +171,11 @@ output/[프로젝트명]/
 
 ## Resources
 
-### references/ (Read 도구로 로드)
+### Skills (자동 로드)
 
-- `plugins/isd-generator/references/guides/prompt_guide.md`: 이미지 프롬프트 작성 상세 가이드
-- `plugins/isd-generator/references/guides/caption_patterns.md`: 캡션 추출 패턴 및 분류 가이드
-- `plugins/isd-generator/references/example_prompts.md`: 캡션 유형별 예시 프롬프트
+이 에이전트는 다음 스킬을 자동으로 로드합니다:
+- `figure-guide`: 이미지 프롬프트 작성 가이드 (프롬프트 가이드, 캡션 패턴, 예시 프롬프트 포함)
+- `image-reference-guide`: 이미지/도표 수집 가이드
 
 ### assets/ (Read 도구로 로드)
 

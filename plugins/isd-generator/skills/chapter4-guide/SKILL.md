@@ -345,9 +345,6 @@ Chapter 1의 개발 필요성과 연계하여 해결된 결과를 기술한다.
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/document_templates/chapter4_template.md
-  - references/content_requirements/chapter4_requirements.md
 consumers:
   - chapter4
 ```

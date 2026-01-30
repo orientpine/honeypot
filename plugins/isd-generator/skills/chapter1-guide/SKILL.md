@@ -786,10 +786,6 @@ Chapter 1 (개발대상 및 필요성) 작성을 위한 통합 가이드. 문서
 ```yaml
 version: "1.0"
 created: "2026-01-30"
-sources:
-  - references/document_templates/chapter1_template.md
-  - references/content_requirements/chapter1_requirements.md
-  - references/guides/chapter1_web_search_guide.md
 consumers:
   - chapter1
 ```
