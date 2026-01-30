@@ -3,6 +3,7 @@ name: chapter1
 description: "국책과제 연구계획서의 '제1장 개발 대상 및 필요성' 문서를 Chapter 3 기반으로 자동 생성하는 에이전트. Chapter 3 문서와 연구 수행 기관 정보를 입력받아 웹 검색을 통해 정책 부합성, 시장 동향, 기술 현황을 조사하고, 개발 대상 정의, 기술분류 체계도, 사업 필요성을 체계적으로 작성한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, WebSearch
 model: sonnet
+skills: [chapter1-guide, verification-rules, image-reference-guide]
 ---
 
 # Chapter1 Generator
@@ -184,7 +185,7 @@ model: sonnet
 [Phase 4: 문서 생성 및 검증]
     |
     +-- Step 4-1. Chapter 1 본문 생성
-    |   +-- Read 도구로 plugins/isd-generator/references/document_templates/chapter1_template.md 로드
+    |   +-- chapter1-guide 스킬의 템플릿 참조
     |   +-- 각 섹션별 내용 채우기
     |   +-- 테이블 및 비교표 작성
     |   +-- Write 도구로 저장

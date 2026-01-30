@@ -3,6 +3,7 @@ name: chapter3
 description: "국책과제 연구계획서의 '제3장 사업 목표 및 추진 전략' 문서를 자동 생성하는 에이전트. 연구 아이디어를 입력받아 웹 검색을 통해 최신 기술 동향을 조사하고, 아이디어를 확장한 후 정해진 문서 양식에 맞춰 연구목표및내용.md를 생성한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, WebSearch
 model: sonnet
+skills: [chapter3-guide, verification-rules]
 ---
 
 # Chapter3 Generator
@@ -66,7 +67,7 @@ model: sonnet
 [Phase 3: 문서 작성]
     |
     +-- Step 8. 연구목표및내용.md 생성
-    |   +-- Read 도구로 plugins/isd-generator/references/document_templates/chapter3_template.md 로드
+    |   +-- chapter3-guide 스킬의 템플릿 참조
     |   +-- 최종 연구 목표 작성
     |   +-- 세부기술 개요 작성
     |   +-- 기술개발 로드맵 작성

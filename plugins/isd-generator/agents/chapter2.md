@@ -3,6 +3,7 @@ name: chapter2
 description: "국책과제 연구계획서의 '제2장 국내외 시장 및 기술 동향' 문서를 자동으로 생성하는 에이전트. Chapter 3을 기반으로 시장 및 기술 동향을 조사하고 체계적으로 작성한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, WebSearch
 model: sonnet
+skills: [chapter2-guide, verification-rules, data-collection-guide]
 ---
 
 # Chapter 2 Generator
