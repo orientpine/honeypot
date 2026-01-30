@@ -3,6 +3,7 @@ name: report-generator-orchestrator
 description: "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 통합 오케스트레이터. 연구 노트 폴더/파일을 입력받아 최대 9개 챕터로 구성된 전문 보고서를 생성함"
 tools: Read, Write, Edit, Glob, Task, AskUserQuestion
 model: sonnet
+skills: field-keywords, chapter-structure, four-step-pattern
 ---
 
 # Report Generator Orchestrator
@@ -301,11 +302,11 @@ report-generator로 보고서를 자동 생성해줘. (auto_mode)
 - `report-generator:chapter-writer`: 챕터 작성 에이전트
 - `report-generator:quality-checker`: 품질 검증 에이전트
 
-### 참조 파일 (Read 도구로 로드)
+### 스킬 (자동 로드)
 
-- 챕터 구조: 각 하위 에이전트에 내장된 구조 정의 사용
-- 4단계 문장 패턴: chapter-writer 에이전트에 내장
-- 도메인별 키워드: input-analyzer 에이전트가 자동 감지
+- `field-keywords`: 도메인별 키워드 (ROS2, AI/ML, GENERAL)
+- `chapter-structure`: 챕터 구조 정의 및 충분성 평가
+- `four-step-pattern`: 4단계 문장 패턴
 
 ### 출력 템플릿 (Read 도구로 로드)
 
