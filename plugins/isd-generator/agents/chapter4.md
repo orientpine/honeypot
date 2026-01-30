@@ -3,6 +3,7 @@ name: chapter4
 description: "국책과제 연구계획서의 '제4장 사업 기대효과' 문서를 Chapter 1과 Chapter 3 기반으로 자동 생성하는 에이전트. Chapter 1의 개발 필요성/성과지표와 Chapter 3의 연구목표/성과물을 분석하여 결과 활용 방안, 기술 사업화 전략, 기대효과 및 파급효과를 체계적으로 작성한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, mcp_exa_web_search_exa
 model: sonnet
+skills: [chapter4-guide, verification-rules]
 ---
 
 # Chapter4 Generator

@@ -3,6 +3,7 @@ name: chapter5
 description: "국책과제 연구계획서의 '제5장 기타 참고자료' 문서를 Chapter 1~4 기반으로 자동 생성하는 에이전트. 선행 Chapter들에서 인용된 모든 참고문헌을 수집하고, NTIS 검색을 통한 유사중복 자체점검을 수행하며, 유사 기존 사업이 있는 경우 차별성을 비교 정리한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, WebSearch
 model: sonnet
+skills: [chapter5-guide, verification-rules]
 ---
 
 # Chapter5 Generator

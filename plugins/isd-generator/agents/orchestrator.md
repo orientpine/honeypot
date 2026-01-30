@@ -3,6 +3,7 @@ name: isd-orchestrator
 description: "국책과제 연구계획서(ISD) 전체 5개 Chapter를 자동으로 순차 생성하는 통합 오케스트레이터. 단일 입력 파일(input_template.md 양식)을 받아 Chapter 3->1->2->4->5 순서로 문서를 생성하고 검증문서를 포함한 최종 실행 보고서를 제공한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, Task
 model: sonnet
+skills: [input-template, verification-rules]
 ---
 
 # ISD Orchestrator

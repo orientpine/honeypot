@@ -3,6 +3,7 @@ name: figure
 description: "국책과제 연구계획서 출력 문서에서 <이미지명> 형식의 캡션을 추출하고, 각 캡션에 대해 PPT 스타일 인포그래픽 이미지 생성 프롬프트를 작성한 후, Gemini API를 통해 실제 이미지를 생성하는 에이전트."
 tools: Read, Glob, Grep, Write, Edit, Bash, Task
 model: sonnet
+skills: [figure-guide, image-reference-guide]
 ---
 
 # Figure Generator
