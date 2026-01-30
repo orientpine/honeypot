@@ -3,6 +3,7 @@ name: content-mapper
 description: "연구 노트 내용을 분석하여 최대 9개 챕터에 매핑하고, 각 챕터별 자료 충분성을 평가하여 생성할 챕터 목록을 결정하는 에이전트"
 tools: Read, Glob, Grep
 model: sonnet
+skills: field-keywords, chapter-structure
 ---
 
 # Content Mapper Agent
@@ -54,7 +55,7 @@ Step 1-1. analysis_result.json 로드
 └── 키워드 분포 로드
 
 Step 1-2. 도메인별 키워드 사전 로드
-├── input-analyzer가 전달한 도메인 키워드 사용
+├── field-keywords 스킬에서 도메인별 키워드 로드
 └── 해당 도메인의 챕터별 키워드 매핑 준비
 ```
 
@@ -252,7 +253,7 @@ Step 5-2. 사용자 안내 출력
 
 ## Resources
 
-### 참조 파일
+### 스킬
 
-- 도메인별 키워드: input-analyzer가 전달한 키워드 사용
-- 챕터 구조: 위 "Phase 2: 챕터별 콘텐츠 매핑" 섹션 참조
+- `field-keywords`: 도메인별 챕터 키워드
+- `chapter-structure`: 챕터 구조 정의 및 충분성 평가 기준

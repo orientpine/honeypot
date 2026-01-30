@@ -3,6 +3,7 @@ name: input-analyzer
 description: "연구 노트 입력을 분석하여 입력 형식(폴더/파일/코드베이스)을 감지하고, 연구 도메인을 자동 추론하며, 파일 구조를 분류하는 에이전트"
 tools: Read, Glob, Grep
 model: sonnet
+skills: field-keywords
 ---
 
 # Input Analyzer Agent
@@ -60,9 +61,9 @@ Step 1-2. 입력 형식별 처리
 ```
 Step 2-1. 키워드 빈도 분석
 ├── 모든 파일 내용에서 키워드 추출
-├── 내장 도메인 키워드 사전 활용
-│   ├── ROS2, AI/ML, 물리학, 생명공학, 범용 도메인 지원
-│   └── 아래 "도메인 판정" 섹션의 키워드 목록 참조
+├── field-keywords 스킬에서 도메인별 키워드 로드
+│   ├── ROS2, AI/ML, GENERAL 도메인
+│   └── 각 도메인의 chapter_keywords 및 detection_hints 활용
 └── 각 도메인별 키워드 매칭 점수 계산
 
 Step 2-2. 도메인 판정
@@ -222,16 +223,9 @@ domain_score =
 
 ## Resources
 
-### 참조 파일
+### 스킬
 
-- 도메인 키워드: 위 "Phase 2: 연구 도메인 자동 감지" 섹션 참조 (ROS2, AI/ML, 물리학, 생명공학, 범용)
-
-### 도메인명-파일명 매핑
-
-| 도메인명 (표시용) | 정규화된 이름 | 키워드 파일 |
-|------------------|---------------|-------------|
-| ROS2 | ros2 | ros2_keywords.json |
-| AI/ML | ai_ml | ai_ml_keywords.json |
-| GENERAL | general | general_keywords.json |
-
-**정규화 규칙**: `domain.lower().replace("/", "_") + "_keywords.json"`
+- `field-keywords`: 도메인별 키워드 및 감지 힌트
+  - ROS2: 로봇 시스템 개발 키워드
+  - AI/ML: 인공지능/머신러닝 키워드
+  - GENERAL: 범용 연구/개발 키워드 및 도메인 감지 힌트

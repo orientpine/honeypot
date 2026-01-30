@@ -3,6 +3,7 @@ name: chapter-writer
 description: "4단계 문장 패턴을 적용하여 공학 박사 수준의 국가기관 제출용 챕터를 작성하는 에이전트. 연구 노트에서 추출한 내용을 전문적 보고서 형식으로 변환함"
 tools: Read, Write, Glob
 model: sonnet
+skills: four-step-pattern, field-keywords
 ---
 
 # Chapter Writer Agent
@@ -270,8 +271,7 @@ Step 5-2. 결과 보고
 
 ## Resources
 
-### 참조 파일
+### 스킬
 
-- 4단계 문장 패턴: 위 "4단계 문장 패턴" 섹션 참조
-- 챕터 구조: 위 "챕터 구조" 섹션 참조  
-- 도메인별 용어: input-analyzer가 전달한 키워드 사용
+- `four-step-pattern`: 4단계 문장 패턴 가이드 및 검증 규칙
+- `field-keywords`: 도메인별 용어 치환 규칙

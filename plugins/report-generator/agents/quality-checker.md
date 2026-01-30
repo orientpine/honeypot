@@ -3,6 +3,7 @@ name: quality-checker
 description: "생성된 보고서의 품질을 검증하는 에이전트. 4단계 패턴 적용 여부, 용어 일관성, 기술적 정확성, 문서 구조 완성도를 검사하고 검증 보고서를 생성함"
 tools: Read, Write, Glob, Grep
 model: sonnet
+skills: four-step-pattern, chapter-structure, field-keywords
 ---
 
 # Quality Checker Agent
@@ -273,8 +274,8 @@ Step 6-2. 결과 출력
 
 ## Resources
 
-### 참조 파일
+### 스킬
 
-- 4단계 패턴: 위 "품질 검증 기준" 섹션 참조
-- 문서 구조: 위 "챕터별 검증 항목" 섹션 참조
-- 용어 일관성: input-analyzer가 전달한 도메인 키워드 기준
+- `four-step-pattern`: 4단계 패턴 검증 기준
+- `chapter-structure`: 문서 구조 완성도 기준
+- `field-keywords`: 용어 일관성 검증 기준
