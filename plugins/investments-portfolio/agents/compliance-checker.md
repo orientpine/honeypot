@@ -107,7 +107,7 @@ Read("funds/fund_fees.json")
   "status": "FAIL",
   "error": "REQUIRED_FILE_MISSING",
   "missing_files": ["fund_classification.json"],
-  "action": "데이터 파일 복구 필요. data-updater 에이전트로 업데이트 권장."
+  "action": "데이터 파일 복구 필요. data-updater 스킬로 업데이트 권장."
 }
 ```
 

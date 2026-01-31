@@ -214,7 +214,7 @@ days_elapsed = (today - version_date).days
 | 경과일 | 상태 | 액션 | 메시지 |
 |:------:|:----:|------|--------|
 | 0~30일 | ✅ FRESH | 워크플로우 진행 | (없음) |
-| 31~60일 | ⚠️ STALE | 경고 후 진행 | "펀드 데이터가 {N}일 경과했습니다. 정확한 분석을 위해 data-updater 에이전트로 업데이트를 권장합니다." |
+| 31~60일 | ⚠️ STALE | 경고 후 진행 | "펀드 데이터가 {N}일 경과했습니다. 정확한 분석을 위해 data-updater 스킬로 업데이트를 권장합니다." |
 | 61일+ | 🔴 OUTDATED | 사용자 확인 요청 | "펀드 데이터가 {N}일 이상 경과하여 오래되었습니다. 진행하시겠습니까? (업데이트 권장)" |
 
 #### 2.-1.4 데이터 업데이트 안내 (STALE/OUTDATED 시)
@@ -225,14 +225,17 @@ days_elapsed = (today - version_date).days
 펀드 데이터가 오래되었습니다. 최신 데이터로 업데이트하려면:
 
 1. 과학기술인공제회에서 최신 CSV 파일을 다운로드합니다.
-2. data-updater 에이전트를 호출합니다:
+2. data-updater 스킬의 워크플로우를 따라 스크립트를 실행합니다:
 
-   ```
-   Task(
-     subagent_type="data-updater",
-     description="펀드 데이터 업데이트",
-     prompt="CSV 파일 경로: resource/YYYY년MM월_상품제안서_퇴직연금(DCIRP).csv"
-   )
+   ```bash
+   # Dry-run (미리보기)
+   python honeypot/plugins/investments-portfolio/scripts/update_fund_data.py \
+     --file "resource/YYYY년MM월_상품제안서_퇴직연금(DCIRP).csv" \
+     --dry-run
+
+   # 실제 실행
+   python honeypot/plugins/investments-portfolio/scripts/update_fund_data.py \
+     --file "resource/YYYY년MM월_상품제안서_퇴직연금(DCIRP).csv"
    ```
 
 3. 업데이트 완료 후 포트폴리오 분석을 다시 요청하세요.
@@ -1533,10 +1536,10 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "4.5"
+version: "4.6"
 updated: "2026-01-31"
 agents:
-  - data-updater        # CSV → JSON 데이터 업데이트 (v4.4 신규)
+  # data-updater 스킬: CSV → JSON 데이터 업데이트 (v4.4 → v4.6 스킬로 전환)
   - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
   - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
@@ -1588,7 +1591,8 @@ changes:
   - "v4.4: Step -1 데이터 신선도 검사 (Data Freshness Check) 추가"
   - "v4.4: fund_data.json _meta.version 기반 경과일 검사"
   - "v4.4: 30일 이내=FRESH, 31-60일=STALE(경고), 61일+=OUTDATED(확인요청)"
-  - "v4.4: data-updater 에이전트 연동 안내 추가"
+  - "v4.6: data-updater 에이전트 → 스킬로 전환 (visual-generator 패턴)"
+  - "v4.4: data-updater 연동 안내 추가"
   - "v4.4: 모든 보고서에 데이터 기준일 명시 필수화"
   - "v4.3: 파일 내용 검증 강화 (환각 방지 핵심 개선)"
   - "v4.3: Step 0.2.5에서 JSON 파싱, original_text, status 필드 검증 추가"
