@@ -111,7 +111,7 @@ Read("funds/deposit_rates.json")
   "status": "FAIL",
   "error": "REQUIRED_FILE_MISSING",
   "missing_files": ["fund_data.json"],
-  "action": "fund_data.json 파일이 없습니다. data-updater 에이전트로 데이터 업데이트 필요.",
+  "action": "fund_data.json 파일이 없습니다. data-updater 스킬로 데이터 업데이트 필요.",
   "hallucination_prevented": true
 }
 ```
