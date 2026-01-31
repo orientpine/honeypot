@@ -207,19 +207,22 @@ description: "펀드 선택 기준 및 점수 체계. 인덱스 vs 액티브 선
 
 ```
 Step 1: 현재 예금 금리 확인
-   └─ funds/deposit_rates.json 참조
-   └─ 퇴직연금 예금 금리 확인 (예: 3.60%)
+   └─ funds/deposit_rates.json 참조 (필수)
+   └─ 퇴직연금 예금 금리 확인 (예: 4.90%)
+   └─ ⚠️ 파일 없음 → FAIL (사용자에게 요청, 웹검색 금지)
 
 Step 2: 채권형 펀드 실질 수익률 계산
    └─ 실질 수익률 = 1년 수익률 - 총보수
-   └─ 예: 4.50% - 0.30% = 4.20%
+   └─ 예: 3.49% - 0.30% = 3.19%
 
 Step 3: 비교 판단
    └─ IF 실질 수익률 > 예금 금리 + 0.5%p:
          THEN 채권형 펀드 선택 가능
       ELSE:
-         THEN 예금 우선 추천
+         THEN 예금 우선 추천 (MANDATORY)
 ```
+
+> ⚠️ **웹검색 금지**: 과학기술인공제회 예금 상품은 외부 웹에서 검색되지 않습니다.
 
 ### 6.5 비교 테이블 예시 (필수 포함)
 
@@ -285,12 +288,12 @@ Step 3: 비교 판단
 
 ### 8.1 로컬 펀드 데이터 (필수)
 
-| 파일 | 용도 | 필수 확인 |
-|------|------|:--------:|
-| `funds/fund_data.json` | 펀드 기본 정보 (수익률, 위험등급, 순자산) | MUST |
-| `funds/fund_classification.json` | 펀드 분류 (위험/안전자산, 카테고리, 지역) | MUST |
-| `funds/fund_fees.json` | 펀드 총보수 (데이터 가용 시에만) | OPTIONAL |
-| `funds/deposit_rates.json` | 기준금리, 예금금리 | MUST |
+| 파일 | 용도 | 필수 확인 | 없을 경우 |
+|------|------|:--------:|----------|
+| `funds/fund_data.json` | 펀드 기본 정보 (수익률, 위험등급, 순자산) | MUST | FAIL |
+| `funds/fund_classification.json` | 펀드 분류 (위험/안전자산, 카테고리, 지역) | MUST | FAIL |
+| `funds/fund_fees.json` | 펀드 총보수 (데이터 가용 시에만) | OPTIONAL | WARNING |
+| `funds/deposit_rates.json` | 예금 금리 (안전자산 비교 필수) | MUST | FAIL (사용자 요청, 웹검색 금지) |
 
 ### 8.2 웹검색 신뢰도 가이드라인
 

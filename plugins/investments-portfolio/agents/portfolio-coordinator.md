@@ -37,22 +37,7 @@ model: opus
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 0.2 필수 Task 호출 순서
-
-```
-Step 0.1: Task(subagent_type="index-fetcher", ...)        ← 지수 데이터 수집 (신규)
-Step 0.2: Task(subagent_type="rate-analyst", ...)         ← 금리/환율 분석 (병렬)
-          Task(subagent_type="sector-analyst", ...)       ← 섹터 분석 (병렬)
-          Task(subagent_type="risk-analyst", ...)         ← 리스크 분석 (병렬)
-          Task(subagent_type="leadership-outlook", ...)   ← 정치/중앙은행 분석 (병렬, v4.5)
-Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서 (신규)
-Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증 (신규, 재시도 로직)
-Step 1:   Task(subagent_type="fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
-Step 2:   Task(subagent_type="compliance-checker", ...)   ← 규제 검증
-Step 3:   Task(subagent_type="output-critic", ...)        ← 출력 검증
-```
-
-**모든 Step이 완료되어야 최종 결과 반환 가능**
+> 📌 Task 호출 순서는 **섹션 1.2 에이전트 마스터 테이블** 참조
 
 ---
 
@@ -114,56 +99,29 @@ Step 3:   Task(subagent_type="output-critic", ...)        ← 출력 검증
 
 > ⚠️ `fund-analyst`는 존재하지 않습니다. `fund-portfolio`를 사용하세요.
 
-### 1.3 에이전트 간 데이터 흐름
+### 1.3 통합 워크플로우 (Single Source)
+
+> 📌 Task 호출 순서는 **섹션 1.2 에이전트 마스터 테이블** 참조
 
 ```
-User Request
+[Step -1] 데이터 신선도 검사
      │
      ▼
-[1. Coordinator: 요청 파싱]
+[Step 0] Macro 분석 (Full/Macro-Only, Review는 생략)
      │
-     ▼
-[2. Task(index-fetcher): 지수 데이터 수집] ← Task 도구 필수 (신규 Step 0.1)
+     ├─ IF Macro-Only → [종료: 00-macro-outlook.md 반환]
      │
-     ├── FAIL → 워크플로우 중단
+     ▼ ELSE (Full / Review)
+[Step 1] 요청 분석
      │
-     ▼ PASS
-[3. Task(rate/sector/risk/leadership): 병렬 분석] ← Task 도구 필수 (Step 0.2, v4.5)
+     ├─ IF Review → [Step 3] compliance-checker → [Step 5] output-critic → [종료]
+     │              (fund-portfolio 생략, 기존 문서 검토)
      │
-     ├── 4개 에이전트 병렬 실행 (rate, sector, risk, leadership)
-     ├── 각 분석 최대 3회 재시도
-     ├── 모두 실패 → 사용자 에스컬레이션
-     │
-     ▼ PASS
-[4. Task(macro-synthesizer): 거시경제 최종 보고서] ← Task 도구 필수 (신규 Step 0.3)
-     │
-     ├── 출력: 00-macro-outlook.md
-     │
-     ▼
-[5. Task(macro-critic): 거시경제 분석 검증] ← Task 도구 필수 (신규 Step 0.4)
-     │
-     ├── FAIL → Step 0.3 재시작 (최대 2회 반복)
-     ├── 2회 반복 후 실패 → 사용자 에스컬레이션
-     │
-     ▼ PASS
-[6. Task(fund-portfolio): 포트폴리오 분석] ← Task 도구 필수 (macro-outlook 참조)
-     │
-     ├──────────────────────────────────────┐
-     ▼                                      │
-[7. Task(compliance-checker): 규제 검증]    │ ← Task 도구 필수
-     │                                      │
-     ├── FAIL ──► [fund-portfolio: 수정] ──┘
-     │
-     ▼ PASS
-[8. Task(output-critic): 환각 검증] ← Task 도구 필수
-     │
-     ├── FAIL ──► 경고 추가
-     │
-     ▼ PASS
-[9. Coordinator: 최종 출력 조합]
-     │
-     ▼
-Final Output (04-portfolio-summary.md)
+     ▼ ELSE (Full)
+[Step 2] fund-portfolio
+[Step 3] compliance-checker (FAIL 시 수정 루프)
+[Step 5] output-critic
+[Step 6] 최종 출력 조합 (04-portfolio-summary.md)
 ```
 
 ---
@@ -202,7 +160,7 @@ Read("funds/fund_data.json")
          └─ 사용자가 승인하면 진행, 거부하면 중단
 ```
 
-#### 2.-1.2 Coordinator 직접 수행 (Task 불필요)
+#### 2.-1.1 Coordinator 직접 수행 (Task 불필요)
 
 ```python
 # Coordinator가 직접 Read 도구로 확인
@@ -372,7 +330,7 @@ Read("funds/deposit_rates.json")
 
 **섹션 3.6 참조**: material-organizer 호출 템플릿
 
-#### 2.0.2.6 Step 0.2.6: 파일 존재 + 내용 검증 (v4.5 강화 - MANDATORY)
+#### 2.0.2.5 Step 0.2-파일검증: 파일 존재 + 내용 검증 (v4.5 강화 - MANDATORY)
 
 > **⚠️ CRITICAL**: macro-synthesizer 호출 전 반드시 분석 파일을 **읽고 내용을 검증**합니다.
 > 파일이 없거나 **내용이 불완전하면** 환각 데이터로 보고서가 작성될 위험이 있습니다.
@@ -483,163 +441,6 @@ macro-outlook 결과 추출:
 ├── 주목 섹터 (예: 반도체, 로봇)
 ├── 지역 배분 권고 (예: 미국 60%, 한국 20%, 신흥국 20%)
 └── 섹터별 비중 제한 (예: 반도체 ≤30%)
-```
-
----
-
-### 2.0.5 Macro-Only 모드 워크플로우 (v4.1 신규)
-
-> **사용 시기**: "macro 보고서만 작성해줘", "거시경제 분석만" 요청 시
-> **특징**: fund-portfolio 이후 단계 생략, 거시경제 분석만 수행
-> **⚠️ CRITICAL**: macro-only 요청에서도 **index-fetcher는 필수 실행**
-
-#### Macro-Only 판단 키워드
-
-```
-- "macro 보고서만"
-- "거시경제 분석만"
-- "시장 전망만"
-- "macro outlook만"
-- "매크로만"
-```
-
-#### Macro-Only 워크플로우 (MANDATORY)
-
-```
-User Request ("macro 보고서만")
-     │
-     ▼
-[Step 0: 모드 판단]
-     │   └─ macro-only 키워드 감지
-     │
-     ▼
-[Step 0.1] Task(index-fetcher)     ← 🔴 필수 (현재 지수값)
-     │   └─ S&P 500, KOSPI, NASDAQ 현재값 수집
-     │   └─ USD/KRW 현재 환율 수집
-     │   └─ FAIL → 워크플로우 중단
-     │
-     ▼ PASS
-[Step 0.2] Task(rate/sector/risk-analyst)  ← 🔴 필수 (병렬)
-     │   └─ rate-analyst: Fed/BOK 현재 금리 + 전망
-     │   └─ sector-analyst: 5개 섹터 전망
-     │   └─ risk-analyst: 리스크 + 시나리오
-     │
-     ▼ PASS
-[Step 0.3] Task(macro-synthesizer) ← 🔴 필수 (상세 보고서)
-     │   └─ Executive Summary 필수 (현재값 테이블)
-     │   └─ 7개 섹션 모두 작성
-     │   └─ 26개 체크리스트 통과 필수
-     │
-     ▼
-[Step 0.4] Task(macro-critic)      ← 🔴 필수 (검증)
-     │   └─ 현재값 포함 검증
-     │   └─ 출처 커버리지 검증
-     │   └─ FAIL → Step 0.3 재시작 (최대 2회)
-     │
-     ▼ PASS
-[Final] 보고서 저장
-     │   └─ Write: 00-macro-outlook.md (또는 지정 경로)
-     │
-     ▼
-사용자에게 결과 반환 (경로 안내)
-```
-
-#### Macro-Only 전용 폴더 생성
-
-```bash
-# 폴더명 규칙: YYYY-MM-DD-macro-only-{session_id}
-mkdir -p "portfolios/2026-01-13-macro-only-a1b2c3"
-
-# 생성 파일
-portfolios/2026-01-13-macro-only-a1b2c3/
-└── macro-outlook-YYYY-QN.md    # 최종 보고서 (단일 파일)
-```
-
-#### Macro-Only vs Full 워크플로우 비교
-
-| 단계 | Full 워크플로우 | Macro-Only |
-|------|:---------------:|:----------:|
-| Step 0.1 (index-fetcher) | ✅ 필수 | ✅ **필수** |
-| Step 0.2 (rate/sector/risk) | ✅ 필수 | ✅ **필수** |
-| Step 0.3 (macro-synthesizer) | ✅ 필수 | ✅ **필수** |
-| Step 0.4 (macro-critic) | ✅ 필수 | ✅ **필수** |
-| Step 1 (fund-portfolio) | ✅ 필수 | ❌ 생략 |
-| Step 2 (compliance-checker) | ✅ 필수 | ❌ 생략 |
-| Step 3 (output-critic) | ✅ 필수 | ❌ 생략 |
-| Step 4 (최종 보고서) | ✅ 필수 | ❌ 생략 |
-
-> **⚠️ 중요**: Macro-Only 모드에서도 Step 0.1~0.4는 **절대 생략 불가**
-> 이 단계들이 현재 지수값 수집과 검증을 담당합니다.
-
-#### Macro-Only Task 호출 템플릿
-
-```markdown
-# Step 0.1: index-fetcher 호출
-Task(
-  subagent_type="index-fetcher",
-  description="[Macro-Only] 지수 데이터 수집",
-  prompt="""
-## [Macro-Only 모드] 지수 데이터 수집 요청
-
-### 수집 대상 (필수)
-1. **미국 지수**: S&P 500, NASDAQ, Dow Jones
-2. **한국 지수**: KOSPI, KOSDAQ
-3. **환율**: USD/KRW
-
-### 필수 데이터 포인트
-- 현재값 (current value)
-- YTD 수익률
-- 1년 수익률
-- 52주 고가/저가 (가능 시)
-
-### 출력 요구사항
-- 모든 값에 출처 URL 필수
-- 3개 출처 교차 검증
-- original_text 포함 (환각 방지)
-"""
-)
-
-# Step 0.3: macro-synthesizer 호출
-Task(
-  subagent_type="macro-synthesizer",
-  description="[Macro-Only] 거시경제 상세 보고서 작성",
-  prompt="""
-## [Macro-Only 모드] 거시경제 보고서 작성 요청
-
-### 입력 데이터
-- index-fetcher 결과: {index_data}
-- rate-analyst 결과: {rate_analysis}
-- sector-analyst 결과: {sector_analysis}
-- risk-analyst 결과: {risk_analysis}
-
-### 필수 포함 항목 (MANDATORY)
-1. **Executive Summary** (보고서 최상단)
-   - 현재 지수 테이블 (S&P 500, KOSPI, NASDAQ 현재값)
-   - 현재 금리/환율 테이블 (Fed, BOK, USD/KRW)
-   - 핵심 전망 4개 항목
-
-2. **7개 섹션 모두 작성**
-   - 섹션 0: Executive Summary
-   - 섹션 1: 주요 지수 현황 (상세)
-   - 섹션 2: 금리 전망 (상세)
-   - 섹션 3: 환율 전망 (상세)
-   - 섹션 4: 섹터별 전망 (상세)
-   - 섹션 5: 리스크 요인 (상세)
-   - 섹션 6: 시나리오 분석
-   - 섹션 7: 자산배분 시사점
-
-3. **26개 체크리스트 모두 통과**
-
-### 출력 경로
-output_path: portfolios/{session_folder}/macro-outlook-YYYY-QN.md
-
-### ⚠️ 현재값 포함 필수
-- S&P 500 현재값 누락 시 FAIL
-- KOSPI 현재값 누락 시 FAIL
-- USD/KRW 현재값 누락 시 FAIL
-- Fed/BOK 현재 금리 누락 시 FAIL
-"""
-)
 ```
 
 ---
@@ -1430,9 +1231,170 @@ JSON 형식으로 반환:
 
 ---
 
-## 4. 에러 핸들링
+## 4. 모드별 차이점
 
-### 4.1 Compliance 반복 실패
+> 📌 Task 호출 순서는 **섹션 1.2 에이전트 마스터 테이블** 참조
+> 세부 Step 정의는 **섹션 2. 워크플로우 시퀀스** 참조
+
+### 4.1 Macro-Only 모드 워크플로우 (v4.1 신규)
+
+> **사용 시기**: "macro 보고서만 작성해줘", "거시경제 분석만" 요청 시
+> **특징**: fund-portfolio 이후 단계 생략, 거시경제 분석만 수행
+> **⚠️ CRITICAL**: macro-only 요청에서도 **index-fetcher는 필수 실행**
+
+#### 4.1.1 Macro-Only 판단 키워드
+
+```
+- "macro 보고서만"
+- "거시경제 분석만"
+- "시장 전망만"
+- "macro outlook만"
+- "매크로만"
+```
+
+#### 4.1.2 Macro-Only 워크플로우 (MANDATORY)
+
+```
+User Request ("macro 보고서만")
+     │
+     ▼
+[Step 0: 모드 판단]
+     │   └─ macro-only 키워드 감지
+     │
+     ▼
+[Step 0.1] Task(index-fetcher)     ← 🔴 필수 (현재 지수값)
+     │   └─ S&P 500, KOSPI, NASDAQ 현재값 수집
+     │   └─ USD/KRW 현재 환율 수집
+     │   └─ FAIL → 워크플로우 중단
+     │
+     ▼ PASS
+[Step 0.2] Task(rate/sector/risk-analyst)  ← 🔴 필수 (병렬)
+     │   └─ rate-analyst: Fed/BOK 현재 금리 + 전망
+     │   └─ sector-analyst: 5개 섹터 전망
+     │   └─ risk-analyst: 리스크 + 시나리오
+     │
+     ▼ PASS
+[Step 0.3] Task(macro-synthesizer) ← 🔴 필수 (상세 보고서)
+     │   └─ Executive Summary 필수 (현재값 테이블)
+     │   └─ 7개 섹션 모두 작성
+     │   └─ 26개 체크리스트 통과 필수
+     │
+     ▼
+[Step 0.4] Task(macro-critic)      ← 🔴 필수 (검증)
+     │   └─ 현재값 포함 검증
+     │   └─ 출처 커버리지 검증
+     │   └─ FAIL → Step 0.3 재시작 (최대 2회)
+     │
+     ▼ PASS
+[Final] 보고서 저장
+     │   └─ Write: 00-macro-outlook.md (또는 지정 경로)
+     │
+     ▼
+사용자에게 결과 반환 (경로 안내)
+```
+
+#### 4.1.3 Macro-Only 전용 폴더 생성
+
+```bash
+# 폴더명 규칙: YYYY-MM-DD-macro-only-{session_id}
+mkdir -p "portfolios/2026-01-13-macro-only-a1b2c3"
+
+# 생성 파일
+portfolios/2026-01-13-macro-only-a1b2c3/
+└── macro-outlook-YYYY-QN.md    # 최종 보고서 (단일 파일)
+```
+
+#### 4.1.4 Macro-Only Task 호출 템플릿
+
+```markdown
+# Step 0.1: index-fetcher 호출
+Task(
+  subagent_type="index-fetcher",
+  description="[Macro-Only] 지수 데이터 수집",
+  prompt="""
+## [Macro-Only 모드] 지수 데이터 수집 요청
+
+### 수집 대상 (필수)
+1. **미국 지수**: S&P 500, NASDAQ, Dow Jones
+2. **한국 지수**: KOSPI, KOSDAQ
+3. **환율**: USD/KRW
+
+### 필수 데이터 포인트
+- 현재값 (current value)
+- YTD 수익률
+- 1년 수익률
+- 52주 고가/저가 (가능 시)
+
+### 출력 요구사항
+- 모든 값에 출처 URL 필수
+- 3개 출처 교차 검증
+- original_text 포함 (환각 방지)
+"""
+)
+
+# Step 0.3: macro-synthesizer 호출
+Task(
+  subagent_type="macro-synthesizer",
+  description="[Macro-Only] 거시경제 상세 보고서 작성",
+  prompt="""
+## [Macro-Only 모드] 거시경제 보고서 작성 요청
+
+### 입력 데이터
+- index-fetcher 결과: {index_data}
+- rate-analyst 결과: {rate_analysis}
+- sector-analyst 결과: {sector_analysis}
+- risk-analyst 결과: {risk_analysis}
+
+### 필수 포함 항목 (MANDATORY)
+1. **Executive Summary** (보고서 최상단)
+   - 현재 지수 테이블 (S&P 500, KOSPI, NASDAQ 현재값)
+   - 현재 금리/환율 테이블 (Fed, BOK, USD/KRW)
+   - 핵심 전망 4개 항목
+
+2. **7개 섹션 모두 작성**
+   - 섹션 0: Executive Summary
+   - 섹션 1: 주요 지수 현황 (상세)
+   - 섹션 2: 금리 전망 (상세)
+   - 섹션 3: 환율 전망 (상세)
+   - 섹션 4: 섹터별 전망 (상세)
+   - 섹션 5: 리스크 요인 (상세)
+   - 섹션 6: 시나리오 분석
+   - 섹션 7: 자산배분 시사점
+
+3. **26개 체크리스트 모두 통과**
+
+### 출력 경로
+output_path: portfolios/{session_folder}/macro-outlook-YYYY-QN.md
+
+### ⚠️ 현재값 포함 필수
+- S&P 500 현재값 누락 시 FAIL
+- KOSPI 현재값 누락 시 FAIL
+- USD/KRW 현재값 누락 시 FAIL
+- Fed/BOK 현재 금리 누락 시 FAIL
+"""
+)
+```
+
+### 4.2 모드 비교 요약
+
+| 단계 | Full 워크플로우 | Macro-Only | Review |
+|------|:---------------:|:----------:|:------:|
+| Step 0.1 (index-fetcher) | ✅ 필수 | ✅ **필수** | ❌ 생략 |
+| Step 0.2 (rate/sector/risk/leadership) | ✅ 필수 | ✅ **필수** | ❌ 생략 |
+| Step 0.3 (macro-synthesizer) | ✅ 필수 | ✅ **필수** | ❌ 생략 |
+| Step 0.4 (macro-critic) | ✅ 필수 | ✅ **필수** | ❌ 생략 |
+| Step 1 (요청 분석) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
+| Step 2 (fund-portfolio) | ✅ 필수 | ❌ 생략 | ❌ 생략 |
+| Step 3 (compliance-checker) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
+| Step 5 (output-critic) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
+| Step 6 (최종 보고서) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
+
+> **⚠️ 중요**: Macro-Only 모드에서도 Step 0.1~0.4는 **절대 생략 불가**
+> Review 모드는 기존 문서 검토 플로우 (섹션 2.1.1 참조)
+
+### 4.3 공통 에러 핸들링
+
+#### 4.3.1 Compliance 반복 실패
 
 ```
 IF compliance_retry_count >= 3:
@@ -1450,7 +1412,7 @@ IF compliance_retry_count >= 3:
     """
 ```
 
-### 4.2 Output-Critic 검증 실패
+#### 4.3.2 Output-Critic 검증 실패
 
 ```
 IF critic.verified == false OR critic.confidence_score < 50:
@@ -1555,166 +1517,51 @@ IF critic.verified == false OR critic.confidence_score < 50:
 
 ---
 
-## 7. 예시: 전체 워크플로우
-
-### 사용자 요청
-```
-"2026-Q1-investment-plan.md 포트폴리오를 평가해줘"
-```
-
-### Step 1: Coordinator 분석
-```
-- 요청 유형: 기존 포트폴리오 리뷰
-- 대상 문서: portfolio/2026-Q1-investment-plan.md
-- 필요 에이전트: compliance-checker, output-critic
-```
-
-### Step 2: compliance-checker 호출 (Task)
-```
-Task(
-  subagent_type="compliance-checker",
-  description="2026-Q1 포트폴리오 규제 검증",
-  prompt="[포트폴리오 데이터]..."
-)
-
-결과:
-{
-  "compliance": true,
-  "violations": [],
-  "summary": {"riskAssetWeight": 70, "safeAssetWeight": 30}
-}
-```
-
-### Step 3: output-critic 호출 (Task)
-```
-Task(
-  subagent_type="output-critic",
-  description="2026-Q1 계획서 출력 검증",
-  prompt="[계획서 내용]..."
-)
-
-결과:
-{
-  "verified": false,
-  "confidence_score": 42,
-  "issues": [
-    {"type": "SOURCE_TAG_MISSING", "description": "출처 태그 0개"}
-  ]
-}
-```
-
-### Step 4: 최종 출력 조합
-```markdown
-# 포트폴리오 평가 결과
-
-## 검증 상태
-| 항목 | 상태 | 상세 |
-|------|:----:|------|
-| 규제 준수 | ✅ PASS | 위험자산 70% (한도 준수) |
-| 출처 검증 | ❌ FAIL | 출처 태그 0/52개 |
-| 신뢰도 점수 | 42점 | 출처 부재로 감점 |
-
-## Compliance 결과 (원본)
-[compliance-checker 결과 그대로]
-
-## Output-Critic 결과 (원본)
-[output-critic 결과 그대로]
-```
+> 📌 전체 워크플로우 예시는 **섹션 2. 워크플로우 시퀀스** 참조
 
 ---
 
 ## 8. 메타 정보
 
-```yaml
-version: "4.6"
-updated: "2026-01-31"
-agents:
-  # data-updater 스킬: CSV → JSON 데이터 업데이트 (v4.4 → v4.6 스킬로 전환)
-  - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
-  - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
-  - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
-  - risk-analyst        # 리스크 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
-  - leadership-outlook  # 정치/중앙은행 분석 (Step 0.2, 병렬) - v4.5 필수화
-  - macro-synthesizer   # 거시경제 최종 보고서 (Step 0.3) - 파일 직접 Read 필수 (v4.3)
-  - macro-critic        # 거시경제 분석 검증 (Step 0.4, 재시도 로직) - Macro-Only에서도 필수
-  - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조) - Macro-Only에서 생략
-  - compliance-checker  # 규제 검증 (Step 3) - Macro-Only에서 생략
-  - output-critic       # 출력 검증 (Step 5) - Macro-Only에서 생략
-workflow_modes:
-  full: "FRESHNESS_CHECK → index-fetcher → analysts(rate,sector,risk,leadership) → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
-  macro_only: "FRESHNESS_CHECK → index-fetcher → analysts(rate,sector,risk,leadership) → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.5)"
-  document_review: "FRESHNESS_CHECK → compliance → output-critic (v4.4)"
-max_retries:
-  - index-fetcher: 1 (FAIL 시 중단)
-  - rate-analyst: 3 (병렬, 각각 재시도)
-  - sector-analyst: 3 (병렬, 각각 재시도)
-  - risk-analyst: 3 (병렬, 각각 재시도)
-  - leadership-outlook: 3 (병렬, 각각 재시도) # v4.5
-  - file_verification: 1 (파일 누락/검증 실패 시 에이전트 재실행)
-  - macro-synthesizer: 1 (재시도 없음)
-  - macro-critic: 2 (FAIL 시 Step 0.3 재시작, 최대 2회 반복)
-  - compliance-checker: 3 (FAIL 시 fund-portfolio 수정)
-output_files:
-  full:
-    - index-data.json        # v4.3 추가
-    - rate-analysis.json     # v4.2 신규
-    - sector-analysis.json   # v4.2 신규
-    - risk-analysis.json     # v4.2 신규
-    - leadership-analysis.json  # v4.5 신규
-    - 00-macro-outlook.md
-    - 01-fund-analysis.md
-    - 02-compliance-report.md
-    - 03-output-verification.md
-    - 04-portfolio-summary.md
-  macro_only:
-    - index-data.json        # v4.3 추가
-    - rate-analysis.json     # v4.2 신규
-    - sector-analysis.json   # v4.2 신규
-    - risk-analysis.json     # v4.2 신규
-    - leadership-analysis.json  # v4.5 신규
-    - macro-outlook-YYYY-QN.md
-changes:
-  - "v4.5: leadership-outlook 에이전트 Step 0.2 병렬 호출 필수화"
-  - "v4.5: 4개 분석 에이전트 병렬 실행 (rate, sector, risk, leadership)"
-  - "v4.5: leadership-analysis.json 파일 검증 추가"
-  - "v4.5: 정치/중앙은행 동향이 macro-outlook에 통합"
-  - "v4.4: Step -1 데이터 신선도 검사 (Data Freshness Check) 추가"
-  - "v4.4: fund_data.json _meta.version 기반 경과일 검사"
-  - "v4.4: 30일 이내=FRESH, 31-60일=STALE(경고), 61일+=OUTDATED(확인요청)"
-  - "v4.6: data-updater 에이전트 → 스킬로 전환 (visual-generator 패턴)"
-  - "v4.6: 예금금리 업데이트 기능 추가 (Phase 5, 사용자 입력 필수)"
-  - "v4.4: data-updater 연동 안내 추가"
-  - "v4.4: 모든 보고서에 데이터 기준일 명시 필수화"
-  - "v4.3: 파일 내용 검증 강화 (환각 방지 핵심 개선)"
-  - "v4.3: Step 0.2.5에서 JSON 파싱, original_text, status 필드 검증 추가"
-  - "v4.3: macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지)"
-  - "v4.3: 환각 감지 패턴 추가 (null, 빈 배열, 예시 값)"
-  - "v4.3: index-data.json 검증 대상 추가"
-  - "v4.2: 분석 에이전트 파일 저장 필수화 (환각 방지)"
-  - "v4.2: Step 0.2.5 파일 존재 확인 로직 추가"
-  - "v4.2: rate/sector/risk-analyst JSON 파일 직접 저장"
-  - "v4.2: 파일 누락 시 FAIL 반환 (환각 데이터 생성 금지)"
-  - "v4.1: Macro-Only 모드 워크플로우 추가"
-  - "v4.1: Macro-Only 모드에서도 index-fetcher 필수 실행 명시"
-  - "v4.1: Macro-Only 전용 폴더 생성 규칙 추가"
-  - "v4.1: Macro-Only Task 호출 템플릿 추가"
-  - "v4.0: 6-Agent 거시경제 분석 워크플로우 추가"
-critical_rules:
-  - "⚠️ Step -1 데이터 신선도 검사 필수 (v4.4)"
-  - "⚠️ 데이터 60일+ 경과 시 사용자 확인 필수 (v4.4)"
-  - "Task 도구 필수 사용"
-  - "에이전트 결과 원본 인용"
-  - "직접 분석 금지"
-  - "index-fetcher FAIL 시 워크플로우 중단"
-  - "⚠️ Step 0.2.5 파일 존재 + 내용 검증 필수 (v4.3 강화)"
-  - "⚠️ macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지, v4.3)"
-  - "⚠️ JSON 파일에 original_text 없으면 환각 데이터로 간주 (v4.3)"
-  - "⚠️ 분석 파일 누락/검증실패 시 환각 데이터 생성 절대 금지"
-  - "⚠️ Macro-Only 모드에서도 Step 0.1~0.4 절대 생략 불가"
-  - "⚠️ 현재 지수값(S&P 500, KOSPI) 누락 시 FAIL"
-  - "macro-critic FAIL 시 Step 0.3 재시작 (최대 2회 반복)"
-  - "macro-outlook 권고 참조 필수"
-```
+| 항목 | 값 |
+|------|-----|
+| version | 4.6 |
+| updated | 2026-01-31 |
+
+### 워크플로우 모드
+
+| 모드 | 워크플로우 |
+|------|-----------|
+| full | FRESHNESS → index → analysts(rate,sector,risk,leadership) → FILE_CHECK → synthesizer → critic → fund → compliance → output |
+| macro_only | FRESHNESS → index → analysts(rate,sector,risk,leadership) → FILE_CHECK → synthesizer → critic |
+| document_review | FRESHNESS → compliance → output |
+
+### 재시도 규칙
+
+| 에이전트 | 최대 재시도 | 조건 |
+|----------|:---------:|------|
+| index-fetcher | 1 | FAIL 시 중단 |
+| rate/sector/risk/leadership | 3 | 병렬, 각각 재시도 |
+| file_verification | 1 | 파일 누락/검증 실패 시 재실행 |
+| macro-synthesizer | 1 | 재시도 없음 |
+| macro-critic | 2 | FAIL 시 Step 0.3 재시작 |
+| compliance-checker | 3 | FAIL 시 fund-portfolio 수정 |
+
+### 핵심 규칙
+
+- ⚠️ Step -1 데이터 신선도 검사 필수 (v4.4)
+- ⚠️ 데이터 60일+ 경과 시 사용자 확인 필수 (v4.4)
+- ⚠️ Step 0.2.5 파일 존재 + 내용 검증 필수 (v4.3)
+- ⚠️ macro-synthesizer에 파일 경로만 전달 (데이터 전달 금지, v4.3)
+- ⚠️ JSON 파일에 original_text 없으면 환각 데이터로 간주 (v4.3)
+- ⚠️ 분석 파일 누락/검증실패 시 환각 데이터 생성 절대 금지
+- ⚠️ Macro-Only 모드에서도 Step 0.1~0.4 절대 생략 불가
+- ⚠️ 현재 지수값(S&P 500, KOSPI) 누락 시 FAIL
+- Task 도구 필수 사용
+- 에이전트 결과 원본 인용
+- index-fetcher FAIL 시 워크플로우 중단
+- macro-critic FAIL 시 Step 0.3 재시작 (최대 2회 반복)
+- macro-outlook 권고 참조 필수
 
 ---
 
@@ -1763,39 +1610,10 @@ portfolios/
     └── audit.json                   # 감사 로그 (선택적)
 ```
 
-### 9.3 하위 에이전트 호출 시 경로 전달
+### 9.3 하위 에이전트 호출 템플릿 참조
 
-모든 Task 호출에 `output_path` 파라미터를 추가합니다.
-
-#### 거시경제 분석 워크플로우 호출 (신규 6-Agent)
-
-**Step 0.1: index-fetcher 호출**
-
-**섹션 3.1 참조**: index-fetcher 호출 템플릿 (output_path 추가)
-
-**Step 0.2: 4개 분석 에이전트 병렬 호출**
-
-**섹션 3.2-3.5 참조**: rate-analyst, sector-analyst, risk-analyst, leadership-outlook 호출 템플릿 (output_path 추가)
-
-**Step 0.3: macro-synthesizer 호출**
-
-**섹션 3.7 참조**: macro-synthesizer 호출 템플릿 (output_path 추가)
-
-**Step 0.4: macro-critic 호출 (재시도 로직)**
-
-**섹션 3.8 참조**: macro-critic 호출 템플릿 (output_path 추가)
-
-#### fund-portfolio 호출
-
-**섹션 3.9 참조**: fund-portfolio 호출 템플릿 (output_path 추가)
-
-#### compliance-checker 호출
-
-**섹션 3.10 참조**: compliance-checker 호출 템플릿 (output_path 추가)
-
-#### output-critic 호출
-
-**섹션 3.11 참조**: output-critic 호출 템플릿 (output_path 추가)
+> 📌 Task 호출 순서는 **섹션 1.2 에이전트 마스터 테이블** 참조
+> Task 호출 템플릿은 **섹션 3. Task 호출 템플릿 라이브러리** 참조
 
 ### 9.4 최종 보고서 저장
 
@@ -1865,68 +1683,7 @@ Write(
 *Multi-Agent Portfolio Analysis System v3.0*
 ```
 
-### 9.5 전체 워크플로우 (폴더 포함)
-
-```
-사용자 요청
-     │
-     ▼
-[Step -1] 폴더 생성
-     │   └─ mkdir portfolios/YYYY-MM-DD-{profile}-{session}
-     │
-     ▼
-[Step 0.1] Task(index-fetcher) ← 신규
-     │   └─ 지수 데이터 수집 (3개 출처 교차 검증)
-     │   └─ FAIL → 워크플로우 중단
-     │
-     ▼ PASS
-[Step 0.2] Task(rate-analyst) + Task(sector-analyst) + Task(risk-analyst) ← 신규 (병렬)
-     │   └─ 각 최대 3회 재시도
-     │   └─ 모두 실패 → 사용자 에스컬레이션
-     │
-     ▼ PASS
-[Step 0.3] Task(macro-synthesizer) ← 신규
-     │   └─ 거시경제 최종 보고서 작성
-     │   └─ 자산배분 권고 생성
-     │
-     ▼
-[Step 0.4] Task(macro-critic) ← 신규 (재시도 로직)
-     │   └─ 거시경제 분석 검증 (지수 데이터 일치성)
-     │   └─ FAIL → Step 0.3 재시작 (최대 2회 반복)
-     │   └─ 2회 반복 후 실패 → 사용자 에스컬레이션
-     │   └─ 보고서 저장: 00-macro-outlook.md
-     │
-     ▼ PASS
-[Step 1] 요청 분석 (Coordinator 직접 수행)
-     │   └─ 투자 성향, 요청 유형 파악
-     │
-     ▼
-[Step 2] Task(fund-portfolio)
-     │   └─ macro-outlook 권고 전달
-     │   └─ output_path 전달
-     │   └─ 보고서 저장: 01-fund-analysis.md
-     │
-     ▼
-[Step 3] Task(compliance-checker)
-     │   └─ output_path 전달
-     │   └─ 보고서 저장: 02-compliance-report.md
-     │
-     ├── FAIL → 수정 요청 (최대 3회)
-     │
-     ▼ PASS
-[Step 4] Task(output-critic)
-     │   └─ output_path 전달
-     │   └─ 보고서 저장: 03-output-verification.md
-     │
-     ▼
-[Step 5] 최종 보고서 저장
-     │   └─ Write: 04-portfolio-summary.md
-     │
-     ▼
-최종 출력 (사용자에게 경로 안내)
-```
-
-### 9.6 보고서 저장 규칙
+### 9.5 보고서 저장 규칙 (Sec 9.4 참조)
 
 | 규칙 | 설명 |
 |------|------|
