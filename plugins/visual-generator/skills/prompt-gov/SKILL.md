@@ -71,19 +71,19 @@ description: "연구 계획서 문서를 분석하여 정부/공공기관 발표
 |   +-- 실습/현장/운영 → workshop
 |
 +-- Step 2-2. 테마 색상 로드
-    +-- references/prompt_style_guide.md에서 팔레트 확정 (주조/보조/강조/배경)
+    +-- 아래 "무드 테마 옵션" 테이블에서 팔레트 확정 (주조/보조/강조/배경)
 ```
 
 ### Phase 3: 시각화 유형(레이아웃) 선택
 
-공유 레이아웃 타입은 `../../references/layout_types.md`를 참조합니다.
+공유 레이아웃 타입은 아래 시각화 유형 테이블을 참조합니다.
 
 - 목적: “무엇을 보여줄지”에 가장 잘 맞는 구조를 선택
 - 원칙: 한 장에서 이해되는 **구조/흐름/관계/비교/로드맵** 중심
 
 ### Phase 4: 프롬프트 작성 (4-Block Format)
 
-`references/prompt_style_guide.md`를 적용하고 `assets/output_template/prompt_template.md`를 기반으로 작성합니다.
+아래 스타일 가이드 및 4블록 템플릿 구조를 적용합니다.
 
 #### [INSTRUCTION BLOCK]
 - 영어로 작성 (렌더링 방지)
@@ -142,6 +142,6 @@ description: "연구 계획서 문서를 분석하여 정부/공공기관 발표
 
 ## 리소스
 
-- `plugins/visual-generator/skills/prompt-gov/references/prompt_style_guide.md`: 정부/공공기관 스타일 가이드 (9 테마)
-- `plugins/visual-generator/references/layout_types.md`: 공유 레이아웃 타입 (24종)
+- 스타일 가이드: 위 "Phase 2" 섹션의 9종 테마 참조
+- 레이아웃 가이드: 위 "Phase 3" 섹션의 시각화 유형 참조
 - `plugins/visual-generator/skills/prompt-gov/assets/output_template/prompt_template.md`: 4블록 프롬프트 템플릿

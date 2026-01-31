@@ -82,7 +82,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 |   +-- 혁신/변화 → innovation
 |
 +-- Step 2-2. 테마 색상 로드
-    +-- references/prompt_style_guide.md에서 테마 색상 로드
+    +-- 아래 "무드 테마 옵션" 테이블에서 테마 색상 로드
     +-- 주조색, 보조색, 강조색 확정
 ```
 
@@ -99,7 +99,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 
 ### Phase 3: 시각화 유형 선택
 
-[../../references/layout_types.md](../../references/layout_types.md) 참조하여 개념에 맞는 시각화 선택 (공유 레이아웃):
+아래 테이블을 참조하여 개념에 맞는 시각화 선택 (공유 레이아웃):
 
 | 개념 유형 | 시각화 유형 |
 |:---|:---|
@@ -118,8 +118,7 @@ description: "핵심 개념을 직관적으로 시각화하는 기술 보고서 
 
 ### Phase 4: 프롬프트 작성
 
-[references/prompt_style_guide.md](references/prompt_style_guide.md)의 스타일 가이드 적용.
-[assets/output_template/prompt_template.md](assets/output_template/prompt_template.md) 템플릿 기반 작성.
+아래 스타일 가이드 및 4블록 템플릿 구조 적용.
 
 ```
 +-- Step 4-1. 프롬프트 초안 작성
@@ -360,8 +359,8 @@ Domain Keywords Reference (for AI understanding only - DO NOT render):
 
 ## 리소스
 
-- `references/prompt_style_guide.md`: 프롬프트 스타일 가이드 (무드 테마 9종 + 시각 원칙)
-- `../../references/layout_types.md`: 시각화 유형별 상세 가이드 (공유 레이아웃)
+- 스타일 가이드: 위 "무드 테마 옵션" 섹션 참조 (9종 테마 + 시각 원칙)
+- 레이아웃 가이드: 위 "Phase 3: 시각화 유형 선택" 섹션 참조
 - `assets/output_template/prompt_template.md`: 프롬프트 템플릿 (4블록 구조)
 
 ---
