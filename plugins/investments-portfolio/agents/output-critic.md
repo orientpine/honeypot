@@ -258,7 +258,7 @@ Read("funds/fund_fees.json")
   "issues": [
     {
       "type": "RETURN_MISMATCH",
-      "description": "삼성글로벌반도체 수익률 불일치: 출력 45.12%, 실제 41.12%",
+      "description": "[펀드명] 수익률 불일치: 출력 XX.XX%, 실제 YY.YY%",
       "location": "추천 포트폴리오 테이블",
       "severity": "high"
     },
@@ -467,12 +467,14 @@ function verifySource(output) {
 
 | 펀드명 | 비중 | 총보수 | 3개월 수익률 |
 |--------|------|--------|-------------|
-| 삼성글로벌반도체UH | 15% | 1.19% | 45.12% |
-| 삼성미국S&P500UH | 20% | 0.69% | 6.25% |
+| [해외주식형 펀드 A] | 15% | 1.19% | 45.12% |
+| [해외주식형 펀드 B] | 20% | 0.69% | 6.25% |
 
 시장 전망: 반도체 섹터는 반드시 상승할 것입니다.
 낙관 시나리오 60%, 비관 시나리오 20%, 중립 20%
 ```
+
+> ⚠️ 위 예시는 환각 탐지 패턴 설명용. 실제 펀드명/수익률은 fund_data.json에서 검증.
 
 ### 출력
 
@@ -484,7 +486,7 @@ function verifySource(output) {
   "issues": [
     {
       "type": "RETURN_MISMATCH",
-      "description": "삼성글로벌반도체UH 3개월 수익률 불일치: 출력 45.12%, 실제 21.67%",
+      "description": "[해외주식형 펀드 A] 3개월 수익률 불일치: 출력 XX.XX%, 실제 YY.YY%",
       "severity": "high"
     },
     {
@@ -499,7 +501,7 @@ function verifySource(output) {
     }
   ],
   "recommendations": [
-    "삼성글로벌반도체UH 수익률 21.67%로 수정 필요",
+    "[펀드명] 수익률을 fund_data.json 실제값으로 수정",
     "'반드시'를 '가능성 높음'으로 수정",
     "확률 수치 제거, 시나리오별 영향만 서술"
   ]

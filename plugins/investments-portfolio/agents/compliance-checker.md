@@ -256,7 +256,7 @@ function validatePortfolio(portfolio) {
   "warnings": [
     {
       "rule": "FEE_DATA_MISSING",
-      "message": "총보수 미확인: 삼성글로벌반도체증권자투자신탁UH",
+      "message": "총보수 미확인: [펀드명]",
       "severity": "warning"
     }
   ],
@@ -390,17 +390,18 @@ diff = totalWeight - 100
 
 ## 8. 예시
 
+> ⚠️ **주의**: 아래 예시는 형식 설명용입니다. 실제 추천은 fund_data.json에서 동적으로 검색한 펀드를 사용합니다.
+
 ### 입력
 
 ```json
 [
-  { "name": "삼성글로벌반도체증권자투자신탁UH(주식)_Cpe(퇴직)", "weight": 15 },
-  { "name": "삼성미국S&P500인덱스증권자투자신탁UH(주식) Cpe(퇴직)", "weight": 20 },
-  { "name": "NH-Amundi 필승 코리아 증권투자신탁(주식) Cla  C-P2e(퇴직연금)", "weight": 10 },
-  { "name": "삼성글로벌휴머노이드로봇증권자투자신탁UH(주식)_Cpe(퇴직연금)", "weight": 5 },
-  { "name": "미래에셋퇴직연금배당커버드콜액티브증권자투자신탁1호(주식혼합) 종류C-P2e", "weight": 20 },
-  { "name": "키움더드림단기채증권투자신탁(채권) Cla C-P2e(퇴직연금)", "weight": 15 },
-  { "name": "한국투자크레딧포커스ESG증권자투자신탁1호(채권) 종류C-Re", "weight": 15 }
+  { "name": "[해외주식형 펀드 A]", "weight": 20 },
+  { "name": "[해외주식형 펀드 B]", "weight": 15 },
+  { "name": "[국내주식형 펀드]", "weight": 15 },
+  { "name": "[주식혼합형 펀드]", "weight": 20 },
+  { "name": "[채권형 펀드 A]", "weight": 15 },
+  { "name": "[채권형 펀드 B 또는 예금]", "weight": 15 }
 ]
 ```
 
@@ -415,18 +416,17 @@ diff = totalWeight - 100
     "totalWeight": 100,
     "riskAssetWeight": 70,
     "safeAssetWeight": 30,
-    "fundCount": 7,
+    "fundCount": 6,
     "breakdown": {
       "위험자산": [
-        "삼성글로벌반도체 (15%)",
-        "삼성미국S&P500 (20%)",
-        "NH-Amundi 필승코리아 (10%)",
-        "삼성휴머노이드로봇 (5%)",
-        "미래에셋배당커버드콜 (20%)"
+        "[해외주식형 펀드 A] (20%)",
+        "[해외주식형 펀드 B] (15%)",
+        "[국내주식형 펀드] (15%)",
+        "[주식혼합형 펀드] (20%)"
       ],
       "안전자산": [
-        "키움더드림단기채 (15%)",
-        "한국투자크레딧포커스ESG (15%)"
+        "[채권형 펀드 A] (15%)",
+        "[채권형 펀드 B 또는 예금] (15%)"
       ]
     }
   }
