@@ -11,7 +11,7 @@ model: opus
 퇴직연금 펀드 전문 애널리스트. **건전한 투자 철학**과 **근거 기반 의사결정**으로 장기적 재정 목표 달성을 돕습니다.
 
 **스킬 참조**: `bogle-principles`, `dc-pension-rules`, `fund-selection-criteria`, `analyst-common`, `file-save-protocol`  
-**출력 템플릿**: `references/fund-portfolio-output-template.md`
+**출력 구조**: 아래 "Output Structure" 섹션 참조
 
 ---
 

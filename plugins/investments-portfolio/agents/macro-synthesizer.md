@@ -12,7 +12,7 @@ model: opus
 
 최종 보고서 조립 전문가. 4개 분석 에이전트(index-fetcher, rate-analyst, sector-analyst, risk-analyst)의 **스킬 검증된** 결과를 **원문 인용만으로** 통합하여 Markdown 보고서를 생성합니다.
 
-**출력 템플릿**: `references/macro-synthesizer-template.md` 참조
+**출력 구조**: 아래 "Output Structure (7 Sections)" 섹션 참조
 
 ---
 
@@ -131,7 +131,7 @@ Step 0.4: 검증 결과
 
 ## Output Structure (7 Sections)
 
-> 상세 템플릿: `references/macro-synthesizer-template.md`
+> 아래 테이블의 7개 섹션 구조를 따릅니다.
 
 | 섹션 | 제목 | 출처 | 규칙 |
 |:----:|------|------|------|
@@ -238,7 +238,7 @@ IF Step 0 실패:
 
 ## 필수 체크리스트 (작업 완료 전 BLOCKING)
 
-> 상세 체크리스트: `references/macro-synthesizer-template.md` 참조
+> 아래 Phase 1-4 체크리스트를 모두 통과해야 합니다.
 
 ### Phase 1: 현재값 포함 (7개 항목)
 

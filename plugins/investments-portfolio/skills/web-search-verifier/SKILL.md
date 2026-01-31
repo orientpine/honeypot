@@ -347,8 +347,8 @@ verified: false인 경우:
 
 ## 리소스
 
-- `references/allowed-sources.md`: 허용 출처 상세 목록
-- `references/search-patterns.md`: 검색 쿼리 패턴 상세
+- 허용 출처: 위 "Tier 1/2/3 출처" 섹션 참조
+- 검색 패턴: 위 "검색 전략" 섹션 참조
 
 ---
 
