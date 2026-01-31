@@ -193,6 +193,14 @@ mcp_exa_web_search_exa(
 - `plugins/isd-generator/references/document_templates/chapter4_template.md`: Chapter 4 작성 템플릿
 - `plugins/isd-generator/references/content_requirements/chapter4_requirements.md`: Chapter 4 콘텐츠 요구사항
 
+### writing_patterns/ (Read 도구로 로드)
+
+- `plugins/isd-generator/references/writing_patterns/section_patterns.md`: 섹션 구조 패턴 (개발대상, 필요성, 연구목표, 기대효과, 추진전략)
+- `plugins/isd-generator/references/writing_patterns/sentence_patterns.md`: 문장 구조 패턴 (목표진술문, 필요성진술문, 성과진술문, 협력진술문)
+- `plugins/isd-generator/references/writing_patterns/table_patterns.md`: 표 구조 패턴 (연구비배분, 성과지표, 일정, 역할)
+- `plugins/isd-generator/references/writing_patterns/vocabulary_glossary.md`: 용어/어휘 사전 (기술, 연구, 성과, 조직 용어)
+- `plugins/isd-generator/references/writing_patterns/voc_template.md`: VoC 작성 템플릿 (전문가, 조사기관, 언론, 수요기관 인용)
+
 ### assets/ (Read 도구로 로드)
 
 - `plugins/isd-generator/assets/output_templates/chapter4_content.md`: 출력 문서 기본 구조
