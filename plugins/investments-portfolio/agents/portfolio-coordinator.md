@@ -503,11 +503,13 @@ Read(file_path="portfolio/2026-Q1-investment-plan.md")
 
 → 포트폴리오 테이블 추출:
 [
-  { "name": "삼성글로벌반도체UH[주식]", "weight": 15 },
-  { "name": "삼성미국S&P500UH[주식]", "weight": 20 },
+  { "name": "[해외주식형 펀드 A]", "weight": 20 },
+  { "name": "[해외주식형 펀드 B]", "weight": 15 },
   ...
 ]
 ```
+
+> ⚠️ 위 예시는 형식 설명용. 실제 펀드명은 문서에서 추출한 값을 사용.
 
 **Step 2: compliance-checker 호출**
 ```markdown
