@@ -30,6 +30,8 @@ model: opus
 | `FEE_DATA_MISSING` | 총보수 누락 | 비용 데이터 없음 | WARNING |
 | `FUND_NOT_FOUND` | 펀드 미존재 | fund_data.json에 없음 | WARNING |
 | `RISK_NEAR_LIMIT` | 한도 근접 | 위험자산 65-70% | WARNING |
+| `DEPOSIT_COMPARISON_MISSING` | 예금 비교 누락 | 안전자산에 채권형 포함 시 예금 비교 없음 | WARNING |
+| `DEPOSIT_SUPERIOR_IGNORED` | 예금 우위 무시 | 예금 금리 > 채권 실질 수익률인데 채권 선택 | WARNING |
 
 ### 1.3 위험자산 분류 기준
 
@@ -138,7 +140,15 @@ Read("funds/fund_fees.json")
    └─ 총보수 누락 → WARNING
    └─ 펀드 미존재 → WARNING
 
-6. [결과 반환]
+6. [예금 vs 채권 비교 검증] ⚠️ NEW
+   └─ 안전자산에 채권형 펀드 포함 여부 확인
+   └─ 포함 시: deposit_rates.json에서 예금 금리 확인 (웹검색 금지)
+   └─ deposit_rates.json 없음 → WARNING + 사용자에게 데이터 요청
+   └─ 채권 실질 수익률 계산 (1년 수익률 - 총보수)
+   └─ 예금 금리 + 0.5%p > 채권 실질 수익률 → WARNING (DEPOSIT_SUPERIOR_IGNORED)
+   └─ 예금 비교 누락 → WARNING (DEPOSIT_COMPARISON_MISSING)
+
+7. [결과 반환]
 ```
 
 ---
@@ -337,12 +347,12 @@ diff = totalWeight - 100
 
 ### 6.1 필수 데이터 파일
 
-| 파일 | 용도 | 필수 |
-|------|------|:----:|
-| `funds/fund_classification.json` | 위험/안전자산 분류 | ✅ |
-| `funds/fund_data.json` | 펀드 존재 확인 | ✅ |
-| `funds/fund_fees.json` | 총보수 확인 | ⚠️ |
-| `funds/deposit_rates.json` | 예금 금리 참조 | - |
+| 파일 | 용도 | 필수 | 없을 경우 |
+|------|------|:----:|----------|
+| `funds/fund_classification.json` | 위험/안전자산 분류 | ✅ | FAIL |
+| `funds/fund_data.json` | 펀드 존재 확인 | ✅ | FAIL |
+| `funds/fund_fees.json` | 총보수 확인 | ⚠️ | WARNING |
+| `funds/deposit_rates.json` | 예금 금리 참조 | ⚠️ | WARNING + 사용자 요청 (웹검색 금지) |
 
 ### 6.2 분류 데이터 스키마
 
