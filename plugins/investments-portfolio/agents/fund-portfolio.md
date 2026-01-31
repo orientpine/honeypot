@@ -55,7 +55,78 @@ model: opus
 
 ---
 
-## 3. 펀드 검색 프로토콜 ⚠️ CRITICAL
+## 3. Step 0: 필수 파일 존재 검증 ⚠️ CRITICAL
+
+> **목적**: 분석 시작 전 필수 데이터 파일의 존재를 확인하여 환각 데이터 생성을 방지합니다.
+> **실행 시점**: 모든 분석 작업 시작 전 **첫 번째로** 실행
+
+### 3.0.1 검증 대상 파일
+
+| 파일 | 용도 | 필수 | 누락 시 처리 |
+|------|------|:----:|-------------|
+| `funds/fund_data.json` | 펀드 수익률 데이터 | ✅ | **FAIL 반환, 작업 중단** |
+| `funds/fund_classification.json` | 위험/안전자산 분류 | ✅ | **FAIL 반환, 작업 중단** |
+| `funds/fund_fees.json` | 총보수 데이터 | ⚠️ | WARNING, 비용 분석 생략 |
+| `funds/deposit_rates.json` | 예금 금리 데이터 | ⚠️ | WARNING, 예금 비교 시 웹검색 |
+
+### 3.0.2 검증 프로세스
+
+```
+[Step 0: 파일 존재 검증]
+     │
+     ▼
+Read("funds/fund_data.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → FAIL 반환 (환각 데이터 생성 금지!)
+     │
+     ▼
+Read("funds/fund_classification.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → FAIL 반환 (환각 데이터 생성 금지!)
+     │
+     ▼
+Read("funds/fund_fees.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → WARNING: "총보수 데이터 없음. 비용 분석 생략."
+     │
+     ▼
+Read("funds/deposit_rates.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → WARNING: "예금 금리 데이터 없음. 웹검색으로 대체."
+     │
+     ▼
+[Step 0 완료] → 분석 작업 진행
+```
+
+### 3.0.3 FAIL 응답 형식
+
+필수 파일 누락 시 **반드시** 아래 형식으로 FAIL을 반환합니다:
+
+```json
+{
+  "status": "FAIL",
+  "error": "REQUIRED_FILE_MISSING",
+  "missing_files": ["fund_data.json"],
+  "action": "fund_data.json 파일이 없습니다. data-updater 에이전트로 데이터 업데이트 필요.",
+  "hallucination_prevented": true
+}
+```
+
+### 3.0.4 절대 하지 말 것 (NEVER)
+
+| 금지 행위 | 결과 |
+|----------|------|
+| 파일 Read 없이 펀드 추천 | **환각 포트폴리오** |
+| 필수 파일 누락 시 추정 데이터 사용 | **환각 데이터** |
+| "파일이 없으니 이전 데이터로 추천" | **환각 포트폴리오** |
+
+---
+
+## 4. 펀드 검색 프로토콜 ⚠️ CRITICAL
 
 **핵심 원칙**: **"fund_data.json에서 먼저 찾고 → 그 펀드를 추천"**. "먼저 추천 → 나중에 검색" 금지.
 
