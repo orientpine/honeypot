@@ -44,6 +44,7 @@ Step 0.1: Task(subagent_type="index-fetcher", ...)        ← 지수 데이터 �
 Step 0.2: Task(subagent_type="rate-analyst", ...)         ← 금리/환율 분석 (병렬)
           Task(subagent_type="sector-analyst", ...)       ← 섹터 분석 (병렬)
           Task(subagent_type="risk-analyst", ...)         ← 리스크 분석 (병렬)
+          Task(subagent_type="leadership-outlook", ...)   ← 정치/중앙은행 분석 (병렬, v4.5)
 Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서 (신규)
 Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증 (신규, 재시도 로직)
 Step 1:   Task(subagent_type="fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
@@ -94,6 +95,7 @@ Step 3:   Task(subagent_type="output-critic", ...)        ← 출력 검증
 | **rate-analyst** | `rate-analyst` | 금리/환율 전망 분석 | ✅ |
 | **sector-analyst** | `sector-analyst` | 섹터별 전망 (5개 섹터) | ✅ |
 | **risk-analyst** | `risk-analyst` | 리스크 분석 및 시나리오 | ✅ |
+| **leadership-outlook** | `leadership-outlook` | 정치 리더십/중앙은행 동향 분석 (7개국) | ✅ |
 | **macro-synthesizer** | `macro-synthesizer` | 거시경제 최종 보고서 작성 | ✅ |
 | **macro-critic** | `macro-critic` | 거시경제 분석 검증 (지수 데이터 일치성) | ✅ |
 | **fund-portfolio** | `fund-portfolio` | 펀드 분석, 포트폴리오 추천 | ✅ |
@@ -117,8 +119,9 @@ User Request
      ├── FAIL → 워크플로우 중단
      │
      ▼ PASS
-[3. Task(rate/sector/risk-analyst): 병렬 분석] ← Task 도구 필수 (신규 Step 0.2)
+[3. Task(rate/sector/risk/leadership): 병렬 분석] ← Task 도구 필수 (Step 0.2, v4.5)
      │
+     ├── 4개 에이전트 병렬 실행 (rate, sector, risk, leadership)
      ├── 각 분석 최대 3회 재시도
      ├── 모두 실패 → 사용자 에스컬레이션
      │
@@ -374,9 +377,9 @@ JSON:
 )
 ```
 
-#### 2.0.2 Step 0.2: 3개 분석 에이전트 병렬 호출
+#### 2.0.2 Step 0.2: 4개 분석 에이전트 병렬 호출 (v4.5)
 
-**목적**: 금리, 섹터, 리스크 분석 (병렬 실행, 각 최대 3회 재시도)
+**목적**: 금리, 섹터, 리스크, 리더십 분석 (병렬 실행, 각 최대 3회 재시도)
 
 ##### 2.0.2.1 rate-analyst 호출
 
@@ -510,7 +513,67 @@ JSON:
 )
 ```
 
-##### 2.0.2.4 material-organizer 호출 (옵셔널)
+##### 2.0.2.4 leadership-outlook 호출 (v4.5 신규 - 필수)
+
+```markdown
+Task(
+  subagent_type="leadership-outlook",
+  description="정치 리더십/중앙은행 동향 분석 (7개국)",
+  prompt="""
+## 정치 리더십 및 중앙은행 동향 분석 요청
+
+### 분석 대상국 (7개국)
+1. 미국 (대통령, 재무장관, Fed 의장)
+2. 중국 (국가주석, 경제부총리, PBOC 총재)
+3. 한국 (대통령, 경제부총리, BOK 총재)
+4. 일본 (총리, 재무장관, BOJ 총재)
+5. 인도 (총리, 재무장관, RBI 총재)
+6. 베트남 (총리, 재무장관, SBV 총재)
+7. 인도네시아 (대통령, 재무장관, BI 총재)
+
+### 분석 항목
+1. 지도자/경제팀 성향 (4개 차원)
+   - 통화정책: 비둘기파/매파
+   - 재정정책: 확장적/긴축적
+   - 무역정책: 개방적/보호주의
+   - 산업정책: 규제/탈규제
+2. 중앙은행 위원회 투표 성향
+3. 정권 교체 시나리오 및 영향
+4. 포트폴리오 시사점
+
+### 출력 경로
+output_path: portfolios/{session_folder}/leadership-analysis.json
+
+### 출력 형식
+JSON:
+{
+  "countries": [
+    {
+      "country": "미국",
+      "leaders": {
+        "head_of_state": {...},
+        "finance_minister": {...},
+        "central_bank_governor": {...}
+      },
+      "policy_stance": {
+        "monetary": "hawkish|dovish|neutral",
+        "fiscal": "expansionary|contractionary|neutral",
+        "trade": "open|protectionist|neutral",
+        "industrial": "regulatory|deregulatory|neutral"
+      },
+      "portfolio_implications": [...]
+    }
+  ],
+  "regional_recommendations": {...},
+  "sector_recommendations": {...}
+}
+
+**재시도 규칙**: 최대 3회 시도, 모두 실패 시 사용자 에스컬레이션
+"""
+)
+```
+
+##### 2.0.2.5 material-organizer 호출 (옵셔널)
 
 ```markdown
 Task(
@@ -538,7 +601,7 @@ SKIP (에러 아님) - fund-portfolio는 material 없이 정상 동작
 )
 ```
 
-#### 2.0.2.5 Step 0.2.5: 파일 존재 + 내용 검증 (v4.3 강화 - MANDATORY)
+#### 2.0.2.6 Step 0.2.6: 파일 존재 + 내용 검증 (v4.5 강화 - MANDATORY)
 
 > **⚠️ CRITICAL**: macro-synthesizer 호출 전 반드시 분석 파일을 **읽고 내용을 검증**합니다.
 > 파일이 없거나 **내용이 불완전하면** 환각 데이터로 보고서가 작성될 위험이 있습니다.
@@ -553,6 +616,7 @@ SKIP (에러 아님) - fund-portfolio는 material 없이 정상 동작
 2. {output_path}/rate-analysis.json
 3. {output_path}/sector-analysis.json
 4. {output_path}/risk-analysis.json
+5. {output_path}/leadership-analysis.json (v4.5 추가)
 
 ### 확인 방법 (2단계)
 
@@ -562,6 +626,7 @@ Read 도구로 각 파일 읽기:
 - Read(file_path="{output_path}/rate-analysis.json")
 - Read(file_path="{output_path}/sector-analysis.json")
 - Read(file_path="{output_path}/risk-analysis.json")
+- Read(file_path="{output_path}/leadership-analysis.json")
 
 #### 2단계: 내용 검증 (v4.3 신규 - 환각 방지 핵심)
 각 파일에 대해 다음을 확인:
@@ -597,6 +662,7 @@ Read 도구로 각 파일 읽기:
     "rate-analysis.json": { ... },
     "sector-analysis.json": { ... },
     "risk-analysis.json": { ... },
+    "leadership-analysis.json": { ... },
     "all_files_valid": true|false,
     "hallucination_risk": "NONE|LOW|HIGH",
     "verification_timestamp": "YYYY-MM-DD HH:MM:SS"
@@ -617,9 +683,9 @@ Read 도구로 각 파일 읽기:
 
 ---
 
-#### 2.0.3 Step 0.3: macro-synthesizer 호출 (v4.3 - 파일 경로만 전달)
+#### 2.0.3 Step 0.3: macro-synthesizer 호출 (v4.5 - 파일 경로만 전달)
 
-**목적**: 4개 분석 결과 통합 및 최종 거시경제 보고서 작성
+**목적**: 5개 분석 결과 통합 및 최종 거시경제 보고서 작성 (rate, sector, risk, leadership + index)
 
 **전제 조건**: Step 0.2.5에서 모든 분석 파일 **존재 + 내용 검증** 완료
 
@@ -647,6 +713,7 @@ output_path: {output_path}
 2. Read("{output_path}/rate-analysis.json")
 3. Read("{output_path}/sector-analysis.json")
 4. Read("{output_path}/risk-analysis.json")
+5. Read("{output_path}/leadership-analysis.json")  # v4.5 추가
 
 ### 파일 읽기 실패 시 행동
 - 파일이 없거나 읽기 실패 → FAIL 반환, 보고서 작성 금지
@@ -1466,28 +1533,30 @@ Task(
 ## 8. 메타 정보
 
 ```yaml
-version: "4.4"
-updated: "2026-01-21"
+version: "4.5"
+updated: "2026-01-31"
 agents:
   - data-updater        # CSV → JSON 데이터 업데이트 (v4.4 신규)
   - index-fetcher       # 지수 데이터 수집 (Step 0.1) - Macro-Only에서도 필수
   - rate-analyst        # 금리/환율 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - sector-analyst      # 섹터 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
   - risk-analyst        # 리스크 분석 (Step 0.2, 병렬) - 파일 저장 필수 (v4.2)
+  - leadership-outlook  # 정치/중앙은행 분석 (Step 0.2, 병렬) - v4.5 필수화
   - macro-synthesizer   # 거시경제 최종 보고서 (Step 0.3) - 파일 직접 Read 필수 (v4.3)
   - macro-critic        # 거시경제 분석 검증 (Step 0.4, 재시도 로직) - Macro-Only에서도 필수
   - fund-portfolio      # 펀드 분석 (Step 2, macro-outlook 참조) - Macro-Only에서 생략
   - compliance-checker  # 규제 검증 (Step 3) - Macro-Only에서 생략
   - output-critic       # 출력 검증 (Step 5) - Macro-Only에서 생략
 workflow_modes:
-  full: "FRESHNESS_CHECK → index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
-  macro_only: "FRESHNESS_CHECK → index-fetcher → analysts → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.4)"
+  full: "FRESHNESS_CHECK → index-fetcher → analysts(rate,sector,risk,leadership) → FILE_CONTENT_CHECK → synthesizer(Read) → critic → fund-portfolio → compliance → output-critic"
+  macro_only: "FRESHNESS_CHECK → index-fetcher → analysts(rate,sector,risk,leadership) → FILE_CONTENT_CHECK → synthesizer(Read) → critic (v4.5)"
   document_review: "FRESHNESS_CHECK → compliance → output-critic (v4.4)"
 max_retries:
   - index-fetcher: 1 (FAIL 시 중단)
   - rate-analyst: 3 (병렬, 각각 재시도)
   - sector-analyst: 3 (병렬, 각각 재시도)
   - risk-analyst: 3 (병렬, 각각 재시도)
+  - leadership-outlook: 3 (병렬, 각각 재시도) # v4.5
   - file_verification: 1 (파일 누락/검증 실패 시 에이전트 재실행)
   - macro-synthesizer: 1 (재시도 없음)
   - macro-critic: 2 (FAIL 시 Step 0.3 재시작, 최대 2회 반복)
@@ -1498,6 +1567,7 @@ output_files:
     - rate-analysis.json     # v4.2 신규
     - sector-analysis.json   # v4.2 신규
     - risk-analysis.json     # v4.2 신규
+    - leadership-analysis.json  # v4.5 신규
     - 00-macro-outlook.md
     - 01-fund-analysis.md
     - 02-compliance-report.md
@@ -1508,8 +1578,13 @@ output_files:
     - rate-analysis.json     # v4.2 신규
     - sector-analysis.json   # v4.2 신규
     - risk-analysis.json     # v4.2 신규
+    - leadership-analysis.json  # v4.5 신규
     - macro-outlook-YYYY-QN.md
 changes:
+  - "v4.5: leadership-outlook 에이전트 Step 0.2 병렬 호출 필수화"
+  - "v4.5: 4개 분석 에이전트 병렬 실행 (rate, sector, risk, leadership)"
+  - "v4.5: leadership-analysis.json 파일 검증 추가"
+  - "v4.5: 정치/중앙은행 동향이 macro-outlook에 통합"
   - "v4.4: Step -1 데이터 신선도 검사 (Data Freshness Check) 추가"
   - "v4.4: fund_data.json _meta.version 기반 경과일 검사"
   - "v4.4: 30일 이내=FRESH, 31-60일=STALE(경고), 61일+=OUTDATED(확인요청)"
