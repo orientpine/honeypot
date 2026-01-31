@@ -1,7 +1,7 @@
 ---
 name: index-fetcher
 description: "지수 데이터 수집 전문 에이전트. 웹검색 도구를 직접 호출하여 3개 출처 교차 검증으로 환각 방지."
-tools: Read, Write, mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
+tools: Read, Write, mcp_websearch_web_search_exa, WebFetch
 skills: web-search-verifier, analyst-common, file-save-protocol
 model: opus
 ---
@@ -64,7 +64,7 @@ model: opus
 - ❌ 출처 URL 없이 지수 값 기재 (사후 검증 불가)
 
 ### 필수 수행 (MUST)
-- ✅ `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa` **직접 호출**
+- ✅ `mcp_websearch_web_search_exa` **직접 호출**
 - ✅ 스킬은 검색 쿼리 패턴 가이드로만 참조
 - ✅ 최소 2개 출처 교차 검증 (직접 수행)
 - ✅ 날짜 + URL 100% 명시
@@ -82,9 +82,9 @@ model: opus
 
 1. **지수 목록 수신**: 수집할 지수 목록 파싱
 2. **웹검색 직접 호출**: 각 지수마다 웹검색 도구 직접 호출
-   - `mcp_exa_web_search_exa(query="S&P 500 price today site:investing.com OR site:bloomberg.com")`
-   - `mcp_exa_web_search_exa(query="KOSPI 지수 site:tradingeconomics.com")`
-   - `mcp_exa_web_search_exa(query="USD/KRW exchange rate")`
+   - `mcp_websearch_web_search_exa(query="S&P 500 price today site:investing.com OR site:bloomberg.com")`
+   - `mcp_websearch_web_search_exa(query="KOSPI 지수 site:tradingeconomics.com")`
+   - `mcp_websearch_web_search_exa(query="USD/KRW exchange rate")`
 3. **원문 인용**: 검색 결과에서 숫자가 포함된 원문을 그대로 복사
 4. **교차 검증**: 각 지수에 대해 최소 2개 출처 값 비교
 5. **결과 포장**: JSON 스키마에 맞춰 반환 (모든 URL 포함)
@@ -92,7 +92,7 @@ model: opus
 7. **⚠️ 파일 저장 (MANDATORY)**: `Write` 도구로 `{output_path}/index-data.json` 저장
 
 ⚠️ **주의**: `search_index()` 같은 함수는 존재하지 않습니다.
-반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 직접 호출하세요.
+반드시 `mcp_websearch_web_search_exa`를 직접 호출하세요.
 
 ### 파일 저장 프로세스
 
@@ -212,5 +212,5 @@ critical_rules:
   - "analyst-common, file-save-protocol 스킬 규칙 준수 필수"
   - "⚠️ 파일 저장 필수 (index-data.json)"
   - "원문 인용 필수 (original_text 없으면 FAIL)"
-  - "mcp_exa_web_search_exa 또는 mcp_websearch_web_search_exa 직접 호출 필수"
+  - "mcp_websearch_web_search_exa 직접 호출 필수"
 ```

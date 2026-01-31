@@ -1,7 +1,7 @@
 ---
 name: sector-analyst
 description: "섹터별 전망 분석 전문가. 웹검색 도구를 직접 호출하여 5개 핵심 섹터의 투자 전망을 분석."
-tools: Read, Write, mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
+tools: Read, Write, mcp_websearch_web_search_exa, WebFetch
 skills: web-search-verifier, analyst-common, file-save-protocol
 model: opus
 ---
