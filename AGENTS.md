@@ -13,7 +13,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (5 plugins)
+│   └── marketplace.json              # Single marketplace registry (10 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent 기반)
     │   ├── agents/
@@ -35,13 +35,14 @@ toolbox/
     │   │   └── output_templates/     # Output templates for all chapters
     │   └── scripts/
     │       └── generate_images.py    # Gemini API image generation script
-    ├── visual-generator/             # 시각자료 통합 플러그인
-    │   ├── skills/
-    │   │   ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
-    │   │   ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
-    │   │   └── renderer/             # Gemini API 이미지 생성
-    │   └── scripts/
-    │       └── generate_slide_images.py  # Gemini API slide image generation script
+     ├── visual-generator/             # 시각자료 통합 플러그인
+     │   ├── skills/                   # 4 skills
+     │   │   ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
+     │   │   ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
+     │   │   ├── prompt-seminar/       # 세미나 프롬프트
+     │   │   └── renderer/             # Gemini API 이미지 생성
+     │   └── scripts/
+     │       └── generate_slide_images.py  # Gemini API slide image generation script
     ├── paper-style-generator/        # Meta-plugin: PDF → Paper Writing Skills
     │   ├── agents/
     │   │   ├── orchestrator.md       # Main workflow coordinator
@@ -67,10 +68,21 @@ toolbox/
     │   └── references/
     │       ├── analysis_schema.md    # Analysis item definitions
     │       └── output_structure.md   # Output directory guide
-    ├── investments-portfolio/        # Portfolio analysis multi-agent system
-    │   └── agents/                   # 6 agents: portfolio-coordinator, macro-outlook, etc.
-    └── general-agents/               # General-purpose agents
-        └── agents/                   # interview.md
+     ├── investments-portfolio/        # Portfolio analysis multi-agent system
+     │   └── agents/                   # 13 agents: portfolio-coordinator, macro-outlook, etc.
+     ├── general-agents/               # General-purpose agents
+     │   └── agents/                   # 1 agent
+     ├── report-generator/             # Research report generation
+     │   └── agents/                   # 5 agents
+     ├── stock-consultation/           # 주식/ETF 투자 상담
+     │   ├── agents/                   # 6 agents
+     │   └── skills/                   # 3 skills
+     ├── equity-research/              # 기관급 주식 분석
+     │   └── agents/                   # 1 agent
+     ├── hwpx-converter/               # Markdown→HWPX 변환
+     │   └── skills/                   # 2 skills
+     └── worktree-workflow/            # Git worktree 워크플로우
+         └── agents/                   # 1 agent
 ```
 
 ## WHERE TO LOOK

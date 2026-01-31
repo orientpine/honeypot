@@ -18,6 +18,10 @@
 | **report-generator** | 연구 노트 → 국가기관 제출용 연구 보고서 자동 생성 | Agent |
 | **investments-portfolio** | DC 연금 포트폴리오 분석 멀티 에이전트 시스템 | Agent |
 | **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
+| **stock-consultation** | 주식/ETF 투자 상담 Multi-Agent 시스템. 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증 워크플로우. Bogle/Vanguard 철학 기반. | Agent |
+| **equity-research** | Professional equity research analysis with institutional-grade formatting. 티커와 함께 호출하면 기관급 주식 분석 리포트를 생성합니다. | Agent |
+| **hwpx-converter** | Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반. 단일 파일 및 폴더 배치 변환 지원. | Skill |
+| **worktree-workflow** | Git worktree를 활용한 Claude Code 병렬 실행 워크플로우 | Agent |
 
 ---
 
@@ -47,7 +51,7 @@
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json          # 마켓플레이스 레지스트리 (6개 플러그인)
+│   └── marketplace.json          # 마켓플레이스 레지스트리 (10개 플러그인)
 ├── plugins/
 │   ├── isd-generator/            # ISD 연구계획서 생성
 │   │   ├── agents/               # 7 agents (orchestrator, chapter1-5, figure)
@@ -55,7 +59,7 @@ honeypot/
 │   │   ├── assets/               # 출력 템플릿
 │   │   └── scripts/              # Gemini 이미지 생성 스크립트
 │   ├── visual-generator/         # 시각자료 생성
-│   │   ├── skills/               # 3 skills (prompt-concept, prompt-gov, renderer)
+│   │   ├── skills/               # 4 skills (prompt-concept, prompt-gov, prompt-seminar, renderer)
 │   │   └── scripts/              # 이미지 생성 스크립트
 │   ├── paper-style-generator/    # 논문 스타일 스킬 생성
 │   │   ├── agents/               # 4 agents (orchestrator, pdf-converter, style-analyzer, skill-generator)
@@ -66,9 +70,18 @@ honeypot/
 │   │   ├── references/           # 문서 템플릿, 키워드
 │   │   └── assets/               # 출력 템플릿
 │   ├── investments-portfolio/    # DC 연금 포트폴리오
-│   │   └── agents/               # 11 agents (coordinator, analysts, critics)
-│   └── general-agents/           # 범용 에이전트
-│       └── agents/               # interview.md
+│   │   └── agents/               # 13 agents (coordinator, analysts, critics)
+│   ├── general-agents/           # 범용 에이전트
+│   │   └── agents/               # interview.md
+│   ├── stock-consultation/       # 주식/ETF 투자 상담
+│   │   ├── agents/               # 6 agents
+│   │   └── skills/               # 3 skills
+│   ├── equity-research/          # 기관급 주식 분석
+│   │   └── agents/               # 1 agent
+│   ├── hwpx-converter/           # Markdown→HWPX 변환
+│   │   └── skills/               # 2 skills
+│   └── worktree-workflow/        # Git worktree 워크플로우
+│       └── agents/               # 1 agent
 ├── resource/                     # 개발 참고 자료
 ├── AGENTS.md                     # 프로젝트 상세 문서
 └── README.md                     # 이 문서
@@ -100,6 +113,7 @@ honeypot/
 |-------|--------|------|
 | prompt-concept | TED 스타일 | 미니멀 인포그래픽 |
 | prompt-gov | 정부/공공기관 | PPT 슬라이드 |
+| prompt-seminar | 세미나 스타일 | 세미나/발표 자료 |
 | renderer | - | Gemini API 이미지 생성 |
 
 ### paper-style-generator
