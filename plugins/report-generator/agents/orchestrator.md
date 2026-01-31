@@ -303,9 +303,9 @@ report-generator로 보고서를 자동 생성해줘. (auto_mode)
 
 ### 참조 파일 (Read 도구로 로드)
 
-- `references/document_templates/chapter_structure.md`: 챕터 구조 정의
-- `references/document_templates/four_step_pattern.md`: 4단계 문장 패턴
-- `references/field_keywords/*.json`: 도메인별 키워드
+- 챕터 구조: 각 하위 에이전트에 내장된 구조 정의 사용
+- 4단계 문장 패턴: chapter-writer 에이전트에 내장
+- 도메인별 키워드: input-analyzer 에이전트가 자동 감지
 
 ### 출력 템플릿 (Read 도구로 로드)
 

@@ -275,6 +275,6 @@ Step 6-2. 결과 출력
 
 ### 참조 파일
 
-- `references/document_templates/four_step_pattern.md`: 4단계 패턴 기준
-- `references/document_templates/chapter_structure.md`: 문서 구조 기준
-- `references/field_keywords/*.json`: 용어 일관성 기준
+- 4단계 패턴: 위 "품질 검증 기준" 섹션 참조
+- 문서 구조: 위 "챕터별 검증 항목" 섹션 참조
+- 용어 일관성: input-analyzer가 전달한 도메인 키워드 기준

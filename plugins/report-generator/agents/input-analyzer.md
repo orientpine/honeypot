@@ -60,9 +60,9 @@ Step 1-2. 입력 형식별 처리
 ```
 Step 2-1. 키워드 빈도 분석
 ├── 모든 파일 내용에서 키워드 추출
-├── references/field_keywords/*.json 로드
-│   ├── 파일명 형식: {domain_normalized}_keywords.json
-│   └── 예: ros2_keywords.json, ai_ml_keywords.json, general_keywords.json
+├── 내장 도메인 키워드 사전 활용
+│   ├── ROS2, AI/ML, 물리학, 생명공학, 범용 도메인 지원
+│   └── 아래 "도메인 판정" 섹션의 키워드 목록 참조
 └── 각 도메인별 키워드 매칭 점수 계산
 
 Step 2-2. 도메인 판정
@@ -224,9 +224,7 @@ domain_score =
 
 ### 참조 파일
 
-- `references/field_keywords/ros2_keywords.json`: ROS2 도메인 키워드
-- `references/field_keywords/ai_ml_keywords.json`: AI/ML 도메인 키워드
-- `references/field_keywords/general_keywords.json`: 범용 키워드 및 도메인 감지 힌트
+- 도메인 키워드: 위 "Phase 2: 연구 도메인 자동 감지" 섹션 참조 (ROS2, AI/ML, 물리학, 생명공학, 범용)
 
 ### 도메인명-파일명 매핑
 
