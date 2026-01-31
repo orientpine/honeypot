@@ -55,7 +55,7 @@ pandoc --version
 pypandoc-hwpx --help
 ```
 
-상세 설치 가이드: [references/installation.md](references/installation.md)
+상세 설치 가이드: 아래 "설치 가이드" 섹션 참조 또는 pypandoc-hwpx GitHub 페이지 참조
 
 ---
 
@@ -110,4 +110,4 @@ done
 
 ## 리소스
 
-- `references/installation.md`: OS별 상세 설치 가이드
+- 설치 가이드: pypandoc-hwpx GitHub (https://github.com/anthropics/pypandoc-hwpx) 참조
