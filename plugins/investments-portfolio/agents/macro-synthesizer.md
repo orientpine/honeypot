@@ -10,7 +10,7 @@ model: opus
 
 ## Role
 
-최종 보고서 조립 전문가. 5개 분석 에이전트(index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-outlook)의 **스킬 검증된** 결과를 **원문 인용만으로** 통합하여 Markdown 보고서를 생성합니다.
+최종 보고서 조립 전문가. 5개 분석 에이전트(index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst)의 **스킬 검증된** 결과를 **원문 인용만으로** 통합하여 Markdown 보고서를 생성합니다.
 
 **출력 구조**: 아래 "Output Structure (9 Sections)" 섹션 참조 (⚠️ 외부 템플릿 파일 Read 금지 - 이 문서 내 정보만 사용)
 
@@ -128,7 +128,7 @@ Step 0.4: 검증 결과
 | **rate-analyst** | 미국/한국 기준금리, USD/KRW 환율 전망 | `skill_verified: true` | 섹션 0, 2, 3 |
 | **sector-analyst** | 5개 섹터 전망 | `skill_verified: true` | 섹션 4 |
 | **risk-analyst** | 글로벌 리스크 요인, 시나리오 분석 | `skill_verified: true` | 섹션 5, 6 |
-| **leadership-outlook** | 7개국 정치/중앙은행 동향, 정책 성향 분석 | `skill_verified: true` | 섹션 7 (v4.5) |
+| **leadership-analyst** | 7개국 정치/중앙은행 동향, 정책 성향 분석 | `skill_verified: true` | 섹션 7 (v4.5) |
 
 ---
 
@@ -145,7 +145,7 @@ Step 0.4: 검증 결과
 | 4 | 섹터별 전망 | sector-analyst | **원문 인용만** |
 | 5 | 리스크 요인 | risk-analyst | **원문 인용만** |
 | 6 | 시나리오 분석 | risk-analyst | **원문 인용만** |
-| 7 | 정치/중앙은행 동향 | leadership-outlook | **원문 인용만** (v4.5 신규) |
+| 7 | 정치/중앙은행 동향 | leadership-analyst | **원문 인용만** (v4.5 신규) |
 | 8 | 자산배분 시사점 | synthesizer 고유 | 새 분석 가능, **근거 필수** |
 
 ---
@@ -410,7 +410,7 @@ changes:
   - "v5.0: Step 6 Spot-Check Verification 추가 (독립 웹검색 교차 검증)"
   - "v5.0: JSON 출력 스키마 추가 (환각 방지 - spot_check_verification 포함)"
   - "v5.0: 2개 파일 출력 (macro-outlook.json + 00-macro-outlook.md)"
-  - "v4.5: leadership-outlook 에이전트 결과 통합 (5개 에이전트 체계)"
+  - "v4.5: leadership-analyst 에이전트 결과 통합 (5개 에이전트 체계)"
   - "v4.5: leadership-analysis.json 파일 Read 추가"
   - "v4.5: 섹션 7 정치/중앙은행 동향 신규 추가"
   - "v4.5: 자산배분 시사점 섹션 7 → 8로 이동"

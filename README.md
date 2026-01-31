@@ -146,7 +146,7 @@ honeypot/
 | Macro Analysts | index-fetcher, rate-analyst, sector-analyst, risk-analyst | 거시경제 분석 |
 | Synthesizers | macro-synthesizer, macro-critic | 분석 종합 및 검증 |
 | Portfolio | fund-portfolio, compliance-checker | 펀드 추천 및 규제 검증 |
-| Verification | output-critic, leadership-outlook | 출력 검증 및 리더십 분석 |
+| Verification | output-critic, leadership-analyst | 출력 검증 및 리더십 분석 |
 
 ---
 

@@ -412,7 +412,7 @@ This is the #1 source of plugin registration issues. Follow this checklist for E
   "./agents/fund-portfolio.md",
   "./agents/compliance-checker.md",
   "./agents/output-critic.md",
-  "./agents/leadership-outlook.md"
+  "./agents/leadership-analyst.md"
 ]
 
 // After (CORRECT):
@@ -427,7 +427,7 @@ This is the #1 source of plugin registration issues. Follow this checklist for E
   "./agents/fund-portfolio.md",
   "./agents/compliance-checker.md",
   "./agents/output-critic.md",
-  "./agents/leadership-outlook.md"
+  "./agents/leadership-analyst.md"
 ]
 ```
 
