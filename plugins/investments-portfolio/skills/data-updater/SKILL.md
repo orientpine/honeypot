@@ -1,6 +1,7 @@
 ---
 name: data-updater
-description: "CSV에서 펀드 데이터를 추출하여 fund_data.json, fund_fees.json, fund_classification.json을 생성/업데이트하는 스킬. 펀드 데이터 업데이트가 필요하거나 CSV 파일을 JSON으로 변환하고 싶을 때 사용한다."
+description: "CSV에서 펀드 데이터를 추출하여 fund_data.json, fund_fees.json, fund_classification.json을 생성/업데이트하는 스킬. 예금금리 데이터(deposit_rates.json) 업데이트도 지원한다. 펀드 데이터 업데이트가 필요하거나 CSV 파일을 JSON으로 변환하고 싶을 때 사용한다."
+tools: Bash, Read, Write, mcp_question
 ---
 
 # Fund Data Updater
@@ -15,7 +16,11 @@ description: "CSV에서 펀드 데이터를 추출하여 fund_data.json, fund_fe
 - fund_data.json 생성 (펀드 기본 정보 및 수익률)
 - fund_fees.json 생성 (펀드 수수료 정보)
 - fund_classification.json 자동 생성 (펀드 분류)
+- **deposit_rates.json 업데이트 (예금금리 - 사용자 입력 필수)**
 - 기존 파일 자동 백업 (archive/ 디렉토리)
+
+> **⚠️ 중요**: 예금금리 데이터는 웹 검색으로 얻을 수 **없습니다**.
+> 과학기술인공제회 내부 금리이므로 반드시 **사용자에게 직접 확인**해야 합니다.
 
 ---
 
@@ -107,6 +112,29 @@ description: "CSV에서 펀드 데이터를 추출하여 fund_data.json, fund_fe
         +-- 생성 완료 알림
         +-- funds/ 폴더 위치 안내
         +-- 다음 단계 안내 (포트폴리오 분석 등)
+
+[Phase 5: 예금금리 업데이트 (선택)]
+    |
+    +-- Step 5-0. 예금금리 업데이트 필요 여부 확인
+    |   +-- deposit_rates.json 존재 확인
+    |   +-- _meta.version 기준 경과일 계산
+    |   +-- 30일 이상 경과 시 업데이트 권장
+    |
+    +-- Step 5-1. 사용자에게 예금금리 확인 요청 (mcp_question 사용)
+    |   +-- ⚠️ 웹 검색 불가 - 사용자 직접 입력 필수
+    |   +-- 질문: "과학기술인공제회 퇴직연금 예금금리를 입력해주세요"
+    |   +-- 필수 입력 항목:
+    |       - 과학기술인공제회 1년 정기예금 금리 (%)
+    |       - 우리은행 1년 정기예금 금리 (%) - 선택
+    |
+    +-- Step 5-2. deposit_rates.json 업데이트
+    |   +-- _meta.version: 현재 날짜 (YYYY-MM-DD)
+    |   +-- _meta.updatedAt: 현재 ISO 8601 타임스탬프
+    |   +-- rates 배열 업데이트
+    |
+    +-- Step 5-3. 업데이트 완료 확인
+        +-- JSON 유효성 검사
+        +-- 업데이트 내역 보고
 ```
 
 ---
@@ -225,11 +253,134 @@ funds/
 }
 ```
 
+### deposit_rates.json 구조
+
+```json
+{
+  "_meta": {
+    "version": "2026-01-31",
+    "source": "과학기술인공제회 퇴직연금 원리금보장형 운용방법 안내",
+    "updatedAt": "2026-01-31T12:00:00+09:00",
+    "recordCount": 4,
+    "freshnessThresholdDays": 30,
+    "note": "30일 경과 시 데이터 업데이트 필요"
+  },
+  "rates": [
+    {
+      "id": "sema-1y",
+      "institution": "과학기술인공제회",
+      "productName": "과학기술인공제회 퇴직연금 운용방법 (1년)",
+      "type": "원리금보장형운용방법",
+      "term": "1년",
+      "termMonths": 12,
+      "rate": 4.9,
+      "unit": "%"
+    },
+    {
+      "id": "woori-1y",
+      "institution": "우리은행",
+      "productName": "우리은행 정기예금 1년",
+      "type": "원리금보장형운용방법",
+      "term": "1년",
+      "termMonths": 12,
+      "rate": 2.75,
+      "unit": "%"
+    }
+  ],
+  "summary": {
+    "highestRate": {
+      "institution": "과학기술인공제회",
+      "rate": 4.9,
+      "term": "1년"
+    },
+    "institutions": ["과학기술인공제회", "우리은행"]
+  }
+}
+```
+
+---
+
+## 예금금리 업데이트 (Phase 5)
+
+### ⚠️ 중요: 웹 검색 불가
+
+**예금금리 데이터는 웹 검색으로 얻을 수 없습니다.**
+
+- 과학기술인공제회 내부 금리는 공개 웹에 게시되지 않음
+- 회원 전용 포털 또는 고객센터에서만 확인 가능
+- 따라서 **사용자에게 직접 확인 요청**이 필수
+
+### 사용자 질문 예시 (mcp_question 사용)
+
+```json
+{
+  "questions": [
+    {
+      "header": "예금금리 업데이트",
+      "question": "과학기술인공제회 퇴직연금 1년 정기예금 금리(%)를 입력해주세요. (예: 4.9)",
+      "options": [
+        {"label": "4.9%", "description": "현재 저장된 금리"},
+        {"label": "5.0%", "description": ""},
+        {"label": "4.8%", "description": ""},
+        {"label": "4.7%", "description": ""}
+      ]
+    }
+  ]
+}
+```
+
+또는 직접 입력을 받는 경우:
+
+```
+사용자에게 예금금리 확인을 요청합니다.
+
+과학기술인공제회 퇴직연금 포털에서 현재 예금금리를 확인해주세요:
+- 과학기술인공제회 1년 정기예금 금리: _____ %
+- (선택) 우리은행 1년 정기예금 금리: _____ %
+
+확인 방법:
+1. 과학기술인공제회 퇴직연금 포털 로그인
+2. 원리금보장형 운용방법 안내 페이지 확인
+3. 현재 금리 입력
+```
+
+### 업데이트 수행 방법
+
+사용자로부터 금리 정보를 받은 후:
+
+```python
+# deposit_rates.json 업데이트
+import json
+from datetime import datetime
+
+# 현재 파일 읽기
+with open('funds/deposit_rates.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+# 메타데이터 업데이트
+data['_meta']['version'] = datetime.now().strftime('%Y-%m-%d')
+data['_meta']['updatedAt'] = datetime.now().isoformat()
+
+# 금리 업데이트 (사용자 입력값 사용)
+for rate in data['rates']:
+    if rate['id'] == 'sema-1y':
+        rate['rate'] = 4.9  # 사용자 입력값
+    elif rate['id'] == 'woori-1y':
+        rate['rate'] = 2.75  # 사용자 입력값
+
+# 요약 업데이트
+data['summary']['highestRate']['rate'] = max(r['rate'] for r in data['rates'])
+
+# 저장
+with open('funds/deposit_rates.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+```
+
 ---
 
 ## Usage Example
 
-### 입력 예시
+### 입력 예시 1: 펀드 데이터 업데이트
 
 ```
 data-updater 스킬을 사용해서 펀드 데이터를 업데이트해줘.
@@ -242,19 +393,38 @@ CSV 파일: resource/26년01월_상품제안서_퇴직연금(DCIRP).csv
 펀드 데이터 업데이트해줘
 ```
 
+### 입력 예시 2: 예금금리 업데이트
+
+```
+예금금리 데이터도 업데이트해줘
+```
+
+또는:
+
+```
+data-updater 스킬로 예금금리 업데이트 해줘.
+과학기술인공제회 1년: 4.9%
+우리은행 1년: 2.75%
+```
+
 ### 수행 절차
 
+**펀드 데이터 업데이트 (Phase 0-4):**
 1. **Phase 0**: CSV 파일 확인, UTF-8 인코딩 검증
 2. **Phase 1**: Dry-run으로 미리보기, 2015개 펀드 발견
 3. **Phase 2**: Python 스크립트 실행, JSON 파일 생성
 4. **Phase 3**: 생성된 파일 검증
 5. **Phase 4**: 완료 보고서 생성
 
+**예금금리 업데이트 (Phase 5, 선택):**
+6. **Phase 5**: 사용자에게 예금금리 확인 요청 → deposit_rates.json 업데이트
+
 ### 출력 파일
 
 1. `funds/fund_data.json`: 펀드 마스터 데이터 (2015개)
 2. `funds/fund_fees.json`: 펀드 수수료 정보
 3. `funds/fund_classification.json`: 펀드 분류 정보
+4. `funds/deposit_rates.json`: 예금금리 정보 (Phase 5 실행 시)
 
 ---
 
@@ -305,9 +475,10 @@ Row 9+: 데이터      | K55105EC1749 | 펀드명 | 운용사 | 2등급(높은�
 
 | 플러그인/에이전트 | 역할 | 연계 |
 |------------------|------|------|
-| portfolio-coordinator | 포트폴리오 분석 오케스트레이터 | fund_data.json 사용 |
-| fund-portfolio | 펀드 추천 | fund_data.json, fund_classification.json 사용 |
-| compliance-checker | DC 규제 검증 | fund_classification.json 사용 |
+| portfolio-coordinator | 포트폴리오 분석 오케스트레이터 | fund_data.json, deposit_rates.json 신선도 검사 |
+| fund-portfolio | 펀드 추천 | fund_data.json, fund_classification.json, deposit_rates.json 사용 |
+| compliance-checker | DC 규제 검증 | fund_classification.json, deposit_rates.json 사용 |
+| fund-selection-criteria | 펀드 선택 기준 | deposit_rates.json으로 예금 vs 채권 비교 |
 | data-updater | 데이터 변환 | 현재 스킬 |
 
 ---
