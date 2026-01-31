@@ -272,6 +272,6 @@ Step 5-2. 결과 보고
 
 ### 참조 파일
 
-- `references/document_templates/four_step_pattern.md`: 4단계 문장 패턴 가이드
-- `references/document_templates/chapter_structure.md`: 챕터 구조 정의
-- `references/field_keywords/{domain}_keywords.json`: 도메인별 용어
+- 4단계 문장 패턴: 위 "4단계 문장 패턴" 섹션 참조
+- 챕터 구조: 위 "챕터 구조" 섹션 참조  
+- 도메인별 용어: input-analyzer가 전달한 키워드 사용

@@ -54,7 +54,7 @@ Step 1-1. analysis_result.json 로드
 └── 키워드 분포 로드
 
 Step 1-2. 도메인별 키워드 사전 로드
-├── Read: references/field_keywords/{domain}_keywords.json
+├── input-analyzer가 전달한 도메인 키워드 사용
 └── 해당 도메인의 챕터별 키워드 매핑 준비
 ```
 
@@ -254,5 +254,5 @@ Step 5-2. 사용자 안내 출력
 
 ### 참조 파일
 
-- `references/field_keywords/*.json`: 도메인별 챕터 키워드
-- `references/document_templates/chapter_structure.md`: 챕터 구조 정의
+- 도메인별 키워드: input-analyzer가 전달한 키워드 사용
+- 챕터 구조: 위 "Phase 2: 챕터별 콘텐츠 매핑" 섹션 참조
