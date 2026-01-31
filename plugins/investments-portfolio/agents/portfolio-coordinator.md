@@ -1592,6 +1592,7 @@ changes:
   - "v4.4: fund_data.json _meta.version 기반 경과일 검사"
   - "v4.4: 30일 이내=FRESH, 31-60일=STALE(경고), 61일+=OUTDATED(확인요청)"
   - "v4.6: data-updater 에이전트 → 스킬로 전환 (visual-generator 패턴)"
+  - "v4.6: 예금금리 업데이트 기능 추가 (Phase 5, 사용자 입력 필수)"
   - "v4.4: data-updater 연동 안내 추가"
   - "v4.4: 모든 보고서에 데이터 기준일 명시 필수화"
   - "v4.3: 파일 내용 검증 강화 (환각 방지 핵심 개선)"
