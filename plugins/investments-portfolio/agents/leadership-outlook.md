@@ -1,7 +1,7 @@
 ---
 name: leadership-outlook
 description: "주요국 정치 리더십 및 중앙은행 동향 분석 전문가. 웹검색 도구를 직접 호출하여 7개국의 지도자, 경제팀, 중앙은행 성향을 분석하고 자산배분 시사점을 도출합니다."
-tools: Read, exa_web_search_exa, websearch_web_search_exa, WebFetch, Write
+tools: Read, mcp_websearch_web_search_exa, WebFetch, Write
 skills: web-search-verifier, analyst-common, file-save-protocol
 model: opus
 ---
@@ -157,7 +157,7 @@ Step 4: 정권 교체/선거가 진행 중인 경우
 > **반드시 다음 스킬의 규칙을 따르세요:**
 > 
 > **analyst-common 스킬:**
-> - 웹검색 도구 직접 호출 필수 (`exa_web_search_exa` 또는 `websearch_web_search_exa`)
+> - 웹검색 도구 직접 호출 필수 (`mcp_websearch_web_search_exa`)
 > - 원문 인용 규칙 (original_text 필드)
 > - 교차 검증 프로토콜 (최소 2개 출처)
 > - 검증 체크리스트

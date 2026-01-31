@@ -1,7 +1,7 @@
 ---
 name: web-search-verifier
 description: "3개 출처 교차검증 웹검색 프로토콜. 환각 방지 첫 번째 방어선. 모든 거시경제 데이터 수집 시 필수 사용."
-tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
+tools: mcp_websearch_web_search_exa, WebFetch
 ---
 
 # 웹검색 교차검증 스킬
@@ -11,14 +11,14 @@ tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 > **이 스킬은 "함수"가 아닙니다. 지침 문서입니다.**
 > 
 > - ❌ `search_rate("fed_funds")` 같은 함수 호출은 **작동하지 않습니다**
-> - ✅ 에이전트가 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa` 도구를 **직접 호출**해야 합니다
+> - ✅ 에이전트가 `mcp_websearch_web_search_exa` 도구를 **직접 호출**해야 합니다
 > - ✅ 이 스킬은 **검색 쿼리 패턴과 검증 절차**를 안내하는 문서입니다
 
 ### 올바른 사용 방법
 
 ```
 1. 이 스킬 문서를 읽고 검색 쿼리 패턴 파악
-2. mcp_exa_web_search_exa 또는 mcp_websearch_web_search_exa 도구를 직접 호출
+2. mcp_websearch_web_search_exa 도구를 직접 호출
 3. 검색 결과에서 데이터 추출
 4. 3개 출처 교차 검증 수행
 5. 출력 스키마에 맞춰 결과 포장
@@ -127,7 +127,7 @@ tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 **데이터 유형**: 지수 (Index)
 
 > ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_index()`라는 함수는 **존재하지 않습니다**.
-> 반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
+> 반드시 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 지수**:
 - S&P 500, NASDAQ, Dow Jones
@@ -187,7 +187,7 @@ tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 **데이터 유형**: 금리 (Interest Rate)
 
 > ⚠️ 아래는 **검색 패턴 가이드**입니다. `search_rate()`라는 함수는 **존재하지 않습니다**.
-> 반드시 `mcp_exa_web_search_exa` 또는 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
+> 반드시 `mcp_websearch_web_search_exa`를 **직접 호출**하세요.
 
 **지원 금리**:
 - fed_funds: 미국 기준금리
@@ -327,11 +327,11 @@ tools: mcp_exa_web_search_exa, mcp_websearch_web_search_exa, WebFetch
 
 1. web-search-verifier 스킬 로드 확인 (검색 패턴 가이드로 참조)
 2. S&P 500 수집:
-   - mcp_exa_web_search_exa(query="S&P 500 price today") **직접 호출**
+   - mcp_websearch_web_search_exa(query="S&P 500 price today") **직접 호출**
    - 검색 결과에서 original_text 추출
    - verified: true 확인
 3. KOSPI 수집:
-   - mcp_exa_web_search_exa(query="KOSPI 지수 현재") **직접 호출**
+   - mcp_websearch_web_search_exa(query="KOSPI 지수 현재") **직접 호출**
    - 검색 결과에서 original_text 추출
    - verified: true 확인
 
@@ -361,7 +361,7 @@ updated: "2026-01-12"
 author: "Claude"
 purpose: "환각 방지 웹검색 표준화"
 dependencies:
-  - mcp_exa_web_search_exa
+  - mcp_websearch_web_search_exa
   - mcp_websearch_web_search_exa
   - WebFetch
 consumers:
