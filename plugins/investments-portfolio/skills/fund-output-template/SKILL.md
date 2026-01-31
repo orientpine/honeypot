@@ -49,7 +49,7 @@ description: "펀드 포트폴리오 분석 보고서 출력 템플릿. fund-por
 | **핵심(Core)** | [펀드1] | X% | 시장 수익 확보 |
 | **핵심(Core)** | [펀드2] | X% | 분산/안정 |
 | **위성(Satellite)** | [펀드3] | X% | 초과 수익 추구 |
-| **안전자산** | [펀드4] | X% | 원금 보존 |
+| **안전자산** | [예금 또는 채권펀드] | X% | 원금 보존 |
 
 ### 상세 포트폴리오
 | 순위 | 펀드명 | 유형 | 위험등급 | 배분비율 | 총보수 | 기준수익률 |
@@ -68,14 +68,37 @@ description: "펀드 포트폴리오 분석 보고서 출력 템플릿. fund-por
 
 **비용 절감 기회**: [대안 펀드와 비교 시 절감 가능 금액]
 
-## 예금 vs 채권형 펀드 비교 (안전자산 필수)
+## 안전자산 결정 (SAFE_ASSET_DECISION) - 필수
 
-| 상품 | 명목 수익률 | 총보수 | 실질 수익률 | 원금 보장 | 선택 |
-|------|:----------:|:------:|:----------:|:---------:|:----:|
-| 예금 | X.X% | 0% | X.X% | O | 기준 |
-| [채권펀드1] | X.X% | X.X% | X.X% | X | [예금 대비 판단] |
+### Step 1: 예금 vs 최적 채권 비교
 
-**선택 근거**: [예금 대비 0.5%p 이상 초과 수익 시에만 채권형 펀드 선택]
+| 항목 | 예금 (SEMA 1년) | 최적 채권펀드 |
+|------|:--------------:|:------------:|
+| 상품명 | 과기공 예금 | [최고 순수익 채권펀드명] |
+| 명목 수익률 | X.X% | X.X% |
+| 총보수 | 0% | X.X% |
+| **순수익률** | **X.X%** | **X.X%** |
+| 원금 보장 | O | X |
+
+### Step 2: 임계값 판정
+
+| 기준 | 값 | 계산식 |
+|------|:--:|--------|
+| 예금 수익률 | X.X% | deposit_rates.json 참조 |
+| 리스크 프리미엄 | 0.5%p | 고정값 |
+| **채권 선택 임계값** | **X.X%** | 예금 + 0.5%p |
+| 최적 채권 순수익 | X.X% | return1y - totalFee |
+| **판정** | **[예금 승/채권 승]** | 순수익 > 임계값? |
+
+### Step 3: 최종 결정
+
+```
+SAFE_ASSET_DECISION = "[예금 / 채권펀드명]"
+```
+
+**선택 근거**: [구체적인 수치 비교 및 판정 이유]
+
+> ⚠️ **HARD RULE**: SAFE_ASSET_DECISION이 "예금"이면, 포트폴리오에 채권형 펀드 비중은 반드시 0%
 
 ## 펀드별 상세 분석
 
@@ -173,8 +196,21 @@ portfolios/YYYY-MM-DD-{profile}-{session}/01-fund-analysis.md
 ```json
 {
   "portfolio": [
-    { "name": "펀드명", "weight": 20, "category": "해외주식형", "role": "core" }
+    { "name": "펀드명", "weight": 20, "category": "해외주식형", "role": "core" },
+    { "name": "과기공 예금", "weight": 30, "category": "예금", "role": "safe" }
   ],
+  "safeAssetDecision": {
+    "decision": "예금",
+    "depositRate": 4.9,
+    "bestBond": {
+      "name": "한국투자크레딧포커스ESG(채권)",
+      "grossReturn": 3.49,
+      "totalFee": 0.30,
+      "netReturn": 3.19
+    },
+    "threshold": 5.4,
+    "reason": "최적 채권 순수익(3.19%) < 임계값(5.4%) → 예금 선택"
+  },
   "analysis": {
     "riskProfile": "공격형",
     "totalRiskWeight": 70,
@@ -183,11 +219,14 @@ portfolios/YYYY-MM-DD-{profile}-{session}/01-fund-analysis.md
   },
   "sources": [
     { "type": "local", "file": "fund_data.json", "fields": ["return3m"] },
+    { "type": "local", "file": "deposit_rates.json", "fields": ["rate"] },
     { "type": "web", "url": "https://...", "title": "..." }
   ],
   "output_markdown": "... 전체 마크다운 출력 ..."
 }
 ```
+
+> **중요**: `safeAssetDecision.decision`이 "예금"이면 `portfolio` 배열에 채권형 펀드가 포함되어서는 안 됩니다.
 
 ### 파일 저장 체크리스트
 

@@ -178,6 +178,50 @@ powershell -Command "Select-String -Path 'funds/fund_data.json' -Pattern '헬스
 ### 3.6 안전자산 선택: 예금 vs 채권 비교 ⚠️ MANDATORY
 
 > **핵심 원칙**: 안전자산(30%) 선택 시 **반드시** 예금과 채권형 펀드를 비교해야 합니다.
+> **실행 시점**: Step 3 (펀드 검색 이전) - 포트폴리오 구성 전 필수 Gate
+
+#### 3.6.0 최적 채권(bestBond) 탐색 규칙 ⚠️ REQUIRED
+
+> **목적**: "아무 채권"이 아니라, fund_data.json 범위 내에서 **예금과 비교할 단 하나의 기준 채권(bestBond)** 을 결정합니다.
+> **금지**: 기존 포트폴리오/템플릿에서 채권 펀드명 복사, 임의 1개 선택.
+
+**정의**
+- `bestBond` = (채권형 카테고리 펀드들 중) `실질 수익률(return1y - 총보수)`가 최대인 펀드 1개
+
+**탐색 절차**
+
+```
+Step A: 후보 집합 구성
+   └─ funds/fund_classification.json에서 category="채권형"인 펀드를 후보로 잡는다.
+
+Step B: 후보별 실질 수익률 계산
+   └─ funds/fund_data.json에서 return1y를 바인딩한다. (없으면 후보 제외)
+   └─ funds/fund_fees.json에서 totalFee(총보수)를 바인딩한다. (없으면 후보 제외, 추정 금지)
+   └─ 실질 수익률 = return1y - totalFee
+
+Step C: bestBond 선택 (정렬/타이브레이커)
+   └─ 1순위: 실질 수익률 내림차순
+   └─ 동률 시: 총보수 낮은 펀드 우선
+   └─ 그래도 동률 시: riskLevel 더 낮은(안정적인) 펀드 우선
+
+Step D: bestBond가 1개도 없으면
+   └─ 채권 비교 불가 → SAFE_ASSET_DECISION="예금" (채권 추천 금지)
+   └─ 사유를 출력에 명시: "총보수/수익률 데이터로 실질 수익률 계산 가능한 채권형 펀드가 없음"
+```
+
+**bestBond 출력 형식**
+
+```json
+{
+  "bestBond": {
+    "name": "[펀드명 전체]",
+    "return1y": X.XX,
+    "totalFee": X.XX,
+    "netReturn": X.XX,
+    "riskLevel": X
+  }
+}
+```
 
 #### 3.6.1 비교 프로세스 (필수 실행)
 
@@ -223,13 +267,57 @@ Step C: 비교 판단
 | **결론** | [선택/미선택] | [선택/미선택] |
 ```
 
-#### 3.6.4 위반 시 처리
+#### 3.6.4 강제 적용 로직 (Hard Gate) ⚠️ CRITICAL
 
-| 위반 | 결과 |
-|------|------|
-| 예금 비교 없이 채권형 추천 | **FAIL** - 포트폴리오 무효 |
-| 예금이 유리한데 채권형 추천 | **FAIL** - 근거 없는 추천 |
-| deposit_rates.json 파일 없음 | **FAIL** - 사용자에게 예금 금리 정보 요청 (웹검색 금지) |
+**SAFE_ASSET_DECISION은 아래 비교식으로만 결정합니다 (예외 없음):**
+
+```
+threshold = depositRate + 0.5%p
+bondNet = bestBond.return1y - bestBond.totalFee
+
+IF bondNet > threshold:
+    SAFE_ASSET_DECISION = "채권"
+ELSE:
+    SAFE_ASSET_DECISION = "예금"
+```
+
+**강제 규칙 (Immutable)**
+
+| SAFE_ASSET_DECISION | 포트폴리오 내 채권형 펀드 | 안전자산 30% 구성 |
+|:-------------------:|:----------------------:|:----------------:|
+| `"예금"` | **0개 (편입 금지)** | 예금 100% |
+| `"채권"` | bestBond만 허용 | bestBond |
+
+**위반 시 처리**
+
+| 위반 유형 | 결과 |
+|----------|------|
+| 예금 비교 테이블 없이 채권형 추천 | **FAIL** - 포트폴리오 무효 |
+| SAFE_ASSET_DECISION="예금"인데 채권형 펀드 포함 | **FAIL** - 규칙 위반 |
+| bestBond 아닌 다른 채권형 펀드 추천 | **FAIL** - 최적화 위반 |
+| deposit_rates.json 파일 없음 | **FAIL** - 사용자에게 예금 금리 정보 요청 |
+| 계산식/수치가 테이블과 불일치 | **FAIL** - 데이터 무결성 위반 |
+
+#### 3.6.5 FAIL 응답 형식 (안전자산 규칙 위반)
+
+아래 중 하나라도 발생 시, 포트폴리오 출력 대신 **반드시 FAIL을 반환**하고 중단합니다:
+
+```json
+{
+  "status": "FAIL",
+  "error": "SAFE_ASSET_GATE_VIOLATION",
+  "violation_type": "[위반 유형]",
+  "details": {
+    "depositRate": X.XX,
+    "threshold": X.XX,
+    "bestBondNetReturn": X.XX,
+    "SAFE_ASSET_DECISION": "[예금/채권]",
+    "violatingFund": "[위반 펀드명]"
+  },
+  "action": "안전자산 Gate(예금 vs 채권) 규칙 위반으로 포트폴리오가 무효입니다. 3.6 섹션을 재실행하고 SAFE_ASSET_DECISION에 맞게 채권 편입을 제거/수정하세요.",
+  "hallucination_prevented": true
+}
+```
 
 > ⚠️ **웹검색 금지**: 과학기술인공제회 예금 상품은 외부 웹에서 검색되지 않습니다. 반드시 `deposit_rates.json` 파일을 사용하세요.
 
@@ -245,23 +333,32 @@ Step C: 비교 판단
 - 미포함 → 자체 웹검색 + "macro-outlook 권고 없음" 명시
 - material-summary 포함 시 → 추가 컨텍스트로 활용 (옵셔널)
 
-### Step 3: 펀드 검색-검증-바인딩
-**섹션 3 프로토콜 준수 필수**
+### Step 3: 안전자산 Gate (예금 vs 채권) ⚠️ MANDATORY - 선행 필수
+
+> **⚠️ CRITICAL**: 이 Step은 펀드 검색(Step 4) **이전에** 반드시 실행합니다.
+> 이 Step의 결론(`SAFE_ASSET_DECISION`)은 이후 단계에서 **변경 금지(Immutable)** 입니다.
+
+**섹션 3.6 프로토콜 준수 필수**
+1. deposit_rates.json 로드 (없으면 **FAIL**)
+2. **최적 채권(bestBond) 탐색** (섹션 3.6.0 규칙)
+3. 예금 금리 + 0.5%p 기준 비교
+4. `SAFE_ASSET_DECISION` 결정:
+   - 채권 실질 수익률 > 예금 + 0.5%p → `"채권"`
+   - 그 외 → `"예금"` (**채권형 펀드 편입 금지**)
+5. 비교 테이블 출력 (섹션 3.6.3 형식) - **필수**
+
+### Step 4: 펀드 검색-검증-바인딩 (위험자산 중심)
+**섹션 4 프로토콜 준수 필수**
+
+> ⚠️ **SAFE_ASSET_DECISION="예금"이면 채권형 펀드 검색/편입 금지 (0% 강제)**
+
 1. 섹터별 검색 (인덱스 펀드 우선)
 2. name/수익률 직접 추출
 3. 정렬 (총보수 → 수익률)
 4. 검증 (펀드명 일치, "데이터 미확인" 0개)
 
-### Step 4: 웹검색 (macro-outlook 미제공 시)
+### Step 4.5: 웹검색 (macro-outlook 미제공 시)
 거시경제, 시장 전망, 섹터 전망, 비판적 시각, 자산배분 연구, 환율 전략
-
-### Step 4.5: 안전자산 예금 vs 채권 비교 ⚠️ MANDATORY
-**섹션 3.6 프로토콜 준수 필수**
-1. deposit_rates.json 로드
-2. 채권형 펀드 실질 수익률 계산
-3. 예금 금리 + 0.5%p 기준 비교
-4. 기준 미충족 시 **예금 추천**
-5. 비교 테이블 출력 (섹션 3.6.3 형식)
 
 ### Step 4.6: Sector Overlap Analysis (MANDATORY - v4.3 신규)
 
@@ -321,13 +418,32 @@ Step 4: 경고 출력
 | 배당펀드 25% + 인컴펀드 20% | 2개 펀드 | 배당 스타일 45% | 스타일 집중 |
 
 ### Step 5: 포트폴리오 구성
-1. macro-outlook 권고 반영 (±10%p 편차 허용)
-2. DC형 70% 한도 확인
-3. **안전자산: Step 4.5 결과 반영 (예금 or 채권)**
+
+> ⚠️ **SAFE_ASSET_DECISION 적용 (Immutable - Step 3에서 결정됨)**
+
+**안전자산 Gate 적용 규칙 (Hard Rule)**
+
+| SAFE_ASSET_DECISION | 안전자산 구성 | 채권형 펀드 |
+|:-------------------:|:-----------:|:----------:|
+| `"예금"` | 예금 30% (또는 전체 안전자산) | **0% - 편입 금지** |
+| `"채권"` | bestBond 30% | bestBond만 허용 |
+
+1. **SAFE_ASSET_DECISION 검증 (최우선)**
+   - `"예금"` → 채권형 펀드 비중 = 0% (포트폴리오에서 제거)
+   - `"채권"` → 안전자산에 bestBond만 포함
+   - **위반 시 Step 5 중단, FAIL 반환**
+
+2. macro-outlook 권고 반영 (±10%p 편차 허용)
+3. DC형 70% 한도 확인
 4. **섹터 집중 리스크: Step 4.6 결과 반영 (40% 한도)**
 5. 핵심-위성 구조 적용
 6. 비용 효율성 분석
 7. 분산투자 확인
+
+**최종 검증 체크리스트**
+- [ ] SAFE_ASSET_DECISION="예금"이면 채권형 펀드 0개인가?
+- [ ] SAFE_ASSET_DECISION="채권"이면 bestBond만 포함되었는가?
+- [ ] 예금 vs 채권 비교 테이블이 출력에 포함되었는가?
 
 ---
 
@@ -355,11 +471,31 @@ Step 4: 경고 출력
 
 **경로**: `portfolios/YYYY-MM-DD-{profile}-{session}/01-fund-analysis.md`
 
+> **중요**: `portfolio` 배열에는 펀드뿐 아니라 **예금도 포함**될 수 있습니다.
+> - 예금 항목은 `category="예금"`으로 표기하고, sources에 `deposit_rates.json`을 포함합니다.
+> - 예금 항목은 `fund_data.json` 수익률 바인딩 대상이 아닙니다.
+
 ```json
 {
-  "portfolio": [{ "name": "펀드명", "weight": 20, "category": "해외주식형", "role": "core" }],
-  "analysis": { "riskProfile": "공격형", "totalRiskWeight": 70, "totalSafeWeight": 30, "weightedFee": 0.85 },
-  "sources": [{ "type": "local", "file": "fund_data.json" }, { "type": "web", "url": "..." }]
+  "portfolio": [
+    { "name": "퇴직연금 예금(과기공제회, 1년)", "weight": 30, "category": "예금", "role": "safe", "rate": 4.9 },
+    { "name": "펀드명", "weight": 20, "category": "해외주식형", "role": "core" }
+  ],
+  "analysis": { 
+    "riskProfile": "공격형", 
+    "totalRiskWeight": 70, 
+    "totalSafeWeight": 30, 
+    "weightedFee": 0.85,
+    "SAFE_ASSET_DECISION": "예금",
+    "bestBond": { "name": "...", "netReturn": X.XX },
+    "depositRate": 4.9,
+    "threshold": 5.4
+  },
+  "sources": [
+    { "type": "local", "file": "fund_data.json" }, 
+    { "type": "local", "file": "deposit_rates.json" },
+    { "type": "web", "url": "..." }
+  ]
 }
 ```
 
