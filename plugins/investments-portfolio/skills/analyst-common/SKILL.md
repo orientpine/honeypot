@@ -8,7 +8,7 @@ tools: mcp_websearch_web_search_exa, WebFetch
 
 ## Overview
 
-이 스킬은 모든 분석 에이전트(index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-outlook, macro-critic)가 공통으로 따라야 하는 규칙을 정의합니다.
+이 스킬은 모든 분석 에이전트(index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst, macro-critic)가 공통으로 따라야 하는 규칙을 정의합니다.
 
 **핵심 목표**: 환각(Hallucination) 방지
 
@@ -232,7 +232,7 @@ consumers:
   - rate-analyst
   - sector-analyst
   - risk-analyst
-  - leadership-outlook
+  - leadership-analyst
   - macro-critic
 extracted_from:
   - "웹검색 도구 직접 호출 필수 섹션"

@@ -1,6 +1,6 @@
 ---
 name: portfolio-coordinator
-description: "퇴직연금 포트폴리오 분석 오케스트레이터. Multi-agent 워크플로우를 조율하여 11개 에이전트를 호출: [Step 0.1] index-fetcher → [Step 0.2 병렬] rate-analyst, sector-analyst, risk-analyst, leadership-outlook, material-organizer(옵셔널) → [Step 0.3] macro-synthesizer → [Step 0.4] macro-critic → [Step 1] fund-portfolio → [Step 2] compliance-checker → [Step 3] output-critic. 규제 준수 검증과 환각 방지를 위한 교차 검증을 보장합니다.
+description: "퇴직연금 포트폴리오 분석 오케스트레이터. Multi-agent 워크플로우를 조율하여 11개 에이전트를 호출: [Step 0.1] index-fetcher → [Step 0.2 병렬] rate-analyst, sector-analyst, risk-analyst, leadership-analyst, material-organizer(옵셔널) → [Step 0.3] macro-synthesizer → [Step 0.4] macro-critic → [Step 1] fund-portfolio → [Step 2] compliance-checker → [Step 3] output-critic. 규제 준수 검증과 환각 방지를 위한 교차 검증을 보장합니다.
 tools: Task, Read, Write, Bash
 skills: file-save-protocol
 model: opus
@@ -56,13 +56,14 @@ model: opus
 │     - 특수 요구사항 식별                                          │
 │                                                                 │
 │  2. 하위 에이전트 조율 (Task 도구 필수 사용)                       │
-│     - index-fetcher: 지수 데이터 수집 (신규 Step 0.1)             │
-│     - rate/sector/risk-analyst: 병렬 분석 (신규 Step 0.2)         │
-│     - macro-synthesizer: 거시경제 최종 보고서 (신규 Step 0.3)     │
-│     - macro-critic: 거시경제 분석 검증 (신규 Step 0.4)            │
-│     - fund-portfolio: 펀드 분석 및 포트폴리오 구성                 │
-│     - compliance-checker: DC형 규제 준수 검증                    │
-│     - output-critic: 출력 검증 및 환각 방지                       │
+│     - index-fetcher: 지수 데이터 수집 (Step 0.1)                  │
+│     - rate/sector/risk/leadership-analyst: 병렬 분석 (Step 0.2)  │
+│     - material-organizer: 수집 자료 정리 (Step 0.2, 옵셔널)       │
+│     - macro-synthesizer: 거시경제 최종 보고서 (Step 0.3)          │
+│     - macro-critic: 거시경제 분석 검증 (Step 0.4)                 │
+│     - fund-portfolio: 펀드 분석 및 포트폴리오 구성 (Step 1)        │
+│     - compliance-checker: DC형 규제 준수 검증 (Step 2)           │
+│     - output-critic: 출력 검증 및 환각 방지 (Step 3)              │
 │                                                                 │
 │  3. 결과 조합 및 최종 출력                                        │
 │     - 에이전트 결과 통합 (원본 그대로 인용)                        │
@@ -80,7 +81,7 @@ model: opus
 | **rate-analyst** | `rate-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
 | **sector-analyst** | `sector-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
 | **risk-analyst** | `risk-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
-| **leadership-outlook** | `leadership-outlook` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
+| **leadership-analyst** | `leadership-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
 | **material-organizer** | `material-organizer` | 0.2 | ✅ | ✅ | ✅ | ✅ | - | ✅ |
 | **macro-synthesizer** | `macro-synthesizer` | 0.3 | - | - | ✅ | ✅ | - | ✅ |
 | **macro-critic** | `macro-critic` | 0.4 | - | - | ✅ | ✅ | - | ✅ |
@@ -322,9 +323,9 @@ Read("funds/deposit_rates.json")
 
 **섹션 3.4 참조**: risk-analyst 호출 템플릿
 
-##### 2.0.2.4 leadership-outlook 호출 (v4.5 신규 - 필수)
+##### 2.0.2.4 leadership-analyst 호출 (v4.5 신규 - 필수)
 
-**섹션 3.5 참조**: leadership-outlook 호출 템플릿
+**섹션 3.5 참조**: leadership-analyst 호출 템플릿
 
 ##### 2.0.2.5 material-organizer 호출 (옵셔널)
 
@@ -857,13 +858,13 @@ JSON:
 
 ---
 
-### 3.5 leadership-outlook 호출 템플릿
+### 3.5 leadership-analyst 호출 템플릿
 
 **목적**: 정치 리더십/중앙은행 동향 분석 (7개국)
 
 ```markdown
 Task(
-  subagent_type="leadership-outlook",
+  subagent_type="leadership-analyst",
   description="정치 리더십/중앙은행 동향 분석 (7개국)",
   prompt="""
 ## 정치 리더십 및 중앙은행 동향 분석 요청

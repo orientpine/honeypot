@@ -74,7 +74,8 @@ portfolios/2026-01-14-aggressive-abc123/
 ├── rate-analysis.json       # rate-analyst 출력
 ├── sector-outlook.json      # sector-analyst 출력
 ├── risk-analysis.json       # risk-analyst 출력
-├── leadership-outlook.json  # leadership-outlook 출력 (on-demand)
+├── leadership-analysis.json # leadership-analyst 출력
+├── material-summary.md      # material-organizer 출력 (옵셔널)
 ├── macro-synthesis.json     # macro-synthesizer 출력
 └── portfolio-recommendation.json  # fund-portfolio 출력
 ```
@@ -87,7 +88,8 @@ portfolios/2026-01-14-aggressive-abc123/
 | rate-analyst | `rate-analysis.json` | O |
 | sector-analyst | `sector-outlook.json` | O |
 | risk-analyst | `risk-analysis.json` | O |
-| leadership-outlook | `leadership-outlook.json` | X (on-demand) |
+| leadership-analyst | `leadership-analysis.json` | O |
+| material-organizer | `material-summary.md` | X (옵셔널) |
 | macro-synthesizer | `macro-synthesis.json` | O |
 | fund-portfolio | `portfolio-recommendation.json` | O |
 
