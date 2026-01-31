@@ -68,7 +68,50 @@ const SAFE_ASSET_CATEGORIES = [
 ]
 ```
 
-### 2.2 검증 순서
+### 2.2 Step 0: 필수 파일 존재 검증
+
+> **목적**: 검증 시작 전 필수 데이터 파일의 존재를 확인하여 검증 실패를 방지합니다.
+
+```
+[Step 0: 필수 파일 검증]
+     │
+     ▼
+Read("funds/fund_classification.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → FAIL 반환
+     │       └─ "fund_classification.json 파일 없음. 위험자산 분류 불가."
+     │
+     ▼
+Read("funds/fund_data.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → FAIL 반환
+     │       └─ "fund_data.json 파일 없음. 펀드 존재 확인 불가."
+     │
+     ▼
+Read("funds/fund_fees.json")
+     │
+     ├─ 성공 → 계속
+     └─ 실패 → WARNING: "fund_fees.json 없음. 총보수 검증 생략."
+     │
+     ▼
+[Step 0 완료] → 검증 프로세스 진행
+```
+
+**FAIL 응답 형식** (필수 파일 누락 시):
+
+```json
+{
+  "compliance": null,
+  "status": "FAIL",
+  "error": "REQUIRED_FILE_MISSING",
+  "missing_files": ["fund_classification.json"],
+  "action": "데이터 파일 복구 필요. data-updater 에이전트로 업데이트 권장."
+}
+```
+
+### 2.3 검증 순서
 
 ```
 1. [데이터 로드]
