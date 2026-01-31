@@ -181,3 +181,11 @@ upstream: [macro-synthesizer]
 validators: [compliance-checker, output-critic]
 output_file: "01-fund-analysis.md"
 ```
+
+---
+
+## 7. Resources
+
+### references/ (Read 도구로 로드)
+
+- `plugins/investments-portfolio/references/fund-portfolio-output-template.md`: 출력 구조, Markdown 템플릿, 품질 체크리스트
