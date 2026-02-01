@@ -45,19 +45,19 @@ model: opus
 ### 0.2 필수 Task 호출 순서
 
 ```
-Step 0.1: Task(subagent_type="index-fetcher", ...)        ← 지수 데이터 수집
-Step 0.2: Task(subagent_type="rate-analyst", ...)         ← 금리/환율 분석 (병렬)
-          Task(subagent_type="sector-analyst", ...)       ← 섹터 분석 (병렬)
-          Task(subagent_type="risk-analyst", ...)         ← 리스크 분석 (병렬)
-          Task(subagent_type="leadership-analyst", ...)   ← 정치/중앙은행 분석 (병렬)
-          Task(subagent_type="material-organizer", ...)   ← 수집 자료 정리 (병렬, 옵셔널)
-Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서
-Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증 (재시도 로직)
-Step 1:   Coordinator 직접 수행                           ← 요청 분석 (투자성향 파악)
-Step 2:   Task(subagent_type="fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
-Step 3:   Task(subagent_type="compliance-checker", ...)   ← 규제 검증
-Step 4:   Compliance 실패 시 수정 루프                    ← fund-portfolio 재호출 (최대 3회)
-Step 5:   Task(subagent_type="output-critic", ...)        ← 출력 검증
+Step 0.1: Task(subagent_type="investments-portfolio:index-fetcher", ...)        ← 지수 데이터 수집
+Step 0.2: Task(subagent_type="investments-portfolio:rate-analyst", ...)         ← 금리/환율 분석 (병렬)
+          Task(subagent_type="investments-portfolio:sector-analyst", ...)       ← 섹터 분석 (병렬)
+          Task(subagent_type="investments-portfolio:risk-analyst", ...)         ← 리스크 분석 (병렬)
+          Task(subagent_type="investments-portfolio:leadership-analyst", ...)   ← 정치/중앙은행 분석 (병렬)
+          Task(subagent_type="investments-portfolio:material-organizer", ...)   ← 수집 자료 정리 (병렬, 옵셔널)
+Step 0.3: Task(subagent_type="investments-portfolio:macro-synthesizer", ...)    ← 거시경제 최종 보고서
+Step 0.4: Task(subagent_type="investments-portfolio:macro-critic", ...)         ← 거시경제 분석 검증 (재시도 로직)
+Step 1:   Coordinator 직접 수행                                                  ← 요청 분석 (투자성향 파악)
+Step 2:   Task(subagent_type="investments-portfolio:fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
+Step 3:   Task(subagent_type="investments-portfolio:compliance-checker", ...)   ← 규제 검증
+Step 4:   Compliance 실패 시 수정 루프                                           ← fund-portfolio 재호출 (최대 3회)
+Step 5:   Task(subagent_type="investments-portfolio:output-critic", ...)        ← 출력 검증
 Step 6:   Coordinator 직접 수행                           ← 최종 출력 조합
 ```
 
@@ -103,17 +103,17 @@ Step 6:   Coordinator 직접 수행                           ← 최종 출력 
 
 | 에이전트 | subagent_type | Step | 병렬 | 옵셔널 | Full | Macro | Review | 파일 |
 |----------|:---------------:|:----:|:----:|:------:|:----:|:-----:|:------:|:----:|
-| **index-fetcher** | `index-fetcher` | 0.1 | - | - | ✅ | ✅ | - | ✅ |
-| **rate-analyst** | `rate-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
-| **sector-analyst** | `sector-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
-| **risk-analyst** | `risk-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
-| **leadership-analyst** | `leadership-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
-| **material-organizer** | `material-organizer` | 0.2 | ✅ | ✅ | ✅ | ✅ | - | ✅ |
-| **macro-synthesizer** | `macro-synthesizer` | 0.3 | - | - | ✅ | ✅ | - | ✅ |
-| **macro-critic** | `macro-critic` | 0.4 | - | - | ✅ | ✅ | - | ✅ |
-| **fund-portfolio** | `fund-portfolio` | 1 | - | - | ✅ | - | - | ✅ |
-| **compliance-checker** | `compliance-checker` | 2 | - | - | ✅ | - | ✅ | ✅ |
-| **output-critic** | `output-critic` | 3 | - | - | ✅ | - | ✅ | ✅ |
+| **index-fetcher** | `investments-portfolio:index-fetcher` | 0.1 | - | - | ✅ | ✅ | - | ✅ |
+| **rate-analyst** | `investments-portfolio:rate-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
+| **sector-analyst** | `investments-portfolio:sector-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
+| **risk-analyst** | `investments-portfolio:risk-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
+| **leadership-analyst** | `investments-portfolio:leadership-analyst` | 0.2 | ✅ | - | ✅ | ✅ | - | ✅ |
+| **material-organizer** | `investments-portfolio:material-organizer` | 0.2 | ✅ | ✅ | ✅ | ✅ | - | ✅ |
+| **macro-synthesizer** | `investments-portfolio:macro-synthesizer` | 0.3 | - | - | ✅ | ✅ | - | ✅ |
+| **macro-critic** | `investments-portfolio:macro-critic` | 0.4 | - | - | ✅ | ✅ | - | ✅ |
+| **fund-portfolio** | `investments-portfolio:fund-portfolio` | 1 | - | - | ✅ | - | - | ✅ |
+| **compliance-checker** | `investments-portfolio:compliance-checker` | 2 | - | - | ✅ | - | ✅ | ✅ |
+| **output-critic** | `investments-portfolio:output-critic` | 3 | - | - | ✅ | - | ✅ | ✅ |
 
 **테이블 범례:**
 - **Step**: 워크플로우 실행 순서 (0.1 → 0.2 → 0.3 → 0.4 → 1 → 2 → 3)
@@ -758,7 +758,7 @@ Read(file_path="portfolio/2026-Q1-investment-plan.md")
 **Step 2: compliance-checker 호출**
 ```markdown
 Task(
-  subagent_type="compliance-checker",
+  subagent_type="investments-portfolio:compliance-checker",
   description="기존 문서 규제 검증",
   prompt="""
 ## 규제 준수 검증 요청 (문서 검토 모드)
@@ -782,7 +782,7 @@ JSON 형식으로 결과 반환
 **Step 3: output-critic 호출**
 ```markdown
 Task(
-  subagent_type="output-critic",
+  subagent_type="investments-portfolio:output-critic",
   description="기존 문서 출력 검증",
   prompt="""
 ## 출력 검증 요청 (문서 검토 모드)
@@ -914,7 +914,7 @@ output_path: portfolios/{session_folder}/{파일명}
 
 ```markdown
 Task(
-  subagent_type="index-fetcher",
+  subagent_type="investments-portfolio:index-fetcher",
   description="지수 데이터 수집 (3개 출처 교차 검증)",
   prompt="""
 ## 지수 데이터 수집 요청
@@ -963,7 +963,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="rate-analyst",
+  subagent_type="investments-portfolio:rate-analyst",
   description="금리/환율 전망 분석",
   prompt="""
 ## 금리/환율 전망 분석 요청
@@ -1009,7 +1009,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="sector-analyst",
+  subagent_type="investments-portfolio:sector-analyst",
   description="섹터별 전망 (5개 섹터)",
   prompt="""
 ## 섹터별 전망 분석 요청
@@ -1056,7 +1056,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="risk-analyst",
+  subagent_type="investments-portfolio:risk-analyst",
   description="리스크 분석 및 시나리오",
   prompt="""
 ## 리스크 분석 및 시나리오 요청
@@ -1107,7 +1107,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="leadership-analyst",
+  subagent_type="investments-portfolio:leadership-analyst",
   description="정치 리더십/중앙은행 동향 분석 (7개국)",
   prompt="""
 ## 정치 리더십 및 중앙은행 동향 분석 요청
@@ -1171,7 +1171,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="material-organizer",
+  subagent_type="investments-portfolio:material-organizer",
   description="수집 자료 정리 (옵셔널)",
   prompt="""
 ## 수집 자료 정리 요청
@@ -1206,7 +1206,7 @@ SKIP (에러 아님) - fund-portfolio는 material 없이 정상 동작
 
 ```markdown
 Task(
-  subagent_type="macro-synthesizer",
+  subagent_type="investments-portfolio:macro-synthesizer",
   description="거시경제 최종 보고서 작성",
   prompt="""
 ## 거시경제 최종 보고서 작성 요청
@@ -1282,7 +1282,7 @@ Markdown:
 
 ```markdown
 Task(
-  subagent_type="macro-critic",
+  subagent_type="investments-portfolio:macro-critic",
   description="거시경제 분석 검증 (지수 데이터 일치성)",
   prompt="""
 ## 거시경제 분석 검증 요청
@@ -1340,7 +1340,7 @@ JSON:
 
 ```markdown
 Task(
-  subagent_type="fund-portfolio",
+  subagent_type="investments-portfolio:fund-portfolio",
   description="펀드 포트폴리오 분석 (macro-outlook 권고 반영)",
   prompt="""
 ## 분석 요청
@@ -1461,7 +1461,7 @@ macro-outlook 권고를 **적극 반영**하되, 편차 발생 시 명확한 근
 
 ```markdown
 Task(
-  subagent_type="compliance-checker",
+  subagent_type="investments-portfolio:compliance-checker",
   description="DC형 규제 준수 검증",
   prompt="""
 ## 규제 준수 검증 요청
@@ -1504,7 +1504,7 @@ JSON 형식으로 반환:
 
 ```markdown
 Task(
-  subagent_type="output-critic",
+  subagent_type="investments-portfolio:output-critic",
   description="포트폴리오 출력 검증",
   prompt="""
 ## 출력 검증 요청
@@ -1616,7 +1616,7 @@ portfolios/2026-01-13-macro-only-a1b2c3/
 ```markdown
 # Step 0.1: index-fetcher 호출
 Task(
-  subagent_type="index-fetcher",
+  subagent_type="investments-portfolio:index-fetcher",
   description="[Macro-Only] 지수 데이터 수집",
   prompt="""
 ## [Macro-Only 모드] 지수 데이터 수집 요청
@@ -1641,7 +1641,7 @@ Task(
 
 # Step 0.3: macro-synthesizer 호출
 Task(
-  subagent_type="macro-synthesizer",
+  subagent_type="investments-portfolio:macro-synthesizer",
   description="[Macro-Only] 거시경제 상세 보고서 작성",
   prompt="""
 ## [Macro-Only 모드] 거시경제 보고서 작성 요청
