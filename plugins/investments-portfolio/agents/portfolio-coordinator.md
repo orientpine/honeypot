@@ -431,17 +431,81 @@ Read 도구로 각 파일 읽기:
 
 **섹션 3.8 참조**: macro-critic 호출 템플릿
 
-#### macro-outlook 결과 전달
+#### 2.0.5 macro-outlook 권고 추출 (Step 0.4 완료 후 - MANDATORY)
 
-macro-synthesizer 결과에서 다음을 추출하여 fund-portfolio에 전달합니다:
+> **목적**: macro-synthesizer가 생성한 00-macro-outlook.md에서 fund-portfolio에 전달할 권고사항을 추출합니다.
+> **실행 시점**: macro-critic PASS 직후, fund-portfolio 호출 직전
+
+##### 2.0.5.1 추출 대상 필드
+
+Coordinator가 `00-macro-outlook.md`를 Read하여 다음 항목을 추출:
+
+| 추출 항목 | macro-outlook 섹션 | 필수 |
+|----------|-------------------|:----:|
+| 권고 위험자산 비중 | 섹션 7. 자산배분 시사점 | ✅ |
+| 환헤지 전략 | 섹션 7. 자산배분 시사점 | ✅ |
+| 주목 섹터 (Top 3) | 섹션 4. 섹터별 전망 | ✅ |
+| 회피 섹터 | 섹션 4. 섹터별 전망 | ○ |
+| 지역 배분 권고 | 섹션 7. 자산배분 시사점 | ✅ |
+| 핵심 리스크 | 섹션 5. 리스크 요인 | ✅ |
+| 시나리오별 전략 | 섹션 6. 시나리오 분석 | ○ |
+
+##### 2.0.5.2 추출 프로세스
 
 ```
-macro-outlook 결과 추출:
-├── 권고 위험자산 비중 (예: 70%)
-├── 환헤지 권고 (예: 환노출 권장)
-├── 주목 섹터 (예: 반도체, 로봇)
-├── 지역 배분 권고 (예: 미국 60%, 한국 20%, 신흥국 20%)
-└── 섹터별 비중 제한 (예: 반도체 ≤30%)
+[Step 0.5: macro-outlook 권고 추출]
+     │
+     ▼
+Read("{output_path}/00-macro-outlook.md")
+     │
+     ├─ 섹션 7 "자산배분 시사점"에서 추출:
+     │   ├─ 위험자산 비중: XX%
+     │   ├─ 환헤지 전략: [환노출/환헤지/혼합]
+     │   └─ 지역 배분: 미국 XX%, 한국 XX%, 신흥국 XX%
+     │
+     ├─ 섹션 4 "섹터별 전망"에서 추출:
+     │   ├─ 주목 섹터: [섹터1, 섹터2, 섹터3]
+     │   └─ 회피 섹터: [섹터1, ...]
+     │
+     ├─ 섹션 5 "리스크 요인"에서 추출:
+     │   └─ 핵심 리스크: [리스크1, 리스크2]
+     │
+     ▼
+[macro_outlook_directives 생성]
+     │
+     ▼
+[Step 1: fund-portfolio 호출 시 전달]
+```
+
+##### 2.0.5.3 macro_outlook_directives 형식
+
+```json
+{
+  "macro_outlook_directives": {
+    "risk_weight": 70,
+    "hedge_strategy": "환노출",
+    "top_sectors": ["반도체", "AI", "로봇"],
+    "avoid_sectors": ["부동산"],
+    "region_allocation": {
+      "미국": 60,
+      "한국": 25,
+      "신흥국": 15
+    },
+    "key_risks": ["지정학적 리스크", "금리 불확실성"],
+    "source_file": "portfolios/{session}/00-macro-outlook.md"
+  }
+}
+```
+
+##### 2.0.5.4 추출 실패 시 처리
+
+```
+IF 00-macro-outlook.md 파일 없음 OR Read 실패:
+    FAIL 반환 - "macro-outlook 파일이 없습니다. Step 0.3을 먼저 완료하세요."
+
+IF 필수 항목(✅) 누락:
+    경고 출력 - "권고 [항목명] 누락. fund-portfolio가 자체 판단합니다."
+    → 워크플로우 진행 (누락된 항목은 fund-portfolio가 결정)
 ```
 
 ---
@@ -1087,26 +1151,46 @@ JSON:
 
 ---
 
-### 3.9 fund-portfolio 호출 템플릿
+### 3.9 fund-portfolio 호출 템플릿 (v4.7 - macro-outlook 반영 강화)
 
-**목적**: 펀드 포트폴리오 분석 및 추천
+**목적**: 펀드 포트폴리오 분석 및 추천 (**macro-outlook 권고 반영 필수**)
 
 ```markdown
 Task(
   subagent_type="fund-portfolio",
-  description="펀드 포트폴리오 분석",
+  description="펀드 포트폴리오 분석 (macro-outlook 권고 반영)",
   prompt="""
 ## 분석 요청
 
-### 시장 전망 참조 (macro-outlook 결과)
-{macro_outlook_summary}
+### ⚠️ macro-outlook 파일 직접 Read (MANDATORY)
+
+**당신이 직접 Read 도구로 파일을 읽어야 합니다.**
+**coordinator가 요약한 내용만 참조하지 마세요!**
+
+```
+Read("{output_path}/00-macro-outlook.md")
+```
+
+### macro-outlook 권고 요약 (coordinator 추출 - Section 2.0.5)
+{macro_outlook_directives}
 
 권고 사항:
 - 위험자산 비중: {recommended_risk_weight}%
 - 환헤지 전략: {hedge_recommendation}
 - 주목 섹터: {recommended_sectors}
+- 회피 섹터: {avoid_sectors}
 - 지역 배분: {region_allocation}
-- 섹터별 비중 제한: {sector_limits}
+- 핵심 리스크: {key_risks}
+
+### macro-outlook 반영 규칙 (MANDATORY)
+
+| 항목 | 허용 편차 | 편차 발생 시 |
+|------|:--------:|-------------|
+| 위험자산 비중 | ±10%p | **근거 필수** (섹션에 명시) |
+| 지역 배분 | ±15%p | **근거 필수** |
+| 섹터 비중 | ±10%p | **근거 필수** |
+| 주목 섹터 | 최소 1개 포함 | **미포함 시 FAIL** |
+| 회피 섹터 | 0% 편입 | **편입 시 FAIL** |
 
 ### 수집 자료 참조 (material-organizer 결과, 옵셔널)
 {material_summary}
@@ -1135,16 +1219,53 @@ Task(
 ### 출력 경로
 output_path: portfolios/{session_folder}/01-fund-analysis.md
 
-### 출력 요구사항
-1. 추천 포트폴리오 테이블 (펀드명, 비중, 유형, 위험자산 여부)
-2. macro-outlook 권고 반영 여부 명시
-3. 권고 대비 편차 발생 시 근거 설명
-4. 펀드별 수익률 데이터 (fund_data.json 기준)
-5. 비용 분석 (데이터 가용 시)
-6. 분석 근거 및 출처
+### 출력 요구사항 (v4.7 강화)
+
+1. **macro-outlook 반영 검증 테이블** (MANDATORY - 출력 최상단)
+
+출력에 반드시 다음 테이블 포함:
+
+| 항목 | macro-outlook 권고 | 실제 포트폴리오 | 편차 | 근거 |
+|------|-------------------|----------------|:----:|------|
+| 위험자산 비중 | {권고}% | XX% | ±Y%p | [근거] |
+| 환헤지 전략 | {권고} | [실제] | - | [근거] |
+| 미국 비중 | {권고}% | XX% | ±Y%p | [근거] |
+| 한국 비중 | {권고}% | XX% | ±Y%p | [근거] |
+| 주목 섹터 반영 | {섹터 목록} | [포함 펀드] | - | - |
+| 회피 섹터 확인 | {섹터 목록} | 0% | - | - |
+
+2. 추천 포트폴리오 테이블 (펀드명, 비중, 유형, 위험자산 여부)
+
+3. **펀드 선택 근거 테이블** (MANDATORY - v4.7)
+
+| # | 펀드명 | 비중 | 선택 근거 | 참조 출처 |
+|:-:|--------|:----:|----------|----------|
+| 1 | [펀드명] | 20% | [구체적 선택 이유] | `[파일명]` 필드명=값 |
+| ... | ... | ... | ... | ... |
+
+- 모든 펀드/예금에 대해 선택 근거와 참조 출처 명시 필수
+- 근거 없는 선택 금지 (Zero Tolerance)
+
+4. **편차 근거 섹션** (편차 발생 시 필수)
+   - 어떤 데이터/분석에 기반한 판단인지
+   - fund_data.json의 실제 펀드 성과 참조
+   - 리스크 요인 고려 여부
+5. 펀드별 수익률 데이터 (fund_data.json 기준)
+6. 비용 분석 (데이터 가용 시)
+7. 분석 근거 및 출처
+
+### FAIL 조건 (v4.7 강화)
+- macro-outlook 파일 Read 없이 분석 → FAIL
+- macro-outlook 반영 검증 테이블 누락 → FAIL
+- **펀드 선택 근거 테이블 누락 → FAIL**
+- **선택 근거에 참조 출처 없음 → FAIL**
+- 주목 섹터 0개 포함 → FAIL
+- 회피 섹터 편입 (근거 없이) → FAIL
+- 허용 편차 초과 + 근거 없음 → FAIL
 
 반드시 fund_data.json의 실제 데이터를 사용하세요.
-macro-outlook 권고를 반영하되, 편차 발생 시 명확한 근거를 제시하세요.
+macro-outlook 권고를 **적극 반영**하되, 편차 발생 시 명확한 근거를 제시하세요.
+**모든 펀드 선택에는 구체적 근거와 참조 출처가 필수입니다.**
 """
 )
 ```
@@ -1528,14 +1649,14 @@ IF critic.verified == false OR critic.confidence_score < 50:
 
 | 항목 | 값 |
 |------|-----|
-| version | 4.6 |
-| updated | 2026-01-31 |
+| version | 4.7 |
+| updated | 2026-02-01 |
 
 ### 워크플로우 모드
 
 | 모드 | 워크플로우 |
 |------|-----------|
-| full | FRESHNESS → index → analysts(rate,sector,risk,leadership) → FILE_CHECK → synthesizer → critic → fund → compliance → output |
+| full | FRESHNESS → index → analysts(rate,sector,risk,leadership) → FILE_CHECK → synthesizer → critic → **DIRECTIVE_EXTRACT** → fund → compliance → output |
 | macro_only | FRESHNESS → index → analysts(rate,sector,risk,leadership) → FILE_CHECK → synthesizer → critic |
 | document_review | FRESHNESS → compliance → output |
 
@@ -1560,6 +1681,9 @@ IF critic.verified == false OR critic.confidence_score < 50:
 - ⚠️ 분석 파일 누락/검증실패 시 환각 데이터 생성 절대 금지
 - ⚠️ Macro-Only 모드에서도 Step 0.1~0.4 절대 생략 불가
 - ⚠️ 현재 지수값(S&P 500, KOSPI) 누락 시 FAIL
+- ⚠️ **Step 0.5 macro-outlook 권고 추출 필수** (v4.7)
+- ⚠️ **fund-portfolio에 macro_outlook_directives 전달 필수** (v4.7)
+- ⚠️ **fund-portfolio가 macro-outlook 파일 직접 Read 지시 필수** (v4.7)
 - Task 도구 필수 사용
 - 에이전트 결과 원본 인용
 - index-fetcher FAIL 시 워크플로우 중단
