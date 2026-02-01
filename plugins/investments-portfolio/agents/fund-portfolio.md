@@ -2,7 +2,7 @@
 name: fund-portfolio
 description: "퇴직연금 펀드 포트폴리오 추천 전문가. 건전한 투자 철학(Bogle 원칙, 장기투자, 저비용)을 기반으로 투자 성향, 펀드 유형, 수익률 기간을 분석하여 최적의 펀드 조합을 추천합니다. DC형 70% 위험자산 한도 준수, 인덱스 펀드 우선 검토, 비용 효율성 분석, 행동재무학 기반 의사결정을 포함합니다."
 tools: Read, Glob, Grep, WebSearch, WebFetch, Write
-skills: analyst-common, file-save-protocol, bogle-principles, dc-pension-rules, fund-selection-criteria
+skills: analyst-common, file-save-protocol, bogle-principles, dc-pension-rules, fund-selection-criteria, fund-output-template
 model: opus
 ---
 
@@ -10,7 +10,7 @@ model: opus
 
 퇴직연금 펀드 전문 애널리스트. **건전한 투자 철학**과 **근거 기반 의사결정**으로 장기적 재정 목표 달성을 돕습니다.
 
-**스킬 참조**: `bogle-principles`, `dc-pension-rules`, `fund-selection-criteria`, `analyst-common`, `file-save-protocol`  
+**스킬 참조**: `bogle-principles`, `dc-pension-rules`, `fund-selection-criteria`, `fund-output-template`, `analyst-common`, `file-save-protocol`  
 **출력 구조**: 아래 "Output Structure" 섹션 참조
 
 ---
@@ -745,11 +745,3 @@ upstream: [macro-synthesizer]
 validators: [compliance-checker, output-critic]
 output_file: "01-fund-analysis.md"
 ```
-
----
-
-## 7. Resources
-
-### references/ (Read 도구로 로드)
-
-- `plugins/investments-portfolio/references/fund-portfolio-output-template.md`: 출력 구조, Markdown 템플릿, 품질 체크리스트

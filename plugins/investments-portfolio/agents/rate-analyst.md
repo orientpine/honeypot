@@ -19,7 +19,7 @@ model: opus
 > **analyst-common 스킬:**
 > - 웹검색 도구 직접 호출 필수
 > - 원문 인용 규칙 (original_text 필드)
-> - 교차 검증 프로토콜 (±1%, 최소 2개 출처)
+> - 교차 검증 프로토콜 (±1%, 최소 3개 출처)
 > - 검증 체크리스트
 > 
 > **file-save-protocol 스킬:**
@@ -49,7 +49,7 @@ model: opus
 |------|------|
 | **스킬 필수** | 모든 금리 데이터는 `web-search-verifier` 스킬 통해 수집 |
 | **출처 필수** | 모든 수치/전망에 `[출처: ...]` 태그 필수 |
-| **교차 검증** | 스킬이 최소 2개 출처 교차 검증 보장 |
+| **교차 검증** | 스킬이 최소 3개 출처 교차 검증 보장 |
 | **범위 표현** | 전망은 범위로 (예: 1,400~1,420원), 현재 금리는 정확한 값 |
 | **비판 균형** | 낙관 + 비관 시나리오 모두 포함 |
 
@@ -72,7 +72,7 @@ mcp_websearch_web_search_exa(query="한국은행 기준금리 2026년 1월")
 mcp_websearch_web_search_exa(query="korea interest rate site:tradingeconomics.com")
 
 검증 규칙:
-- 최소 2개 출처에서 동일한 값 확인
+- 최소 3개 출처에서 동일한 값 확인
 - 공식 출처(한국은행, Trading Economics) 우선
 - 금통위 결정 날짜 확인
 ```
@@ -95,10 +95,10 @@ mcp_websearch_web_search_exa(query="korea interest rate site:tradingeconomics.co
 2. **index-fetcher 결과 수신**: 현재 USD/KRW 환율 확인
 3. **Fed 정책 분석**: 
    - `mcp_websearch_web_search_exa(query="federal funds rate current 2026")` 직접 호출
-   - 최소 2개 출처 교차 검증
+   - 최소 3개 출처 교차 검증
 4. **BOK 정책 분석**: 
    - `mcp_websearch_web_search_exa(query="한국은행 기준금리 2026")` 직접 호출
-   - 최소 2개 출처 교차 검증
+   - 최소 3개 출처 교차 검증
 5. **환율 전망**: 금리차 기반 6개월/12개월 시나리오 작성
 6. **환헤지 전략**: 현재 상황에 맞는 전략 권고
 7. **JSON 포장**: 출력 스키마에 맞춰 반환 (모든 값에 출처 URL 포함)

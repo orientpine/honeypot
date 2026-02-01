@@ -27,7 +27,7 @@ tools: mcp_websearch_web_search_exa, WebFetch
    - 예: mcp_websearch_web_search_exa(query="S&P 500 price today")
    - 예: mcp_websearch_web_search_exa(query="한국은행 기준금리")
 3. 검색 결과에서 숫자가 포함된 원문을 그대로 복사
-4. 최소 2개 출처에서 값 확인 및 교차 검증
+4. 최소 3개 출처에서 값 확인 및 교차 검증
 5. 출처 간 ±1% 이내 일치 시 사용, 불일치 시 FAIL
 ```
 
@@ -35,7 +35,7 @@ tools: mcp_websearch_web_search_exa, WebFetch
 
 - `mcp_websearch_web_search_exa` **직접 호출**
 - **원문 인용 필수** - 숫자가 포함된 검색 결과 문장을 그대로 복사
-- 최소 2개 이상 독립 출처에서 교차 검증
+- 최소 3개 이상 독립 출처에서 교차 검증
 - 검색 결과의 URL과 날짜 명시
 - 출처 간 값이 일치하는지 확인 (±1% 이내)
 
@@ -116,7 +116,7 @@ tools: mcp_websearch_web_search_exa, WebFetch
 
 | 항목 | 기준 |
 |------|------|
-| 최소 출처 수 | 2개 이상 |
+| 최소 출처 수 | 3개 이상 |
 | 값 일치 허용 범위 | ±1% |
 | 1차 출처 | 공식 출처(Fed, BOK, KRX 등) 1개 이상 권장 |
 | 날짜 일치 | 동일 거래일 데이터 |
@@ -172,7 +172,7 @@ Step 4: 판정
 - [ ] 이전 결과나 예시 값을 복사하지 않았는가?
 
 ### 교차 검증 확인
-- [ ] 모든 수치에 최소 2개 출처가 있는가?
+- [ ] 모든 수치에 최소 3개 출처가 있는가?
 - [ ] 출처 간 값이 ±1% 이내로 일치하는가?
 - [ ] 모든 값에 출처 URL이 포함되어 있는가?
 

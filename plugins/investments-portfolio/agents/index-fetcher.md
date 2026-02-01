@@ -32,7 +32,7 @@ model: opus
 |------|------|
 | **스킬 필수** | 모든 지수 데이터는 `web-search-verifier` 스킬 통해 수집 |
 | **출처 필수** | 모든 수치에 `[출처: URL, 날짜]` 태그 필수 |
-| **교차 검증** | 최소 2개 출처 교차 검증, ±1% 이내 일치 필수 |
+| **교차 검증** | 최소 3개 출처 교차 검증, ±1% 이내 일치 필수 |
 | **원문 인용** | `original_text` 필드에 숫자 포함 원문 그대로 복사 |
 | **최신성** | 7일 이내 최신 데이터만 사용 |
 
@@ -45,7 +45,7 @@ model: opus
 > **analyst-common 스킬:**
 > - 웹검색 도구 직접 호출 필수
 > - 원문 인용 규칙 (original_text 필드)
-> - 교차 검증 프로토콜 (±1%, 최소 2개 출처)
+> - 교차 검증 프로토콜 (±1%, 최소 3개 출처)
 > - 검증 체크리스트
 > 
 > **file-save-protocol 스킬:**
@@ -66,7 +66,7 @@ model: opus
 ### 필수 수행 (MUST)
 - ✅ `mcp_websearch_web_search_exa` **직접 호출**
 - ✅ 스킬은 검색 쿼리 패턴 가이드로만 참조
-- ✅ 최소 2개 출처 교차 검증 (직접 수행)
+- ✅ 최소 3개 출처 교차 검증 (직접 수행)
 - ✅ 날짜 + URL 100% 명시
 - ✅ `original_text` 필드 필수 포함
 
@@ -86,7 +86,7 @@ model: opus
    - `mcp_websearch_web_search_exa(query="KOSPI 지수 site:tradingeconomics.com")`
    - `mcp_websearch_web_search_exa(query="USD/KRW exchange rate")`
 3. **원문 인용**: 검색 결과에서 숫자가 포함된 원문을 그대로 복사
-4. **교차 검증**: 각 지수에 대해 최소 2개 출처 값 비교
+4. **교차 검증**: 각 지수에 대해 최소 3개 출처 값 비교
 5. **결과 포장**: JSON 스키마에 맞춰 반환 (모든 URL 포함)
 6. **실패 처리**: 출처 불일치 또는 검색 실패 시 FAIL 상태로 포함
 7. **⚠️ 파일 저장 (MANDATORY)**: `Write` 도구로 `{output_path}/index-data.json` 저장
