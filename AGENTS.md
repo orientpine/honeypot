@@ -69,7 +69,7 @@ toolbox/
     │       ├── analysis_schema.md    # Analysis item definitions
     │       └── output_structure.md   # Output directory guide
      ├── investments-portfolio/        # Portfolio analysis multi-agent system
-     │   └── agents/                   # 13 agents: portfolio-coordinator, macro-outlook, etc.
+     │   └── agents/                   # 13 agents: macro-outlook, analysts, critics
      ├── general-agents/               # General-purpose agents
      │   └── agents/                   # 1 agent
      ├── report-generator/             # Research report generation
@@ -407,7 +407,6 @@ This is the #1 source of plugin registration issues. Follow this checklist for E
 ```json
 // Before (WRONG):
 "agents": [
-  "./agents/portfolio-coordinator.md",
   "./agents/macro-outlook.md",  // ← Archived but still listed
   "./agents/fund-portfolio.md",
   "./agents/compliance-checker.md",
@@ -417,7 +416,6 @@ This is the #1 source of plugin registration issues. Follow this checklist for E
 
 // After (CORRECT):
 "agents": [
-  "./agents/portfolio-coordinator.md",
   "./agents/index-fetcher.md",        // ← Added
   "./agents/macro-critic.md",         // ← Added
   "./agents/rate-analyst.md",         // ← Added

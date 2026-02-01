@@ -199,7 +199,7 @@ JSON.stringify(analysis_result, null, 2)
 ## 7. 세션 재개 시 파일 검증 (v1.1 신규)
 
 > **목적**: 세션 재개 시 필수 JSON 파일 존재 여부 확인
-> **참조**: portfolio-coordinator.md Step -0.5
+> **참조**: portfolio-orchestrator 스킬의 세션 재개 검증 섹션
 
 ### 세션 재개 시 coordinator가 수행하는 검증
 
@@ -253,7 +253,6 @@ changes:
   - "v1.1: 세션 재개 시 파일 검증 섹션 추가 (Step -0.5 연동)"
   - "v1.0: 초기 버전 - 파일 저장 필수 규칙 정의"
 consumers:
-  - portfolio-coordinator
   - index-fetcher
   - rate-analyst
   - sector-analyst

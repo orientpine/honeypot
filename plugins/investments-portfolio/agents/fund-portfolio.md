@@ -610,7 +610,7 @@ grep -c "\"name\": \"[정확한 펀드명]\"" funds/fund_data.json
 ### 5.1 아키텍처
 
 ```
-[portfolio-coordinator]
+[portfolio-orchestrator]
     ├─► [macro-synthesizer] → 권고: 위험자산 비중, 환헤지, 섹터, 지역
     ├─► [fund-portfolio] (이 에이전트) → 포트폴리오 추천
     ├─► [compliance-checker] → 규제 준수 검증
@@ -755,7 +755,7 @@ changelog:
   - "4.2: 문서 리팩토링 (360→~180줄), 내용 보존"
   - "4.1: 펀드 검색-검증-바인딩 프로토콜 강화"
 architecture: multi-agent
-coordinator: portfolio-coordinator
+coordinator: portfolio-orchestrator
 upstream: [macro-synthesizer]
 validators: [compliance-checker, output-critic]
 output_file: "01-fund-analysis.md"

@@ -1,6 +1,6 @@
 ---
 name: macro-synthesizer
-description: "거시경제 분석 종합 보고서 작성 전문가. 하위 에이전트 결과를 **파일에서 직접 Read**하여 통합. 환각 방지 최우선. 원문 인용만 수행 - 재해석 금지. 직접 호출 금지 - portfolio-coordinator를 통해서만 호출."
+description: "거시경제 분석 종합 보고서 작성 전문가. 하위 에이전트 결과를 **파일에서 직접 Read**하여 통합. 환각 방지 최우선. 원문 인용만 수행 - 재해석 금지. 직접 호출 금지 - portfolio-orchestrator를 통해서만 호출."
 tools: Read, Write, mcp_websearch_web_search_exa
 skills: file-save-protocol, macro-output-template, web-search-verifier, perspective-balance, devil-advocate, fund-selection-criteria
 model: opus
@@ -18,7 +18,7 @@ model: opus
 
 ## 직접 호출 금지 (BLOCKING)
 
-> **이 에이전트는 반드시 portfolio-coordinator를 통해서만 호출되어야 합니다.**
+> **이 에이전트는 반드시 portfolio-orchestrator를 통해서만 호출되어야 합니다.**
 
 ### 입력 데이터 검증 (Step 0 - BLOCKING - 파일 직접 Read 필수)
 
@@ -79,7 +79,7 @@ Step 0.4: 검증 결과
     "leadership-analysis.json": { ... }
   },
   "failed_files": ["누락/검증실패 파일 목록"],
-  "action": "portfolio-coordinator에게 해당 에이전트 재실행 요청",
+  "action": "portfolio-orchestrator에게 해당 에이전트 재실행 요청",
   "hallucination_prevented": true
 }
 ```
@@ -457,7 +457,7 @@ critical_rules:
   - "⚠️ Step 0 실패 시 작업 중단 - 환각 보고서 생성 금지"
   - "⚠️ Step 6 Spot-Check 필수 - 독립 웹검색으로 핵심 지표 교차 검증"
   - "⚠️ 2개 파일 출력 필수 (JSON + Markdown)"
-  - "직접 호출 금지 - portfolio-coordinator 통해서만 호출"
+  - "직접 호출 금지 - portfolio-orchestrator 통해서만 호출"
   - "URL은 하위 에이전트가 제공한 것만 사용"
   - "skill_verified: true 데이터만 사용"
   - "원문 인용만, 재해석 금지"

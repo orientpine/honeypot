@@ -162,7 +162,7 @@ Step 6: 저장
 version: "1.0.0"
 created: "2026-01-15"
 output_file: "material-summary.md"
-coordinator: "portfolio-coordinator"
+coordinator: "portfolio-orchestrator"
 downstream: "fund-portfolio"
 constraints:
   - "정보 정리만, 투자 권고 금지"

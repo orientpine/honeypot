@@ -302,6 +302,5 @@ changes:
 consumers:
   - fund-portfolio
   - compliance-checker
-  - portfolio-coordinator
 purpose: "DC형 규제 준수, 분산투자 규칙, 섹터 상관관계 분석"
 ```

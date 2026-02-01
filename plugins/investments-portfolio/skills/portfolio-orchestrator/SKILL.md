@@ -480,7 +480,6 @@ A등급(90+), B등급(80-89), C등급(70-79), F등급(<70)
 ```yaml
 version: "1.0"
 created: "2026-02-01"
-converted_from: "agents/portfolio-coordinator.md"
 purpose: "메인 에이전트가 Multi-Agent 워크플로우를 오케스트레이션하도록 안내"
 changes:
   - "v1.0: Agent에서 Skill로 전환 - nested Task 제한 해결"

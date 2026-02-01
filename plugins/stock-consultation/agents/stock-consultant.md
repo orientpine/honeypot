@@ -165,7 +165,7 @@ Final Output (consultations/YYYY-MM-DD-{ticker}-{session}/)
 > **중요**: 모든 주식/ETF 상담 시 반드시 거시경제 분석을 먼저 수행합니다.
 > investments-portfolio 플러그인의 6개 에이전트를 재사용합니다.
 
-거시경제 분석 상세 절차는 `portfolio-coordinator.md` 의 Section 2.0 참조.
+거시경제 분석 상세 절차는 `skills/portfolio-orchestrator/SKILL.md` 의 Step별 Task 호출 템플릿 섹션 참조.
 
 **요약**:
 1. `index-fetcher`: S&P 500, KOSPI, NASDAQ, USD/KRW 등 지수 데이터 수집

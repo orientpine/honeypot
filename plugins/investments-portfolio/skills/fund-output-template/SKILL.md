@@ -171,7 +171,7 @@ SAFE_ASSET_DECISION = "[예금 / 채권펀드명]"
 
 ## 2. Multi-Agent 보고서 출력 형식 (coordinator 호출 시)
 
-portfolio-coordinator에서 호출될 때 반드시 지정된 경로에 보고서를 저장합니다.
+portfolio-orchestrator에서 호출될 때 반드시 지정된 경로에 보고서를 저장합니다.
 
 ### 파일 출력 경로
 

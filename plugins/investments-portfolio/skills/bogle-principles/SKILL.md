@@ -189,6 +189,5 @@ sections_extracted:
   - "4. 비용의 장기 영향"
 consumers:
   - fund-portfolio
-  - portfolio-coordinator
 purpose: "투자 철학 및 행동재무학 원칙 - 에이전트 파일 크기 축소"
 ```

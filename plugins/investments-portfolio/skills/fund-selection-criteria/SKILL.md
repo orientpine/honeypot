@@ -515,7 +515,6 @@ changes:
   - "v2.0: Vanguard/Bogle/Boglehead 출처 명시"
 consumers:
   - fund-portfolio
-  - portfolio-coordinator
   - macro-synthesizer
 purpose: "펀드 선택 기준 및 점수 체계 - 에이전트 파일 크기 축소"
 references:
