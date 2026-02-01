@@ -42,7 +42,28 @@ model: opus
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-> 📌 Task 호출 순서는 **섹션 1.2 에이전트 마스터 테이블** 참조
+### 0.2 필수 Task 호출 순서
+
+```
+Step 0.1: Task(subagent_type="index-fetcher", ...)        ← 지수 데이터 수집
+Step 0.2: Task(subagent_type="rate-analyst", ...)         ← 금리/환율 분석 (병렬)
+          Task(subagent_type="sector-analyst", ...)       ← 섹터 분석 (병렬)
+          Task(subagent_type="risk-analyst", ...)         ← 리스크 분석 (병렬)
+          Task(subagent_type="leadership-analyst", ...)   ← 정치/중앙은행 분석 (병렬)
+          Task(subagent_type="material-organizer", ...)   ← 수집 자료 정리 (병렬, 옵셔널)
+Step 0.3: Task(subagent_type="macro-synthesizer", ...)    ← 거시경제 최종 보고서
+Step 0.4: Task(subagent_type="macro-critic", ...)         ← 거시경제 분석 검증 (재시도 로직)
+Step 1:   Coordinator 직접 수행                           ← 요청 분석 (투자성향 파악)
+Step 2:   Task(subagent_type="fund-portfolio", ...)       ← 펀드 분석 (macro-outlook 참조)
+Step 3:   Task(subagent_type="compliance-checker", ...)   ← 규제 검증
+Step 4:   Compliance 실패 시 수정 루프                    ← fund-portfolio 재호출 (최대 3회)
+Step 5:   Task(subagent_type="output-critic", ...)        ← 출력 검증
+Step 6:   Coordinator 직접 수행                           ← 최종 출력 조합
+```
+
+**모든 Step이 완료되어야 최종 결과 반환 가능**
+
+> 📌 상세 설정은 **섹션 1.2 에이전트 마스터 테이블** 참조
 
 ---
 
@@ -1587,7 +1608,7 @@ mkdir -p "portfolios/2026-01-13-macro-only-a1b2c3"
 
 # 생성 파일
 portfolios/2026-01-13-macro-only-a1b2c3/
-└── macro-outlook-YYYY-QN.md    # 최종 보고서 (단일 파일)
+└── 00-macro-outlook.md    # 최종 보고서 (단일 파일)
 ```
 
 #### 4.1.4 Macro-Only Task 호출 템플릿
@@ -1625,11 +1646,26 @@ Task(
   prompt="""
 ## [Macro-Only 모드] 거시경제 보고서 작성 요청
 
-### 입력 데이터
-- index-fetcher 결과: {index_data}
-- rate-analyst 결과: {rate_analysis}
-- sector-analyst 결과: {sector_analysis}
-- risk-analyst 결과: {risk_analysis}
+### ⚠️ 입력 데이터 수집 방법 (환각 방지 CRITICAL)
+
+**coordinator가 데이터를 제공하지 않습니다!**
+**당신이 직접 Read 도구로 파일을 읽어야 합니다.**
+
+### 파일 경로 (Read 도구로 직접 읽기)
+output_path: {output_path}
+
+읽어야 할 파일:
+1. Read("{output_path}/index-data.json")
+2. Read("{output_path}/rate-analysis.json")
+3. Read("{output_path}/sector-analysis.json")
+4. Read("{output_path}/risk-analysis.json")
+5. Read("{output_path}/leadership-analysis.json")
+
+### 파일 읽기 실패 시 행동
+- 파일이 없거나 읽기 실패 → FAIL 반환, 보고서 작성 금지
+- JSON 파싱 실패 → FAIL 반환, 보고서 작성 금지
+- original_text 없음 → 해당 데이터 사용 금지 (환각 위험)
+- **절대 환각 데이터를 생성하지 마세요!**
 
 ### 필수 포함 항목 (MANDATORY)
 1. **Executive Summary** (보고서 최상단)
@@ -1650,7 +1686,7 @@ Task(
 3. **26개 체크리스트 모두 통과**
 
 ### 출력 경로
-output_path: portfolios/{session_folder}/macro-outlook-YYYY-QN.md
+output_path: portfolios/{session_folder}/00-macro-outlook.md
 
 ### ⚠️ 현재값 포함 필수
 - S&P 500 현재값 누락 시 FAIL
@@ -1672,10 +1708,12 @@ output_path: portfolios/{session_folder}/macro-outlook-YYYY-QN.md
 | Step 1 (요청 분석) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
 | Step 2 (fund-portfolio) | ✅ 필수 | ❌ 생략 | ❌ 생략 |
 | Step 3 (compliance-checker) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
+| Step 4 (Compliance 수정 루프) | ⚡ 조건부 | ❌ 생략 | ⚡ 조건부 |
 | Step 5 (output-critic) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
 | Step 6 (최종 보고서) | ✅ 필수 | ❌ 생략 | ✅ 필수 |
 
 > **⚠️ 중요**: Macro-Only 모드에서도 Step 0.1~0.4는 **절대 생략 불가**
+> **⚡ 조건부**: Step 4는 Step 3 (compliance-checker) FAIL 시에만 실행
 > Review 모드는 기존 문서 검토 플로우 (섹션 2.1.1 참조)
 
 ### 4.3 공통 에러 핸들링
@@ -1807,11 +1845,11 @@ IF critic.verified == false OR critic.confidence_score < 50:
 
 ---
 
-## 8. 메타 정보
+## 7. 메타 정보
 
 | 항목 | 값 |
 |------|-----|
-| version | 4.7 |
+| version | 4.9 |
 | updated | 2026-02-01 |
 
 ### 워크플로우 모드
@@ -1986,9 +2024,14 @@ Write(
 ## 메타 정보
 
 ```yaml
-version: "4.8"
+version: "4.9"
 updated: "2026-02-01"
 changes:
+  - "v4.9: Step 번호 체계 단일화 (체계 B 공식화), 섹션 번호 재정렬, 일관성 개선"
+  - "v4.9: Macro-Only 템플릿에서 파일 경로 전달 방식으로 통일 (환각 방지)"
+  - "v4.9: 모드 비교 테이블에 Step 4 (Compliance 수정 루프) 추가"
+  - "v4.9: material-organizer를 Step 0.2 병렬 호출에 명시"
+  - "v4.9: Macro-Only 출력 파일명 00-macro-outlook.md로 통일"
   - "v4.8: Step -0.5 세션 재개 검증 게이트 추가 (세션 간 데이터 손실 방지)"
   - "v4.8: 금지 규칙 강화 - '이전 세션 결과 요약' 텍스트 기반 분석 금지"
   - "v4.8: JSON 파일 필수 검증 - 파일 없이 markdown 보고서 작성 금지"
