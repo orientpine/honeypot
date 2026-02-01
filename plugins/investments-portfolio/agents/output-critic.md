@@ -439,6 +439,99 @@ function verifySource(output) {
 }
 ```
 
+### 6.5 총보수 검증 ⚠️ MANDATORY
+
+> **목적**: 출력에 포함된 총보수(수수료)가 `fund_fees.json`의 실제 데이터와 일치하는지 검증합니다.
+> **환각 방지**: 임의의 총보수 수치 사용 방지
+
+```javascript
+function verifyFees(output, feeData) {
+  const issues = [];
+  
+  // 출력에서 총보수 정보 파싱
+  // 패턴: 펀드명과 함께 나오는 "X.XX%" 형태의 총보수
+  const feePattern = /총보수[:\s]*(\d+\.\d+)%/g;
+  const tablePattern = /\|\s*([^|]+)\s*\|\s*[^|]*\|\s*(\d+\.\d+)%\s*\|/g;
+  
+  // 방법 1: 테이블에서 펀드명-총보수 쌍 추출
+  const outputFees = parseFeesFromTable(output);
+  
+  for (const [fundName, reportedFee] of Object.entries(outputFees)) {
+    // fund_fees.json에서 해당 펀드 찾기
+    const feeInfo = feeData.find(f => 
+      f.name === fundName || 
+      normalizedMatch(f.name, fundName)
+    );
+    
+    if (!feeInfo) {
+      // 펀드 자체가 fee 데이터에 없음 (펀드 존재 검증은 별도)
+      continue;
+    }
+    
+    // 총보수 비교 (허용 오차: 0.01%)
+    const actualFee = parseFloat(feeInfo.totalFee);
+    const reportedFeeNum = parseFloat(reportedFee);
+    
+    if (Math.abs(actualFee - reportedFeeNum) > 0.01) {
+      issues.push({
+        type: 'FEE_MISMATCH',
+        description: `${fundName} 총보수 불일치: 출력 ${reportedFee}%, 실제 ${feeInfo.totalFee}%`,
+        severity: 'high'
+      });
+    }
+  }
+  
+  return issues;
+}
+
+// 테이블에서 펀드명-총보수 쌍 추출 헬퍼
+function parseFeesFromTable(output) {
+  const fees = {};
+  const lines = output.split('\n');
+  
+  for (const line of lines) {
+    if (!line.startsWith('|')) continue;
+    
+    // 테이블 헤더 확인 (총보수 열 위치 파악)
+    if (line.includes('총보수')) {
+      // 헤더 행 - 열 인덱스 파악
+      continue;
+    }
+    
+    // 데이터 행 파싱
+    const cells = line.split('|').filter(c => c.trim());
+    if (cells.length >= 2) {
+      const fundName = cells[0].trim();
+      // 총보수가 포함된 셀 찾기 (X.XX% 패턴)
+      for (const cell of cells) {
+        const feeMatch = cell.match(/(\d+\.\d+)%/);
+        if (feeMatch) {
+          fees[fundName] = feeMatch[1];
+          break;
+        }
+      }
+    }
+  }
+  
+  return fees;
+}
+```
+
+#### 6.5.1 검증 대상
+
+| 검증 항목 | 비교 기준 | 허용 오차 | 심각도 |
+|----------|----------|:--------:|:------:|
+| 펀드 총보수 | fund_fees.json.totalFee | 0.01% | HIGH |
+| 실질 수익률 계산 | return1y - totalFee | 0.05% | MEDIUM |
+
+#### 6.5.2 필수 Read 파일
+
+```
+funds/fund_fees.json   # 총보수 원본 데이터
+```
+
+검증 전 반드시 위 파일을 Read하여 최신 데이터 확보
+
 ---
 
 ## 7. 행동 규칙
