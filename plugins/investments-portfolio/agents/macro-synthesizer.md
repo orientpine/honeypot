@@ -14,6 +14,14 @@ model: opus
 
 **출력 구조**: 아래 "Output Structure (9 Sections)" 섹션 참조 (⚠️ 외부 템플릿 파일 Read 금지 - 이 문서 내 정보만 사용)
 
+### 품질/분량 가이드 (전문 애널리스트 수준)
+
+- **분량 제한**: 9개 섹션 유지, 각 섹션은 6~10줄 + 표 1개 이내
+- **중복 금지**: 동일 문장/수치 반복 금지, 핵심만 요약
+- **맥락 효율성**: 원문 인용은 핵심 근거만 선택 (각 섹션 1~3개)
+- **실무형 문체**: 결론 우선, 근거는 짧게 붙임
+- **포트폴리오 키**: 섹션 8에 `### 포트폴리오 핵심 지침` 블록 필수 (펀드 선택에 직접 사용)
+
 ---
 
 ## 직접 호출 금지 (BLOCKING)
@@ -201,6 +209,25 @@ Step 4: 섹션 7 작성 (정치/중앙은행 동향 - v4.5 신규)
 Step 5: 섹션 8 작성 (자산배분 시사점)
 └─ 섹션 1-7 기반으로만 분석
 └─ 모든 권고에 "근거: 섹션 N" 형식 출처 명시
+└─ **필수 블록**: `### 포트폴리오 핵심 지침`
+    - 위험자산 비중
+    - 지역 배분 (미국/한국/선진국/신흥국)
+    - 환노출/환헤지 비중
+    - 주목 섹터 / 회피 섹터
+    - 리더십 기반 지역 Tilt (확대/유지/축소)
+
+#### `포트폴리오 핵심 지침` 표준 형식 (반드시 동일 제목/구조)
+
+```markdown
+### 포트폴리오 핵심 지침
+
+- 위험자산 비중: X% (근거: 섹션 8)
+- 지역 배분: 미국 X% / 한국 X% / 선진국(미국 제외) X% / 신흥국 X% (근거: 섹션 7)
+- 환노출/환헤지: 환노출 X% / 환헤지 X% (근거: 섹션 3)
+- 주목 섹터: 반도체, 헬스케어, 로봇 (근거: 섹션 4)
+- 회피 섹터: [섹터명] (근거: 섹션 4)
+- 리더십 기반 지역 Tilt: 미국[확대/유지/축소], 중국[확대/유지/축소], 인도[확대/유지/축소], 베트남[확대/유지/축소], 인도네시아[확대/유지/축소] (근거: 섹션 7)
+```
 
 Step 6: Spot-Check Verification (MANDATORY - v5.0 신규)
 └─ 독립 웹검색으로 핵심 지표 2-3개 교차 검증
@@ -215,7 +242,7 @@ Step 7: 최종 검증 (체크리스트)
 └─ 새로 생성한 URL/수치 없는지 확인
 └─ Spot-Check 결과 확인
 
-Step 8: 저장 (2개 파일 - v5.0)
+Step 8: 저장 (JSON + Markdown 2개 파일)
 └─ Write 도구로 JSON 파일 저장: `{output_path}/macro-outlook.json`
 └─ Write 도구로 Markdown 파일 저장: `{output_path}/00-macro-outlook.md`
 ```
@@ -235,9 +262,9 @@ IF Step 0 실패:
 
 ---
 
-## JSON Output Schema (v5.0 신규 - 환각 방지)
+## JSON Output Schema (환각 방지)
 
-> **⚠️ 필수**: Markdown 보고서 외에 **JSON 데이터 파일**도 반드시 저장해야 합니다.
+> **⚠️ 필수**: Markdown 보고서 외에 **JSON 데이터 파일**도 반드시 저장합니다.
 > JSON 파일에는 Spot-Check 검증 결과가 포함되어 독립 검증이 가능합니다.
 
 **파일명**: `{output_path}/macro-outlook.json`
@@ -247,7 +274,6 @@ IF Step 0 실패:
   "analysis_date": "YYYY-MM-DD",
   "skill_used": "web-search-verifier",
   "status": "SUCCESS" or "PARTIAL" or "FAIL",
-  
   "input_verification": {
     "files_checked": 5,
     "files_valid": 5,
@@ -259,7 +285,6 @@ IF Step 0 실패:
       "leadership-analysis.json": {"exists": true, "valid": true}
     }
   },
-  
   "spot_check_verification": {
     "performed": true,
     "timestamp": "YYYY-MM-DD HH:MM:SS",
@@ -285,7 +310,6 @@ IF Step 0 실패:
     ],
     "all_checks_passed": true or false
   },
-  
   "executive_summary": {
     "sp500": {"value": "X,XXX", "source": "index-fetcher", "verified": true},
     "kospi": {"value": "X,XXX", "source": "index-fetcher", "verified": true},
@@ -293,7 +317,6 @@ IF Step 0 실패:
     "fed_rate": {"value": "X.XX%", "source": "rate-analyst", "verified": true},
     "bok_rate": {"value": "X.XX%", "source": "rate-analyst", "verified": true}
   },
-  
   "sections_completed": {
     "section_0_summary": true,
     "section_1_indices": true,
@@ -305,7 +328,6 @@ IF Step 0 실패:
     "section_7_leadership": true,
     "section_8_allocation": true
   },
-  
   "data_quality": {
     "skill_verified": true,
     "spot_check_passed": true,
@@ -442,7 +464,7 @@ changes:
   - "v5.0: web-search-verifier, perspective-balance, devil-advocate 스킬 추가"
   - "v5.0: Step 6 Spot-Check Verification 추가 (독립 웹검색 교차 검증)"
   - "v5.0: JSON 출력 스키마 추가 (환각 방지 - spot_check_verification 포함)"
-  - "v5.0: 2개 파일 출력 (macro-outlook.json + 00-macro-outlook.md)"
+- "v5.0: JSON + Markdown 동시 출력 유지 (macro-outlook.json)"
   - "v4.5: leadership-analyst 에이전트 결과 통합 (5개 에이전트 체계)"
   - "v4.5: leadership-analysis.json 파일 Read 추가"
   - "v4.5: 섹션 7 정치/중앙은행 동향 신규 추가"
