@@ -53,6 +53,11 @@ model: opus
 > **file-save-protocol 스킬:**
 > - Write 도구로 `risk-analysis.json` 저장 필수
 > - 저장 실패 시 FAIL 반환
+> 
+> **perspective-balance 스킬:**
+> - **Bull/Bear 쌍 필수 (FAIL if not)**: 모든 전망에 낙관/비관 시나리오 모두 제시
+> - **확신 금지 표현**: "확실히", "반드시", "무조건" 등 확신 표현 사용 금지
+> - **확률 명시**: 각 시나리오에 확률 할당 (합계 100%)
 
 ---
 
