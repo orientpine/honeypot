@@ -67,7 +67,6 @@
       "category": "finance",
       "strict": true,
       "agents": [
-        "./agents/portfolio-coordinator.md",
         "./agents/index-fetcher.md",
         "./agents/macro-critic.md",
         "./agents/rate-analyst.md",
