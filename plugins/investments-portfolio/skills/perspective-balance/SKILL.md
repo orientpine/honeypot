@@ -199,6 +199,7 @@ created: "2026-01-31"
 author: "Claude"
 purpose: "편향 방지를 위한 균형 분석 강제화"
 consumers:
+  - macro-critic
   - macro-synthesizer
   - sector-analyst
   - rate-analyst

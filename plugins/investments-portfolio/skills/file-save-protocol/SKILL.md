@@ -254,11 +254,16 @@ changes:
   - "v1.0: 초기 버전 - 파일 저장 필수 규칙 정의"
 consumers:
   - portfolio-coordinator
+  - index-fetcher
   - rate-analyst
   - sector-analyst
   - risk-analyst
+  - leadership-analyst
   - macro-synthesizer
+  - compliance-checker
   - fund-portfolio
+  - output-critic
+  - material-organizer
 extracted_from:
   - "파일 저장 필수 섹션 (rate-analyst v4.2)"
   - "저장 프로세스 섹션"

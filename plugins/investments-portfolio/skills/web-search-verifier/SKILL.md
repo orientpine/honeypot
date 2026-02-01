@@ -368,6 +368,9 @@ consumers:
   - index-fetcher
   - rate-analyst
   - sector-analyst
+  - risk-analyst
+  - leadership-analyst
+  - macro-synthesizer
 changes_v2.1:
   - "범위 검증 (Sanity Check) 제거 - 대폭락 시 정상 데이터 reject 문제"
 changes_v2.0:
