@@ -194,13 +194,66 @@ JSON.stringify(analysis_result, null, 2)
 
 ---
 
+---
+
+## 7. 세션 재개 시 파일 검증 (v1.1 신규)
+
+> **목적**: 세션 재개 시 필수 JSON 파일 존재 여부 확인
+> **참조**: portfolio-coordinator.md Step -0.5
+
+### 세션 재개 시 coordinator가 수행하는 검증
+
+```
+[Step -0.5: 세션 재개 검증]
+     │
+     ▼
+Glob("portfolios/{session_folder}/*.json")
+     │
+     ├── 필수 파일 목록:
+     │   ├── index-data.json
+     │   ├── rate-analysis.json
+     │   ├── sector-analysis.json
+     │   ├── risk-analysis.json
+     │   └── leadership-analysis.json
+     │
+     ├─ 모든 파일 존재 → 다음 Step 진행
+     │
+     └─ 파일 누락 → 해당 에이전트 재호출
+```
+
+### 에이전트 책임
+
+각 에이전트는 **반드시 파일 저장을 완료**해야 합니다:
+
+| 조건 | 에이전트 행동 |
+|------|--------------|
+| Write 성공 | 정상 응답 반환 (output_file 경로 포함) |
+| Write 실패 | FAIL 반환 (**환각 데이터 생성 금지**) |
+| output_path 미전달 | FAIL 반환 (경로 확인 요청) |
+
+### 금지 사항 (coordinator 포함)
+
+```
+❌ 파일 저장 없이 "완료" 응답
+❌ 이전 세션 결과 "텍스트 요약"으로 대체
+❌ JSON 파일 없이 markdown 보고서 직접 작성
+❌ 파일 검증 없이 다음 Step 진행
+```
+
+---
+
 ## 메타 정보
 
 ```yaml
-version: "1.0"
+version: "1.1"
 created: "2026-01-14"
+updated: "2026-02-01"
 purpose: "파일 저장 프로토콜 통합 - 코드 중복 제거"
+changes:
+  - "v1.1: 세션 재개 시 파일 검증 섹션 추가 (Step -0.5 연동)"
+  - "v1.0: 초기 버전 - 파일 저장 필수 규칙 정의"
 consumers:
+  - portfolio-coordinator
   - rate-analyst
   - sector-analyst
   - risk-analyst
@@ -212,4 +265,5 @@ extracted_from:
   - "저장 실패 시 응답 형식"
 dependencies:
   - Write
+  - Glob (coordinator 검증용)
 ```
