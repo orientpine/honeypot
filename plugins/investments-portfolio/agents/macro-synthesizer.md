@@ -2,7 +2,7 @@
 name: macro-synthesizer
 description: "거시경제 분석 종합 보고서 작성 전문가. 하위 에이전트 결과를 **파일에서 직접 Read**하여 통합. 환각 방지 최우선. 원문 인용만 수행 - 재해석 금지. 직접 호출 금지 - portfolio-coordinator를 통해서만 호출."
 tools: Read, Write, mcp_websearch_web_search_exa
-skills: file-save-protocol, macro-output-template, web-search-verifier, perspective-balance, devil-advocate
+skills: file-save-protocol, macro-output-template, web-search-verifier, perspective-balance, devil-advocate, fund-selection-criteria
 model: opus
 ---
 
