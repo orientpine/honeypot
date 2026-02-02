@@ -76,8 +76,26 @@ model: opus
 - `macro_outlook`: 거시경제 전망 데이터
 - `analysis_date`: 분석 기준일
 - `search_depth`: 검색 깊이 (basic/standard/deep)
+- `target_sector`: **(NEW)** 분석 대상 섹터 (선택적)
+  - 미지정 시: 5개 섹터 전체 분석 (기존 동작)
+  - 지정 시: 해당 섹터만 분석 (병렬 실행용)
+  - 유효값: `technology`, `robotics`, `healthcare`, `energy`, `commodities`
+- `output_mode`: **(NEW)** 출력 모드 (선택적)
+  - `full`: 전체 분석 결과 저장 (기본값)
+  - `partial`: 단일 섹터 결과만 저장 (병렬 실행용)
 
-### 2. 섹터별 분석 (5개 섹터 순차 처리)
+### 1.1 실행 모드 결정
+
+```
+IF target_sector가 지정됨:
+    mode = "single_sector"
+    출력 파일명 = "{output_path}/sector-{target_sector}.json"
+ELSE:
+    mode = "all_sectors"
+    출력 파일명 = "{output_path}/sector-analysis.json"
+```
+
+### 2. 섹터별 분석 (모드에 따라 처리)
 
 각 섹터 분석 시 `web-search-verifier` 스킬을 활용하여 데이터 수집:
 
@@ -125,6 +143,8 @@ model: opus
 
 JSON 스키마로 구조화된 분석 결과 생성 후 **반드시 파일 저장**:
 
+#### 3.1 전체 분석 모드 (mode = "all_sectors")
+
 ```
 Write(
   file_path="{output_path}/sector-analysis.json",
@@ -132,20 +152,42 @@ Write(
 )
 
 ### Markdown 저장 (MANDATORY)
-
 - JSON 저장 필수
 - MD 요약도 필수 (JSON 내용 요약만)
 - 파일명 고정: `{output_path}/02-sector-analysis.md`
+```
+
+#### 3.2 단일 섹터 모드 (mode = "single_sector") — 병렬 실행용
+
+```
+Write(
+  file_path="{output_path}/sector-{target_sector}.json",
+  content=JSON.stringify(single_sector_result, null, 2)
+)
+
+# 예시:
+# - sector-technology.json
+# - sector-robotics.json
+# - sector-healthcare.json
+# - sector-energy.json
+# - sector-commodities.json
+
+### Markdown 저장 (단일 섹터 모드에서는 생략)
+- 단일 섹터 모드에서는 MD 파일 생성 불필요
+- 오케스트레이터가 병합 후 최종 MD 생성
 ```
 
 ---
 
 ## Output Schema
 
+### 전체 분석 모드 (sector-analysis.json)
+
 ```json
 {
   "analysis_date": "YYYY-MM-DD",
   "skill_used": "web-search-verifier",
+  "mode": "all_sectors",
   "sectors": [
     {
       "name": "기술/반도체",
@@ -171,6 +213,32 @@ Write(
   "data_quality": {
     "skill_verified": true,
     "all_sectors_verified": true
+  }
+}
+```
+
+### 단일 섹터 모드 (sector-{name}.json) — 병렬 실행용
+
+```json
+{
+  "analysis_date": "YYYY-MM-DD",
+  "skill_used": "web-search-verifier",
+  "mode": "single_sector",
+  "target_sector": "technology",
+  "sector": {
+    "name": "기술/반도체",
+    "outlook": "긍정적/중립/부정적",
+    "confidence": 0.0-1.0,
+    "key_drivers": ["AI 칩 수요 급증", "파운드리 경쟁 심화"],
+    "risks": ["과잉공급 우려", "미국-중국 규제"],
+    "allocation_recommendation": "확대/유지/축소",
+    "max_allocation_pct": 25,
+    "verified": true,
+    "sources": [...]
+  },
+  "data_quality": {
+    "skill_verified": true,
+    "sector_verified": true
   }
 }
 ```
@@ -235,9 +303,12 @@ Write(
 ## 메타 정보
 
 ```yaml
-version: "5.2"
-updated: "2026-01-21"
+version: "6.0"
+updated: "2026-02-02"
 changes:
+  - "v6.0: target_sector 파라미터 추가 - 단일 섹터 병렬 실행 지원"
+  - "v6.0: output_mode 파라미터 추가 - partial/full 출력 모드"
+  - "v6.0: 단일 섹터 모드 출력 스키마 추가 (sector-{name}.json)"
   - "v5.2: 데이터 무결성 규칙에 원문 인용(직접 복사) 규칙 명시"
   - "v5.1: 역할 정의 섹션 추가 (수행/수행하지 않는 것)"
   - "v5.1: 데이터 무결성 규칙 테이블 추가"
@@ -249,7 +320,7 @@ changes:
   - "v3.1: 원문 인용 필수화 (original_text 필드)"
 critical_rules:
   - "analyst-common, file-save-protocol 스킬 규칙 준수 필수"
-  - "⚠️ 파일 저장 필수 (sector-analysis.json)"
-  - "정확히 5개 섹터만 분석"
+  - "⚠️ 파일 저장 필수 (sector-analysis.json 또는 sector-{name}.json)"
+  - "정확히 5개 섹터만 분석 (또는 target_sector로 지정된 단일 섹터)"
   - "⚠️ original_text는 웹검색 결과 직접 복사 (모델 생성 금지)"
 ```
