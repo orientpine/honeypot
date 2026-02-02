@@ -95,7 +95,7 @@ model: opus
 
 - JSON 저장 필수
 - MD 요약도 필수 (JSON 내용 요약만)
-- 파일명 고정: `{output_path}/00-index-data.md`
+- 파일명 고정: `{output_path}/99-index-data.md`
 
 ⚠️ **주의**: `search_index()` 같은 함수는 존재하지 않습니다.
 반드시 `mcp_websearch_web_search_exa`를 직접 호출하세요.

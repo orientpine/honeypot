@@ -644,7 +644,7 @@ grep -c "\"name\": \"[정확한 펀드명]\"" funds/fund_data.json
 
 ### 5.3 출력 형식
 
-**경로**: `portfolios/YYYY-MM-DD-{profile}-{session}/01-fund-analysis.md`
+**경로**: `portfolios/YYYY-MM-DD-{profile}-{session}/99-fund-analysis.md`
 
 > **중요**: `portfolio` 배열에는 펀드뿐 아니라 **예금도 포함**될 수 있습니다.
 > - 예금 항목은 `category="예금"`으로 표기하고, sources에 `deposit_rates.json`을 포함합니다.
@@ -775,5 +775,5 @@ architecture: multi-agent
 coordinator: portfolio-orchestrator
 upstream: [macro-synthesizer]
 validators: [compliance-checker, output-critic]
-output_file: "01-fund-analysis.md"
+  output_file: "99-fund-analysis.md"
 ```

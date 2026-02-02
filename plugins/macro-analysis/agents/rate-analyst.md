@@ -113,7 +113,7 @@ mcp_websearch_web_search_exa(query="korea interest rate site:tradingeconomics.co
 
 - JSON 저장 필수
 - MD 요약도 필수 (JSON 내용 요약만)
-- 파일명 고정: `{output_path}/01-rate-analysis.md`
+- 파일명 고정: `{output_path}/99-rate-analysis.md`
 
 ---
 

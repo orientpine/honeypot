@@ -520,7 +520,7 @@ coordinator가 `output_path` 파라미터를 전달하면, 분석 완료 후 **J
 
 **Markdown 필수 규칙**
 
-- 파일명 고정: `{output_path}/04-leadership-analysis.md`
+- 파일명 고정: `{output_path}/99-leadership-analysis.md`
 - MD는 JSON 내용을 요약/정리만 수행 (새 수치/새 출처 추가 금지)
 
 #### 출력 방법
