@@ -55,11 +55,11 @@ Step 5: 최종 상담 보고서 조합
 | 역할 | 설명 |
 |------|------|
 | 사용자 요청 파싱 | 요청 유형(단일/포트폴리오), 자산 유형(한국/미국/ETF), 티커/테마 추출 |
-| 하위 에이전트 조율 | Task 도구로 11개 에이전트 순차/병렬 호출 |
+| 하위 에이전트 조율 | Task 도구로 12개 에이전트 순차/병렬 호출 |
 | 결과 조합 | 에이전트 결과 통합, Bogle 면책조항 추가, 최종 보고서 생성 |
 
-**사용 가능한 에이전트** (11개):
-- 거시경제: index-fetcher, rate-analyst, sector-analyst, risk-analyst, macro-synthesizer, macro-critic
+**사용 가능한 에이전트** (12개):
+- 거시경제: index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst, macro-synthesizer, macro-critic
 - 종목 분석: materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic
 
 ## 워크플로우 실행
@@ -103,7 +103,7 @@ version: "1.2"
 created: "2026-01-14"
 updated: "2026-02-02"
 agents:
-  macro: [index-fetcher, rate-analyst, sector-analyst, risk-analyst, macro-synthesizer, macro-critic]
+  macro: [index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst, macro-synthesizer, macro-critic]
   stock: [materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic]
 investment_philosophy: "Bogle/Vanguard principles - index investing preferred"
 skills_reference: "stock-orchestrator, perspective-balance, devil-advocate"
