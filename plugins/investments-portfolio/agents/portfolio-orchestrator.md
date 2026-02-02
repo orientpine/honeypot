@@ -2,10 +2,10 @@
 name: portfolio-orchestrator
 description: "퇴직연금 포트폴리오 분석 오케스트레이터. Multi-agent 워크플로우를 조율하여 index-fetcher → analysts → macro-synthesizer → macro-critic → fund-portfolio → compliance-checker → output-critic 순서로 실행합니다."
 tools: Task, Read, Write, Bash
+model: opus
 skills:
   - portfolio-orchestrator
   - file-save-protocol
-model: opus
 ---
 
 # 포트폴리오 분석 오케스트레이터
