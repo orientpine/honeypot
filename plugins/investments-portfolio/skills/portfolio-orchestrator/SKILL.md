@@ -76,17 +76,17 @@ description: "퇴직연금 포트폴리오 분석 오케스트레이션 스킬. 
 
 | 에이전트 | subagent_type | 역할 |
 |----------|---------------|------|
-| index-fetcher | `investments-portfolio:index-fetcher` | 지수 데이터 수집 (3소스 교차검증) |
-| rate-analyst | `investments-portfolio:rate-analyst` | 금리/환율 전망 |
-| sector-analyst | `investments-portfolio:sector-analyst` | 섹터별 전망 |
-| risk-analyst | `investments-portfolio:risk-analyst` | 리스크 분석 & 시나리오 |
-| leadership-analyst | `investments-portfolio:leadership-analyst` | 정치 리더십/중앙은행 동향 |
-| material-organizer | `investments-portfolio:material-organizer` | 수집 자료 정리 (옵셔널) |
-| macro-synthesizer | `investments-portfolio:macro-synthesizer` | 거시경제 종합 보고서 |
-| macro-critic | `investments-portfolio:macro-critic` | 거시경제 분석 검증 |
-| fund-portfolio | `investments-portfolio:fund-portfolio` | 펀드 포트폴리오 추천 |
-| compliance-checker | `investments-portfolio:compliance-checker` | DC형 규제 준수 검증 |
-| output-critic | `investments-portfolio:output-critic` | 최종 출력 검증 |
+| index-fetcher | `index-fetcher` | 지수 데이터 수집 (3소스 교차검증) |
+| rate-analyst | `rate-analyst` | 금리/환율 전망 |
+| sector-analyst | `sector-analyst` | 섹터별 전망 |
+| risk-analyst | `risk-analyst` | 리스크 분석 & 시나리오 |
+| leadership-analyst | `leadership-analyst` | 정치 리더십/중앙은행 동향 |
+| material-organizer | `material-organizer` | 수집 자료 정리 (옵셔널) |
+| macro-synthesizer | `macro-synthesizer` | 거시경제 종합 보고서 |
+| macro-critic | `macro-critic` | 거시경제 분석 검증 |
+| fund-portfolio | `fund-portfolio` | 펀드 포트폴리오 추천 |
+| compliance-checker | `compliance-checker` | DC형 규제 준수 검증 |
+| output-critic | `output-critic` | 최종 출력 검증 |
 
 ---
 
@@ -125,7 +125,7 @@ Read("funds/fund_data.json")  # _meta.version 확인
 
 ```
 Task(
-  subagent_type="investments-portfolio:index-fetcher",
+  subagent_type="index-fetcher",
   description="지수 데이터 수집 (3개 출처 교차 검증)",
   prompt="""
 ## 지수 데이터 수집 요청
@@ -156,7 +156,7 @@ output_path: {session_folder}
 ```
 # rate-analyst
 Task(
-  subagent_type="investments-portfolio:rate-analyst",
+  subagent_type="rate-analyst",
   description="금리/환율 전망 분석",
   prompt="""
 ## 금리/환율 전망 분석 요청
@@ -176,7 +176,7 @@ rate-analysis.json
 
 # sector-analyst
 Task(
-  subagent_type="investments-portfolio:sector-analyst",
+  subagent_type="sector-analyst",
   description="섹터별 전망 분석",
   prompt="""
 ## 섹터별 전망 분석 요청
@@ -198,7 +198,7 @@ sector-analysis.json
 
 # risk-analyst
 Task(
-  subagent_type="investments-portfolio:risk-analyst",
+  subagent_type="risk-analyst",
   description="리스크 분석 및 시나리오",
   prompt="""
 ## 리스크 분석 요청
@@ -223,7 +223,7 @@ risk-analysis.json
 
 # leadership-analyst
 Task(
-  subagent_type="investments-portfolio:leadership-analyst",
+  subagent_type="leadership-analyst",
   description="정치 리더십/중앙은행 동향 분석",
   prompt="""
 ## 정치 리더십 분석 요청
@@ -251,7 +251,7 @@ leadership-analysis.json
 
 ```
 Task(
-  subagent_type="investments-portfolio:macro-synthesizer",
+  subagent_type="macro-synthesizer",
   description="거시경제 최종 보고서 작성",
   prompt="""
 ## 거시경제 최종 보고서 작성 요청
@@ -280,7 +280,7 @@ output_path: {session_folder}
 
 ```
 Task(
-  subagent_type="investments-portfolio:macro-critic",
+  subagent_type="macro-critic",
   description="거시경제 분석 검증",
   prompt="""
 ## 거시경제 분석 검증 요청
@@ -304,7 +304,7 @@ FAIL 시 → macro-synthesizer 재호출 (최대 2회)
 
 ```
 Task(
-  subagent_type="investments-portfolio:fund-portfolio",
+  subagent_type="fund-portfolio",
   description="펀드 포트폴리오 분석",
   prompt="""
 ## 펀드 포트폴리오 분석 요청
@@ -338,7 +338,7 @@ output_path: {session_folder}
 
 ```
 Task(
-  subagent_type="investments-portfolio:compliance-checker",
+  subagent_type="compliance-checker",
   description="규제 준수 검증",
   prompt="""
 ## DC형 규제 준수 검증 요청
@@ -367,7 +367,7 @@ fund-portfolio 재호출 (최대 3회)
 
 ```
 Task(
-  subagent_type="investments-portfolio:output-critic",
+  subagent_type="output-critic",
   description="최종 출력 검증",
   prompt="""
 ## 최종 출력 검증 요청
