@@ -70,14 +70,18 @@ portfolios/{session_folder}/{filename}
 
 예시:
 portfolios/2026-01-14-aggressive-abc123/
-├── index-data.json          # index-fetcher 출력
-├── rate-analysis.json       # rate-analyst 출력
-├── sector-outlook.json      # sector-analyst 출력
-├── risk-analysis.json       # risk-analyst 출력
-├── leadership-analysis.json # leadership-analyst 출력
-├── material-summary.md      # material-organizer 출력 (옵셔널)
-├── macro-synthesis.json     # macro-synthesizer 출력
-└── portfolio-recommendation.json  # fund-portfolio 출력
+├── index-data.json             # index-fetcher 출력
+├── rate-analysis.json          # rate-analyst 출력
+├── sector-analysis.json        # sector-analyst 출력
+├── risk-analysis.json          # risk-analyst 출력
+├── leadership-analysis.json    # leadership-analyst 출력
+├── material-summary.md         # material-organizer 출력 (옵셔널)
+├── macro-outlook.json          # macro-synthesizer 출력
+├── 00-macro-outlook.md         # macro-synthesizer 출력
+├── 01-fund-analysis.md         # fund-portfolio 출력
+├── 02-compliance-report.md     # compliance-checker 출력
+├── 03-output-verification.md   # output-critic 출력
+└── 04-portfolio-summary.md     # portfolio-orchestrator 출력
 ```
 
 ### 에이전트별 출력 파일
@@ -86,12 +90,15 @@ portfolios/2026-01-14-aggressive-abc123/
 |----------|----------|:----:|
 | index-fetcher | `index-data.json` | O |
 | rate-analyst | `rate-analysis.json` | O |
-| sector-analyst | `sector-outlook.json` | O |
+| sector-analyst | `sector-analysis.json` | O |
 | risk-analyst | `risk-analysis.json` | O |
 | leadership-analyst | `leadership-analysis.json` | O |
 | material-organizer | `material-summary.md` | X (옵셔널) |
-| macro-synthesizer | `macro-synthesis.json` | O |
-| fund-portfolio | `portfolio-recommendation.json` | O |
+| macro-synthesizer | `macro-outlook.json`, `00-macro-outlook.md` | O |
+| fund-portfolio | `01-fund-analysis.md` | O |
+| compliance-checker | `02-compliance-report.md` | O |
+| output-critic | `03-output-verification.md` | O |
+| portfolio-orchestrator | `04-portfolio-summary.md` | O |
 
 ---
 

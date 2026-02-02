@@ -73,7 +73,7 @@ honeypot/
 │   ├── macro-analysis/            # 거시경제 분석 공용 에이전트
 │   │   └── agents/                # 7 agents (index, rate, sector, risk, leadership, synthesizer, critic)
 │   ├── investments-portfolio/    # DC 연금 포트폴리오
-│   │   └── agents/               # 13 agents (analysts, critics)
+│   │   └── agents/               # 5 agents (orchestrator, fund, compliance, output, material)
 │   ├── general-agents/           # 범용 에이전트
 │   │   └── agents/               # interview.md
 │   ├── stock-consultation/       # 주식/ETF 투자 상담
@@ -145,11 +145,11 @@ honeypot/
 
 | Agent Group | Agents | 역할 |
 |-------------|--------|------|
-| Coordinator | 메인 에이전트 (portfolio-orchestrator 스킬) | 전체 워크플로우 조율 |
-| Macro Analysts | index-fetcher, rate-analyst, sector-analyst, risk-analyst | 거시경제 분석 |
-| Synthesizers | macro-synthesizer, macro-critic | 분석 종합 및 검증 |
+| Coordinator | portfolio-orchestrator | 전체 워크플로우 조율 |
+| Macro Analysis (macro-analysis) | index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst | 거시경제 분석 |
+| Synthesizers (macro-analysis) | macro-synthesizer, macro-critic | 분석 종합 및 검증 |
 | Portfolio | fund-portfolio, compliance-checker | 펀드 추천 및 규제 검증 |
-| Verification | output-critic, leadership-analyst | 출력 검증 및 리더십 분석 |
+| Verification | output-critic | 출력 검증 |
 
 ---
 

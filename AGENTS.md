@@ -69,7 +69,7 @@ toolbox/
     │       ├── analysis_schema.md    # Analysis item definitions
     │       └── output_structure.md   # Output directory guide
      ├── investments-portfolio/        # Portfolio analysis multi-agent system
-     │   └── agents/                   # 13 agents: macro-outlook, analysts, critics
+     │   └── agents/                   # 5 agents: orchestrator, fund, compliance, output, material
      ├── general-agents/               # General-purpose agents
      │   └── agents/                   # 1 agent
      ├── report-generator/             # Research report generation
@@ -172,7 +172,7 @@ toolbox/
 - 4-color palette: #1E3A5F, #4A90A4, #2E7D5A, #F5F7FA
 
 ### Multi-Agent Portfolio System
-- Workflow: `macro-outlook` → `fund-portfolio` → `compliance-checker` → `output-critic`
+- Workflow: `macro-analysis` → `fund-portfolio` → `compliance-checker` → `output-critic`
 - Output files: `00-macro-outlook.md` through `04-portfolio-summary.md`
 - Folder: `portfolios/YYYY-MM-DD-{profile}-{session}/`
 
