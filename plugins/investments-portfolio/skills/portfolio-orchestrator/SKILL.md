@@ -433,6 +433,12 @@ A등급(90+), B등급(80-89), C등급(70-79), F등급(<70)
 | `03-output-verification.md` | output-critic | 출력 검증 및 신뢰도 |
 | `04-portfolio-summary.md` | 메인 에이전트 | 최종 통합 보고서 |
 
+### Markdown 고정 규칙 (MANDATORY)
+
+- index/rate/sector/risk/leadership 에이전트는 **JSON + 번호 접두어 MD** 모두 필수
+- 허용 파일명: `{NN}-{base}.md`만 허용 (base = JSON 파일명)
+- base 단독 `{base}.md` 금지
+
 ---
 
 ## 6. 에러 처리

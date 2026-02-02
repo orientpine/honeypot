@@ -43,6 +43,20 @@ tools: Write
 
 ---
 
+## 1.5 Markdown 저장 규칙 (MANDATORY)
+
+JSON 저장은 **항상 필수**이며, 사람이 읽기 위한 Markdown 요약도 **반드시** 저장합니다.
+
+### 필수 규칙
+
+- JSON과 MD 모두 저장 (둘 중 하나라도 누락 시 FAIL)
+- MD는 JSON 내용을 요약/정리만 수행 (새 수치/새 출처 추가 금지)
+- 파일명은 **번호 접두어 고정**:
+  - `{output_path}/{NN}-{base}.md` (base = JSON 파일명에서 `.json` 제거)
+  - 예: `00-index-data.md`
+
+---
+
 ## 2. 저장 프로세스
 
 ### Step-by-Step
@@ -243,7 +257,7 @@ Glob("portfolios/{session_folder}/*.json")
 ```
 ❌ 파일 저장 없이 "완료" 응답
 ❌ 이전 세션 결과 "텍스트 요약"으로 대체
-❌ JSON 파일 없이 markdown 보고서 직접 작성
+❌ JSON 파일 없이 markdown만 작성
 ❌ 파일 검증 없이 다음 Step 진행
 ```
 

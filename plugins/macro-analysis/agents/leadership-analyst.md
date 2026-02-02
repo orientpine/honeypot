@@ -510,13 +510,18 @@ Step 4: 정권 교체/선거가 진행 중인 경우
 
 ## 6. 보고서 저장 규칙
 
-### 6.1 파일 출력 (JSON 1개만)
+### 6.1 파일 출력 (JSON + MD 필수)
 
-coordinator가 `output_path` 파라미터를 전달하면, 분석 완료 후 **JSON 1개 파일만** 저장합니다:
+coordinator가 `output_path` 파라미터를 전달하면, 분석 완료 후 **JSON 파일과 MD 요약을 모두 저장**합니다:
 
 | 파일 | 용도 | 필수 |
 |------|------|:----:|
 | `leadership-analysis.json` | 환각 방지용 원천 데이터 (original_text 포함) | ✅ |
+
+**Markdown 필수 규칙**
+
+- 파일명 고정: `{output_path}/04-leadership-analysis.md`
+- MD는 JSON 내용을 요약/정리만 수행 (새 수치/새 출처 추가 금지)
 
 #### 출력 방법
 

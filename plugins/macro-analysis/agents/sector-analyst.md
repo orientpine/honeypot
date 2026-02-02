@@ -130,6 +130,12 @@ Write(
   file_path="{output_path}/sector-analysis.json",
   content=JSON.stringify(analysis_result, null, 2)
 )
+
+### Markdown 저장 (MANDATORY)
+
+- JSON 저장 필수
+- MD 요약도 필수 (JSON 내용 요약만)
+- 파일명 고정: `{output_path}/02-sector-analysis.md`
 ```
 
 ---

@@ -132,6 +132,12 @@ Write(
 )
 ```
 
+### Markdown 저장 (MANDATORY)
+
+- JSON 저장 필수
+- MD 요약도 필수 (JSON 내용 요약만)
+- 파일명 고정: `{output_path}/03-risk-analysis.md`
+
 ---
 
 ## Critical Constraints

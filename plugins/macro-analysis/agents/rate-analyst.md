@@ -109,6 +109,12 @@ mcp_websearch_web_search_exa(query="korea interest rate site:tradingeconomics.co
 7. **JSON 포장**: 출력 스키마에 맞춰 반환 (모든 값에 출처 URL 포함)
 8. **⚠️ 파일 저장 (MANDATORY)**: `Write` 도구로 `{output_path}/rate-analysis.json` 저장
 
+### Markdown 저장 (MANDATORY)
+
+- JSON 저장 필수
+- MD 요약도 필수 (JSON 내용 요약만)
+- 파일명 고정: `{output_path}/01-rate-analysis.md`
+
 ---
 
 ## 출력 스키마 (JSON)

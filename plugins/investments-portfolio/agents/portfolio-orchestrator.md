@@ -17,6 +17,25 @@ model: opus
 > **경고**: 이 에이전트는 분석, 검증, 비판을 **직접 수행하면 안 됩니다**.
 > 반드시 **Task 도구**를 사용하여 하위 에이전트를 호출해야 합니다.
 
+### 0.5 출력 폴더 오염 방지 (MANDATORY)
+
+**목표**: `portfolios/` 루트에 파일이 쌓이지 않도록 **세션 폴더로만 저장**합니다.
+
+**필수 규칙**:
+- 세션 폴더는 항상 `portfolios/YYYY-MM-DD-{risk_profile}-{session_id}/` 형식으로 생성
+- `output_path`는 반드시 위 세션 폴더로 고정
+- 하위 에이전트에 `output_path`를 명시적으로 전달
+- `portfolios/` 루트에 `.json`/`.md`가 생성되면 **즉시 FAIL** 처리
+
+**실행 전 프리플라이트** (Coordinator 직접 수행):
+```
+# 세션 폴더 생성
+mkdir -p portfolios/YYYY-MM-DD-{risk_profile}-{session_id}
+
+# 루트 오염 방지: 루트에 결과 파일이 있으면 중단
+ls portfolios/*.json portfolios/*.md 2>/dev/null && exit 1
+```
+
 **필수 Task 호출 순서**:
 ```
 Step -1: 데이터 신선도 검사 (Coordinator 직접 수행)
@@ -53,7 +72,7 @@ Step 4: 최종 출력 조합 (Coordinator 직접 수행)
 ## 3. 메타 정보
 
 ```yaml
-version: "1.1"
+version: "1.2"
 created: "2026-02-01"
 updated: "2026-02-02"
 agents:
