@@ -18,8 +18,29 @@ skills:
 > **경고**: 이 에이전트는 분석, 검증, 비판을 **직접 수행하면 안 됩니다**.
 > 반드시 **Task 도구**를 사용하여 하위 에이전트를 호출해야 합니다.
 
+### 0.5 출력 폴더 오염 방지 (MANDATORY)
+
+**목표**: `consultations/` 루트가 난잡해지지 않도록 **단일 세션 폴더에만 저장**합니다.
+
+**필수 규칙**:
+- 세션 폴더는 항상 `consultations/YYYY-MM-DD-{ticker|portfolio}-{session_id}/` 형식으로 1개만 생성
+- `output_path`는 반드시 위 세션 폴더로 고정
+- 하위 에이전트에 `output_path`를 명시적으로 전달
+- 동일 요청에서 **추가 세션 폴더 생성 금지**
+- `consultations/` 루트에 `.json`/`.md` 생성 시 즉시 FAIL
+
+**실행 전 프리플라이트** (Coordinator 직접 수행):
+```
+# 세션 폴더 생성
+mkdir -p consultations/YYYY-MM-DD-{ticker|portfolio}-{session_id}
+
+# 루트 오염 방지: 루트에 결과 파일이 있으면 중단
+ls consultations/*.json consultations/*.md 2>/dev/null && exit 1
+```
+
 **필수 Task 호출 순서**:
 ```
+Step -1: 세션 폴더 프리플라이트 (Coordinator 직접 수행)
 Step 0: 거시경제 분석 (index-fetcher → analysts → macro-synthesizer → macro-critic)
 Step 0.5: materials-organizer (materials_path 제공 시)
 Step 1: stock-screener (포트폴리오 요청인 경우)

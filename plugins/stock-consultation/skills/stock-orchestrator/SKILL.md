@@ -113,6 +113,24 @@ consultations/YYYY-MM-DD-{ticker}-{session_id}/
 예시: consultations/2026-01-14-TSLA-a1b2c3/
 ```
 
+### 3.1 출력 폴더 오염 방지 (MANDATORY)
+
+**목표**: 동일 요청에 대해 **단일 세션 폴더만 사용**합니다.
+
+**필수 규칙**:
+- 세션 폴더는 1개만 생성 (추가 폴더 생성 금지)
+- 모든 서브에이전트에 동일한 `output_path` 전달
+- `consultations/` 루트에 `.json`/`.md` 생성 시 즉시 FAIL
+
+**프리플라이트 (Coordinator 직접 수행)**:
+```
+# 세션 폴더 생성
+mkdir -p consultations/YYYY-MM-DD-{ticker|portfolio}-{session_id}
+
+# 루트 오염 방지: 루트에 결과 파일이 있으면 중단
+ls consultations/*.json consultations/*.md 2>/dev/null && exit 1
+```
+
 **포트폴리오 요청 시:**
 ```
 consultations/YYYY-MM-DD-portfolio-{theme}-{session_id}/
@@ -342,7 +360,7 @@ ETF: TER, AUM, 추적오차, 거래량
 output_path: {session_folder}
 
 ### 출력 파일
-01-stock-screening.md
+01-stock-screening.json (필수), 01-stock-screening.md (필수)
 
 ### 출력 형식
 JSON:
@@ -404,7 +422,7 @@ Task(
 output_path: {session_folder}
 
 ### 출력 파일
-02-valuation-report.md
+02-valuation-report.json (필수), 02-valuation-report.md (필수)
 
 ### 출력 형식
 JSON:
@@ -459,7 +477,7 @@ Task(
 output_path: {session_folder}
 
 ### 출력 파일
-03-bear-case.md
+03-bear-case.json (필수), 03-bear-case.md (필수)
 
 ### 출력 형식
 JSON:
@@ -519,7 +537,7 @@ Task(
 output_path: {session_folder}
 
 ### 출력 파일
-04-final-verification.md
+04-final-verification.json (필수), 04-final-verification.md (필수)
 
 ### 출력 형식
 JSON:
@@ -574,11 +592,17 @@ JSON:
 | `risk-analysis.json` | risk-analyst | 리스크 분석 (JSON) |
 | `00-macro-outlook.md` | macro-synthesizer | 거시경제 종합 보고서 |
 | `00-materials-summary.md` | materials-organizer | 자료 정리 (옵션) |
-| `01-stock-screening.md` | stock-screener | 종목 스크리닝 (포트폴리오) |
-| `02-valuation-report.md` | stock-valuation | 밸류에이션 분석 |
-| `03-bear-case.md` | bear-case-critic | 반대 논거 |
-| `04-final-verification.md` | stock-critic | 출력 검증 및 신뢰도 |
+| `01-stock-screening.json` | stock-screener | 종목 스크리닝 (포트폴리오) |
+| `02-valuation-report.json` | stock-valuation | 밸류에이션 분석 |
+| `03-bear-case.json` | bear-case-critic | 반대 논거 |
+| `04-final-verification.json` | stock-critic | 출력 검증 및 신뢰도 |
 | `05-consultation-summary.md` | 메인 에이전트 | 최종 통합 보고서 |
+
+### Markdown 고정 규칙 (MANDATORY)
+
+- 위 JSON 파일의 MD 요약을 반드시 저장
+- 허용 파일명: `{NN}-{base}.md`만 허용
+- base 단독 `{base}.md` 금지
 
 ---
 
