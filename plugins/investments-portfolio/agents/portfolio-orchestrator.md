@@ -43,19 +43,12 @@ skills:
 [Step 0.1] index-fetcher (BLOCKING)
       │
       ▼
-[Step 0.2] 8개 에이전트 병렬 호출 (v6.0: sector 5개 분리)
+[Step 0.2] 4개 에이전트 병렬 호출
       ├── rate-analyst
-      ├── sector-analyst (technology)    ← NEW
-      ├── sector-analyst (robotics)      ← NEW
-      ├── sector-analyst (healthcare)    ← NEW
-      ├── sector-analyst (energy)        ← NEW
-      ├── sector-analyst (commodities)   ← NEW
+      ├── sector-analyst
       ├── risk-analyst
       └── leadership-analyst
       │
-      ▼
-[Step 0.2.1] 섹터 분석 결과 병합 (NEW)
-      │ → sector-{name}.json 5개를 sector-analysis.json으로 병합
       ▼
 [Step 0.3] macro-synthesizer (BLOCKING)
       │
@@ -184,150 +177,29 @@ output_path: {session_folder}
 )
 ```
 
-#### sector-analyst (섹터별 전망) — 5개 병렬 호출
-
-> **v6.0 변경**: 타임아웃 방지를 위해 5개 섹터를 **병렬로 개별 호출**합니다.
-> 각 섹터 분석이 완료되면 Step 0.2.1에서 결과를 병합합니다.
+#### sector-analyst (섹터별 전망)
 
 ```
-# 5개 섹터 병렬 호출 (각 섹터당 약 2-3분)
 Task(
   subagent_type="macro-analysis:sector-analyst",
   prompt="""
-## 섹터 전망 분석 요청 - 기술/반도체
+## 섹터별 전망 분석 요청
 
-### target_sector: technology
-### output_mode: partial
-
-### 분석 항목
-- AI/데이터센터 칩 수요
-- 파운드리 경쟁 (TSMC, Samsung, Intel)
-- 지정학적 규제 리스크
+### 분석 대상 섹터 (5개 고정)
+1. 기술/반도체 (AI 칩 수요)
+2. 로봇/자동화
+3. 헬스케어
+4. 에너지 (유가, 재생에너지)
+5. 원자재
 
 ### 출력 경로
 output_path: {session_folder}
 
 ### 출력 파일
-- sector-technology.json
+- sector-analysis.json
+- 02-sector-analysis.md
 """
 )
-
-Task(
-  subagent_type="macro-analysis:sector-analyst",
-  prompt="""
-## 섹터 전망 분석 요청 - 로봇/자동화
-
-### target_sector: robotics
-### output_mode: partial
-
-### 분석 항목
-- 휴머노이드 로봇 (Tesla Bot, Boston Dynamics)
-- 산업용/협업 로봇
-
-### 출력 경로
-output_path: {session_folder}
-
-### 출력 파일
-- sector-robotics.json
-"""
-)
-
-Task(
-  subagent_type="macro-analysis:sector-analyst",
-  prompt="""
-## 섹터 전망 분석 요청 - 헬스케어
-
-### target_sector: healthcare
-### output_mode: partial
-
-### 분석 항목
-- GLP-1 약물 시장
-- 의료기기, 고령화 수혜
-
-### 출력 경로
-output_path: {session_folder}
-
-### 출력 파일
-- sector-healthcare.json
-"""
-)
-
-Task(
-  subagent_type="macro-analysis:sector-analyst",
-  prompt="""
-## 섹터 전망 분석 요청 - 에너지
-
-### target_sector: energy
-### output_mode: partial
-
-### 분석 항목
-- 유가/OPEC+
-- 태양광/풍력 (IRA)
-- 원자력/SMR
-
-### 출력 경로
-output_path: {session_folder}
-
-### 출력 파일
-- sector-energy.json
-"""
-)
-
-Task(
-  subagent_type="macro-analysis:sector-analyst",
-  prompt="""
-## 섹터 전망 분석 요청 - 원자재
-
-### target_sector: commodities
-### output_mode: partial
-
-### 분석 항목
-- 구리, 리튬 (산업용)
-- 금 (안전자산)
-- 농산물
-
-### 출력 경로
-output_path: {session_folder}
-
-### 출력 파일
-- sector-commodities.json
-"""
-)
-```
-
-#### Step 0.2.1: 섹터 분석 결과 병합 (NEW)
-
-> 5개 개별 섹터 파일을 `sector-analysis.json`으로 병합합니다.
-
-```
-# 병합 로직 (오케스트레이터가 직접 수행)
-Read("{session_folder}/sector-technology.json")
-Read("{session_folder}/sector-robotics.json")
-Read("{session_folder}/sector-healthcare.json")
-Read("{session_folder}/sector-energy.json")
-Read("{session_folder}/sector-commodities.json")
-
-# 병합 JSON 구조
-merged_result = {
-  "analysis_date": "YYYY-MM-DD",
-  "skill_used": "web-search-verifier",
-  "mode": "merged_from_parallel",
-  "sectors": [
-    // sector-technology.json의 sector 객체
-    // sector-robotics.json의 sector 객체
-    // sector-healthcare.json의 sector 객체
-    // sector-energy.json의 sector 객체
-    // sector-commodities.json의 sector 객체
-  ],
-  "summary": "5개 섹터 병렬 분석 결과 병합",
-  "data_quality": {
-    "skill_verified": true,
-    "all_sectors_verified": // 5개 모두 verified인지 체크
-  }
-}
-
-Write("{session_folder}/sector-analysis.json", merged_result)
-Write("{session_folder}/02-sector-analysis.md", markdown_summary)
 ```
 
 #### risk-analyst (리스크 분석)
@@ -595,13 +467,8 @@ A등급(90+), B등급(80-89), C등급(70-79), F등급(<70)
 | 00 | `00-index-data.md` | index-fetcher |
 | - | `rate-analysis.json` | rate-analyst |
 | 01 | `01-rate-analysis.md` | rate-analyst |
-| - | `sector-technology.json` | sector-analyst (v6.0 병렬) |
-| - | `sector-robotics.json` | sector-analyst (v6.0 병렬) |
-| - | `sector-healthcare.json` | sector-analyst (v6.0 병렬) |
-| - | `sector-energy.json` | sector-analyst (v6.0 병렬) |
-| - | `sector-commodities.json` | sector-analyst (v6.0 병렬) |
-| - | `sector-analysis.json` | **오케스트레이터 (병합)** |
-| 02 | `02-sector-analysis.md` | **오케스트레이터 (병합)** |
+| - | `sector-analysis.json` | sector-analyst |
+| 02 | `02-sector-analysis.md` | sector-analyst |
 | - | `risk-analysis.json` | risk-analyst |
 | 03 | `03-risk-analysis.md` | risk-analyst |
 | - | `leadership-analysis.json` | leadership-analyst |
@@ -653,19 +520,14 @@ A등급(90+), B등급(80-89), C등급(70-79), F등급(<70)
 ## 7. 메타 정보
 
 ```yaml
-version: "3.0"
+version: "2.0"
 created: "2026-02-01"
 updated: "2026-02-02"
 changes:
-  - "v3.0: sector-analyst 5개 병렬 호출로 변경 (타임아웃 방지)"
-  - "v3.0: Step 0.2.1 추가 - 섹터 분석 결과 병합 로직"
-  - "v3.0: sector-{name}.json 개별 파일 → sector-analysis.json 병합"
   - "v2.0: 실제 Task() 호출 코드 추가 (nested Task 문제 해결)"
   - "v1.2: 스킬 참조 방식에서 직접 실행 방식으로 전환"
 agents:
-  macro: [index-fetcher, rate-analyst, sector-analyst×5, risk-analyst, leadership-analyst, macro-synthesizer, macro-critic]
+  macro: [index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst, macro-synthesizer, macro-critic]
   portfolio: [fund-portfolio, compliance-checker, output-critic]
 skills_reference: "portfolio-orchestrator, file-save-protocol"
-parallel_optimization:
-  - "sector-analyst: 순차 5개 → 병렬 5개 (총 실행시간 1/5 단축)"
 ```
