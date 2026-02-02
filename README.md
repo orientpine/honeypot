@@ -17,6 +17,7 @@
 | **paper-style-generator** | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 | Agent |
 | **report-generator** | 연구 노트 → 국가기관 제출용 연구 보고서 자동 생성 | Agent |
 | **investments-portfolio** | DC 연금 포트폴리오 분석 멀티 에이전트 시스템 | Agent |
+| **macro-analysis** | 거시경제 분석 공용 에이전트 (지수/금리/섹터/리스크/리더십) | Agent |
 | **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
 | **stock-consultation** | 주식/ETF 투자 상담 Multi-Agent 시스템. 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증 워크플로우. Bogle/Vanguard 철학 기반. | Agent |
 | **equity-research** | Professional equity research analysis with institutional-grade formatting. 티커와 함께 호출하면 기관급 주식 분석 리포트를 생성합니다. | Agent |
@@ -69,6 +70,8 @@ honeypot/
 │   │   ├── agents/               # 5 agents (orchestrator, input-analyzer, content-mapper, chapter-writer, quality-checker)
 │   │   ├── references/           # 문서 템플릿, 키워드
 │   │   └── assets/               # 출력 템플릿
+│   ├── macro-analysis/            # 거시경제 분석 공용 에이전트
+│   │   └── agents/                # 7 agents (index, rate, sector, risk, leadership, synthesizer, critic)
 │   ├── investments-portfolio/    # DC 연금 포트폴리오
 │   │   └── agents/               # 13 agents (analysts, critics)
 │   ├── general-agents/           # 범용 에이전트

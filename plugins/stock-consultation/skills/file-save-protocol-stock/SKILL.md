@@ -70,7 +70,7 @@ consultations/{session_folder}/{filename}
 
 예시:
 consultations/2026-01-14-TSLA-abc123/
-├── 00-macro-outlook.md           # 거시경제 분석 (investments-portfolio 재사용)
+├── 00-macro-outlook.md           # 거시경제 분석 (macro-analysis 재사용)
 ├── 00-materials-summary.md       # 자료 정리 (materials_path 제공 시)
 ├── 01-stock-screening.json       # stock-screener 출력
 ├── 02-valuation-report.json      # stock-valuation 출력

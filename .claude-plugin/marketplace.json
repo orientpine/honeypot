@@ -68,19 +68,37 @@
       "strict": true,
       "agents": [
         "./agents/portfolio-orchestrator.md",
-        "./agents/index-fetcher.md",
-        "./agents/macro-critic.md",
-        "./agents/rate-analyst.md",
-        "./agents/sector-analyst.md",
-        "./agents/risk-analyst.md",
-        "./agents/macro-synthesizer.md",
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
         "./agents/output-critic.md",
-        "./agents/leadership-analyst.md",
         "./agents/material-organizer.md"
       ],
       "skills": ["./skills"]
+    },
+    {
+      "name": "macro-analysis",
+      "source": "./plugins/macro-analysis",
+      "description": "거시경제 분석 공용 에이전트 모음. 지수/금리/섹터/리스크/리더십 분석 및 종합/검증을 제공합니다.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Baekdong Cha",
+        "url": "https://github.com/orientpine"
+      },
+      "homepage": "https://github.com/orientpine/honeypot",
+      "repository": "https://github.com/orientpine/honeypot",
+      "license": "MIT",
+      "keywords": ["macro", "analysis", "indices", "rates", "sectors", "risk", "leadership"],
+      "category": "finance",
+      "strict": true,
+      "agents": [
+        "./agents/index-fetcher.md",
+        "./agents/rate-analyst.md",
+        "./agents/sector-analyst.md",
+        "./agents/risk-analyst.md",
+        "./agents/leadership-analyst.md",
+        "./agents/macro-synthesizer.md",
+        "./agents/macro-critic.md"
+      ]
     },
     {
       "name": "general-agents",
