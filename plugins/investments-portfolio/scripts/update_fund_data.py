@@ -50,6 +50,12 @@ Examples:
         "--dry-run", action="store_true", help="Show preview without writing files"
     )
 
+    parser.add_argument(
+        "--codes-file",
+        default="funds/investable_codes.json",
+        help="Path to investable codes JSON file for filtering (default: funds/investable_codes.json)",
+    )
+
     return parser.parse_args()
 
 
@@ -433,13 +439,96 @@ def parse_fund_fees(row, header):
     }
 
 
-def process_csv(csv_path, output_dir, dry_run):
-    """Main processing function
+def load_investable_codes(codes_file):
+    """Load investable codes from JSON file
+
+    Args:
+        codes_file: Path to investable codes JSON file
+
+    Returns:
+        set: Set of investable fund codes
+
+    Raises:
+        FileNotFoundError: If codes file doesn't exist
+        ValueError: If codes file has invalid structure
+    """
+    codes_path = Path(codes_file)
+    if not codes_path.exists():
+        raise FileNotFoundError(f"Investable codes file not found: {codes_file}")
+
+    with open(codes_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    codes = data.get("codes", [])
+    if not codes:
+        raise ValueError(f"No codes found in {codes_file}")
+
+    return set(codes)
+
+
+def filter_fund_data(fund_data, investable_codes):
+    """Filter fund_data by fundCode
+
+    Args:
+        fund_data: Original fund_data dict
+        investable_codes: Set of investable fundCodes
+
+    Returns:
+        dict: Filtered fund_data with updated _meta (recordCount, missing)
+    """
+    original_funds = fund_data.get("funds", [])
+    filtered_funds = [
+        f for f in original_funds if f.get("fundCode") in investable_codes
+    ]
+
+    # Calculate missing codes
+    found_codes = {f["fundCode"] for f in filtered_funds}
+    missing_codes = [
+        code for code in sorted(investable_codes) if code not in found_codes
+    ]
+
+    return {
+        "_meta": {
+            **fund_data["_meta"],
+            "recordCount": len(filtered_funds),
+            "missing": missing_codes,
+        },
+        "funds": filtered_funds,
+    }
+
+
+def filter_fund_fees(fund_fees, investable_codes):
+    """Filter fund_fees by fundCode
+
+    Args:
+        fund_fees: Original fund_fees dict
+        investable_codes: Set of investable fundCodes
+
+    Returns:
+        dict: Filtered fund_fees with updated _meta.recordCount
+    """
+    original_fees = fund_fees.get("fees", {})
+    filtered_fees = {
+        code: fee for code, fee in original_fees.items() if code in investable_codes
+    }
+
+    return {
+        "_meta": {
+            **fund_fees["_meta"],
+            "recordCount": len(filtered_fees),
+        },
+        "fees": filtered_fees,
+    }
+
+
+def process_csv(csv_path, output_dir, dry_run, codes_file=None):
+    """Main processing function with integrated filtering workflow
 
     Args:
         csv_path: Path to CSV file
         output_dir: Output directory for JSON files
         dry_run: If True, show preview without writing files
+        codes_file: Path to investable codes JSON file for filtering
     """
     # Load CSV
     print("=" * 60)
@@ -516,60 +605,135 @@ def process_csv(csv_path, output_dir, dry_run):
         )
         print()
 
+        # Show filtering statistics if codes_file provided
+        if codes_file:
+            try:
+                investable_codes = load_investable_codes(codes_file)
+                all_codes = {f["fundCode"] for f in fund_data_list}
+                filtered_count = len(all_codes & investable_codes)
+                missing_codes = [
+                    c for c in sorted(investable_codes) if c not in all_codes
+                ]
+
+                print()
+                print("Statistics:")
+                print(f"  Total funds: {len(fund_data_list)}")
+                print(f"  Filtered funds: {filtered_count}")
+                print(f"  Missing funds: {len(missing_codes)}")
+                if missing_codes:
+                    print(
+                        f"  Missing codes: {missing_codes[:5]}{'...' if len(missing_codes) > 5 else ''}"
+                    )
+            except FileNotFoundError as e:
+                print(f"\nError: {e}")
+                sys.exit(1)
+
+        print()
         print("=" * 60)
         print("DRY RUN COMPLETE - No files created")
         print("=" * 60)
         return
 
-    # Write JSON files
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    # Create fund_data.json
-    fund_data_json = {
+    timestamp = datetime.now().astimezone().isoformat()
+    version_date = metadata["baseDate"]
+
+    all_fund_data_json = {
         "_meta": {
-            "version": metadata["baseDate"],
+            "version": version_date,
             "sourceFile": Path(csv_path).name,
-            "updatedAt": datetime.now().astimezone().isoformat(),
+            "updatedAt": timestamp,
             "recordCount": len(fund_data_list),
         },
         "funds": fund_data_list,
     }
 
-    # Create fund_fees.json
-    fund_fees_json = {
+    all_fund_fees_json = {
         "_meta": {
-            "version": metadata["baseDate"],
+            "version": version_date,
             "sourceFile": Path(csv_path).name,
-            "updatedAt": datetime.now().astimezone().isoformat(),
+            "updatedAt": timestamp,
             "recordCount": len(fund_fees_dict),
         },
         "fees": fund_fees_dict,
     }
 
-    # Get version date from metadata
-    version_date = metadata["baseDate"]  # "2025-12-01"
+    # Save ALL funds to funds/all/ directory
+    all_dir = output_path / "all"
+    all_dir.mkdir(parents=True, exist_ok=True)
 
-    # Define output paths
-    fund_data_path = output_path / "fund_data.json"
-    fund_fees_path = output_path / "fund_fees.json"
-
-    # Archive existing files before overwriting
     print()
-    print("Archiving existing files...")
-    archive_existing_file(fund_data_path, version_date)
-    archive_existing_file(fund_fees_path, version_date)
+    print("Writing ALL fund files to all/ directory...")
+    all_fund_data_path = all_dir / "all_fund_data.json"
+    all_fund_fees_path = all_dir / "all_fund_fees.json"
 
-    # Write new files
-    print()
-    print("Writing new files...")
-    with open(fund_data_path, "w", encoding="utf-8") as f:
-        json.dump(fund_data_json, f, ensure_ascii=False, indent=2)
-    print(f"  {fund_data_path}")
+    with open(all_fund_data_path, "w", encoding="utf-8") as f:
+        json.dump(all_fund_data_json, f, ensure_ascii=False, indent=2)
+    print(f"  {all_fund_data_path}")
 
-    with open(fund_fees_path, "w", encoding="utf-8") as f:
-        json.dump(fund_fees_json, f, ensure_ascii=False, indent=2)
-    print(f"  {fund_fees_path}")
+    with open(all_fund_fees_path, "w", encoding="utf-8") as f:
+        json.dump(all_fund_fees_json, f, ensure_ascii=False, indent=2)
+    print(f"  {all_fund_fees_path}")
+
+    # Filter and save to root funds/ directory
+    if codes_file:
+        try:
+            investable_codes = load_investable_codes(codes_file)
+        except FileNotFoundError as e:
+            print(f"\nError: {e}")
+            sys.exit(1)
+
+        filtered_fund_data = filter_fund_data(all_fund_data_json, investable_codes)
+        filtered_fund_fees = filter_fund_fees(all_fund_fees_json, investable_codes)
+
+        if filtered_fund_data["_meta"]["recordCount"] == 0:
+            print("\nError: Filtering resulted in 0 funds - check codes file")
+            sys.exit(1)
+
+        fund_data_path = output_path / "fund_data.json"
+        fund_fees_path = output_path / "fund_fees.json"
+
+        print()
+        print("Archiving existing filtered files...")
+        archive_existing_file(fund_data_path, version_date)
+        archive_existing_file(fund_fees_path, version_date)
+
+        print()
+        print("Writing FILTERED fund files...")
+        with open(fund_data_path, "w", encoding="utf-8") as f:
+            json.dump(filtered_fund_data, f, ensure_ascii=False, indent=2)
+        print(f"  {fund_data_path}")
+
+        with open(fund_fees_path, "w", encoding="utf-8") as f:
+            json.dump(filtered_fund_fees, f, ensure_ascii=False, indent=2)
+        print(f"  {fund_fees_path}")
+
+        missing_count = len(filtered_fund_data["_meta"]["missing"])
+        print()
+        print("Statistics:")
+        print(f"  Total funds: {len(fund_data_list)}")
+        print(f"  Filtered funds: {filtered_fund_data['_meta']['recordCount']}")
+        print(f"  Missing funds: {missing_count}")
+    else:
+        fund_data_path = output_path / "fund_data.json"
+        fund_fees_path = output_path / "fund_fees.json"
+
+        print()
+        print("Archiving existing files...")
+        archive_existing_file(fund_data_path, version_date)
+        archive_existing_file(fund_fees_path, version_date)
+
+        print()
+        print("Writing fund files (no filtering)...")
+        with open(fund_data_path, "w", encoding="utf-8") as f:
+            json.dump(all_fund_data_json, f, ensure_ascii=False, indent=2)
+        print(f"  {fund_data_path}")
+
+        with open(fund_fees_path, "w", encoding="utf-8") as f:
+            json.dump(all_fund_fees_json, f, ensure_ascii=False, indent=2)
+        print(f"  {fund_fees_path}")
 
     print()
     print("=" * 60)
@@ -579,7 +743,6 @@ def process_csv(csv_path, output_dir, dry_run):
     print(f"Total funds processed: {len(fund_data_list)}")
     print()
 
-    # Run dependency chain
     run_dependency_chain(output_dir)
 
 
@@ -603,7 +766,7 @@ def main():
 
     # Process
     try:
-        process_csv(csv_path, output_dir, args.dry_run)
+        process_csv(csv_path, output_dir, args.dry_run, args.codes_file)
     except UnicodeDecodeError as e:
         print(f"Error: File encoding error - {e}")
         sys.exit(1)
