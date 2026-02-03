@@ -388,9 +388,16 @@ def run_dependency_chain(output_dir):
             classify_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(classify_module)
 
-            # Run classification
+            # Run classification for filtered funds
             classify_module.main(output_dir)
             print("   OK fund_classification.json regenerated")
+
+            # Run classification for ALL funds
+            all_dir = Path(output_dir) / "all"
+            if all_dir.exists() and (all_dir / "all_fund_data.json").exists():
+                print("\n2. Classifying ALL funds...")
+                classify_module.main(output_dir, all_dir=str(all_dir))
+                print("   OK all_fund_classification.json regenerated")
         except Exception as e:
             print(f"   ERROR classify_funds.py failed: {e}")
     else:

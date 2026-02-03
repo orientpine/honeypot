@@ -200,11 +200,12 @@ def find_investments_repo():
     return None
 
 
-def main(output_dir=None):
+def main(output_dir=None, all_dir=None):
     """메인 실행 함수
 
     Args:
         output_dir: 출력 디렉토리 (None이면 자동 감지)
+        all_dir: all/ 폴더 경로 (지정하면 all_fund_data.json 기반 분류 생성)
     """
     # Determine output directory
     if output_dir:
@@ -217,10 +218,19 @@ def main(output_dir=None):
             print("Error: Could not find investments repository")
             sys.exit(1)
 
-    fund_data_path = funds_dir / "fund_data.json"
+    # Determine which fund_data.json to use
+    if all_dir:
+        # Use all_fund_data.json from all/ directory
+        all_dir_path = Path(all_dir)
+        fund_data_path = all_dir_path / "all_fund_data.json"
+        output_filename = "all_fund_classification.json"
+    else:
+        # Use regular fund_data.json
+        fund_data_path = funds_dir / "fund_data.json"
+        output_filename = "fund_classification.json"
 
     if not fund_data_path.exists():
-        print(f"Error: fund_data.json not found at {fund_data_path}")
+        print(f"Error: {fund_data_path.name} not found at {fund_data_path}")
         sys.exit(1)
 
     # fund_data.json 읽기
@@ -284,7 +294,11 @@ def main(output_dir=None):
         print(f"  {cat}: {count} {risk_label}")
 
     # 파일 저장
-    output_path = funds_dir / "fund_classification.json"
+    if all_dir:
+        output_path = Path(all_dir) / output_filename
+    else:
+        output_path = funds_dir / output_filename
+
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(classification, f, ensure_ascii=False, indent=2)
 
