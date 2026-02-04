@@ -3,12 +3,12 @@
 ==================================================
 
 Purpose:
-Generate an official Korean government / national R&D presentation slide infographic.
+Generate a professional R&D presentation slide infographic in a clean, institutional style.
 [슬라이드 주제와 목적을 영어로 1-2문장 기술]
 
 Tone & Manner:
 - Trustworthy, public-oriented, technology-leading, future-oriented
-- National Research Institute & Government Report Style
+- Clean institutional / professional report style
 - Technical expression without exaggeration
 - Clear explanation understandable by non-experts
 
@@ -114,6 +114,8 @@ Forbidden Elements:
 - Cartoon style, cyberpunk, dark background
 - Watermarks, credits, source text outside content area
 - Overly cluttered layout (too many text elements)
+- National emblems, flags, or government logos (e.g., Taegeukgi, Korean government seal, national certification marks)
+- Any official government seal, ministry logo, or institutional emblem
 
 Final Output Goal:
-A clean, trustworthy government-style infographic slide that communicates the topic at a glance with structured hierarchy and readable labels.
+A clean, trustworthy institutional-style infographic slide that communicates the topic at a glance with structured hierarchy and readable labels.

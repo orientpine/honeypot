@@ -136,8 +136,9 @@ skills: layout-types
 | 언어 병기 | `한글 (English)` | 단일 언어로만 작성, 번역 힌트는 INSTRUCTION으로 이동 |
 | 크기 단위 노출 | 숫자+단위 조합 | `대형/중형/소형` 등급으로만 표현 |
 | 투명도/비율 노출 | `70%`, `alpha` | 별도의 HEX 팔레트(불투명도 변형 색) 사용 또는 생략 |
-| 설정 텍스트 렌더링 | “DO NOT RENDER” 문장이 본문에 섞임 | 블록 제목으로만 사용 |
+| 설정 텍스트 렌더링 | "DO NOT RENDER" 문장이 본문에 섞임 | 블록 제목으로만 사용 |
 | 과도한 주석/캡션 | 장문의 설명 문장 | 키워드/짧은 구문 중심 |
+| 국가 상징물 | 태극기, 정부 로고, 국가 인증마크 | FORBIDDEN 블록에 명시적 금지 |
 
 ---
 
@@ -178,7 +179,7 @@ skills: layout-types
 ### 공통 톤앤매너
 
 - 신뢰감, 공공성, 기술 선도, 미래지향
-- National Research Institute & Government Report Style
+- Clean institutional / professional report style
 - 과장 없는 기술 중심 표현(정책/성과는 명확하고 담백하게)
 - 비전공자도 이해 가능한 시각적 설명
 
