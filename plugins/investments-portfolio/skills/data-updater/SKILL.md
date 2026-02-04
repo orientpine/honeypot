@@ -16,6 +16,8 @@ tools: Bash, Read, Write, mcp_question
 - fund_data.json 생성 (펀드 기본 정보 및 수익률)
 - fund_fees.json 생성 (펀드 수수료 정보)
 - fund_classification.json 자동 생성 (펀드 분류)
+- **투자 가능 펀드 필터링** (investable_codes.json 기반)
+- **funds/all/ 폴더에 전체 펀드 데이터 저장** (2015개)
 - **deposit_rates.json 업데이트 (예금금리 - 사용자 입력 필수)**
 - 기존 파일 자동 백업 (archive/ 디렉토리)
 
@@ -195,12 +197,18 @@ python plugins/investments-portfolio/scripts/classify_funds.py \
 
 ```
 funds/
-├── fund_data.json              # 펀드 마스터 데이터 (수익률 포함)
-├── fund_fees.json              # 펀드 수수료 정보
-├── fund_classification.json    # 펀드 분류 (위험/안전자산)
+├── fund_data.json              # 필터링된 펀드 (206개)
+├── fund_fees.json              # 필터링된 수수료 정보
+├── fund_classification.json    # 필터링된 펀드 분류
+├── investable_codes.json       # 투자 가능 펀드 코드 목록
+├── deposit_rates.json          # 예금금리 정보
+├── all/                        # 전체 펀드 데이터
+│   ├── all_fund_data.json      # 전체 펀드 (2015개)
+│   ├── all_fund_fees.json      # 전체 수수료 정보
+│   └── all_fund_classification.json  # 전체 펀드 분류
 └── archive/                    # 이전 버전 백업
-    ├── fund_data_2025-12-01.json
-    └── fund_fees_2025-12-01.json
+    ├── fund_data_2026-01-01.json
+    └── fund_fees_2026-01-01.json
 ```
 
 ### fund_data.json 구조
@@ -211,7 +219,8 @@ funds/
     "version": "2026-01-01",
     "sourceFile": "26년01월_상품제안서_퇴직연금(DCIRP).csv",
     "updatedAt": "2026-01-21T21:00:00+09:00",
-    "recordCount": 2015
+    "recordCount": 206,
+    "missing": []
   },
   "funds": [
     {
