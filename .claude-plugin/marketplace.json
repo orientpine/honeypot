@@ -38,7 +38,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "author": {
         "name": "Baekdong Cha",
         "url": "https://github.com/orientpine"
@@ -49,7 +49,14 @@
       "keywords": ["presentation", "visualization", "gemini", "image-generation", "slides"],
       "category": "presentations",
       "strict": true,
-      "skills": ["./skills"]
+      "agents": [
+        "./agents/orchestrator.md",
+        "./agents/content-organizer.md",
+        "./agents/content-reviewer.md",
+        "./agents/prompt-designer.md",
+        "./agents/renderer-agent.md"
+      ],
+      "skills": ["./skills/layout-types"]
     },
     {
       "name": "investments-portfolio",
