@@ -22,9 +22,9 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 |------|------|:----:|--------|
 | `concepts_path` | 핵심 개념 파일 경로 (`concepts.md` 또는 `concepts_revised.md`) | ✓ | - |
 | `slide_plan_path` | 슬라이드 구성 계획 파일 경로 | ✓ | - |
-| `theme` | 선택된 테마 (9종 중 하나) | ✓ | - |
+| `theme` | 선택된 테마 (9종 무드 또는 목적형 단일 테마) | ✓ | - |
 | `layout` | 선택된 레이아웃 유형 (24종 중 하나) | ✓ | - |
-| `style` | 스타일 유형 (concept, gov, seminar) | ✓ | - |
+| `style` | 스타일 유형 (concept, gov, seminar, whatif, pitch, comparison) | ✓ | - |
 | `output_path` | 프롬프트 출력 폴더 경로 | ✓ | - |
 | `auto_mode` | 자동 실행 여부 | - | true |
 
@@ -49,7 +49,7 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 {전달하고자 하는 핵심 메시지}
 
 ### Visual Style
-- 스타일: {concept/gov/seminar}
+- 스타일: {concept/gov/seminar/whatif/pitch/comparison}
 - 특성: {스타일별 특성 설명}
 ```
 
@@ -133,6 +133,9 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 | concept | **15개** | 미니멀, 핵심만 |
 | gov | **25개** | 정보 밀도 중간 |
 | seminar | **30개** | 상세 정보 포함 |
+| whatif | **20개** | 시나리오 중심, 중간 정보량 |
+| pitch | **18개** | 임팩트 중심, 간결한 메시지 |
+| comparison | **22개** | 비교 항목 균형, 이중 구조 |
 
 ### 텍스트 카운팅 기준
 
@@ -247,6 +250,9 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 | concept | `plugins/visual-generator/references/themes/concept.md` |
 | gov | `plugins/visual-generator/references/themes/gov.md` |
 | seminar | `plugins/visual-generator/references/themes/seminar.md` |
+| whatif | `plugins/visual-generator/references/themes/whatif.md` |
+| pitch | `plugins/visual-generator/references/themes/pitch.md` |
+| comparison | `plugins/visual-generator/references/themes/comparison.md` |
 
 ### 테마 목록 (9종)
 
@@ -302,7 +308,7 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 - [ ] concepts.md와 slide_plan.md 파일 완전히 읽고 파싱
 - [ ] 스타일별 테마 파일에서 정확한 색상 팔레트 추출
 - [ ] 4-block 구조 완전히 포함 (INSTRUCTION, CONFIGURATION, CONTENT, FORBIDDEN)
-- [ ] 스타일별 텍스트 밀도 준수 (concept:15, gov:25, seminar:30)
+- [ ] 스타일별 텍스트 밀도 준수 (concept:15, gov:25, seminar:30, whatif:20, pitch:18, comparison:22)
 - [ ] 렌더링 방지 규칙 FORBIDDEN ELEMENTS에 명시
 - [ ] 각 프롬프트 100줄 이상 생성
 - [ ] prompt_index.md 인덱스 파일 생성

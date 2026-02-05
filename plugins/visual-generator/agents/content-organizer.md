@@ -21,7 +21,7 @@ model: sonnet
 | 필드 | 설명 | 필수 | 기본값 |
 |------|------|:----:|--------|
 | `input_document` | 입력 문서 경로 (연구계획서, 사업계획서, 기술문서 등) | ✓ | - |
-| `style` | 스타일 유형 (concept, gov, seminar) | - | gov |
+| `style` | 스타일 유형 (concept, gov, seminar, whatif, pitch, comparison) | - | gov |
 | `output_path` | 출력 폴더 경로 | ✓ | - |
 | `auto_mode` | 자동 실행 모드 | - | true |
 
@@ -139,7 +139,8 @@ model: sonnet
     |
     +-- Step 3-1. 테마 참조 파일 로드
     |   +-- Read(plugins/visual-generator/references/themes/{style}.md)
-    |   +-- style에 따른 9종 무드 확인
+    |   +-- concept/gov/seminar: 9종 무드 확인
+    |   +-- whatif/pitch/comparison: 단일 목적 테마(팔레트 4색) 확인
     |
     +-- Step 3-2. 문서 특성-테마 매칭
     |   +-- 문서 톤앤매너 분석
@@ -261,6 +262,10 @@ model: sonnet
 구성요소 분해 → Exploded View
 ```
 
+## Purpose Themes (단일 테마)
+
+whatif/pitch/comparison은 목적형 테마로, **무드 선택 없이 단일 팔레트**를 사용한다.
+
 ## Resources
 
 ### 참조 파일 (Read 도구로 로드)
@@ -271,6 +276,9 @@ model: sonnet
 | `plugins/visual-generator/references/themes/concept.md` | concept 스타일 테마 (9종 무드, 각 4색 팔레트) |
 | `plugins/visual-generator/references/themes/gov.md` | gov 스타일 테마 (9종 무드, 각 4색 팔레트) |
 | `plugins/visual-generator/references/themes/seminar.md` | seminar 스타일 테마 (9종 무드, 각 4색 팔레트) |
+| `plugins/visual-generator/references/themes/whatif.md` | whatif 목적 테마 (단일 팔레트) |
+| `plugins/visual-generator/references/themes/pitch.md` | pitch 목적 테마 (단일 팔레트) |
+| `plugins/visual-generator/references/themes/comparison.md` | comparison 목적 테마 (단일 팔레트) |
 
 ## MUST DO
 

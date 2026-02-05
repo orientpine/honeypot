@@ -344,3 +344,6 @@ Task(
 | `plugins/visual-generator/references/themes/concept.md` | concept 스타일 테마 (9종) |
 | `plugins/visual-generator/references/themes/gov.md` | gov 스타일 테마 (9종) |
 | `plugins/visual-generator/references/themes/seminar.md` | seminar 스타일 테마 (9종) |
+| `plugins/visual-generator/references/themes/whatif.md` | whatif 목적 테마 (단일 팔레트) |
+| `plugins/visual-generator/references/themes/pitch.md` | pitch 목적 테마 (단일 팔레트) |
+| `plugins/visual-generator/references/themes/comparison.md` | comparison 목적 테마 (단일 팔레트) |
