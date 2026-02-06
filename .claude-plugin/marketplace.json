@@ -49,8 +49,8 @@
       "keywords": ["presentation", "visualization", "gemini", "image-generation", "slides"],
       "category": "presentations",
       "strict": true,
+      "commands": ["./commands/visual-generate.md"],
       "agents": [
-        "./agents/orchestrator.md",
         "./agents/content-organizer.md",
         "./agents/content-reviewer.md",
         "./agents/prompt-designer.md",
