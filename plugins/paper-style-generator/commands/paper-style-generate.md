@@ -1,10 +1,3 @@
----
-name: paper-style-orchestrator
-description: "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 오케스트레이터. MinerU로 PDF 변환, 스타일 패턴 분석, 9개 섹션별 독립 스킬 세트 생성을 조율합니다."
-tools: Read, Glob, Grep, Write, Edit, Bash, Task
-model: opus
----
-
 # Paper Style Generator Orchestrator
 
 PDF 논문 컬렉션을 분석하여 특정 저자/연구그룹의 논문 작성 스타일을 추출하고,

@@ -13,69 +13,49 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (10 plugins)
+│   └── marketplace.json              # Single marketplace registry (11 plugins)
 └── plugins/
-    ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent 기반)
-    │   ├── agents/
-    │   │   ├── orchestrator.md       # Master orchestrator (Chapter 3→1→2→4→5)
+    ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
+    │   ├── agents/                   # 6 agents
     │   │   ├── chapter1.md           # Chapter 1 generator
     │   │   ├── chapter2.md           # Chapter 2 generator
     │   │   ├── chapter3.md           # Chapter 3 generator
     │   │   ├── chapter4.md           # Chapter 4 generator
     │   │   ├── chapter5.md           # Chapter 5 generator
     │   │   └── figure.md             # Caption extraction + Gemini API image gen
-    │   ├── references/
-    │   │   ├── document_templates/   # Chapter 1-5 document templates
-    │   │   ├── writing_patterns/     # Section-specific writing patterns (5 files)
-    │   │   ├── content_requirements/ # Chapter-specific content requirements (5 files)
-    │   │   ├── guides/               # Web search, image, caption guides
-    │   │   ├── example_prompts.md    # Example prompts for each chapter
-    │   │   └── input_template.md     # Orchestrator input template
-    │   ├── assets/
-    │   │   └── output_templates/     # Output templates for all chapters
-    │   └── scripts/
-    │       └── generate_images.py    # Gemini API image generation script
-     ├── visual-generator/             # 시각자료 통합 플러그인
-     │   ├── skills/                   # 4 skills
-     │   │   ├── prompt-concept/       # TED 스타일 개념 시각화 프롬프트
-     │   │   ├── prompt-gov/           # 정부/공공기관 슬라이드 프롬프트
-     │   │   ├── prompt-seminar/       # 세미나 프롬프트
-     │   │   └── renderer/             # Gemini API 이미지 생성
-     │   └── scripts/
-     │       └── generate_slide_images.py  # Gemini API slide image generation script
-    ├── paper-style-generator/        # Meta-plugin: PDF → Paper Writing Skills
-    │   ├── agents/
-    │   │   ├── orchestrator.md       # Main workflow coordinator
+    │   ├── commands/
+    │   │   └── isd-generate.md       # Master orchestrator command (Chapter 3→1→2→4→5)
+    │   └── skills/                   # 11 skills (chapter guides, core-resources, etc.)
+     ├── visual-generator/             # 시각자료 통합 플러그인 (Agent + Command + Skill)
+     │   ├── agents/                   # 4 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent)
+     │   ├── commands/
+     │   │   └── visual-generate.md    # 시각자료 생성 오케스트레이터 command
+     │   └── skills/                   # 8 skills (layout-types, theme-*, slide-renderer)
+    ├── paper-style-generator/        # Meta-plugin: PDF → Paper Writing Skills (Agent + Command + Skill)
+    │   ├── agents/                   # 3 agents
     │   │   ├── pdf-converter.md      # MinerU PDF→MD conversion
     │   │   ├── style-analyzer.md     # Deep style pattern extraction
     │   │   └── skill-generator.md    # 10-skill set generation (including orchestrator)
-    │   ├── scripts/
-    │   │   ├── mineru_converter.py   # MinerU Python wrapper
-    │   │   ├── md_postprocessor.py   # MD cleanup & section tagging
-    │   │   └── style_extractor.py    # Pattern extraction logic
-    │   ├── templates/                # Jinja2 templates for skill generation
-    │   │   ├── skill_common.md.j2
-    │   │   ├── skill_abstract.md.j2
-    │   │   ├── skill_introduction.md.j2
-    │   │   ├── skill_methodology.md.j2
-    │   │   ├── skill_results.md.j2
-    │   │   ├── skill_discussion.md.j2
-    │   │   ├── skill_caption.md.j2
-    │   │   ├── skill_title.md.j2
-    │   │   ├── skill_verify.md.j2
-    │   │   ├── skill_orchestrator.md.j2  # Full paper auto-generation
-    │   │   └── marketplace.json.j2
-    │   └── references/
-    │       ├── analysis_schema.md    # Analysis item definitions
-    │       └── output_structure.md   # Output directory guide
+    │   ├── commands/
+    │   │   └── paper-style-generate.md  # Main workflow orchestrator command
+    │   └── skills/
+    │       └── paper-style-toolkit/  # Scripts, templates, references (Jinja2 templates, MinerU wrapper)
      ├── investments-portfolio/        # Portfolio analysis multi-agent system
-     │   └── agents/                   # 5 agents: orchestrator, fund, compliance, output, material
+     │   ├── agents/                   # 4 agents: fund-portfolio, compliance-checker, output-critic, material-organizer
+     │   ├── commands/
+     │   │   └── portfolio-analyze.md  # Portfolio orchestrator command
+     │   └── skills/                   # 11 skills (analyst-common, bogle-principles, dc-pension-rules, etc.)
      ├── general-agents/               # General-purpose agents
      │   └── agents/                   # 1 agent
      ├── report-generator/             # Research report generation
-     │   └── agents/                   # 5 agents
+     │   ├── agents/                   # 4 agents: input-analyzer, content-mapper, chapter-writer, quality-checker
+     │   ├── commands/
+     │   │   └── report-generate.md    # Report orchestrator command
+     │   └── skills/                   # 3 skills (field-keywords, chapter-structure, four-step-pattern)
      ├── stock-consultation/           # 주식/ETF 투자 상담
-     │   ├── agents/                   # 6 agents
+     │   ├── agents/                   # 5 agents
+     │   ├── commands/
+     │   │   └── stock-consult.md      # Stock consultation orchestrator command
      │   └── skills/                   # 3 skills
      ├── equity-research/              # 기관급 주식 분석
      │   └── agents/                   # 1 agent
@@ -89,16 +69,18 @@ toolbox/
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Generate full ISD proposal | `plugins/isd-generator/agents/orchestrator.md` | Uses `references/input_template.md` |
+| Generate full ISD proposal | `plugins/isd-generator/commands/isd-generate.md` | Uses `skills/input-template/` |
 | Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
 | Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
-| Generate concept prompts (TED style) | `plugins/visual-generator/skills/prompt-concept/` | Minimal infographics |
-| Generate gov prompts (official style) | `plugins/visual-generator/skills/prompt-gov/` | 4-color palette, PPT style |
-| Render prompts to images | `plugins/visual-generator/skills/renderer/` | Gemini API required |
-| **Generate paper writing skills from PDFs** | `plugins/paper-style-generator/` | MinerU + 11 Jinja2 templates |
-| Portfolio analysis agents | `plugins/investments-portfolio/` | Korean DC pension multi-agent |
-| General interview agent | `plugins/general-agents/` | Deep interview + execution |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 5 plugins listed |
+| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline |
+| **Generate paper writing skills from PDFs** | `plugins/paper-style-generator/commands/paper-style-generate.md` | MinerU + Jinja2 templates |
+| Portfolio analysis | `plugins/investments-portfolio/commands/portfolio-analyze.md` | Korean DC pension multi-agent |
+| Generate research report | `plugins/report-generator/commands/report-generate.md` | 연구노트 → 보고서 자동 생성 |
+| Stock/ETF consultation | `plugins/stock-consultation/commands/stock-consult.md` | Bogle/Vanguard 철학 기반 |
+| General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
+| Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
+| Markdown → HWPX conversion | `plugins/hwpx-converter/skills/converter/` | pypandoc-hwpx 기반 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 11 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
@@ -178,7 +160,7 @@ toolbox/
 
 ### Paper Style Generator (Meta-Plugin)
 - **Purpose**: Analyze PDF papers (10+) and auto-generate paper writing skill sets
-- **Workflow**: `orchestrator` → `pdf-converter` → `style-analyzer` → `skill-generator`
+- **Workflow**: `paper-style-generate` (command) → `pdf-converter` → `style-analyzer` → `skill-generator`
 - **Input**: PDF papers from same author/research group or same field
 - **Output**: 10 independent Claude skills in `~/.claude/skills/{name}-gen/`
   1. `{name}-common` - Shared style guide
@@ -216,7 +198,7 @@ python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
   --output-dir [path]/figures/
 
 # Generate slide images
-python plugins/visual-generator/scripts/generate_slide_images.py \
+python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py \
   --prompts-dir [path] --output-dir [path]
 
 # Paper Style Generator: Convert PDFs to Markdown (requires MinerU)
@@ -756,18 +738,13 @@ Orchestrate {workflow description}:
 
 ### Current Codebase Migration Notes
 
-> **⚠️ 주의**: 현재 이 프로젝트의 일부 플러그인은 표준 구조를 따르지 않습니다.
+> **Status (2026-02-06)**: 루트 비표준 폴더 마이그레이션이 완료되었습니다.
 
-**비표준 구조를 가진 플러그인:**
+현재 마켓플레이스의 플러그인들은 `agents/`, `commands/`, `skills/`, `.claude-plugin/` 표준 구조를 따릅니다.
 
-| Plugin | 비표준 폴더 | 마이그레이션 방향 |
-|--------|------------|-----------------|
-| `isd-generator` | `references/`, `assets/`, `scripts/` at root | 에이전트 전용 구조로 유지하되, 참조자료는 스킬로 분리 검토 |
-| `visual-generator` | `scripts/` at root | `skills/{skill}/scripts/`로 이동 |
-| `paper-style-generator` | `scripts/`, `templates/`, `references/` at root | 스킬 구조로 재구성 검토 |
-| `report-generator` | `references/`, `assets/` at root | 스킬 구조로 재구성 검토 |
-
-이 플러그인들은 마켓플레이스 등록 자체는 동작하지만, Claude Code 생태계의 표준 구조와 호환성을 위해 향후 마이그레이션을 권장합니다.
+추가 원칙:
+- 오케스트레이터 워크플로우는 `commands/`에 배치합니다.
+- `scripts/`, `references/`, `assets/`, `templates/`는 플러그인 루트가 아닌 `skills/{skill-name}/` 내부에 배치합니다.
 
 ---
 

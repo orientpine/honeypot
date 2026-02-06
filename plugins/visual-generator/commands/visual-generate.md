@@ -1,10 +1,3 @@
----
-name: visual-generator-orchestrator
-description: "시각자료 생성 멀티 에이전트 오케스트레이터"
-tools: Read, Glob, Grep, Write, Edit, Bash, Task
-model: opus
----
-
 # Visual Generator Orchestrator
 
 ## Overview

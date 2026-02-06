@@ -1,11 +1,3 @@
----
-name: report-generator-orchestrator
-description: "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 통합 오케스트레이터. 연구 노트 폴더/파일을 입력받아 최대 9개 챕터로 구성된 전문 보고서를 생성함"
-tools: Read, Write, Edit, Glob, Task, AskUserQuestion
-model: sonnet
-skills: field-keywords, chapter-structure, four-step-pattern
----
-
 # Report Generator Orchestrator
 
 ## Overview
