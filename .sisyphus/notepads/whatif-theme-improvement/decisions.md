@@ -1,0 +1,4 @@
+# Decisions - whatif-theme-improvement
+
+## [2026-02-06T01:52:21.619Z] Session Start
+No architectural decisions yet.
