@@ -318,6 +318,15 @@ Task(subagent_type="paper-style-generator:skill-generator")
 
 ---
 
+## 8.3 MUST NOT DO
+
+- [ ] 직접 PDF 변환을 수행하지 않음 (pdf-converter에 위임 필수)
+- [ ] 직접 스타일 분석을 수행하지 않음 (style-analyzer에 위임 필수)
+- [ ] 직접 스킬을 생성하지 않음 (skill-generator에 위임 필수)
+- [ ] Task(subagent_type=...) 없이 파이프라인 단계를 수행하지 않음
+
+---
+
 ## 9. 메타데이터
 
 ```yaml

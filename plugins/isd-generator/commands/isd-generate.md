@@ -351,6 +351,15 @@ output/[프로젝트명]/
 - 계속: 생성 완료 후 사용자 검토 요청
 - 제안: 수정 필요 Chapter 및 항목 안내
 
+## MUST NOT DO
+
+- [ ] 검증문서 생성 없이 다음 Phase로 진행하지 않음 (chapter3_research_verification.md 등 필수)
+- [ ] 직접 Chapter 내용을 생성하지 않음 (chapter1-5에 위임 필수)
+- [ ] 직접 이미지 프롬프트를 생성하지 않음 (figure에 위임 필수)
+- [ ] Task(subagent_type=...) 없이 파이프라인 단계를 수행하지 않음
+- [ ] Chapter 3→1→2→4→5 순서를 변경하지 않음 (의존성 위반)
+- [ ] 정합성 검증 없이 최종 보고서를 생성하지 않음
+
 ## Usage Example
 
 ```
