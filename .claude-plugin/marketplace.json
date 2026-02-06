@@ -13,18 +13,7 @@
       "name": "isd-generator",
       "source": "./plugins/isd-generator",
       "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["isd", "research-proposal", "documentation", "orchestration", "chapter-generator"],
-      "category": "documentation",
       "strict": true,
-      "commands": ["./commands/isd-generate.md"],
       "agents": [
         "./agents/chapter1.md",
         "./agents/chapter2.md",
@@ -39,18 +28,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
-      "version": "2.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["presentation", "visualization", "gemini", "image-generation", "slides"],
-      "category": "presentations",
       "strict": true,
-      "commands": ["./commands/visual-generate.md"],
       "agents": [
         "./agents/content-organizer.md",
         "./agents/content-reviewer.md",
@@ -63,18 +41,7 @@
       "name": "investments-portfolio",
       "source": "./plugins/investments-portfolio",
       "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템. web-search-verifier 스킬로 환각 방지.",
-      "version": "2.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["finance", "portfolio", "dc-pension", "multi-agent", "hallucination-prevention"],
-      "category": "finance",
       "strict": true,
-      "commands": ["./commands/portfolio-analyze.md"],
       "agents": [
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
@@ -87,16 +54,6 @@
       "name": "macro-analysis",
       "source": "./plugins/macro-analysis",
       "description": "거시경제 분석 공용 에이전트 모음. 지수/금리/섹터/리스크/리더십 분석 및 종합/검증을 제공합니다.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["macro", "analysis", "indices", "rates", "sectors", "risk", "leadership"],
-      "category": "finance",
       "strict": true,
       "agents": [
         "./agents/index-fetcher.md",
@@ -112,16 +69,6 @@
       "name": "general-agents",
       "source": "./plugins/general-agents",
       "description": "범용 에이전트 모음",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["utilities", "interview", "general-purpose"],
-      "category": "utilities",
       "strict": true,
       "agents": ["./agents/interview.md"]
     },
@@ -129,18 +76,7 @@
       "name": "paper-style-generator",
       "source": "./plugins/paper-style-generator",
       "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["paper-writing", "style-analysis", "skill-generator", "mineru", "pdf-to-markdown", "academic-writing"],
-      "category": "documentation",
       "strict": true,
-      "commands": ["./commands/paper-style-generate.md"],
       "agents": [
         "./agents/pdf-converter.md",
         "./agents/style-analyzer.md",
@@ -150,19 +86,8 @@
     {
       "name": "report-generator",
       "source": "./plugins/report-generator",
-      "description": "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 플러그인. 폴더/파일/코드베이스 입력을 지원하며 4단계 문장 패턴을 적용하여 최대 9개 챕터로 구성된 전문 보고서를 생성합니다.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["research-report", "documentation", "4-step-pattern", "automatic-writing", "phd-level"],
-      "category": "documentation",
+      "description": "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 플러그인.",
       "strict": true,
-      "commands": ["./commands/report-generate.md"],
       "agents": [
         "./agents/input-analyzer.md",
         "./agents/content-mapper.md",
@@ -173,19 +98,8 @@
     {
       "name": "stock-consultation",
       "source": "./plugins/stock-consultation",
-      "description": "주식/ETF 투자 상담 Multi-Agent 시스템. 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증 워크플로우. Bogle/Vanguard 철학 기반.",
-      "version": "1.1.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["stock-analysis", "etf-analysis", "valuation", "multi-agent", "bogle-vanguard", "hallucination-prevention"],
-      "category": "finance",
+      "description": "주식/ETF 투자 상담 Multi-Agent 시스템. Bogle/Vanguard 철학 기반.",
       "strict": true,
-      "commands": ["./commands/stock-consult.md"],
       "agents": [
         "./agents/materials-organizer.md",
         "./agents/stock-screener.md",
@@ -198,34 +112,14 @@
     {
       "name": "equity-research",
       "source": "./plugins/equity-research",
-      "description": "Professional equity research analysis with institutional-grade formatting. 티커와 함께 호출하면 기관급 주식 분석 리포트를 생성합니다.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["equity-research", "stock-analysis", "trading", "institutional-grade"],
-      "category": "finance",
+      "description": "Professional equity research analysis with institutional-grade formatting.",
       "strict": true,
       "agents": ["./agents/equity-research-analyst.md"]
     },
     {
       "name": "hwpx-converter",
       "source": "./plugins/hwpx-converter",
-      "description": "Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반. 단일 파일 및 폴더 배치 변환 지원.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["markdown", "hwpx", "hangeul", "document-conversion", "pandoc"],
-      "category": "utilities",
+      "description": "Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반.",
       "strict": true,
       "skills": ["./skills"]
     },
@@ -233,16 +127,6 @@
       "name": "worktree-workflow",
       "source": "./plugins/worktree-workflow",
       "description": "Git worktree를 활용한 Claude Code 병렬 실행 워크플로우",
-      "version": "1.0.0",
-      "author": {
-        "name": "Baekdong Cha",
-        "url": "https://github.com/orientpine"
-      },
-      "homepage": "https://github.com/orientpine/honeypot",
-      "repository": "https://github.com/orientpine/honeypot",
-      "license": "MIT",
-      "keywords": ["git", "worktree", "workflow", "tmux", "parallel-execution"],
-      "category": "utilities",
       "strict": true,
       "agents": ["./agents/worktree.md"]
     }
