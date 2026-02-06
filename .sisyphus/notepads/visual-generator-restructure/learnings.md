@@ -43,3 +43,39 @@ Commands are registered via "commands" array in marketplace.json, separate from 
 - ✅ marketplace.json valid JSON (python3 validation passed)
 - ✅ Delegation rules count: 4 (grep "직접" found 4 matches)
 - ✅ marketplace.json structure correct: commands array before agents array
+
+## Task 4 Completion (2026-02-06)
+
+### Changes Made
+1. **Phase 2 Step 2-1 validation patterns** (lines 70-73): Fixed 4 grep patterns
+   - Changed from "INSTRUCTION BLOCK" → "## INSTRUCTION"
+   - Changed from "CONFIGURATION BLOCK" → "## CONFIGURATION"
+   - Changed from "CONTENT BLOCK" → "## CONTENT"
+   - "FORBIDDEN ELEMENTS" → "## FORBIDDEN ELEMENTS"
+
+2. **Validation Checklist table** (line 149): Updated verification method
+   - From: "Grep 4개 블록 키워드"
+   - To: "Grep "## INSTRUCTION", "## CONFIGURATION", "## CONTENT", "## FORBIDDEN ELEMENTS""
+
+3. **Verification command** (line 162): Updated grep pattern
+   - From: `grep -c "INSTRUCTION BLOCK\|CONFIGURATION BLOCK\|CONTENT BLOCK\|FORBIDDEN ELEMENTS"`
+   - To: `grep -c "## INSTRUCTION\|## CONFIGURATION\|## CONTENT\|## FORBIDDEN ELEMENTS"`
+
+4. **Workflow Position section** (lines 19-29): Added after Overview, before Input Schema
+   - Pipeline position diagram showing renderer-agent as final stage
+   - Key Distinctions vs prompt-designer, content-reviewer, content-organizer
+
+### Verification Results
+All 9 verification checks PASSED:
+- ✓ INSTRUCTION BLOCK removed
+- ✓ CONFIGURATION BLOCK removed
+- ✓ CONTENT BLOCK removed
+- ✓ ## INSTRUCTION exists
+- ✓ ## CONFIGURATION exists
+- ✓ ## CONTENT exists
+- ✓ grep command updated
+- ✓ Workflow Position section added
+- ✓ Pipeline position diagram added
+
+### Root Cause Fixed
+Mismatch between prompt-designer output format (## INSTRUCTION, etc.) and renderer-agent validation patterns (INSTRUCTION BLOCK, etc.) is now resolved. Validation will correctly match the actual prompt structure.

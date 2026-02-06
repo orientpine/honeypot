@@ -11,6 +11,23 @@ model: sonnet
 
 프롬프트 파일의 최종 검증을 수행하고 Gemini API를 통해 이미지를 렌더링하는 에이전트. 4-block 구조, pt/px 패턴, 언어 병기, 플레이스홀더 등 렌더링 전 품질 검증을 담당한다.
 
+**파이프라인 위치:**
+```
+content-organizer → content-reviewer → prompt-designer → [renderer-agent]
+```
+
+## Workflow Position
+
+- **After**: prompt-designer (4-block 프롬프트 생성 완료)
+- **Before**: 없음 (최종 단계)
+- **Enables**: 최종 이미지 파일 출력
+
+## Key Distinctions
+
+- **vs prompt-designer**: 프롬프트를 생성하지 않음. 생성된 프롬프트를 검증하고 이미지로 렌더링만 수행
+- **vs content-reviewer**: 콘텐츠 품질을 평가하지 않음. 기술적 형식(4-block 구조, 금지 패턴) 검증만 수행
+- **vs content-organizer**: 문서 분석하지 않음. 프롬프트 파일만 입력으로 받음
+
 ## Input Schema
 
 | 필드 | 설명 | 필수 | 기본값 |
@@ -31,6 +48,12 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 ## Workflow
 
 ```
+[Phase 0: 출력 디렉토리 생성]
+    |
+    +-- Step 0-1. 출력 폴더 생성 (Bash 도구 사용, Read/Glob으로 디렉토리를 확인하지 말 것)
+    |   +-- Bash: mkdir -p {output_path}
+    |   +-- 주의: 디렉토리 존재 여부를 Read로 확인하지 않음. mkdir -p는 이미 존재해도 안전함.
+
 [Phase 1: 프롬프트 파일 수집]
     |
     +-- Step 1-1. 프롬프트 폴더 스캔
@@ -43,12 +66,12 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 
 [Phase 2: 최종 검증 (각 프롬프트 파일)]
     |
-    +-- Step 2-1. 4-block 구조 검증
-    |   +-- Grep: "INSTRUCTION BLOCK" 존재 확인
-    |   +-- Grep: "CONFIGURATION BLOCK" 존재 확인
-    |   +-- Grep: "CONTENT BLOCK" 존재 확인
-    |   +-- Grep: "FORBIDDEN ELEMENTS" 존재 확인
-    |   +-- 4개 블록 모두 존재해야 PASS
+     +-- Step 2-1. 4-block 구조 검증
+     |   +-- Grep: "## INSTRUCTION" 존재 확인
+     |   +-- Grep: "## CONFIGURATION" 존재 확인
+     |   +-- Grep: "## CONTENT" 존재 확인
+     |   +-- Grep: "## FORBIDDEN ELEMENTS" 존재 확인
+     |   +-- 4개 블록 모두 존재해야 PASS
     |
     +-- Step 2-2. pt/px 패턴 검증
     |   +-- Grep: "[0-9]+pt" 패턴 검색
@@ -123,7 +146,7 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 
 | # | 검증 항목 | 검증 방법 | FAIL 조건 |
 |:-:|-----------|-----------|-----------|
-| 1 | 4-block 구조 | Grep 4개 블록 키워드 | 4개 미만 발견 |
+| 1 | 4-block 구조 | Grep "## INSTRUCTION", "## CONFIGURATION", "## CONTENT", "## FORBIDDEN ELEMENTS" | 4개 미만 발견 |
 | 2 | pt/px 패턴 없음 | `grep -E "[0-9]+pt\|[0-9]+px"` | 패턴 발견 |
 | 3 | 언어 병기 없음 | 한글(영문) 또는 영문(한글) 패턴 | 패턴 발견 |
 | 4 | 플레이스홀더 없음 | `[내용]`, `{변수}` 형태 | 패턴 발견 |
@@ -136,7 +159,7 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 
 ```bash
 # 4-block 구조 확인 (4개 모두 있어야 PASS)
-grep -c "INSTRUCTION BLOCK\|CONFIGURATION BLOCK\|CONTENT BLOCK\|FORBIDDEN ELEMENTS" prompt.md
+grep -c "## INSTRUCTION\|## CONFIGURATION\|## CONTENT\|## FORBIDDEN ELEMENTS" prompt.md
 
 # pt/px 패턴 확인 (없어야 PASS)
 grep -E "[0-9]+pt|[0-9]+px" prompt.md || echo "PASS"

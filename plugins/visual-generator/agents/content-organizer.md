@@ -1,7 +1,7 @@
 ---
 name: content-organizer
 description: "입력 문서 분석 및 테마/레이아웃 선택 에이전트"
-tools: Read, Glob, Grep, Write
+tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 ---
 
@@ -15,6 +15,16 @@ model: sonnet
 ```
 [content-organizer] → content-reviewer → prompt-designer → renderer-agent
 ```
+
+## Workflow Position
+- **After**: 없음 (파이프라인 첫 단계)
+- **Before**: content-reviewer (콘텐츠 검토)
+- **Enables**: content-reviewer가 검토할 분석 결과(concepts.md, slide_plan.md, theme_recommendation.md) 제공
+
+## Key Distinctions
+- **vs content-reviewer**: 콘텐츠를 검토하지 않음. 원본 문서를 분석하여 구조화된 개념을 추출
+- **vs prompt-designer**: 프롬프트를 생성하지 않음. 테마, 레이아웃, 핵심 개념까지만 결정
+- **vs renderer-agent**: 이미지 관련 작업 수행하지 않음
 
 ## Input Schema
 
@@ -105,6 +115,12 @@ model: sonnet
 ## Workflow
 
 ```
+[Phase 0: 출력 디렉토리 생성]
+    |
+    +-- Step 0-1. 출력 폴더 생성 (Bash 도구 사용, Read/Glob으로 디렉토리를 확인하지 말 것)
+    |   +-- Bash: mkdir -p {output_path}
+    |   +-- 주의: 디렉토리 존재 여부를 Read로 확인하지 않음. mkdir -p는 이미 존재해도 안전함.
+
 [Phase 1: 문서 읽기 및 구조 파악]
     |
     +-- Step 1-1. 입력 문서 로드
