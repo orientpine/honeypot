@@ -127,6 +127,10 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 | 2 | pt/px 패턴 없음 | `grep -E "[0-9]+pt\|[0-9]+px"` | 패턴 발견 |
 | 3 | 언어 병기 없음 | 한글(영문) 또는 영문(한글) 패턴 | 패턴 발견 |
 | 4 | 플레이스홀더 없음 | `[내용]`, `{변수}` 형태 | 패턴 발견 |
+| 5 | 위치 지시자 없음 | `grep -E "\[[A-Z가-힣].*\]"` | 패턴 발견 |
+| 6 | 레이아웃 유형명 없음 | `grep -Ei "scenario grid\|section-flow\|z-pattern"` | 패턴 발견 |
+| 7 | 인라인 색상 코드 없음 | `grep -E "\(#[A-Fa-f0-9]{6}\)"` | 패턴 발견 |
+| 8 | 환각 URL 없음 | `grep -E "www\.[a-z-]+\.(com\|net\|org)"` | 패턴 발견 |
 
 ### 검증 명령어 예시
 
@@ -139,6 +143,15 @@ grep -E "[0-9]+pt|[0-9]+px" prompt.md || echo "PASS"
 
 # 플레이스홀더 확인 (없어야 PASS)
 grep -E "\[.*내용.*\]|\{[A-Z_]+\}" prompt.md || echo "PASS"
+
+# 위치 지시자 확인 (없어야 PASS)
+grep -E "\[[A-Z가-힣]+-?[0-9]*\]|\[상단\]|\[하단\]|\[왼쪽\]|\[오른쪽\]" prompt.md || echo "PASS"
+
+# 인라인 색상 코드 확인 (없어야 PASS)
+grep -E "\(#[A-Fa-f0-9]{6}\)" prompt.md || echo "PASS"
+
+# 환각 URL 확인 (없어야 PASS)
+grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
 ```
 
 ## Script Invocation

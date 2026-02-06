@@ -95,6 +95,20 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
 | 데이터 | 차트, 대시보드, KPI 요약 |
 | 협력 관계 | 협력체계, 네트워크, 허브앤스포크 |
 
+### 4. 구성용 텍스트 검출 (Composition Text Detection)
+
+| 평가 항목 | 기준 | 점수 |
+|-----------|------|:----:|
+| 위치 지시자 부재 | `[상단]`, `[하단 결론1]` 등 없음 | 1-5 |
+| 레이아웃 유형명 부재 | `Whatif Scenario Grid` 등 없음 | 1-5 |
+| 색상/크기 힌트 부재 | `(#FF6B35)`, `48pt` 등 없음 | 1-5 |
+| 환각 데이터 부재 | 가상 URL/이메일/통계 없음 | 1-5 |
+
+**점수 기준:**
+- 5: 깨끗함 - 구성용 텍스트 완전 부재
+- 3: 경미 - 1-2개 패턴 발견 (수정 권장)
+- 1: 심각 - 3개 이상 패턴 발견 (필수 수정)
+
 ## Decision Logic
 
 ### PASS 조건 (모두 충족)
@@ -104,6 +118,7 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
     +-- 개념 추출 평균 점수 ≥ 3.5
     +-- 테마 선택 평균 점수 ≥ 3.5
     +-- 레이아웃 선택 평균 점수 ≥ 3.5
+    +-- 구성용 텍스트 검출 평균 점수 ≥ 3.5
     +-- 전체 평균 점수 ≥ 3.5
     +-- 개별 항목 중 1점 없음
 ```
@@ -115,6 +130,7 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
     +-- 개념 추출 평균 점수 < 3.0
     +-- 테마 선택 평균 점수 < 3.0
     +-- 레이아웃 선택 평균 점수 < 3.0
+    +-- 구성용 텍스트 검출 평균 점수 < 3.0
     +-- 전체 평균 점수 < 3.5
     +-- 개별 항목 중 1점 존재
 ```
@@ -172,6 +188,7 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
 | 개념 추출 | X.X | - |
 | 테마 선택 | X.X | - |
 | 레이아웃 선택 | X.X | - |
+| 구성용 텍스트 검출 | X.X | - |
 | **전체** | **X.X** | **PASS/REJECT** |
 
 ## 상세 점수
@@ -203,6 +220,15 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
 | 시각적 균형 | X | ... |
 | 가독성 | X | ... |
 | 콘텐츠 구조 반영 | X | ... |
+
+### 구성용 텍스트 검출 (Composition Text Detection)
+
+| 평가 항목 | 점수 | 코멘트 |
+|-----------|:----:|--------|
+| 위치 지시자 부재 | X | ... |
+| 레이아웃 유형명 부재 | X | ... |
+| 색상/크기 힌트 부재 | X | ... |
+| 환각 데이터 부재 | X | ... |
 
 ## 피드백
 
@@ -244,7 +270,8 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
     "concept_extraction": 4.2,
     "theme_selection": 3.8,
     "layout_selection": 4.0,
-    "overall": 4.0
+    "composition_text_detection": 4.5,
+    "overall": 4.1
   },
   "detailed_scores": {
     "concept_extraction": {
@@ -265,6 +292,12 @@ content-reviewer 에이전트를 사용해서 분석 결과를 검토해줘.
       "visual_balance": 4,
       "readability": 4,
       "structure_match": 4
+    },
+    "composition_text_detection": {
+      "no_position_markers": 5,
+      "no_layout_type_names": 4,
+      "no_color_size_hints": 5,
+      "no_hallucinated_data": 4
     }
   },
   "feedback": {

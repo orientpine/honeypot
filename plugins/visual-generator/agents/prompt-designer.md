@@ -166,12 +166,64 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 | `+---+---+` | ASCII 박스 렌더링 | 자연어 설명 |
 | `(굵게)` | 힌트 텍스트 렌더링 | 생략 |
 | `[내용 입력]` | 플레이스홀더 렌더링 | 실제 내용 |
+| `[하단 결론1]` | 위치 지시자 렌더링 | 실제 텍스트만 |
+| `Whatif Scenario Grid` | 레이아웃 유형명 렌더링 | CONFIGURATION에만 |
+| `(#FF6B35)` | 색상 코드 렌더링 | CONFIGURATION에만 |
+| `www.fake-url.com` | 환각 URL 렌더링 | `[웹사이트 URL 입력 필요]` |
 
 ### 언어 원칙
 
 - 모든 텍스트는 **한글 단독** 사용
 - 예외: 고유명사, 약어 (AI, IoT 등)
 - 영어 병기가 필요하면 한글만 사용하고 영어 생략
+
+## 구성용 텍스트 분리 원칙 (CRITICAL)
+
+**CONTENT BLOCK에는 오직 "이미지에 실제로 보여야 할 텍스트"만 포함합니다.**
+
+다음은 **절대로 CONTENT BLOCK에 포함하면 안 되는** 구성용 텍스트입니다:
+
+| 유형 | 금지 예시 | 올바른 처리 |
+|------|-----------|------------|
+| **위치 지시자** | `[상단]`, `[하단 결론1]`, `[왼쪽 영역]` | INSTRUCTION에서 위치 설명, CONTENT에는 실제 텍스트만 |
+| **레이아웃 유형명** | `Whatif Scenario Grid`, `Before/After 비교` | CONFIGURATION의 Layout Structure에서만 언급 |
+| **메타포 이름** | `Contrast`, `Flow`, `Section-Flow` | CONFIGURATION에서만 사용 |
+| **크기 힌트** | `(대형)`, `(중형)`, `Large KPI`, `48pt` | INSTRUCTION의 스타일 설명에서만 사용 |
+| **색상 지정** | `(#FF6B35)`, `Accent Color` | CONFIGURATION의 Color Palette에서만 명시 |
+| **역할 설명** | `Main Title`, `핵심 메시지 영역` | INSTRUCTION에서 설명, CONTENT에는 실제 텍스트만 |
+
+### 올바른 CONTENT BLOCK 예시
+
+```markdown
+## CONTENT
+
+1. AI 설계 플랫폼 도입 미래상
+2. 도메인 특화 LLM 엔진
+3. 설계 시간 70% 단축
+4. 오류율 90% 감소
+```
+
+### 잘못된 CONTENT BLOCK 예시
+
+```markdown
+## CONTENT
+
+1. **[메인 타이틀]** AI 설계 플랫폼 도입 미래상
+2. **[Section A]** 도메인 특화 LLM 엔진
+3. **[Large KPI]** 설계 시간 70% 단축 (#FF6B35, Accent)
+4. **Whatif Scenario Grid** - 시나리오 레이아웃
+```
+
+### 검증 체크리스트
+
+CONTENT BLOCK 작성 후 다음을 확인하세요:
+
+- [ ] 위치 지시자(`[상단]`, `[하단]` 등) 포함 여부 확인
+- [ ] 레이아웃 유형명(`Grid`, `Flow` 등) 포함 여부 확인
+- [ ] 색상 코드(`#XXXXXX`) 포함 여부 확인
+- [ ] 크기 힌트(`pt`, `px`, `대형` 등) 포함 여부 확인
+- [ ] 역할 설명(`Main Title`, `핵심 메시지` 등) 포함 여부 확인
+- [ ] 모든 텍스트가 실제 이미지에 표시될 내용인지 확인
 
 ## Workflow
 
