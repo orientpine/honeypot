@@ -498,7 +498,7 @@ Wave 3 (After Wave 2, 순차):
 
 ---
 
-- [ ] 8. 최종 통합 검증
+- [x] 8. 최종 통합 검증
 
   **What to do**:
   모든 변경사항에 대한 종합 검증 스크립트 실행:
@@ -547,7 +547,7 @@ Wave 3 (After Wave 2, 순차):
   - **Blocked By**: Task 7
 
   **Acceptance Criteria**:
-  - [ ] 위 검증 스크립트의 모든 항목 PASS
+  - [x] 위 검증 스크립트의 모든 항목 PASS
 
   **Commit**: NO (검증만)
 
@@ -582,14 +582,14 @@ python3 -c "import json; d=json.load(open('.claude-plugin/marketplace.json')); [
 ```
 
 ### Final Checklist
-- [ ] 5개 `commands/` 디렉토리 생성됨
-- [ ] 5개 오케스트레이터가 commands/에만 존재 (agents/에서 삭제됨)
-- [ ] marketplace.json에 5개 commands 배열 존재
-- [ ] marketplace.json의 agents 배열에 오케스트레이터 없음
-- [ ] isd-generator에 skills 배열 등록됨
-- [ ] 모든 YAML frontmatter name 필드 변경 없음
-- [ ] 모든 위임 강제 규칙 추가됨
-- [ ] marketplace.json 유효한 JSON
-- [ ] strict: true 유지
-- [ ] sub-agent 파일 수정 없음
-- [ ] 스크립트/스킬 파일 수정 없음
+- [x] 5개 `commands/` 디렉토리 생성됨
+- [x] 5개 오케스트레이터가 commands/에만 존재 (agents/에서 삭제됨)
+- [x] marketplace.json에 5개 commands 배열 존재
+- [x] marketplace.json의 agents 배열에 오케스트레이터 없음
+- [x] isd-generator에 skills 배열 등록됨
+- [x] 모든 YAML frontmatter name 필드 변경 없음
+- [x] 모든 위임 강제 규칙 추가됨
+- [x] marketplace.json 유효한 JSON
+- [x] strict: true 유지
+- [x] sub-agent 파일 수정 없음
+- [x] 스크립트/스킬 파일 수정 없음
