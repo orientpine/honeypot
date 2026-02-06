@@ -237,62 +237,234 @@ python plugins/paper-style-generator/scripts/style_extractor.py \
 
 ## CLAUDE CODE MARKETPLACE RULES
 
-### Directory Structure (CRITICAL)
+> **Sources**: [Agent Skills Specification](https://agentskills.io/specification), [wshobson/agents](https://github.com/wshobson/agents) (reference implementation with 73 plugins)
+
+### Plugin Root Directory Structure (CRITICAL)
+
+플러그인 루트에는 **오직 아래 4개 폴더만** 허용됩니다. 이 외의 폴더 (`scripts/`, `references/`, `templates/`, `assets/` 등)를 플러그인 루트에 두면 안 됩니다.
+
 ```
-toolbox/
-├── .claude-plugin/
-│   └── marketplace.json    ← ONLY ONE marketplace.json at root
-└── plugins/                ← ALL plugins under this directory
-    └── {plugin-name}/
-        ├── agents/         ← Agent .md files
-        ├── skills/         ← SKILL.md + references/ + assets/
-        └── scripts/        ← Python scripts (optional)
+plugins/{plugin-name}/
+├── .claude-plugin/         ← 플러그인별 plugin.json (플러그인 메타데이터)
+│   └── plugin.json
+├── agents/                 ← 에이전트 .md 파일들
+│   ├── agent-name.md
+│   └── ...
+├── commands/               ← 커맨드(워크플로우) .md 파일들
+│   ├── command-name.md
+│   └── ...
+└── skills/                 ← 스킬 폴더들 (각 스킬은 하위 디렉토리)
+    ├── skill-name-1/
+    │   ├── SKILL.md        ← 필수: 스킬 정의 파일
+    │   ├── references/     ← 선택: 참조 문서
+    │   ├── assets/         ← 선택: 템플릿, 리소스
+    │   └── scripts/        ← 선택: 실행 스크립트
+    └── skill-name-2/
+        └── SKILL.md
 ```
+
+**핵심 규칙:**
+- `scripts/`, `references/`, `assets/`는 **스킬 폴더 내부**에만 위치해야 함 (플러그인 루트 ❌)
+- `skills/` 아래에는 스킬 이름별 **하위 디렉토리**가 오며, 각 디렉토리에 `SKILL.md` 필수
+- 최소 요구사항: 하나의 agent 또는 하나의 command 필요
+
+### Three Component Types
+
+#### 1. Agents (에이전트)
+
+독립적으로 실행되는 전문 AI 에이전트. 별도의 격리된 컨텍스트에서 작동합니다.
+
+```yaml
+---
+name: backend-architect
+description: Expert backend architect specializing in scalable API design, microservices architecture, and distributed systems. Use PROACTIVELY when creating new backend services or APIs.
+model: opus       # opus | sonnet | haiku | inherit
+---
+
+You are a backend system architect specializing in scalable, resilient, and maintainable backend systems and APIs.
+
+## Purpose
+{에이전트의 목적과 전문 분야}
+
+## Capabilities
+{에이전트가 할 수 있는 것들}
+
+## Workflow
+{작업 흐름}
+```
+
+**Agent frontmatter 필드:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | 에이전트 식별자 (hyphen-case) |
+| `description` | Yes | 역할 설명 + 언제 사용해야 하는지. "Use when..." 또는 "Use PROACTIVELY when..." 포함 권장 |
+| `model` | No | `opus` (아키텍처/보안/리뷰), `sonnet` (복잡한 추론), `haiku` (빠른 실행), `inherit` (부모 모델 상속) |
+
+#### 2. Commands (커맨드)
+
+다단계 워크플로우를 오케스트레이션하는 명령어. 여러 에이전트를 조합하여 복잡한 작업을 수행합니다.
+
+```markdown
+Orchestrate end-to-end feature development from requirements to production deployment:
+
+## Configuration Options
+{설정 옵션}
+
+## Phase 1: Discovery & Requirements
+1. Use Task tool with subagent_type="plugin::agent-name"
+   - Prompt: "..."
+   - Expected output: ...
+
+## Phase 2: Implementation
+1. Use Task tool with subagent_type="plugin::agent-name"
+   - Prompt: "..."
+```
+
+**커맨드 특징:**
+- `commands/` 폴더에 `.md` 파일로 저장
+- frontmatter 없음 (에이전트/스킬과 다름)
+- 여러 에이전트를 Task tool로 순차/병렬 호출하는 워크플로우 정의
+- `$ARGUMENTS`로 사용자 입력을 받음
+
+#### 3. Skills (스킬)
+
+에이전트에게 전문 지식을 제공하는 모듈형 패키지. [Agent Skills Specification](https://agentskills.io/specification) 준수.
+
+```yaml
+---
+name: api-design-principles
+description: Master REST and GraphQL API design principles to build intuitive, scalable, and maintainable APIs. Use when designing new APIs, reviewing API specifications, or establishing API design standards.
+---
+
+# API Design Principles
+
+## When to Use This Skill
+- Designing new REST or GraphQL APIs
+- Refactoring existing APIs for better usability
+- ...
+
+## Core Concepts
+{핵심 개념}
+
+## Best Practices
+{모범 사례}
+
+## Resources
+- **references/rest-best-practices.md**: REST API design guide
+- **assets/api-design-checklist.md**: Pre-implementation review checklist
+- **scripts/openapi-generator.py**: Generate OpenAPI specs from code
+```
+
+**SKILL.md frontmatter 필드 (Agent Skills Spec):**
+
+| Field | Required | Constraints |
+|-------|----------|-------------|
+| `name` | Yes | Max 64자. 소문자 + 숫자 + 하이픈만 허용. 부모 디렉토리명과 일치해야 함 |
+| `description` | Yes | Max 1024자. 무엇을 하는지 + 언제 사용하는지 포함. "Use when..." 키워드 권장 |
+| `license` | No | 라이선스 이름 또는 파일 참조 |
+| `compatibility` | No | Max 500자. 환경 요구사항 (필요한 도구, 네트워크 접근 등) |
+| `metadata` | No | 추가 키-값 메타데이터 (author, version 등) |
+| `allowed-tools` | No | 사전 승인된 도구 목록 (실험적) |
+
+**`name` 필드 규칙:**
+- 소문자 알파벳, 숫자, 하이픈만 허용 (`a-z`, `0-9`, `-`)
+- 하이픈으로 시작/끝 불가
+- 연속 하이픈 (`--`) 불가
+- 부모 디렉토리명과 **반드시 일치**해야 함
+
+**Progressive Disclosure (단계적 로딩):**
+
+| 단계 | 로딩 시점 | 토큰 사용량 |
+|------|-----------|------------|
+| **Metadata** | 항상 (시작 시) | ~100 토큰/스킬 |
+| **Instructions** (SKILL.md body) | 스킬 활성화 시 | < 5000 토큰 권장 |
+| **Resources** (references/, assets/, scripts/) | 필요 시에만 | 필요한 만큼 |
+
+SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 분리하세요.
+
+### Per-Plugin plugin.json
+
+각 플러그인에 `.claude-plugin/plugin.json`을 두어 플러그인별 메타데이터를 정의합니다:
+
+```json
+{
+  "name": "backend-development",
+  "version": "1.2.4",
+  "description": "Backend API design, GraphQL architecture, workflow orchestration with Temporal, and test-driven backend development",
+  "author": {
+    "name": "Author Name",
+    "email": "author@example.com"
+  },
+  "license": "MIT"
+}
+```
+
+### Root Marketplace.json Format
+
+```json
+{
+  "name": "marketplace-name",
+  "owner": {
+    "name": "Author Name",
+    "url": "https://github.com/username"
+  },
+  "metadata": {
+    "description": "마켓플레이스 설명",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "plugin-name",
+      "source": "./plugins/plugin-name",
+      "description": "플러그인 설명",
+      "version": "1.0.0",
+      "author": { "name": "Author" },
+      "license": "MIT",
+      "category": "development",
+      "strict": true,
+      "agents": [
+        "./agents/agent-1.md",
+        "./agents/agent-2.md"
+      ],
+      "skills": ["./skills"],
+      "homepage": "https://github.com/..."
+    }
+  ]
+}
+```
+
+**marketplace.json plugin 항목 필드:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | 플러그인 식별자 |
+| `source` | Yes | 플러그인 소스 경로 (상대 경로) |
+| `description` | Yes | 플러그인 설명 |
+| `strict` | Yes | 항상 `true` |
+| `agents` | No | 에이전트 파일 경로 배열 |
+| `skills` | No | 스킬 디렉토리 경로 배열 |
+| `version` | No | 시맨틱 버전 |
+| `author` | No | 저자 정보 |
+| `license` | No | 라이선스 |
+| `category` | No | 카테고리 |
+| `homepage` | No | 홈페이지 URL |
 
 ### Forbidden Patterns
 
 | Pattern | Problem | Solution |
 |---------|---------|----------|
-| Nested `marketplace.json` | Conflicts with root registry | Delete all except root |
-| Nested `.claude-plugin/plugin.json` | Conflicts with marketplace entry | Delete, use root marketplace only |
-| `"skills": ["./skills/"]` (trailing slash) | Path resolution fails | Use `"./skills"` |
-| `"skills": ["./skills/SKILL.md"]` | Wrong format | Use `"./skills"` (directory) |
-| Mixed line endings (CRLF + LF) | YAML parsing fails | Use LF only: `sed -i 's/\r$//' file` |
-| Single quotes in description without wrapping | YAML parsing fails | Wrap in double quotes |
-| `"strict": false` | Manifest conflicts | Always use `"strict": true` |
-
-### SKILL.md Frontmatter Rules
-
-```yaml
-# CORRECT - description with quotes wrapped in double quotes
----
-name: my-skill
-description: "Korean text with '따옴표' inside works fine"
----
-
-# WRONG - unquoted description with single quotes breaks YAML
----
-name: my-skill
-description: Korean text with '따옴표' breaks parsing
----
-```
-
-### Marketplace.json Format
-
-```json
-{
-  "name": "marketplace-name",
-  "plugins": [
-    {
-      "name": "plugin-name",
-      "source": "./plugins/plugin-name",
-      "strict": true,
-      "agents": ["./agents/agent-name.md"],
-      "skills": ["./skills"]
-    }
-  ]
-}
-```
+| 플러그인 루트에 `scripts/` 폴더 | 표준 구조 위반 | `skills/{skill-name}/scripts/`로 이동 |
+| 플러그인 루트에 `references/` 폴더 | 표준 구조 위반 | `skills/{skill-name}/references/`로 이동 |
+| 플러그인 루트에 `templates/` 폴더 | 표준 구조 위반 | `skills/{skill-name}/assets/`로 이동 |
+| 플러그인 루트에 `assets/` 폴더 | 표준 구조 위반 | `skills/{skill-name}/assets/`로 이동 |
+| `"skills": ["./skills/"]` (trailing slash) | Path resolution fails | `"./skills"` 사용 |
+| `"skills": ["./skills/SKILL.md"]` | Wrong format | `"./skills"` (디렉토리만 지정) |
+| Mixed line endings (CRLF + LF) | YAML parsing fails | LF only: `sed -i 's/\r$//' file` |
+| description에 `'` 포함 (unquoted) | YAML parsing fails | 큰따옴표로 감싸기 |
+| `"strict": false` | Manifest conflicts | 항상 `"strict": true` |
+| 대문자 스킬 이름 | Agent Skills Spec 위반 | 소문자 + 하이픈만 사용 |
+| 스킬 이름 ≠ 디렉토리명 | 스킬 매칭 실패 | 반드시 일치시킬 것 |
 
 ### After Any Changes
 
@@ -305,131 +477,32 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorActio
 # Claude Code: /plugin marketplace add {path}
 ```
 
-### Validation Checklist
+### CRITICAL: Agent/Skill/Command File Changes Checklist
 
-- [ ] Only one `.claude-plugin/marketplace.json` at root
-- [ ] No `plugin.json` files anywhere
-- [ ] All plugins under `plugins/` directory
-- [ ] All SKILL.md files have LF-only line endings
-- [ ] Descriptions with special chars wrapped in double quotes
-- [ ] All marketplace entries have `"strict": true`
-- [ ] Paths use `./skills` not `./skills/` or `./skills/SKILL.md`
+**⚠️ MANDATORY: When adding, removing, or renaming agent/skill/command files, you MUST update marketplace.json**
 
-### CRITICAL: Agent/Skill File Changes Checklist
+This is the #1 source of plugin registration issues:
 
-**⚠️ MANDATORY: When adding, removing, or renaming agent/skill files, you MUST update marketplace.json**
+| Action | Steps |
+|--------|-------|
+| **Add agent** | 1. Create `.md` in `agents/` → 2. Add to marketplace.json `"agents"` array → 3. Clear cache |
+| **Remove agent** | 1. Delete/archive `.md` → 2. Remove from marketplace.json → 3. Clear cache |
+| **Add skill** | 1. Create `skills/{name}/SKILL.md` → 2. Ensure `"skills": ["./skills"]` in marketplace.json → 3. Clear cache |
+| **Add command** | 1. Create `.md` in `commands/` → 2. Clear cache (commands are auto-discovered) |
+| **Rename anything** | 1. Rename file → 2. Update marketplace.json → 3. Clear cache |
 
-This is the #1 source of plugin registration issues. Follow this checklist for EVERY agent/skill file operation:
+**Example: Real-World Case (2026-01-10)**
 
-#### When Adding New Agent Files
+Created 6 new agents but forgot to update marketplace.json → Agents invisible in Claude. marketplace.json is NOT auto-synced with filesystem. **ALWAYS update manually.**
 
-1. **Create the agent file:**
-   ```bash
-   # Example: Adding new-agent.md to investments-portfolio
-   vim plugins/investments-portfolio/agents/new-agent.md
-   ```
+### Model Selection Guide
 
-2. **Update marketplace.json IMMEDIATELY:**
-   ```bash
-   # Edit .claude-plugin/marketplace.json
-   # Find the plugin's "agents" array
-   # Add: "./agents/new-agent.md"
-   ```
-
-3. **Verify the update:**
-   ```bash
-   # Check that the new agent is listed
-   grep -A 20 '"investments-portfolio"' .claude-plugin/marketplace.json | grep "new-agent"
-   ```
-
-4. **Clear cache and re-register:**
-   ```powershell
-   Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorAction SilentlyContinue
-   # Then: /plugin marketplace remove honeypot
-   # Then: /plugin marketplace add C:\path\to\toolbox_orientpine
-   ```
-
-#### When Removing Agent Files
-
-1. **Archive or delete the file:**
-   ```bash
-   # Example: Archiving macro-outlook.md
-   mkdir -p plugins/investments-portfolio/agents/archive/
-   mv plugins/investments-portfolio/agents/macro-outlook.md \
-      plugins/investments-portfolio/agents/archive/
-   ```
-
-2. **Update marketplace.json IMMEDIATELY:**
-   ```bash
-   # Edit .claude-plugin/marketplace.json
-   # Remove the line: "./agents/macro-outlook.md"
-   ```
-
-3. **Verify the update:**
-   ```bash
-   # Ensure the removed agent is NOT listed
-   grep -A 20 '"investments-portfolio"' .claude-plugin/marketplace.json | grep -v "macro-outlook"
-   ```
-
-4. **Clear cache and re-register** (same as above)
-
-#### When Renaming Agent Files
-
-1. **Rename the file:**
-   ```bash
-   mv plugins/investments-portfolio/agents/old-name.md \
-      plugins/investments-portfolio/agents/new-name.md
-   ```
-
-2. **Update marketplace.json IMMEDIATELY:**
-   ```bash
-   # Change: "./agents/old-name.md" → "./agents/new-name.md"
-   ```
-
-3. **Verify and re-register** (same as above)
-
-#### Common Mistakes to Avoid
-
-| Mistake | Impact | Prevention |
-|---------|--------|------------|
-| Creating agent file but forgetting marketplace.json | Agent not visible in Claude | Always edit marketplace.json IMMEDIATELY after file creation |
-| Deleting agent file but leaving it in marketplace.json | Plugin fails to load | Always remove from marketplace.json IMMEDIATELY after deletion |
-| Updating multiple agents but only updating some in marketplace.json | Partial registration, confusing behavior | Update marketplace.json for EVERY file change |
-| Not clearing cache after marketplace.json changes | Old registration persists | ALWAYS clear cache + re-register |
-
-#### Example: Real-World Case (2026-01-10)
-
-**Problem:** Created 6 new agents (index-fetcher, macro-critic, rate/sector/risk-analyst, macro-synthesizer) and archived macro-outlook.md, but forgot to update marketplace.json.
-
-**Symptom:** New agents not visible in Claude, old macro-outlook.md still registered.
-
-**Fix:**
-```json
-// Before (WRONG):
-"agents": [
-  "./agents/macro-outlook.md",  // ← Archived but still listed
-  "./agents/fund-portfolio.md",
-  "./agents/compliance-checker.md",
-  "./agents/output-critic.md",
-  "./agents/leadership-analyst.md"
-]
-
-// After (CORRECT):
-"agents": [
-  "./agents/index-fetcher.md",        // ← Added
-  "./agents/macro-critic.md",         // ← Added
-  "./agents/rate-analyst.md",         // ← Added
-  "./agents/sector-analyst.md",       // ← Added
-  "./agents/risk-analyst.md",         // ← Added
-  "./agents/macro-synthesizer.md",    // ← Added
-  "./agents/fund-portfolio.md",
-  "./agents/compliance-checker.md",
-  "./agents/output-critic.md",
-  "./agents/leadership-analyst.md"
-]
-```
-
-**Lesson:** marketplace.json is NOT automatically synced with file system. You MUST manually update it.
+| Model | Use Case | 예시 |
+|-------|----------|------|
+| `opus` | 아키텍처 설계, 보안 감사, 코드 리뷰 | backend-architect, security-auditor |
+| `sonnet` | 복잡한 추론, 기술 선택, 다단계 분석 | python-pro, typescript-pro |
+| `haiku` | 빠른 실행, 정형화된 작업, 코드 생성 | test-automator, scaffold-generator |
+| `inherit` | 부모 모델 상속 (기본값) | 대부분의 범용 에이전트 |
 
 ---
 
@@ -439,141 +512,116 @@ This is the #1 source of plugin registration issues. Follow this checklist for E
 
 ### Plugin Types
 
-| 유형 | 구조 | 용도 | 예시 |
-|------|------|------|------|
-| **Skill 기반** | `skills/SKILL.md` + `references/` + `assets/` | 단일 작업 워크플로우 | chapter1-generator, figure-generator |
-| **Agent 기반** | `agents/*.md` | Multi-Agent 협업 시스템 | investments-portfolio, general-agents |
-| **Hybrid** | `skills/` + `scripts/` | 스킬 + 외부 API/스크립트 연동 | slide-image-generator |
+| 유형 | 포함 폴더 | 용도 | 예시 |
+|------|-----------|------|------|
+| **Agent only** | `agents/` | 전문 에이전트 모음 | general-agents, macro-analysis |
+| **Skill only** | `skills/` | 전문 지식/절차 제공 | hwpx-converter |
+| **Agent + Skill** | `agents/` + `skills/` | 에이전트 + 전문 지식 | stock-consultation, investments-portfolio |
+| **Agent + Command** | `agents/` + `commands/` | 에이전트 + 워크플로우 오케스트레이션 | backend-development |
+| **Full** | `agents/` + `commands/` + `skills/` | 완전한 플러그인 | agent-teams |
 
 ### Category System
 
-플러그인 등록 시 다음 카테고리 중 선택:
-
 | Category | 설명 | 적합한 플러그인 |
 |----------|------|----------------|
-| `documentation` | 문서 생성/처리 | ISD chapter generators, orchestrator |
-| `presentations` | 슬라이드/이미지 생성 | figure-generator, slide-prompt-generator |
-| `finance` | 금융/투자 분석 | investments-portfolio |
-| `utilities` | 범용 도구 | general-agents (interview 등) |
-| `research` | 연구/조사 도구 | 데이터 수집, 분석 스킬 |
-| `automation` | 자동화 워크플로우 | 반복 작업 자동화 |
+| `documentation` | 문서 생성/처리 | ISD chapter generators, report-generator |
+| `development` | 소프트웨어 개발 | backend, frontend, full-stack |
+| `finance` | 금융/투자 분석 | investments-portfolio, stock-consultation |
+| `utilities` | 범용 도구 | general-agents |
+| `research` | 연구/조사 도구 | paper-style-generator |
+| `workflows` | 워크플로우 오케스트레이션 | orchestrators |
+| `quality` | 코드 품질/리뷰 | code-review |
+| `infrastructure` | 인프라/배포 | CI/CD, cloud |
+| `security` | 보안 | scanning, compliance |
 
 ### Step-by-Step Guide
 
-#### Level 1: Simple Skill (기본)
+#### Level 1: Agent-Only Plugin (기본)
 
-**디렉토리 구조:**
 ```
 plugins/{plugin-name}/
+├── .claude-plugin/
+│   └── plugin.json
+└── agents/
+    ├── agent-1.md
+    └── agent-2.md
+```
+
+#### Level 2: Agent + Skill Plugin (표준)
+
+```
+plugins/{plugin-name}/
+├── .claude-plugin/
+│   └── plugin.json
+├── agents/
+│   ├── main-agent.md
+│   └── support-agent.md
 └── skills/
-    ├── SKILL.md              # 메인 스킬 정의 (필수)
-    └── references/           # 참조 문서 (선택)
-        └── example.md
+    ├── domain-knowledge/
+    │   ├── SKILL.md
+    │   └── references/
+    │       └── guide.md
+    └── workflow-patterns/
+        ├── SKILL.md
+        └── assets/
+            └── template.md
 ```
 
-**SKILL.md 템플릿:**
-```yaml
----
-name: {skill-name}
-description: "{스킬 설명. 작은따옴표가 포함되면 반드시 큰따옴표로 감싸기}"
----
+#### Level 3: Full Plugin with Commands (고급)
 
-# {스킬 제목}
-
-## Overview
-{스킬의 목적과 사용 시점 설명}
-
-## 사용자 입력 스키마
-| 항목 | 설명 | 필수 |
-|------|------|:----:|
-| ... | ... | O/X |
-
-## Workflow
-{단계별 작업 흐름}
-
-## Resources
-- `references/`: 참조 문서
-```
-
-**marketplace.json 등록:**
-```json
-{
-  "name": "{plugin-name}",
-  "source": "./plugins/{plugin-name}",
-  "description": "{플러그인 설명}",
-  "version": "1.0.0",
-  "category": "{category}",
-  "strict": true,
-  "skills": ["./skills"]
-}
-```
-
-#### Level 2: Standard Skill (중간)
-
-**디렉토리 구조:**
 ```
 plugins/{plugin-name}/
+├── .claude-plugin/
+│   └── plugin.json
+├── agents/
+│   ├── architect.md
+│   ├── implementer.md
+│   └── reviewer.md
+├── commands/
+│   └── full-workflow.md
 └── skills/
-    ├── SKILL.md
-    ├── references/
-    │   ├── document_template.md
-    │   ├── example_1.md
-    │   └── example_2.md
-    └── assets/
-        └── output_template/
-            ├── main_output.md
-            └── verification.md
+    ├── design-patterns/
+    │   ├── SKILL.md
+    │   ├── references/
+    │   │   ├── pattern-catalog.md
+    │   │   └── anti-patterns.md
+    │   ├── assets/
+    │   │   ├── template.py
+    │   │   └── checklist.md
+    │   └── scripts/
+    │       └── generator.py
+    └── testing-patterns/
+        └── SKILL.md
 ```
 
-**추가 요소:**
-- `references/`: 작성 가이드, 예시 문서 2개 이상
-- `assets/output_template/`: 출력 템플릿
-- 검증문서 생성 단계 포함 (chapter generators 참조)
+#### Level 4: Skill with Scripts (외부 API 연동)
 
-**SKILL.md 확장 섹션:**
-```markdown
-## 검증문서 템플릿
-{검증문서 구조 정의}
+스크립트가 필요한 경우, **스킬 폴더 내부**에 `scripts/` 배치:
 
-## Writing Guidelines
-{작성 규칙}
-
-## Resources
-### references/
-- `document_template.md`: 문서 템플릿
-- `example_1.md`: 예시 1
-- `example_2.md`: 예시 2
-
-### assets/
-- `output_template/main_output.md`: 출력 템플릿
-```
-
-#### Level 3: Advanced Skill with Scripts (복잡)
-
-**디렉토리 구조:**
 ```
 plugins/{plugin-name}/
-├── skills/
-│   ├── SKILL.md
-│   ├── references/
-│   └── assets/
-│       └── output_template/
-└── scripts/
-    └── main_script.py
+├── .claude-plugin/
+│   └── plugin.json
+├── agents/
+│   └── main-agent.md
+└── skills/
+    └── image-generation/
+        ├── SKILL.md
+        ├── scripts/
+        │   └── generate_images.py
+        └── references/
+            └── api-guide.md
 ```
 
 **스크립트 작성 규칙:**
 ```python
-# scripts/main_script.py
+# skills/{skill-name}/scripts/main_script.py
 import os
 import argparse
 from dotenv import load_dotenv
 
-# .env 파일 로드 (프로젝트 루트의 .env 자동 인식)
 load_dotenv()
-
-# API 키는 환경변수에서 로드 (하드코딩 금지)
-API_KEY = os.environ.get("GEMINI_API_KEY")
+API_KEY = os.environ.get("GEMINI_API_KEY")  # 환경변수에서 로드 (하드코딩 금지)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -586,117 +634,136 @@ if __name__ == "__main__":
     main()
 ```
 
-**SKILL.md에 스크립트 연동 섹션 추가:**
-```markdown
-## Script Usage
+### File Templates
 
-```bash
-# 환경 변수 설정
-export GEMINI_API_KEY="your-api-key"
-
-# 스크립트 실행
-python plugins/{plugin-name}/scripts/main_script.py \
-  --input-dir [path] \
-  --output-dir [path]
-```
+**plugin.json:**
+```json
+{
+  "name": "{plugin-name}",
+  "version": "1.0.0",
+  "description": "{플러그인 설명}",
+  "author": { "name": "Author Name" },
+  "license": "MIT"
+}
 ```
 
-#### Level 4: Agent Plugin
-
-**디렉토리 구조:**
-```
-plugins/{plugin-name}/
-└── agents/
-    ├── coordinator.md        # 조정자 에이전트
-    ├── agent-1.md            # 전문 에이전트 1
-    ├── agent-2.md            # 전문 에이전트 2
-    └── critic.md             # 검증 에이전트
-```
-
-**Agent 파일 템플릿:**
+**Agent .md:**
 ```yaml
 ---
 name: {agent-name}
-description: {에이전트 역할 설명}
-tools: Read, Glob, Grep, Write, Edit, Bash, Task, AskUserQuestion
-model: opus
+description: "{역할 설명}. Use when {사용 시점}."
+model: sonnet
 ---
 
-# {에이전트 제목}
+You are a {역할} specializing in {전문 분야}.
 
-## Role
-{에이전트의 역할과 책임}
+## Purpose
+{에이전트의 목적}
+
+## Capabilities
+{할 수 있는 것들}
 
 ## Workflow
 {작업 흐름}
-
-## Input/Output
-| 입력 | 출력 |
-|------|------|
-| ... | ... |
 
 ## Constraints
 {제약 조건}
 ```
 
-**marketplace.json 등록 (Agent):**
-```json
-{
-  "name": "{plugin-name}",
-  "source": "./plugins/{plugin-name}",
-  "description": "{플러그인 설명}",
-  "version": "1.0.0",
-  "category": "{category}",
-  "strict": true,
-  "agents": [
-    "./agents/coordinator.md",
-    "./agents/agent-1.md",
-    "./agents/agent-2.md",
-    "./agents/critic.md"
-  ]
-}
+**SKILL.md:**
+```yaml
+---
+name: {skill-name}
+description: "{스킬 설명}. Use when {사용 시점}."
+---
+
+# {스킬 제목}
+
+## When to Use This Skill
+- {사용 시점 1}
+- {사용 시점 2}
+
+## Core Concepts
+{핵심 개념}
+
+## Step-by-Step Instructions
+{단계별 지침}
+
+## Best Practices
+{모범 사례}
+
+## Resources
+- **references/guide.md**: 상세 가이드
+- **assets/template.md**: 출력 템플릿
+```
+
+**Command .md:**
+```markdown
+Orchestrate {workflow description}:
+
+## Configuration Options
+{설정 옵션}
+
+## Phase 1: {Phase Name}
+1. Use Task tool with subagent_type="{plugin}::{agent}"
+   - Prompt: "{작업 지시}"
+   - Expected output: {기대 출력}
+
+## Phase 2: {Phase Name}
+...
 ```
 
 ### Marketplace Registration Checklist
 
 새 플러그인 추가 후 반드시 확인:
 
+- [ ] `plugins/{name}/.claude-plugin/plugin.json` 생성
 - [ ] `.claude-plugin/marketplace.json`에 플러그인 항목 추가
 - [ ] `"strict": true` 설정
-- [ ] `"skills": ["./skills"]` 또는 `"agents": ["./agents/*.md"]` 경로 정확히 지정
+- [ ] 플러그인 루트에 `agents/`, `commands/`, `skills/` 이외 폴더 없음
+- [ ] 모든 스킬이 `skills/{skill-name}/SKILL.md` 구조
+- [ ] 스킬 name 필드 = 디렉토리 이름 (소문자 + 하이픈)
+- [ ] 모든 description에 "Use when..." 키워드 포함
 - [ ] SKILL.md/Agent.md의 description이 큰따옴표로 감싸져 있음
 - [ ] 모든 .md 파일이 LF 줄바꿈 사용 (CRLF 금지)
-- [ ] 플러그인 캐시 클리어:
-  ```powershell
-  Remove-Item -Recurse -Force "$env:USERPROFILE\.claude\plugins\cache" -ErrorAction SilentlyContinue
-  ```
-- [ ] 마켓플레이스 재등록:
-  ```
-  /plugin marketplace remove toolbox-marketplace
-  /plugin marketplace add C:\Users\...\toolbox_orientpine
-  ```
+- [ ] 플러그인 캐시 클리어 후 재등록
 
 ### Common Mistakes to Avoid
 
 | 실수 | 문제 | 해결 |
 |------|------|------|
+| 플러그인 루트에 `scripts/` 배치 | 비표준 구조 | `skills/{skill}/scripts/`로 이동 |
+| 플러그인 루트에 `references/` 배치 | 비표준 구조 | `skills/{skill}/references/`로 이동 |
 | `"skills": ["./skills/"]` | trailing slash | `"./skills"` 사용 |
 | `"skills": ["./skills/SKILL.md"]` | 파일 직접 지정 | 디렉토리만 지정 |
 | description에 `'` 포함 | YAML 파싱 실패 | 전체를 `"..."` 로 감싸기 |
 | CRLF 줄바꿈 | YAML 파싱 실패 | LF로 변환 |
-| 중첩된 marketplace.json | 충돌 | 루트 하나만 유지 |
-| plugin.json 파일 존재 | 충돌 | 삭제 |
+| 스킬 name에 대문자 사용 | Spec 위반 | 소문자만 사용 |
+| plugin.json 미생성 | 플러그인 메타데이터 누락 | 각 플러그인에 생성 |
 
-### Template Files Location
+### Template Files Location (Reference Implementations)
 
-새 스킬 생성 시 참조할 수 있는 템플릿:
+| 복잡도 | 참조 저장소 | 위치 |
+|--------|------------|------|
+| Agent only | wshobson/agents | `plugins/arm-cortex-microcontrollers/` |
+| Agent + Command | wshobson/agents | `plugins/backend-development/` |
+| Agent + Skill | wshobson/agents | `plugins/blockchain-web3/` |
+| Full (Agent + Command + Skill) | wshobson/agents | `plugins/agent-teams/` |
 
-| 복잡도 | 참조 플러그인 | 위치 |
-|--------|--------------|------|
-| Simple | visual-generator:prompt-concept | `plugins/visual-generator/skills/prompt-concept/` |
-| Standard | isd-generator (Agent) | `plugins/isd-generator/agents/chapter1.md` |
-| Advanced | isd-generator:figure (Agent) | `plugins/isd-generator/agents/figure.md` |
-| Agent | investments-portfolio | `plugins/investments-portfolio/agents/` |
+### Current Codebase Migration Notes
+
+> **⚠️ 주의**: 현재 이 프로젝트의 일부 플러그인은 표준 구조를 따르지 않습니다.
+
+**비표준 구조를 가진 플러그인:**
+
+| Plugin | 비표준 폴더 | 마이그레이션 방향 |
+|--------|------------|-----------------|
+| `isd-generator` | `references/`, `assets/`, `scripts/` at root | 에이전트 전용 구조로 유지하되, 참조자료는 스킬로 분리 검토 |
+| `visual-generator` | `scripts/` at root | `skills/{skill}/scripts/`로 이동 |
+| `paper-style-generator` | `scripts/`, `templates/`, `references/` at root | 스킬 구조로 재구성 검토 |
+| `report-generator` | `references/`, `assets/` at root | 스킬 구조로 재구성 검토 |
+
+이 플러그인들은 마켓플레이스 등록 자체는 동작하지만, Claude Code 생태계의 표준 구조와 호환성을 위해 향후 마이그레이션을 권장합니다.
 
 ---
 
