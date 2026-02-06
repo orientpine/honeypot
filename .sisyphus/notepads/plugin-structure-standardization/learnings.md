@@ -169,3 +169,38 @@
 - MUST NOT DO section placement: Before metadata section
 - Delegation rules format: Checkbox list with reason in parentheses
 - Sub-agent names referenced in rules match actual agent filenames
+
+## 2026-02-06: Marketplace.json Atomic Update (Task 7)
+
+### Changes Applied
+Successfully updated `.claude-plugin/marketplace.json` with 6 atomic changes in single Edit call:
+
+1. **isd-generator**: Added `"commands": ["./commands/isd-generate.md"]`, removed orchestrator from agents, added `"skills": ["./skills"]`
+2. **report-generator**: Added `"commands": ["./commands/report-generate.md"]`, removed orchestrator from agents
+3. **paper-style-generator**: Added `"commands": ["./commands/paper-style-generate.md"]`, removed orchestrator from agents
+4. **investments-portfolio**: Added `"commands": ["./commands/portfolio-analyze.md"]`, removed portfolio-orchestrator from agents
+5. **stock-consultation**: Added `"commands": ["./commands/stock-consult.md"]`, removed stock-consultant from agents
+6. **visual-generator**: Unchanged (already had commands)
+
+### Verification
+- ✓ JSON valid (python3 -m json.tool)
+- ✓ All 5 plugins have commands arrays
+- ✓ All orchestrators removed from agents arrays
+- ✓ isd-generator has skills array
+- ✓ All other fields preserved
+- ✓ "strict": true maintained for all plugins
+
+### Key Learning
+Atomic JSON edits prevent intermediate invalid states. Single Edit call with all 6 changes ensures marketplace.json never becomes invalid during update process. This is critical since 11 plugins depend on this file.
+
+### Pattern Applied
+```json
+{
+  "name": "{plugin-name}",
+  "source": "./plugins/{plugin-name}",
+  "commands": ["./commands/{name}.md"],
+  "agents": [/* orchestrator removed */],
+  "skills": ["./skills"],  // isd-generator only
+  "strict": true
+}
+```

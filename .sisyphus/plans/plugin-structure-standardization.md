@@ -412,7 +412,7 @@ Wave 3 (After Wave 2, 순차):
 
 ---
 
-- [ ] 7. marketplace.json 단일 원자적 수정 (6개 변경사항)
+- [x] 7. marketplace.json 단일 원자적 수정 (6개 변경사항)
 
   **What to do**:
   marketplace.json을 **한 번에** 수정하여 6개 변경사항을 적용:
@@ -465,8 +465,8 @@ Wave 3 (After Wave 2, 순차):
   - 중간 수정 상태에서 파일 참조가 없는 항목이 있으면 플러그인 로드 실패 가능
 
   **Acceptance Criteria**:
-  - [ ] JSON 유효성: `python3 -c "import json; json.load(open('.claude-plugin/marketplace.json')); print('VALID')"`
-  - [ ] 5개 plugins에 commands 배열 존재:
+  - [x] JSON 유효성: `python3 -c "import json; json.load(open('.claude-plugin/marketplace.json')); print('VALID')"`
+  - [x] 5개 plugins에 commands 배열 존재:
     ```
     python3 -c "
     import json
@@ -480,7 +480,7 @@ Wave 3 (After Wave 2, 순차):
             print(f\"{p['name']}: commands={'PASS' if has_cmd else 'FAIL'}, orch_removed={'PASS' if no_orch else 'FAIL'}\")
     "
     ```
-  - [ ] isd-generator skills 등록됨:
+  - [x] isd-generator skills 등록됨:
     ```
     python3 -c "
     import json

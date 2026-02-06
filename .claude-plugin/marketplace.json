@@ -24,15 +24,16 @@
       "keywords": ["isd", "research-proposal", "documentation", "orchestration", "chapter-generator"],
       "category": "documentation",
       "strict": true,
+      "commands": ["./commands/isd-generate.md"],
       "agents": [
-        "./agents/orchestrator.md",
         "./agents/chapter1.md",
         "./agents/chapter2.md",
         "./agents/chapter3.md",
         "./agents/chapter4.md",
         "./agents/chapter5.md",
         "./agents/figure.md"
-      ]
+      ],
+      "skills": ["./skills"]
     },
     {
       "name": "visual-generator",
@@ -73,8 +74,8 @@
       "keywords": ["finance", "portfolio", "dc-pension", "multi-agent", "hallucination-prevention"],
       "category": "finance",
       "strict": true,
+      "commands": ["./commands/portfolio-analyze.md"],
       "agents": [
-        "./agents/portfolio-orchestrator.md",
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
         "./agents/output-critic.md",
@@ -139,8 +140,8 @@
       "keywords": ["paper-writing", "style-analysis", "skill-generator", "mineru", "pdf-to-markdown", "academic-writing"],
       "category": "documentation",
       "strict": true,
+      "commands": ["./commands/paper-style-generate.md"],
       "agents": [
-        "./agents/orchestrator.md",
         "./agents/pdf-converter.md",
         "./agents/style-analyzer.md",
         "./agents/skill-generator.md"
@@ -161,8 +162,8 @@
       "keywords": ["research-report", "documentation", "4-step-pattern", "automatic-writing", "phd-level"],
       "category": "documentation",
       "strict": true,
+      "commands": ["./commands/report-generate.md"],
       "agents": [
-        "./agents/orchestrator.md",
         "./agents/input-analyzer.md",
         "./agents/content-mapper.md",
         "./agents/chapter-writer.md",
@@ -184,8 +185,8 @@
       "keywords": ["stock-analysis", "etf-analysis", "valuation", "multi-agent", "bogle-vanguard", "hallucination-prevention"],
       "category": "finance",
       "strict": true,
+      "commands": ["./commands/stock-consult.md"],
       "agents": [
-        "./agents/stock-consultant.md",
         "./agents/materials-organizer.md",
         "./agents/stock-screener.md",
         "./agents/stock-valuation.md",
