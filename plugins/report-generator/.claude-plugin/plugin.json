@@ -1,0 +1,10 @@
+{
+  "name": "report-generator",
+  "version": "1.0.0",
+  "description": "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 플러그인.",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

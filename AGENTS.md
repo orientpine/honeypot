@@ -211,7 +211,7 @@ toolbox/
 
 ```bash
 # Generate images from prompts (requires google-genai, Pillow)
-python plugins/isd-generator/scripts/generate_images.py \
+python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
   --prompts-dir [path]/prompts/ \
   --output-dir [path]/figures/
 
@@ -220,17 +220,17 @@ python plugins/visual-generator/scripts/generate_slide_images.py \
   --prompts-dir [path] --output-dir [path]
 
 # Paper Style Generator: Convert PDFs to Markdown (requires MinerU)
-python plugins/paper-style-generator/scripts/mineru_converter.py \
+python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/mineru_converter.py \
   --input-dir [pdf_folder] \
   --output-dir [md_output_folder]
 
 # Paper Style Generator: Post-process and tag sections
-python plugins/paper-style-generator/scripts/md_postprocessor.py \
+python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/md_postprocessor.py \
   --input-dir [md_folder] \
   --output-dir [tagged_output_folder]
 
 # Paper Style Generator: Extract style patterns
-python plugins/paper-style-generator/scripts/style_extractor.py \
+python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/style_extractor.py \
   --input-dir [tagged_md_folder] \
   --output-file [analysis.json]
 ```
@@ -399,6 +399,10 @@ SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 �
   "license": "MIT"
 }
 ```
+
+**Project policy (MANDATORY):**
+- Every `plugins/{plugin}/.claude-plugin/plugin.json` MUST include `author.email`.
+- In this repository, set `author.email` to `orientpine@gmail.com`.
 
 ### Root Marketplace.json Format
 

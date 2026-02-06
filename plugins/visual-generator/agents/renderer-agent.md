@@ -99,11 +99,8 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
     |   +-- 미설정 시 즉시 중단, 사용자에게 안내
     |
     +-- Step 3-2. 렌더링 스크립트 실행
-    |   +-- 스크립트 경로: plugins/visual-generator/scripts/generate_slide_images.py
-    |   +-- 명령어:
-    |       python plugins/visual-generator/scripts/generate_slide_images.py \
-    |         --prompts-dir {prompts_path} \
-    |         --output-dir {output_path}
+    |   +-- slide-renderer 스킬의 scripts/generate_slide_images.py 사용
+    |   +-- 실행 방법 및 환경 요구사항은 slide-renderer 스킬 참조
     |
     +-- Step 3-3. 스크립트 출력 모니터링
         +-- [OK] 메시지: 성공 카운트 증가
@@ -177,69 +174,9 @@ grep -E "\(#[A-Fa-f0-9]{6}\)" prompt.md || echo "PASS"
 grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
 ```
 
-## Script Invocation
+## Script & Error Handling
 
-### 기본 실행
-
-```bash
-python plugins/visual-generator/scripts/generate_slide_images.py \
-  --prompts-dir [프롬프트 폴더 경로] \
-  --output-dir [이미지 출력 폴더 경로]
-```
-
-### 환경 요구사항
-
-| 항목 | 설명 |
-|------|------|
-| Python | 3.8+ |
-| 패키지 | google-genai, Pillow |
-| 환경변수 | `GEMINI_API_KEY` 필수 |
-| 모델 | gemini-3-pro-image-preview |
-| 출력 | 4K, 16:9 비율 PNG |
-
-### 스크립트 출력 해석
-
-| 출력 패턴 | 의미 | 처리 |
-|-----------|------|------|
-| `[OK] Saved:` | 이미지 생성 성공 | 성공 카운트 증가 |
-| `[FAIL] Failed:` | 이미지 생성 실패 | 재시도 대상 추가 |
-| `[SKIP] Already exists:` | 파일 이미 존재 | 스킵 카운트 증가 |
-| `[에러]` | API 오류 또는 시스템 오류 | 로그 기록 |
-
-## Error Handling
-
-### 에러 유형별 처리
-
-| 에러 유형 | 처리 방법 | 최대 재시도 |
-|-----------|-----------|:-----------:|
-| GEMINI_API_KEY 미설정 | 즉시 중단, 사용자 안내 | 0 |
-| API 타임아웃 | 5초 대기 후 재시도 | 3 |
-| API 응답 없음 | 5초 대기 후 재시도 | 3 |
-| 이미지 데이터 없음 | 5초 대기 후 재시도 | 3 |
-| 파일 쓰기 오류 | 권한 확인, 사용자 안내 | 0 |
-| 프롬프트 검증 실패 | 해당 프롬프트 스킵, 보고서 기록 | 0 |
-
-### 재시도 로직
-
-```
-[재시도 플로우]
-    |
-    +-- 실패 발생
-    |   +-- 실패 사유 확인 (API 타임아웃, 응답 없음, 데이터 없음)
-    |
-    +-- 재시도 가능 여부 판단
-    |   +-- 현재 시도 횟수 < 3: 재시도
-    |   +-- 현재 시도 횟수 >= 3: 최종 실패 처리
-    |
-    +-- 재시도 실행
-    |   +-- 5초 대기
-    |   +-- 해당 프롬프트만 다시 스크립트 실행
-    |   +-- (스크립트 내부에서 기존 성공 파일은 자동 스킵)
-    |
-    +-- 결과 기록
-        +-- 성공: 성공 목록에 추가
-        +-- 실패: 최종 실패 목록에 추가, 사유 기록
-```
+스크립트 실행 방법, 환경 요구사항, 출력 해석, 에러 처리는 모두 `slide-renderer` 스킬에 정의되어 있습니다. 스킬이 컨텍스트에 자동 로드되므로 해당 내용을 참조하세요.
 
 ## Output Structure
 
@@ -297,12 +234,12 @@ python plugins/visual-generator/scripts/generate_slide_images.py \
 - [ ] API 타임아웃 시 최대 3회 재시도 (5초 간격)
 - [ ] 모든 실패 사유를 generation_report.md에 기록
 - [ ] 검증 실패 프롬프트도 보고서에 별도 기록
-- [ ] 스크립트 경로: `plugins/visual-generator/scripts/generate_slide_images.py`
+- [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용
 
 ## MUST NOT DO
 
 - [ ] 검증 실패 프롬프트를 수정하지 않음 (플래그만 기록, 수정은 prompt-designer 책임)
-- [ ] `${CLAUDE_PLUGIN_ROOT}` 변수 사용하지 않음 (프로젝트 루트 기준 상대 경로 사용)
+- [ ] `${CLAUDE_PLUGIN_ROOT}` 변수 사용하지 않음 (slide-renderer 스킬 경로 기준 사용)
 - [ ] 재시도 횟수 3회 초과 시 무한 루프 방지
 - [ ] 환경변수 미설정 상태로 스크립트 실행하지 않음
 - [ ] 에러 로그 없이 실패 처리하지 않음

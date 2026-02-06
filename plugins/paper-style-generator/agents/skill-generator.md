@@ -255,7 +255,7 @@ description: "{Name} 스타일의 논문 전체 자동 생성 오케스트레이
 ```python
 from jinja2 import Environment, FileSystemLoader
 
-env = Environment(loader=FileSystemLoader('templates'))
+env = Environment(loader=FileSystemLoader('skills/paper-style-toolkit/assets'))
 template = env.get_template('skill_methodology.md.j2')
 
 output = template.render(
@@ -270,7 +270,7 @@ output = template.render(
 ### 4.2 템플릿 파일 구조 (17개 템플릿)
 
 ```
-templates/
+skills/paper-style-toolkit/assets/
 ├── marketplace_root.json.j2            # 1. my-marketplace 초기화 (plugins[] 빈 배열)
 ├── marketplace_hybrid.json.j2          # 2. 플러그인 엔트리 (plugins[] 배열 항목)
 ├── agent_orchestrator.md.j2            # 3. Orchestrator 에이전트

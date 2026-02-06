@@ -1,0 +1,10 @@
+{
+  "name": "paper-style-generator",
+  "version": "1.0.0",
+  "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

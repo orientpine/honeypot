@@ -254,8 +254,8 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
     |   +-- Read(slide_plan_path)
     |   +-- 슬라이드별 구성 계획 파싱
     |
-    +-- Step 1-3. 테마 파일 로드
-        +-- Read(plugins/visual-generator/references/themes/{style}.md)
+    +-- Step 1-3. 테마 팔레트 참조
+        +-- theme-{style} 스킬이 컨텍스트에 자동 로드됨 (Read 불필요)
         +-- 해당 theme의 색상 팔레트 추출
 
 [Phase 2: 슬라이드별 프롬프트 생성]
@@ -311,16 +311,16 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 
 ## Theme Reference
 
-테마 팔레트는 다음 파일에서 로드:
+테마 팔레트는 개별 `theme-{style}` 스킬에서 자동 로드됩니다:
 
-| 스타일 | 파일 경로 |
-|--------|----------|
-| concept | `plugins/visual-generator/references/themes/concept.md` |
-| gov | `plugins/visual-generator/references/themes/gov.md` |
-| seminar | `plugins/visual-generator/references/themes/seminar.md` |
-| whatif | `plugins/visual-generator/references/themes/whatif.md` |
-| pitch | `plugins/visual-generator/references/themes/pitch.md` |
-| comparison | `plugins/visual-generator/references/themes/comparison.md` |
+| 스타일 | 스킬명 | 설명 |
+|--------|--------|------|
+| concept | `theme-concept` | TED 미니멀, 9종 무드 팔레트 |
+| gov | `theme-gov` | 정부/공공기관, 9종 무드 팔레트 |
+| seminar | `theme-seminar` | 세미나/발표, 9종 무드 팔레트 |
+| whatif | `theme-whatif` | 미래 비전 스냅샷, 단일 팔레트 + 장면 가이드 |
+| pitch | `theme-pitch` | 피치덱, 단일 팔레트 + Z-Pattern 가이드 |
+| comparison | `theme-comparison` | Before/After, 단일 팔레트 + 대비 가이드 |
 
 ### 테마 목록 (9종)
 

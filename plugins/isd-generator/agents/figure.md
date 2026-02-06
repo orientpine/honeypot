@@ -88,7 +88,7 @@ skills: [figure-guide, image-reference-guide]
     |
     +-- Step 3-1. Python 스크립트 실행 준비
     +-- Step 3-2. 이미지 생성 스크립트 실행 (Bash 도구)
-        - python plugins/isd-generator/scripts/generate_images.py \
+        - python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
             --prompts-dir [output]/prompts/ \
             --output-dir [output]/figures/
     +-- Step 3-3. 생성 결과 확인
@@ -179,12 +179,12 @@ output/[프로젝트명]/
 
 ### assets/ (Read 도구로 로드)
 
-- `plugins/isd-generator/assets/output_templates/figure_generation_report.md`: 실행 보고서 템플릿
-- `plugins/isd-generator/assets/output_templates/prompt_template.md`: 개별 프롬프트 기본 템플릿
+- `plugins/isd-generator/skills/core-resources/assets/output_templates/figure_generation_report.md`: 실행 보고서 템플릿
+- `plugins/isd-generator/skills/core-resources/assets/output_templates/prompt_template.md`: 개별 프롬프트 기본 템플릿
 
 ### scripts/ (Bash 도구로 실행)
 
-- `plugins/isd-generator/scripts/generate_images.py`: Gemini API 이미지 생성 스크립트
+- `plugins/isd-generator/skills/core-resources/scripts/generate_images.py`: Gemini API 이미지 생성 스크립트
 
 ---
 

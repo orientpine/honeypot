@@ -1,5 +1,5 @@
 ---
-name: hwpx-converter
+name: converter
 description: "Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반."
 ---
 

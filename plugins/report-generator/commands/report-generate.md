@@ -317,5 +317,5 @@ report-generator로 보고서를 자동 생성해줘. (auto_mode)
 
 ### 출력 템플릿 (Read 도구로 로드)
 
-- `assets/output_templates/report_structure.md`: 보고서 구조 템플릿
-- `assets/output_templates/execution_report.md`: 실행 보고서 템플릿
+- `skills/chapter-structure/assets/output_templates/report_structure.md`: 보고서 구조 템플릿
+- `skills/chapter-structure/assets/output_templates/execution_report.md`: 실행 보고서 템플릿

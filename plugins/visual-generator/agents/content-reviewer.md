@@ -379,14 +379,14 @@ Task(
 
 ## Resources
 
-### 참조 파일 (Read 도구로 로드)
+### 등록된 스킬 (컨텍스트에 자동 로드)
 
-| 경로 | 설명 |
-|------|------|
-| `plugins/visual-generator/skills/layout-types/SKILL.md` | 24종 레이아웃 유형 정의 |
-| `plugins/visual-generator/references/themes/concept.md` | concept 스타일 테마 (9종) |
-| `plugins/visual-generator/references/themes/gov.md` | gov 스타일 테마 (9종) |
-| `plugins/visual-generator/references/themes/seminar.md` | seminar 스타일 테마 (9종) |
-| `plugins/visual-generator/references/themes/whatif.md` | whatif 목적 테마 (단일 팔레트) |
-| `plugins/visual-generator/references/themes/pitch.md` | pitch 목적 테마 (단일 팔레트) |
-| `plugins/visual-generator/references/themes/comparison.md` | comparison 목적 테마 (단일 팔레트) |
+| 스킬명 | 설명 |
+|--------|------|
+| `layout-types` | 24종 레이아웃 유형 정의 |
+| `theme-concept` | concept 스타일 테마 (TED 미니멀, 9종 무드 팔레트) |
+| `theme-gov` | gov 스타일 테마 (정부/공공기관, 9종 무드 팔레트) |
+| `theme-seminar` | seminar 스타일 테마 (세미나/발표, 9종 무드 팔레트) |
+| `theme-whatif` | whatif 목적 테마 (미래 비전 스냅샷) |
+| `theme-pitch` | pitch 목적 테마 (피치덱) |
+| `theme-comparison` | comparison 목적 테마 (Before/After) |

@@ -1,0 +1,10 @@
+{
+  "name": "isd-generator",
+  "version": "1.0.0",
+  "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

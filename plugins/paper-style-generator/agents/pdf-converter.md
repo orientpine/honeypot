@@ -66,7 +66,7 @@ print(f"발견된 PDF: {len(pdf_files)}개")
 
 ```bash
 # 스크립트 실행
-python scripts/mineru_converter.py \
+python skills/paper-style-toolkit/scripts/mineru_converter.py \
   --input-dir "{pdf_folder}" \
   --output-dir "{output_folder}" \
   --backend "hybrid-auto-engine"
@@ -76,7 +76,7 @@ python scripts/mineru_converter.py \
 
 ```bash
 # 후처리 스크립트 실행
-python scripts/md_postprocessor.py \
+python skills/paper-style-toolkit/scripts/md_postprocessor.py \
   --input-dir "{output_folder}" \
   --output-dir "{output_folder}/processed"
 ```

@@ -35,7 +35,16 @@
         "./agents/prompt-designer.md",
         "./agents/renderer-agent.md"
       ],
-      "skills": ["./skills/layout-types"]
+      "skills": [
+        "./skills/layout-types",
+        "./skills/theme-concept",
+        "./skills/theme-gov",
+        "./skills/theme-seminar",
+        "./skills/theme-whatif",
+        "./skills/theme-pitch",
+        "./skills/theme-comparison",
+        "./skills/slide-renderer"
+      ]
     },
     {
       "name": "investments-portfolio",
@@ -81,7 +90,8 @@
         "./agents/pdf-converter.md",
         "./agents/style-analyzer.md",
         "./agents/skill-generator.md"
-      ]
+      ],
+      "skills": ["./skills"]
     },
     {
       "name": "report-generator",
@@ -93,7 +103,8 @@
         "./agents/content-mapper.md",
         "./agents/chapter-writer.md",
         "./agents/quality-checker.md"
-      ]
+      ],
+      "skills": ["./skills"]
     },
     {
       "name": "stock-consultation",

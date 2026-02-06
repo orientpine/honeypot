@@ -19,7 +19,7 @@ from typing import Dict, List, Tuple, Optional
 # 설정 파일 경로 (외부화된 패턴)
 # ==============================================================================
 
-CONFIG_DIR = Path(__file__).parent.parent / "config"
+CONFIG_DIR = Path(__file__).parent.parent / "references"
 
 
 def load_linguistic_patterns() -> Dict:

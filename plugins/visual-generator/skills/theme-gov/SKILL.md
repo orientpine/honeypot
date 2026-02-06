@@ -1,6 +1,9 @@
-# Gov 스타일 테마 팔레트
+---
+name: theme-gov
+description: "visual-generator gov 스타일(정부/공공기관 PPT 슬라이드) 테마 팔레트. style=gov일 때 사용. 9종 무드(technical-report, growth, clarity, connection, innovation, tech-focus, knowledge, presentation, workshop) 각각 4색 팔레트 제공."
+---
 
-## 개요
+# Gov 스타일 테마 팔레트
 
 정부/공공기관 PPT 슬라이드를 위한 9가지 무드 테마. 각 테마는 공식 문서와 발표 자료에 적합한 4색 팔레트를 제공합니다.
 
@@ -161,10 +164,7 @@
 
 ## 렌더링 금지 요소 (CRITICAL)
 
-이 테마를 사용하여 프롬프트를 생성할 때, 다음 요소들은 **CONTENT BLOCK에 절대 포함하지 마십시오**.
-이 요소들은 프롬프트 구성을 위한 것이며, 이미지에 렌더링되면 안 됩니다.
-
-### 금지 패턴
+프롬프트 생성 시 다음 요소는 **CONTENT BLOCK에 절대 포함 금지**:
 
 | 유형 | 금지 예시 | 설명 |
 |------|-----------|------|
@@ -174,19 +174,4 @@
 | 크기 힌트 | `(대형)`, `(중형)`, `48pt` | INSTRUCTION에서만 사용 |
 | 역할 라벨 | `Main Title`, `Sub-header` | INSTRUCTION에서만 사용 |
 
-### 올바른 CONTENT 작성법
-
-**잘못된 예:**
-```
-1. **[메인 타이틀]** 플랫폼 비전
-2. **[핵심 지표]** 70% 개선 (#FF6B35)
-```
-
-**올바른 예:**
-```
-1. 플랫폼 비전
-2. 70% 개선
-```
-
-텍스트의 위치, 크기, 색상은 INSTRUCTION과 CONFIGURATION에서 설명하고,
 CONTENT에는 **순수한 텍스트 내용만** 포함합니다.

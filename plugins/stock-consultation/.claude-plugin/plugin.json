@@ -1,0 +1,10 @@
+{
+  "name": "stock-consultation",
+  "version": "1.0.0",
+  "description": "주식/ETF 투자 상담 Multi-Agent 시스템. Bogle/Vanguard 철학 기반.",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

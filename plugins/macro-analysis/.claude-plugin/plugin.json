@@ -1,0 +1,10 @@
+{
+  "name": "macro-analysis",
+  "version": "1.0.0",
+  "description": "거시경제 분석 공용 에이전트 모음. 지수/금리/섹터/리스크/리더십 분석 및 종합/검증을 제공합니다.",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

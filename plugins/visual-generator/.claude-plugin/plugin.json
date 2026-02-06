@@ -1,0 +1,10 @@
+{
+  "name": "visual-generator",
+  "version": "1.0.0",
+  "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}

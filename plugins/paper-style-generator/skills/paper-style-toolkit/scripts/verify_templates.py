@@ -30,7 +30,7 @@ def verify_template(template_path):
 
 
 def main():
-    templates_dir = Path(__file__).parent / "templates"
+    templates_dir = Path(__file__).parent.parent / "assets"
 
     # New hybrid templates to verify
     templates = [

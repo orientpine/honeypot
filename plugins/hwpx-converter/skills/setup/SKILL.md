@@ -1,5 +1,5 @@
 ---
-name: hwpx-setup
+name: setup
 description: "hwpx-converter 사용을 위한 의존성(Pandoc, Python, pypandoc-hwpx)을 자동 설치합니다."
 ---
 

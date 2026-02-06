@@ -413,7 +413,7 @@ model: opus
 
 ```bash
 # 스타일 분석 실행
-python scripts/style_extractor.py \
+python skills/paper-style-toolkit/scripts/style_extractor.py \
   --input-dir "{md_folder}" \
   --output-file "style_analysis.json" \
   --depth "deep" \

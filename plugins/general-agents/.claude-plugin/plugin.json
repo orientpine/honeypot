@@ -1,0 +1,10 @@
+{
+  "name": "general-agents",
+  "version": "1.0.0",
+  "description": "범용 에이전트 모음",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "license": "MIT"
+}
