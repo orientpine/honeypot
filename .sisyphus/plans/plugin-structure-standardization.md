@@ -59,14 +59,14 @@ visual-generator 플러그인에서 성공적으로 수행한 구조 개선(orch
 - `.claude-plugin/marketplace.json` — 6개 변경 (5 commands + 1 skills)
 
 ### Definition of Done
-- [ ] 5개 `commands/` 디렉토리 생성됨
-- [ ] 5개 오케스트레이터 파일이 `commands/`에 존재
-- [ ] 5개 원본 파일이 `agents/`에서 삭제됨
-- [ ] marketplace.json에 5개 `"commands"` 배열 존재
-- [ ] marketplace.json의 `"agents"` 배열에서 오케스트레이터 제거됨
-- [ ] isd-generator에 `"skills"` 배열 추가됨
-- [ ] marketplace.json 유효한 JSON
-- [ ] YAML frontmatter의 `name` 필드 5개 모두 변경 없음
+- [x] 5개 `commands/` 디렉토리 생성됨
+- [x] 5개 오케스트레이터 파일이 `commands/`에 존재
+- [x] 5개 원본 파일이 `agents/`에서 삭제됨
+- [x] marketplace.json에 5개 `"commands"` 배열 존재
+- [x] marketplace.json의 `"agents"` 배열에서 오케스트레이터 제거됨
+- [x] isd-generator에 `"skills"` 배열 추가됨
+- [x] marketplace.json 유효한 JSON
+- [x] YAML frontmatter의 `name` 필드 5개 모두 변경 없음
 
 ### Must Have
 - 5개 오케스트레이터의 commands/ 이동
