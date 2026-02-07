@@ -546,6 +546,80 @@ This is the #1 source of plugin registration issues:
 
 Created 6 new agents but forgot to update marketplace.json → Agents invisible in Claude. marketplace.json is NOT auto-synced with filesystem. **ALWAYS update manually.**
 
+### MANDATORY: Version Management & Registry Updates
+
+> **배경**: 플러그인 수정 후 `plugin.json`/`marketplace.json` 버전을 업데이트하지 않으면, 사용자가 변경사항을 감지할 수 없고 캐시 무효화가 작동하지 않음.
+
+#### Semantic Versioning (SemVer) 규칙
+
+모든 플러그인은 `MAJOR.MINOR.PATCH` 형식의 시맨틱 버전을 사용합니다.
+
+| 버전 구성 | 변경 시점 | 예시 |
+|-----------|-----------|------|
+| **PATCH** (`x.y.Z`) | 버그 수정, 오탈자, 프롬프트 미세 조정, description 수정 | `1.0.0` → `1.0.1` |
+| **MINOR** (`x.Y.0`) | 새 agent/skill/command 추가, 기존 기능 개선, 새 레이아웃/스타일 추가 | `1.0.1` → `1.1.0` |
+| **MAJOR** (`X.0.0`) | 호환성 깨지는 변경, 워크플로우 구조 변경, agent/skill 삭제 또는 이름 변경 | `1.1.0` → `2.0.0` |
+
+#### 업데이트 대상 파일 (2곳 필수)
+
+| 파일 | 위치 | 업데이트 내용 |
+|------|------|--------------|
+| **plugin.json** | `plugins/{plugin}/.claude-plugin/plugin.json` | `"version"` 필드 |
+| **marketplace.json** | `.claude-plugin/marketplace.json` | 해당 플러그인 항목의 `"version"` 필드 |
+
+**두 파일의 버전은 반드시 동일해야 합니다.**
+
+#### 업데이트 절차 (모든 플러그인 수정 시 적용)
+
+```
+Step 1. 플러그인 코드 수정 (agents/, skills/, commands/ 내 파일)
+Step 2. 변경 유형 판단 (PATCH / MINOR / MAJOR)
+Step 3. plugin.json 버전 업데이트
+        → plugins/{plugin}/.claude-plugin/plugin.json의 "version" 필드
+Step 4. marketplace.json 버전 동기화
+        → .claude-plugin/marketplace.json에서 해당 플러그인의 "version" 필드를 동일하게 업데이트
+Step 5. 캐시 클리어 후 재등록
+```
+
+#### 자동 판단 기준 (AI 에이전트용)
+
+플러그인 파일 수정 시, 아래 기준으로 버전 변경 유형을 **자동 판단**합니다:
+
+| 변경 내용 | 판단 | 버전 변경 |
+|-----------|------|-----------|
+| SKILL.md 내 문구 수정, 오탈자 | PATCH | `x.y.Z+1` |
+| Agent .md 내 프롬프트 개선 | PATCH | `x.y.Z+1` |
+| description, frontmatter 수정 | PATCH | `x.y.Z+1` |
+| scripts/ 내 버그 수정 | PATCH | `x.y.Z+1` |
+| 새 agent .md 추가 | MINOR | `x.Y+1.0` |
+| 새 skill 폴더 추가 | MINOR | `x.Y+1.0` |
+| 새 command .md 추가 | MINOR | `x.Y+1.0` |
+| 기존 스킬에 새 섹션/기능 추가 | MINOR | `x.Y+1.0` |
+| references/, assets/ 추가 | MINOR | `x.Y+1.0` |
+| agent/skill/command 삭제 | MAJOR | `X+1.0.0` |
+| agent/skill 이름 변경 | MAJOR | `X+1.0.0` |
+| 워크플로우 순서/구조 변경 | MAJOR | `X+1.0.0` |
+| plugin.json 의 name 변경 | MAJOR | `X+1.0.0` |
+
+#### marketplace.json 메타데이터 버전
+
+루트 `marketplace.json`의 `metadata.version`은 **마켓플레이스 전체**의 버전입니다.
+
+| 변경 | 업데이트 |
+|------|----------|
+| 기존 플러그인 수정 (PATCH/MINOR) | 마켓플레이스 버전 변경 불필요 |
+| 새 플러그인 추가 | 마켓플레이스 MINOR 버전 올림 |
+| 플러그인 삭제 또는 마켓플레이스 구조 변경 | 마켓플레이스 MAJOR 버전 올림 |
+
+#### 금지 패턴
+
+| 금지 | 문제 | 올바른 방법 |
+|------|------|------------|
+| 플러그인 수정 후 버전 미변경 | 변경사항 추적 불가, 캐시 문제 | 반드시 PATCH 이상 올림 |
+| plugin.json과 marketplace.json 버전 불일치 | 혼란, 디버깅 어려움 | 두 파일 동시 업데이트 |
+| 버전만 올리고 marketplace.json 미반영 | 레지스트리에서 구버전으로 표시 | 항상 두 파일 함께 수정 |
+| MAJOR 변경인데 PATCH만 올림 | 호환성 문제 미감지 | 변경 유형 정확히 판단 |
+
 ### Model Selection Guide
 
 | Model | Use Case | 예시 |
