@@ -13,6 +13,7 @@
       "name": "isd-generator",
       "source": "./plugins/isd-generator",
       "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
+      "version": "1.0.1",
       "strict": true,
       "agents": [
         "./agents/chapter1.md",
@@ -28,6 +29,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
+      "version": "1.1.0",
       "strict": true,
       "agents": [
         "./agents/content-organizer.md",
@@ -50,6 +52,7 @@
       "name": "investments-portfolio",
       "source": "./plugins/investments-portfolio",
       "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템. web-search-verifier 스킬로 환각 방지.",
+      "version": "1.0.1",
       "strict": true,
       "agents": [
         "./agents/fund-portfolio.md",
@@ -85,6 +88,7 @@
       "name": "paper-style-generator",
       "source": "./plugins/paper-style-generator",
       "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
+      "version": "1.0.1",
       "strict": true,
       "agents": [
         "./agents/pdf-converter.md",

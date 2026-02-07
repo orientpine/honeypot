@@ -1,6 +1,6 @@
 {
   "name": "investments-portfolio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템. web-search-verifier 스킬로 환각 방지.",
   "author": {
     "name": "Baekdong Cha",
