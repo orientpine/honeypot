@@ -87,10 +87,14 @@ skills: [figure-guide, image-reference-guide]
 [Phase 3: 이미지 생성]
     |
     +-- Step 3-1. Python 스크립트 실행 준비
-    +-- Step 3-2. 이미지 생성 스크립트 실행 (Bash 도구)
-        - python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
-            --prompts-dir [output]/prompts/ \
-            --output-dir [output]/figures/
+    +-- Step 3-2. 이미지 생성 스크립트 찾기 및 실행 (Bash 도구)
+        +-- 상대경로 참조: scripts/generate_images.py (스킬 루트 기준)
+        +-- 실패 시 Glob 폴백: **/isd-generator/skills/core-resources/scripts/generate_images.py
+        +-- Glob도 실패 시: Glob: **/generate_images.py
+        +-- 찾은 경로로 실행:
+            python {경로} --prompts-dir [output]/prompts/ --output-dir [output]/figures/
+        +-- 스크립트를 찾지 못하면: 즉시 중단, 사용자에게 경로 확인 요청
+        +-- 절대 금지: 스크립트를 못 찾았을 때 자체 Python 코드를 작성하여 대체하지 않음
     +-- Step 3-3. 생성 결과 확인
     +-- Step 3-4. 실패 항목 처리
     +-- Step 3-5. 진행 상황 보고
@@ -184,7 +188,7 @@ output/[프로젝트명]/
 
 ### scripts/ (Bash 도구로 실행)
 
-- `plugins/isd-generator/skills/core-resources/scripts/generate_images.py`: Gemini API 이미지 생성 스크립트
+- `scripts/generate_images.py`: Gemini API 이미지 생성 스크립트 (Glob으로 절대경로 확보 후 실행)
 
 ---
 
