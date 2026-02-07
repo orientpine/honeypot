@@ -29,7 +29,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (Concept/Gov/Renderer)",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "strict": true,
       "agents": [
         "./agents/content-organizer.md",
