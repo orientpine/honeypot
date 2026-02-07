@@ -61,6 +61,15 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 ### Visual Style
 - 스타일: {concept/gov/seminar/whatif/pitch/comparison}
 - 특성: {스타일별 특성 설명}
+
+### Rendering Style
+- 서피스: {theme-{style}의 렌더링 스타일 테이블에서 서피스 지시 사항}
+- 배경: {theme-{style}의 렌더링 스타일 테이블에서 배경 지시 사항}
+- 코너/엣지: {theme-{style}의 렌더링 스타일 테이블에서 코너/엣지 지시 사항}
+- 연결선: {theme-{style}의 렌더링 스타일 테이블에서 연결선 지시 사항}
+- 시각 장식: {theme-{style}의 렌더링 스타일 테이블에서 시각 장식 지시 사항}
+- 공간 구성: {theme-{style}의 렌더링 스타일 테이블에서 공간 구성 지시 사항}
+- 시각 메타포: {theme-{style}의 렌더링 스타일 테이블에서 시각 메타포 지시 사항}
 ```
 
 ### Block 2: CONFIGURATION
@@ -74,6 +83,10 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 - 해상도: 3840 x 2160 (4K 16:9)
 - 배경색: {테마별 배경색}
 
+### Background Treatment
+- 배경 유형: {theme-{style} 렌더링 스타일의 배경 지시에 따름}
+- 배경 장식: {그라데이션/패턴/보케/블롭/없음 등 스타일별 지시}
+
 ### Color Palette
 - 주조색: {hex} - {용도}
 - 보조색: {hex} - {용도}
@@ -85,9 +98,11 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 - 영역 구분: {영역별 설명}
 
 ### Typography
-- 제목: 굵은 산세리프체
-- 본문: 깔끔한 산세리프체
-- 강조: 볼드 처리
+- 위계 구조: {스타일별 타이포 위계 — concept:2단, gov:3단, seminar:4단, 기타:기본}
+- 제목: {스타일별 크기/웨이트 지시}
+- 본문: {스타일별 크기/웨이트 지시}
+- 강조: {스타일별 강조 방식}
+- 특수 규칙: {concept: 중간크기 없음 / gov: 좌측정렬+번호매김 / seminar: 캡션 이탤릭 / pitch: 숫자>제목 / 등}
 ```
 
 ### Block 3: CONTENT
@@ -375,6 +390,11 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 
 - [ ] concepts.md와 slide_plan.md 파일 완전히 읽고 파싱
 - [ ] 스타일별 테마 파일에서 정확한 색상 팔레트 추출
+- [ ] 스타일별 테마 파일에서 렌더링 스타일(Rendering Style) 테이블의 8개 차원을 INSTRUCTION의 Rendering Style 서브섹션에 반영
+- [ ] 스타일별 테마 파일에서 콘텐츠 표현 규칙을 CONTENT 블록 작성 시 적용 (concept: 키워드 3단어 / gov: 합니다 체 / seminar: ~다 체 문장)
+- [ ] 스타일별 테마 파일의 권장 레이아웃 우선순위를 레이아웃 선택 시 참고
+- [ ] CONFIGURATION의 Background Treatment를 스타일별 렌더링 스타일의 배경 지시에 맞게 작성
+- [ ] CONFIGURATION의 Typography를 스타일별 타이포 위계에 맞게 작성 (concept:2단, gov:3단, seminar:4단)
 - [ ] 4-block 구조 완전히 포함 (INSTRUCTION, CONFIGURATION, CONTENT, FORBIDDEN)
 - [ ] 스타일별 텍스트 밀도 준수 (concept:15, gov:25, seminar:30, whatif:20, pitch:18, comparison:22)
 - [ ] 렌더링 방지 규칙 FORBIDDEN ELEMENTS에 명시
@@ -410,12 +430,14 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 - `### Target Audience`
 - `### Key Message`
 - `### Visual Style`
+- `### Rendering Style` — 서피스, 배경, 코너/엣지, 연결선, 시각 장식, 공간 구성, 시각 메타포 7개 항목
 
 **서브섹션** (CONFIGURATION 블록 내 필수):
 - `### Canvas Settings`
+- `### Background Treatment` — 배경 유형 + 배경 장식
 - `### Color Palette`
 - `### Layout Structure`
-- `### Typography`
+- `### Typography` — 위계 구조, 제목, 본문, 강조, 특수 규칙 5개 항목
 
 ## MUST NOT DO
 
@@ -457,14 +479,27 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 - 스타일: gov (정부/공공기관)
 - 특성: 공식적, 신뢰감, 전문성 강조
 
+### Rendering Style
+- 서피스: 2px 실선 테두리 + 내부 흰색 채움. 박스 헤더 영역은 주조색 배경 + 흰색 글씨
+- 배경: 연한 그레이 배경 + 상단 주조색 가로 배너. 하단 얇은 구분선
+- 코너/엣지: 완전 직각(0px radius). 라운딩 금지
+- 연결선: 2px 실선 + 채운 삼각형 화살표(▶). 점선은 계획/예정 의미로만 사용
+- 시각 장식: 단색 플랫 아이콘(채워진 원 안 흰색 심볼). 번호 뱃지(①②③). 표 적극 활용
+- 공간 구성: 엣지-투-엣지 격자 + 20% 여백. 상단 배너 + 본문 그리드 + 하단 주석 3단 구조
+- 시각 메타포: 플랫 인포그래픽. 채워진 아이콘, 단색 차트 바, 표, 조직도. 2D 평면적
+
 ## CONFIGURATION
 
 ### Canvas Settings
 - 해상도: 3840 x 2160 (4K 16:9)
 - 배경색: #F5F7FA (라이트 그레이)
 
+### Background Treatment
+- 배경 유형: 단색 + 상단 배너
+- 배경 장식: 상단에 #1E3A5F 가로 배너(높이 약 8%). 하단에 #1E3A5F 1px 구분선. 배경 본체는 #F5F7FA 단색
+
 ### Color Palette
-- 주조색: #1E3A5F (딥 블루) - 제목, 핵심 박스
+- 주조색: #1E3A5F (딥 블루) - 제목, 핵심 박스, 배너
 - 보조색: #4A90A4 (미디엄 블루) - 연결선, 보조 박스
 - 강조색: #E07B39 (오렌지) - 핵심 포인트, 성과
 - 배경색: #F5F7FA (라이트 그레이)
@@ -472,14 +507,16 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 ### Layout Structure
 - 레이아웃 유형: 비전-다이어그램
 - 영역 구분:
-  - 상단: 비전 선언문
-  - 중앙: 핵심 연구 영역 3개
-  - 하단: 기대 효과
+  - 상단: 비전 선언문 (배너 내)
+  - 중앙: 핵심 연구 영역 3개 (2px 직각 박스)
+  - 하단: 기대 효과 (주석 영역)
 
 ### Typography
-- 제목: 굵은 산세리프체
-- 본문: 깔끔한 산세리프체
-- 강조: 볼드 처리
+- 위계 구조: 3단(대/중/소) 균등 분포
+- 제목: 볼드 산세리프체, 박스 헤더는 세미볼드
+- 본문: 레귤러 산세리프체, 좌측 정렬
+- 강조: 볼드 처리, 강조색 배경 뱃지
+- 특수 규칙: 모든 나열 항목에 번호 매김 필수. 숫자는 본문과 동일 크기
 
 ## CONTENT
 
