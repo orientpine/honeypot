@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-08T00:00:00+09:00
-**Version:** 2.3.0
+**Generated:** 2026-02-07T00:00:00+09:00
+**Version:** 2.4.0
 **Branch:** main
 
 ## OVERVIEW
@@ -72,7 +72,7 @@ toolbox/
 | Generate full ISD proposal | `plugins/isd-generator/commands/isd-generate.md` | Uses `skills/input-template/` |
 | Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
 | Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
-| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline |
+| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. Concept=Kurzgesagt 풍 장면 스토리텔링 |
 | **Generate paper writing skills from PDFs** | `plugins/paper-style-generator/commands/paper-style-generate.md` | MinerU + Jinja2 templates |
 | Portfolio analysis | `plugins/investments-portfolio/commands/portfolio-analyze.md` | Korean DC pension multi-agent |
 | Generate research report | `plugins/report-generator/commands/report-generate.md` | 연구노트 → 보고서 자동 생성 |
