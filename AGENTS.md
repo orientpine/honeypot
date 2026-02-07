@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-08T13:00:00+09:00
-**Version:** 2.2.0
+**Generated:** 2026-02-08T00:00:00+09:00
+**Version:** 2.3.0
 **Branch:** main
 
 ## OVERVIEW
@@ -884,6 +884,52 @@ Orchestrate {workflow description}:
 추가 원칙:
 - 오케스트레이터 워크플로우는 `commands/`에 배치합니다.
 - `scripts/`, `references/`, `assets/`, `templates/`는 플러그인 루트가 아닌 `skills/{skill-name}/` 내부에 배치합니다.
+
+---
+
+## MANDATORY: AGENTS.md 최신화 (작업 완료 시)
+
+> **배경**: 프로젝트 구조, 플러그인 구성, 워크플로우가 변경되었음에도 AGENTS.md가 업데이트되지 않으면, 다음 세션의 에이전트가 오래된 정보를 기반으로 잘못된 판단을 내리게 됨. AGENTS.md는 이 프로젝트의 **단일 진실 공급원(Single Source of Truth)**이므로 항상 최신 상태를 유지해야 함.
+
+### 업데이트 트리거 (아래 중 하나라도 해당 시 AGENTS.md 업데이트 필수)
+
+| 변경 유형 | 업데이트 대상 섹션 | 예시 |
+|-----------|-------------------|------|
+| 플러그인 추가/삭제 | `STRUCTURE`, `WHERE TO LOOK`, `UNIQUE STYLES` | 새 플러그인 폴더 추가 |
+| Agent/Skill/Command 추가/삭제/이름 변경 | `STRUCTURE`, `WHERE TO LOOK` | 에이전트 .md 파일 추가 |
+| 워크플로우 순서/구조 변경 | `CONVENTIONS`, `UNIQUE STYLES` | ISD 챕터 순서 변경 |
+| 새로운 스크립트/명령어 추가 | `COMMANDS` | 새 Python 스크립트 |
+| 새로운 금지 패턴 발견 | `ANTI-PATTERNS` | 새로운 실수 패턴 발견 |
+| 프로젝트 규칙/컨벤션 변경 | `CONVENTIONS`, 관련 규칙 섹션 | 새 코딩 규칙 추가 |
+| 마켓플레이스 구조 변경 | `CLAUDE CODE MARKETPLACE RULES` | 플러그인 등록 방식 변경 |
+
+### 업데이트 절차
+
+```
+Step 1. 작업 완료 후, 위 트리거 목록과 대조하여 AGENTS.md 업데이트가 필요한지 판단
+Step 2. 업데이트가 필요하면, 해당 섹션의 기존 내용을 읽고 변경사항 반영
+Step 3. AGENTS.md 상단의 **Generated** 날짜를 현재 날짜로 업데이트
+Step 4. 변경 내용이 다른 섹션에도 영향을 미치는지 교차 확인
+Step 5. 커밋 시 AGENTS.md 변경분을 함께 포함
+```
+
+### 업데이트 원칙
+
+| 원칙 | 설명 |
+|------|------|
+| **정확성 우선** | 추측이 아닌 실제 파일 시스템 상태를 반영할 것 |
+| **최소 변경** | 변경된 부분만 수정, 불필요한 리포맷 금지 |
+| **일관성 유지** | 기존 문서 스타일(표, 코드블록, 한/영 혼용)을 따를 것 |
+| **교차 참조** | 하나의 섹션 변경 시 관련 섹션도 함께 확인 (예: `STRUCTURE` 변경 → `WHERE TO LOOK`도 확인) |
+
+### 금지 패턴
+
+| 금지 | 문제 | 올바른 방법 |
+|------|------|------------|
+| 플러그인 추가 후 AGENTS.md 미업데이트 | 다음 세션에서 새 플러그인 인식 불가 | 반드시 `STRUCTURE`, `WHERE TO LOOK` 업데이트 |
+| 워크플로우 변경 후 AGENTS.md 미업데이트 | 에이전트가 구버전 워크플로우로 작업 | 즉시 해당 섹션 업데이트 |
+| AGENTS.md만 업데이트하고 실제 코드 미반영 | 문서와 코드 불일치 | 코드 변경 → AGENTS.md 순서로 진행 |
+| Generated 날짜 미업데이트 | 최종 업데이트 시점 추적 불가 | 항상 현재 날짜로 갱신 |
 
 ---
 
