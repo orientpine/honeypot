@@ -64,21 +64,28 @@ print(f"발견된 PDF: {len(pdf_files)}개")
 
 ### Phase 2: MinerU 변환 실행
 
-```bash
-# 스크립트 실행
-python skills/paper-style-toolkit/scripts/mineru_converter.py \
-  --input-dir "{pdf_folder}" \
-  --output-dir "{output_folder}" \
-  --backend "hybrid-auto-engine"
+```
+# 스크립트 찾기 및 실행
++-- 상대경로 참조: scripts/mineru_converter.py (스킬 루트 기준)
++-- 실패 시 Glob 폴백: **/paper-style-generator/skills/paper-style-toolkit/scripts/mineru_converter.py
++-- Glob도 실패 시: Glob: **/mineru_converter.py
++-- 찾은 경로로 실행:
+    python {경로} --input-dir "{pdf_folder}" --output-dir "{output_folder}" --backend "hybrid-auto-engine"
++-- 스크립트를 찾지 못하면: 즉시 중단, 사용자에게 경로 확인 요청
++-- 절대 금지: 스크립트를 못 찾았을 때 자체 Python 코드를 작성하여 대체하지 않음
 ```
 
 ### Phase 3: 후처리 정제
 
-```bash
-# 후처리 스크립트 실행
-python skills/paper-style-toolkit/scripts/md_postprocessor.py \
-  --input-dir "{output_folder}" \
-  --output-dir "{output_folder}/processed"
+```
+# 스크립트 찾기 및 실행
++-- 상대경로 참조: scripts/md_postprocessor.py (스킬 루트 기준)
++-- 실패 시 Glob 폴백: **/paper-style-generator/skills/paper-style-toolkit/scripts/md_postprocessor.py
++-- Glob도 실패 시: Glob: **/md_postprocessor.py
++-- 찾은 경로로 실행:
+    python {경로} --input-dir "{output_folder}" --output-dir "{output_folder}/processed"
++-- 스크립트를 찾지 못하면: 즉시 중단, 사용자에게 경로 확인 요청
++-- 절대 금지: 스크립트를 못 찾았을 때 자체 Python 코드를 작성하여 대체하지 않음
 ```
 
 ### Phase 4: 품질 검증

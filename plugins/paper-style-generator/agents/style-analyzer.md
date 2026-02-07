@@ -411,13 +411,15 @@ model: opus
 
 ## 5. 실행 스크립트
 
-```bash
-# 스타일 분석 실행
-python skills/paper-style-toolkit/scripts/style_extractor.py \
-  --input-dir "{md_folder}" \
-  --output-file "style_analysis.json" \
-  --depth "deep" \
-  --confidence-report "confidence_report.md"
+```
+# 스크립트 찾기 및 실행
++-- 상대경로 참조: scripts/style_extractor.py (스킬 루트 기준)
++-- 실패 시 Glob 폴백: **/paper-style-generator/skills/paper-style-toolkit/scripts/style_extractor.py
++-- Glob도 실패 시: Glob: **/style_extractor.py
++-- 찾은 경로로 실행:
+    python {경로} --input-dir "{md_folder}" --output-file "style_analysis.json" --depth "deep" --confidence-report "confidence_report.md"
++-- 스크립트를 찾지 못하면: 즉시 중단, 사용자에게 경로 확인 요청
++-- 절대 금지: 스크립트를 못 찾았을 때 자체 Python 코드를 작성하여 대체하지 않음
 ```
 
 ---
