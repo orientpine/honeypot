@@ -147,6 +147,11 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 - 영어 단독 사용 (한글 우선)
 - 플레이스홀더 텍스트 (예: "[내용]", "{텍스트}")
 - 빈 박스/미완성 영역
+- 기관 로고/마크 (정부 부처, 공공기관 식별 요소)
+- 특정 기관명 고정 배치 (예: "과학기술정보통신부", "OO청")
+- "Figure N." 캡션 번호 (seminar 스타일 포함)
+- 색상 범례 박스/표 (seminar 스타일 포함)
+- 축 라벨, 데이터 테이블 (학술 논문 고유 요소)
 ```
 
 ## Text Density Rules
@@ -157,10 +162,16 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 |:------:|:----------------:|------|
 | concept | **15개** | 미니멀, 핵심만 |
 | gov | **25개** | 정보 밀도 중간 |
-| seminar | **30개** | 상세 정보 포함 |
+| seminar | **25개** | 학술 발표체, 정보 밀도 중상 |
 | whatif | **20개** | 시나리오 중심, 중간 정보량 |
 | pitch | **18개** | 임팩트 중심, 간결한 메시지 |
-| comparison | **22개** | 비교 항목 균형, 이중 구조 |
+| comparison | **12개** | 이미지 중심, 최소 텍스트 오버레이 |
+
+### 글로벌 텍스트 규칙 (CRITICAL)
+
+**한국어 개조식 원칙**: 모든 CONTENT 블록의 텍스트 요소는 한국어 개조식으로 작성한다. 개조식이란 핵심 키워드나 요점을 짧게 끊어서 항목별로 나열하는 방식이다. 완전한 문장보다는 명사구, 핵심어, 숫자를 중심으로 구성한다.
+
+**절대 상한**: 어떤 스타일이든 텍스트 요소는 **절대 25개를 초과하지 않는다**. 위 테이블의 스타일별 최대값이 25 이하인 경우 해당 값을 따르고, 25를 초과하는 값은 허용하지 않는다.
 
 ### 텍스트 카운팅 기준
 
@@ -396,7 +407,7 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 - [ ] CONFIGURATION의 Background Treatment를 스타일별 렌더링 스타일의 배경 지시에 맞게 작성
 - [ ] CONFIGURATION의 Typography를 스타일별 타이포 위계에 맞게 작성 (concept:2단, gov:3단, seminar:4단)
 - [ ] 4-block 구조 완전히 포함 (INSTRUCTION, CONFIGURATION, CONTENT, FORBIDDEN)
-- [ ] 스타일별 텍스트 밀도 준수 (concept:15, gov:25, seminar:30, whatif:20, pitch:18, comparison:22)
+- [ ] 스타일별 텍스트 밀도 준수 (concept:15, gov:25, seminar:25, whatif:20, pitch:18, comparison:12) — 절대 상한 25개
 - [ ] 렌더링 방지 규칙 FORBIDDEN ELEMENTS에 명시
 - [ ] 각 프롬프트 100줄 이상 생성
 - [ ] prompt_index.md 인덱스 파일 생성
@@ -451,6 +462,10 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 - [ ] `# INSTRUCTION BLOCK` 형태 사용 금지 (올바른 형태: `## INSTRUCTION`)
 - [ ] 마크다운 헤딩 없이 블록명 사용 금지 (예: `INSTRUCTION:` 금지)
 - [ ] 블록 구분자에 "BLOCK" 접미사 사용 금지 (예: `## INSTRUCTION BLOCK` 금지)
+- [ ] gov 스타일에서 기관 로고, 기관명, 부처명 등 특정 기관 식별 요소 포함 금지
+- [ ] seminar 스타일에서 "Figure N." 캡션, 색상 범례 박스, 축 라벨 등 학술 논문 고유 요소 포함 금지
+- [ ] 어떤 스타일이든 텍스트 요소 25개 초과 금지
+- [ ] 개조식이 아닌 장문 서술형 텍스트를 CONTENT 블록에 포함 금지
 
 ## Example Output
 
