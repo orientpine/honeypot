@@ -98,9 +98,14 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
     |   +-- GEMINI_API_KEY 설정 확인
     |   +-- 미설정 시 즉시 중단, 사용자에게 안내
     |
-    +-- Step 3-2. 렌더링 스크립트 실행
-    |   +-- slide-renderer 스킬의 scripts/generate_slide_images.py 사용
-    |   +-- 실행 방법 및 환경 요구사항은 slide-renderer 스킬 참조
+    +-- Step 3-2. 렌더링 스크립트 찾기 및 실행
+    |   +-- 상대경로 참조: scripts/generate_slide_images.py (스킬 루트 기준)
+    |   +-- 실패 시 Glob 폴백: **/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py
+    |   +-- Glob도 실패 시: Glob: **/generate_slide_images.py
+    |   +-- 찾은 경로로 실행:
+    |   |   python {경로} --prompts-dir {prompts_path} --output-dir {output_path}
+    |   +-- 스크립트를 찾지 못하면: 즉시 중단, 사용자에게 경로 확인 요청
+    |   +-- 절대 금지: 스크립트를 못 찾았을 때 자체 Python 코드를 작성하여 대체하지 않음
     |
     +-- Step 3-3. 스크립트 출력 모니터링
         +-- [OK] 메시지: 성공 카운트 증가
@@ -176,7 +181,30 @@ grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
 
 ## Script & Error Handling
 
-스크립트 실행 방법, 환경 요구사항, 출력 해석, 에러 처리는 모두 `slide-renderer` 스킬에 정의되어 있습니다. 스킬이 컨텍스트에 자동 로드되므로 해당 내용을 참조하세요.
+### 스크립트 경로 확보 (CRITICAL - 반드시 준수)
+
+렌더링 스크립트 `generate_slide_images.py`는 `slide-renderer` 스킬의 `scripts/` 폴더에 있습니다.
+
+**경로 탐색 순서:**
+1. 상대경로 참조: `scripts/generate_slide_images.py` (스킬 루트 기준, 최우선)
+2. 상대경로 실패 시 Glob 폴백: `**/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py`
+3. Glob도 실패 시: `**/generate_slide_images.py`
+
+**스크립트를 찾지 못한 경우:**
+- 즉시 중단하고 사용자에게 경로 확인 요청
+- **절대로 자체적으로 Python 코드를 작성하여 대체하지 않음**
+- 자체 작성 코드는 구버전 패키지(google.generativeai) 사용, image_size="4K" 누락 등 치명적 결함을 유발함
+
+### 스크립트 핵심 설정 (변경 금지)
+
+| 항목 | 값 | 비고 |
+|------|-----|------|
+| 패키지 | `google-genai` (google.genai) | `google-generativeai` 아님 |
+| 모델 | `gemini-3-pro-image-preview` | |
+| 해상도 | `image_size="4K"` | 반드시 포함 |
+| 비율 | `aspect_ratio="16:9"` | |
+
+환경 요구사항, 출력 해석, 에러 처리 상세는 `slide-renderer` 스킬 참조.
 
 ## Output Structure
 
@@ -234,12 +262,13 @@ grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
 - [ ] API 타임아웃 시 최대 3회 재시도 (5초 간격)
 - [ ] 모든 실패 사유를 generation_report.md에 기록
 - [ ] 검증 실패 프롬프트도 보고서에 별도 기록
-- [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용
+- [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용 (Glob으로 절대경로 확보 후 실행)
 
 ## MUST NOT DO
 
 - [ ] 검증 실패 프롬프트를 수정하지 않음 (플래그만 기록, 수정은 prompt-designer 책임)
-- [ ] `${CLAUDE_PLUGIN_ROOT}` 변수 사용하지 않음 (slide-renderer 스킬 경로 기준 사용)
+- [ ] `${CLAUDE_PLUGIN_ROOT}` 변수 사용하지 않음 (Glob으로 절대경로 탐색)
+- [ ] 스크립트를 찾지 못했을 때 자체 Python 코드를 작성하지 않음 (구버전 패키지, 4K 설정 누락 등 치명적 결함 유발)
 - [ ] 재시도 횟수 3회 초과 시 무한 루프 방지
 - [ ] 환경변수 미설정 상태로 스크립트 실행하지 않음
 - [ ] 에러 로그 없이 실패 처리하지 않음

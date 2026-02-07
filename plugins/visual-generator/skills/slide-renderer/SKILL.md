@@ -7,17 +7,33 @@ description: "Gemini API를 사용한 슬라이드 이미지 렌더링 스킬. r
 
 Gemini API를 사용하여 프롬프트 파일(.md)을 4K 16:9 PNG 이미지로 변환하는 스크립트 실행 가이드.
 
-## Script Location
+## 스크립트 참조 및 실행 (CRITICAL)
 
-이 스킬 디렉토리 내 `scripts/generate_slide_images.py`에 위치합니다.
+스크립트는 이 스킬의 상대경로에 위치합니다:
 
-## 실행 방법
+scripts/generate_slide_images.py
 
+**실행 순서:**
+
+**Step 1. 상대경로로 실행** (최우선)
 ```bash
-python {이_스킬의_scripts_경로}/generate_slide_images.py \
+python scripts/generate_slide_images.py \
   --prompts-dir [프롬프트 폴더 경로] \
   --output-dir [이미지 출력 폴더 경로]
 ```
+
+**Step 2. 상대경로 실패 시 Glob 폴백**
+```
+Glob: **/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py
+```
+
+**Step 3. Glob도 실패 시 확장 탐색**
+```
+Glob: **/generate_slide_images.py
+```
+
+**절대 금지**: 스크립트를 찾지 못했을 때 자체적으로 Python 코드를 작성하지 마세요.
+반드시 에러를 보고하고 사용자에게 경로 확인을 요청하세요.
 
 ## 환경 요구사항
 
