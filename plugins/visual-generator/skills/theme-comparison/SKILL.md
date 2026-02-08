@@ -172,3 +172,32 @@ Comparison 테마는 **이미지가 메시지의 주체**입니다. 텍스트는
 | **한영 병기 텍스트** | `연구 (Research)`, `분석(Analysis)`, `목표 / Goal` | 한글과 영어를 괄호·슬래시로 병기하는 모든 형태 금지. 한글 단독 또는 고유 영문 약어(AI, IoT, CNN 등) 단독만 허용 |
 
 CONTENT에는 **순수한 텍스트 내용만** 포함합니다.
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+comparison 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: Before/After 비교 슬라이드의 목적 (변화 증명, 개선 효과 등)
+- `### Target Audience`: 의사결정자, 평가위원 등
+- `### Key Message`: 핵심 변화 포인트 한 문장
+- `### Visual Style`: `comparison` 스타일 명시 + IMAX 분할 화면 특성
+- `### Rendering Style`: 서피스(패널 없음, 50:50 분할 이미지), 배경(좌측 어둡고 복잡 / 우측 밝고 정돈), 코너/엣지(완전 직각), 연결선(중앙 대형 화살표 1개), 시각 장식(최소, ✓/✗ 아이콘, 변화율 배지), 공간 구성(이미지 95%+텍스트 오버레이 5%), 시각 메타포(시각 대비) 7개 차원
+- `### Content Placement`: Before/After 각 측면의 텍스트 배치 위치, 중앙 화살표/VS 배치, **장면 묘사(이미지 내용, 분위기)는 여기에 기술**
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 #F5F6FA
+- `### Background Treatment`: 좌측 50%(어두운 톤) / 우측 50%(밝은 톤) + 중앙 구분
+- `### Color Palette`: 주조(#2D3436), 보조(#00B894), 강조(#FF7675), 배경(#F5F6FA)
+- `### Layout Structure`: 대비 메타포(Contrast) 좌우 대칭 + 영역 구분
+- `### Typography`: 2단 위계(제목/핵심 수치), 오버레이 위 밝은 텍스트
+
+### CONTENT 블록 포함 내용
+- `### Title Area`: Before/After 제목 (번호 목록 형태)
+- `### Main Content`: 이미지에 렌더링될 순수 텍스트만 번호 목록으로 나열 — Before 항목과 After 항목의 대응 수치 (장면 묘사 절대 포함 금지 — INSTRUCTION에 배치)
+- `### Data Elements`: 전후 핵심 수치 (최대 3개)
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, 테이블 형식 CONTENT 등

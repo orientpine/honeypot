@@ -281,3 +281,32 @@ seminar 스타일의 텍스트는 **개조식 학술체**를 따릅니다:
 | 받침대/플랫폼 | 콘크리트 베이스, 스톤 플랫폼, 사각 받침대 | 3D 아이콘 아래 별도 바닥면 금지 |
 
 CONTENT에는 **순수한 텍스트 내용만** 포함합니다.
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+seminar 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: 세미나/학술 발표 슬라이드의 목적 (연구 방법론, 실험 결과 등)
+- `### Target Audience`: 학술 청중, 연구자, 전문가 등
+- `### Key Message`: 전달할 핵심 메시지 한 문장
+- `### Visual Style`: `seminar` 스타일 명시 + 에디토리얼 매거진 × 아이소메트릭 3D 특성
+- `### Rendering Style`: 서피스(아이소메트릭 3D 아이콘), 배경(깨끗한 단색), 코너/엣지(소프트 라운딩 12px), 연결선(2D 플로우 라인), 시각 장식(3D 아이콘+매거진 레이아웃), 공간 구성(매거진 에디토리얼), 시각 메타포(에디토리얼 × 아이소메트릭 3D) 7개 차원
+- `### Content Placement`: CONTENT 텍스트의 영역별 배치 위치, 3D 아이콘과 텍스트의 배치 패턴(감싸기/삽입/앵커/오버레이), 시각 요소 배치
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 (테마별)
+- `### Background Treatment`: 깨끗한 단색 + 미세 그림자
+- `### Color Palette`: 주조/보조/강조/배경 4색 (9종 무드별)
+- `### Layout Structure`: Flow/Structure/Card-Grid/Strategy Map 중 선택 + 영역 구분
+- `### Typography`: 4단 위계(제목/소제목/본문/캡션), 대형 볼드 제목
+
+### CONTENT 블록 포함 내용
+- `### Title Area`: 메인 제목 (번호 목록 형태)
+- `### Main Content`: 이미지에 렌더링될 순수 텍스트만 번호 목록으로 나열 (역할 라벨, 영역 구분자, 배치 정보 절대 포함 금지)
+- `### Data Elements`: 연구 수치, 성과 지표
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, Figure 캡션, 색상 범례, 축 라벨, 데이터 테이블, 받침대/플랫폼, 테이블 형식 CONTENT 등

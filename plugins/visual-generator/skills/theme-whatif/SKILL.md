@@ -237,3 +237,32 @@ whatif 스타일의 텍스트는 **개조식 현재형**을 따릅니다:
 | **한영 병기 텍스트** | `연구 (Research)`, `분석(Analysis)`, `목표 / Goal` | 한글과 영어를 괄호·슬래시로 병기하는 모든 형태 금지. 한글 단독 또는 고유 영문 약어(AI, IoT, CNN 등) 단독만 허용 |
 
 CONTENT에는 **이미지에 실제 렌더링될 텍스트(UI 오버레이, KPI 수치, 라벨)만** 포함합니다.
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+whatif 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: 미래 비전 스냅샷의 목적 (비전 몰입, 성과 시각화 등)
+- `### Target Audience`: 투자자, 의사결정자, 청중 등
+- `### Key Message`: 단정형 선언문 한 문장 (이미 실현된 톤)
+- `### Visual Style`: `whatif` 스타일 명시 + 시네마틱 씬 특성
+- `### Rendering Style`: 서피스(글래스모피즘 패널), 배경(다크 틸→소프트 크림 그래디언트), 코너/엣지(큰 라운딩 16px), 연결선(그래디언트+글로우), 시각 장식(보케, HUD UI), 공간 구성(풀블리드 장면), 시각 메타포(시네마틱 씬) 7개 차원
+- `### Content Placement`: 장면 구성 5요소 상세 — 행위자(WHO), 행동(DOING), 환경(WHERE), 성과 지표(RESULT) 배치, 시간 단서(WHEN). **장면 묘사(인물 외모, 표정, 환경, 조명)는 여기에 기술**
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 #F7FFF7
+- `### Background Treatment`: 다크 틸→소프트 크림 대각선 그래디언트 + 원형 보케
+- `### Color Palette`: 주조(#1A535C), 보조(#4ECDC4), 강조(#FF6B35), 배경(#F7FFF7)
+- `### Layout Structure`: Future Snapshot 또는 Hero Statement + 영역 구분
+- `### Typography`: 선언형 대형 텍스트, KPI 강조색 볼드
+
+### CONTENT 블록 포함 내용
+- `### Title Area`: 단정형 선언문 제목 (번호 목록 형태)
+- `### Main Content`: 이미지에 렌더링될 UI 오버레이 텍스트, KPI 수치, 라벨만 번호 목록으로 나열 (장면 묘사, 환경 설명, 조명/분위기 절대 포함 금지 — INSTRUCTION에 배치)
+- `### Data Elements`: KPI/성과 수치 (숫자+단위+맥락)
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, Before 언급, 장면 묘사, 환경 설명, 테이블 형식 CONTENT 등

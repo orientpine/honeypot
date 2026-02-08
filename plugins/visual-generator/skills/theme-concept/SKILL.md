@@ -316,3 +316,31 @@ concept 스타일에는 **텍스트가 없습니다**:
 | **엣지 클리핑** | 캐릭터/주요 오브젝트가 캔버스 가장자리에서 잘리는 것 | 모든 핵심 요소는 세이프 존(5%) 안에 온전히 포함되어야 한다 |
 
 **이 테마의 이미지에는 단 하나의 글자도 렌더링되어서는 안 됩니다.**
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+concept 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: 시각 스토리텔링의 목적 (개념 설명, 원리 전달 등)
+- `### Target Audience`: 교육 대상, 발표 청중 등
+- `### Key Message`: 장면으로 전달할 핵심 개념 한 문장
+- `### Visual Style`: `concept` 스타일 명시 + Kurzgesagt 특성
+- `### Rendering Style`: 서피스(플랫 벡터), 배경(어두운 단색/그라데이션), 코너/엣지(큰 라운딩), 연결선(입자 흐름), 시각 장식(글로우, 보케), 공간 구성(풀블리드, 3레이어 깊이), 시각 메타포(시각 스토리텔링) 7개 차원
+- `### Content Placement`: 장면 구성 상세 — 전경/중경/후경 배치, 캐릭터 위치, 행동, 환경 단서, 시각적 결과 배치
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 (테마별 주조색)
+- `### Background Treatment`: 어두운 단색 + 미세한 별/입자/보케
+- `### Color Palette`: 주조/보조/강조/전경 4색 (테마별)
+- `### Layout Structure`: Central/Section-Flow/Contrast/Evolution 중 선택 + 영역 구분
+- `### Typography`: 텍스트 없음 규칙 명시
+
+### CONTENT 블록 포함 내용 (이 테마 전용)
+- `### Scene Elements (시각 요소)`: 장면에 포함될 캐릭터, 사물, 환경 요소 목록 (텍스트 아님)
+- `### Scene Composition (장면 구성)`: 전경/중경/후경 배치 설명
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- **모든 텍스트** (제목, 라벨, 수치, 범례, 설명문), 위치 지시자, 색상 코드, 차트/그래프, 표/테이블, 아이콘/불릿, 엣지 클리핑 등
