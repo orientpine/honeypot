@@ -1,0 +1,52 @@
+{
+  "title": "중학교 2학년 수학 단원평가",
+  "subtitle": "일차방정식과 부등식",
+  "problems": [
+    {
+      "text": "다음 일차방정식을 풀어라.",
+      "equation": "2x + 3 = 7"
+    },
+    {
+      "text": "다음 방정식의 해를 구하여라.",
+      "equation": "{2x+1} over 3 = {x-2} over 5"
+    },
+    {
+      "text": "다음을 간단히 하여라.",
+      "sub_problems": [
+        {"equation": "3(x+2) - 2(x-1)"},
+        {"equation": "{x+1} over 2 + {x-1} over 3"},
+        {"equation": "(-2)^3 + 3 times (-1)^2"}
+      ]
+    },
+    {
+      "text": "다음 연립방정식을 풀어라.",
+      "equation": "cases {2x + y = 5 # 3x - 2y = 4}"
+    },
+    {
+      "text": "다음 부등식을 풀어라.",
+      "equation": "3x - 5 > 2x + 1"
+    },
+    {
+      "text": "다음 제곱근을 간단히 하여라.",
+      "sub_problems": [
+        {"equation": "sqrt 12 + sqrt 27 - sqrt 48"},
+        {"equation": "sqrt {32} over sqrt {2}"},
+        {"equation": "{2 sqrt 3 + sqrt 2} times {sqrt 3 - sqrt 2}"}
+      ]
+    },
+    {
+      "text": "다음 중 옳은 것을 고르시오.",
+      "choices": [
+        "$sqrt 4 = +- 2$",
+        "$sqrt {(-3)^2} = -3$",
+        "$sqrt 9 = 3$",
+        "$(-sqrt 5)^2 = -5$",
+        "$sqrt {0.01} = 0.1$"
+      ]
+    },
+    {
+      "text": "일차함수 y = 2x - 3의 그래프가 점 (a, 5)를 지날 때, a의 값을 구하여라.",
+      "equation": "y = 2x - 3"
+    }
+  ]
+}

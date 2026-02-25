@@ -1,0 +1,41 @@
+{
+  "exam_type": "학력평가",
+  "year": 2020,
+  "month": 3,
+  "grade": "고1",
+  "session": 2,
+  "subject_area": "수학",
+  "total_pages": 12,
+  "question_type_label": "5지선다형",
+  "problems": [
+    {
+      "text": "의 값은?",
+      "equation": "-{7} over {2} times (-3) + 4 times left | -{5} over {2} right |",
+      "points": 2,
+      "choices": ["$-1$", "$-{1} over {2}$", "$0$", "${1} over {2}$", "$1$"]
+    },
+    {
+      "text": "의 값은?",
+      "equation": "(2^4)^3 div 2^{10}",
+      "points": 2,
+      "choices": ["1", "2", "4", "8", "16"]
+    },
+    {
+      "text": "에 대하여 3A-B를 간단히 하면?",
+      "equation": "A = 2a^2 + a,~B = 3a - 1",
+      "points": 2,
+      "choices": [
+        "$6a^2 + 6a + 1$",
+        "$6a^2 - 6a + 1$",
+        "$6a^2 - 1$",
+        "$6a^2 + 1$",
+        "$6a^2$"
+      ]
+    },
+    {
+      "text": "부등식 5x - 7 ≤ 23 - x를 만족시키는 자연수 x의 개수는?",
+      "points": 3,
+      "choices": ["5", "6", "7", "8", "9"]
+    }
+  ]
+}

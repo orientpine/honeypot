@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-07T00:00:00+09:00
+**Generated:** 2026-02-25T00:00:00+09:00
 **Version:** 2.4.0
 **Branch:** main
 
@@ -59,8 +59,11 @@ toolbox/
      │   └── skills/                   # 3 skills
      ├── equity-research/              # 기관급 주식 분석
      │   └── agents/                   # 1 agent
-     ├── hwpx-converter/               # Markdown→HWPX 변환
-     │   └── skills/                   # 2 skills
+     ├── hwpx-generator/               # HWPX 문서 생성/편집/분석 통합 플러그인
+     │   ├── agents/                   # 2 agents (hwpx-builder, hwpx-analyzer)
+     │   ├── commands/
+     │   │   └── hwpx-generate.md      # HWPX 문서 생성 오케스트레이터 command
+     │   └── skills/                   # 3 skills (hwpx-core, hwpx-templates, hwpx-math)
      └── worktree-workflow/            # Git worktree 워크플로우
          └── agents/                   # 1 agent
 ```
@@ -79,7 +82,10 @@ toolbox/
 | Stock/ETF consultation | `plugins/stock-consultation/commands/stock-consult.md` | Bogle/Vanguard 철학 기반 |
 | General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
-| Markdown → HWPX conversion | `plugins/hwpx-converter/skills/converter/` | pypandoc-hwpx 기반 |
+| HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 + 수식 통합 |
+| HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반 |
+| HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수 |
+| 수학 수식 문제지 | `plugins/hwpx-generator/skills/hwpx-math/SKILL.md` | 한컴 수식 스크립트 |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 11 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
@@ -640,7 +646,7 @@ Step 5. 캐시 클리어 후 재등록
 | 유형 | 포함 폴더 | 용도 | 예시 |
 |------|-----------|------|------|
 | **Agent only** | `agents/` | 전문 에이전트 모음 | general-agents, macro-analysis |
-| **Skill only** | `skills/` | 전문 지식/절차 제공 | hwpx-converter |
+| **Skill only** | `skills/` | 전문 지식/절차 제공 | hwpx-generator |
 | **Agent + Skill** | `agents/` + `skills/` | 에이전트 + 전문 지식 | stock-consultation, investments-portfolio |
 | **Agent + Command** | `agents/` + `commands/` | 에이전트 + 워크플로우 오케스트레이션 | backend-development |
 | **Full** | `agents/` + `commands/` + `skills/` | 완전한 플러그인 | agent-teams |

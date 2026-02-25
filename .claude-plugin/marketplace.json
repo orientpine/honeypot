@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -132,10 +132,15 @@
       "agents": ["./agents/equity-research-analyst.md"]
     },
     {
-      "name": "hwpx-converter",
-      "source": "./plugins/hwpx-converter",
-      "description": "Markdown 파일을 한글 문서(HWPX)로 변환합니다. pypandoc-hwpx 기반.",
+      "name": "hwpx-generator",
+      "source": "./plugins/hwpx-generator",
+      "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + 수학 수식 지원.",
+      "version": "1.0.0",
       "strict": true,
+      "agents": [
+        "./agents/hwpx-builder.md",
+        "./agents/hwpx-analyzer.md"
+      ],
       "skills": ["./skills"]
     },
     {

@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Validate the structural integrity of an HWPX file.
+
+Checks:
+  - Valid ZIP archive
+  - Required files present (mimetype, content.hpf, header.xml, section0.xml)
+  - mimetype content is correct
+  - mimetype is the first ZIP entry and stored without compression
+  - All XML files are well-formed
+
+Usage:
+    python validate.py document.hwpx
+"""
+
+import argparse
+import sys
+from pathlib import Path
+from zipfile import ZIP_STORED, BadZipFile, ZipFile
+
+from lxml import etree
+
+REQUIRED_FILES = [
+    "mimetype",
+    "Contents/content.hpf",
+    "Contents/header.xml",
+    "Contents/section0.xml",
+]
+
+EXPECTED_MIMETYPE = "application/hwp+zip"
+
+
+def validate(hwpx_path: str) -> list[str]:
+    """Validate HWPX file and return a list of error messages (empty = valid)."""
+
+    errors: list[str] = []
+    path = Path(hwpx_path)
+
+    if not path.is_file():
+        return [f"File not found: {hwpx_path}"]
+
+    # Check valid ZIP
+    try:
+        zf = ZipFile(hwpx_path, "r")
+    except BadZipFile:
+        return [f"Not a valid ZIP archive: {hwpx_path}"]
+
+    with zf:
+        names = zf.namelist()
+
+        # Check required files
+        for required in REQUIRED_FILES:
+            if required not in names:
+                errors.append(f"Missing required file: {required}")
+
+        # Check mimetype content
+        if "mimetype" in names:
+            mimetype_content = zf.read("mimetype").decode("utf-8").strip()
+            if mimetype_content != EXPECTED_MIMETYPE:
+                errors.append(
+                    f"Invalid mimetype: expected '{EXPECTED_MIMETYPE}', "
+                    f"got '{mimetype_content}'"
+                )
+
+            # Check mimetype is first entry
+            if names[0] != "mimetype":
+                errors.append(
+                    f"mimetype is not the first ZIP entry (found at index "
+                    f"{names.index('mimetype')})"
+                )
+
+            # Check mimetype is stored without compression
+            info = zf.getinfo("mimetype")
+            if info.compress_type != ZIP_STORED:
+                errors.append(
+                    f"mimetype should use ZIP_STORED (0), "
+                    f"got compress_type={info.compress_type}"
+                )
+
+        # Check XML well-formedness
+        for name in names:
+            if name.endswith(".xml") or name.endswith(".hpf"):
+                try:
+                    data = zf.read(name)
+                    etree.fromstring(data)
+                except etree.XMLSyntaxError as e:
+                    errors.append(f"Malformed XML in {name}: {e}")
+
+    return errors
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Validate the structural integrity of an HWPX file"
+    )
+    parser.add_argument("input", help="Path to .hwpx file")
+    args = parser.parse_args()
+
+    errors = validate(args.input)
+
+    if errors:
+        print(f"INVALID: {args.input}", file=sys.stderr)
+        for err in errors:
+            print(f"  - {err}", file=sys.stderr)
+        sys.exit(1)
+    else:
+        print(f"VALID: {args.input}")
+        print("  All structural checks passed.")
+
+
+if __name__ == "__main__":
+    main()
