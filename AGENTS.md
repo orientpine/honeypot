@@ -13,7 +13,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (11 plugins)
+│   └── marketplace.json              # Single marketplace registry (12 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
     │   ├── agents/                   # 6 agents
@@ -64,9 +64,36 @@ toolbox/
      │   ├── commands/
      │   │   └── hwpx-generate.md      # HWPX 문서 생성 오케스트레이터 command
      │   └── skills/                   # 2 skills (hwpx-core, hwpx-templates)
-     └── worktree-workflow/            # Git worktree 워크플로우
-         └── agents/                   # 1 agent
+     ├── worktree-workflow/            # Git worktree 워크플로우
+     │   └── agents/                   # 1 agent
+     └── patent-trend-analyzer/        # 특허 동향 분석
+         ├── agents/                   # 3 agents: patent-planner, patent-searcher, patent-analyzer
+         ├── commands/
+         │   └── analyze-patents.md    # 전체 파이프라인 오케스트레이터 command
+         └── skills/                   # 4 skills (mcp-setup, research-planning, search-collect, analysis-viz)
 ```
+
+### patent-trend-analyzer (특허 동향 분석)
+KIPRIS API 기반 특허 키워드 최적화, 검색, 3축 분류 및 시각화 파이프라인.
+
+**Agents:**
+- `patent-planner.md` - 연구 영역 클러스터링, 키워드 최적화, IPC 매핑, 검색 전략 수립
+- `patent-searcher.md` - KIPRIS API 특허 검색 실행, 배치 내보내기, 중복 제거
+- `patent-analyzer.md` - 3축 분류, 트렌드 분석, 시각화 (PNG/HTML), 보고서 생성
+
+**Skills:**
+- `patent-mcp-setup/` - KIPRIS MCP 서버 설치 및 설정
+- `patent-research-planning/` - 키워드 최적화, IPC 코드 매핑, 검색 전략
+- `patent-search-collect/` - API 검색 실행, 배치 내보내기, 결과 중복 제거
+- `patent-analysis-viz/` - 3축 분류, 8종 차트, HTML 대시보드, Excel 보고서
+
+**Commands:**
+- `analyze-patents.md` - 전체 파이프라인 오케스트레이션 (계획 → 검색 → 분석)
+
+**MCP Tools (18):**
+- 한국 특허 검색 (8): patent_free_search, patent_applicant_search 등
+- 해외 특허 검색 (7): foreign_patent_free_search 등
+- 전처리 (3): patent_search_planner, patent_keyword_optimizer, patent_result_deduplicator
 
 ## WHERE TO LOOK
 
@@ -85,7 +112,8 @@ toolbox/
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
 | HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 11 plugins listed |
+| Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 12 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
