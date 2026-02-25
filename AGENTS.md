@@ -75,24 +75,25 @@ toolbox/
          ├── agents/                   # 3 agents: patent-planner, patent-searcher, patent-analyzer
          ├── commands/
          │   └── analyze-patents.md    # 전체 파이프라인 오케스트레이터 command
-         └── skills/                   # 4 skills (mcp-setup, research-planning, search-collect, analysis-viz)
+         └── skills/                   # 5 skills (mcp-setup, research-planning, search-collect, analysis-viz, ipc-classification-guide)
 ```
 
 [1] https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev 의 내용을 참조하여 포팅함.
 
 ### patent-trend-analyzer (특허 동향 분석)
-KIPRIS API 기반 특허 키워드 최적화, 검색, 3축 분류 및 시각화 파이프라인.
+KIPRIS API 기반 범용 특허 키워드 최적화, 검색, 사용자 정의 다축 분류 및 시각화 파이프라인. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능.
 
 **Agents:**
 - `patent-planner.md` - 연구 영역 클러스터링, 키워드 최적화, IPC 매핑, 검색 전략 수립
 - `patent-searcher.md` - KIPRIS API 특허 검색 실행, 배치 내보내기, 중복 제거
-- `patent-analyzer.md` - 3축 분류, 트렌드 분석, 시각화 (PNG/HTML), 보고서 생성
+- `patent-analyzer.md` - 사용자 정의 분류 체계 적용, 트렌드 분석, 시각화 (PNG/HTML), 보고서 생성
 
 **Skills:**
 - `patent-mcp-setup/` - KIPRIS MCP 서버 설치 및 설정
 - `patent-research-planning/` - 키워드 최적화, IPC 코드 매핑, 검색 전략
 - `patent-search-collect/` - API 검색 실행, 배치 내보내기, 결과 중복 제거
-- `patent-analysis-viz/` - 3축 분류, 8종 차트, HTML 대시보드, Excel 보고서
+- `patent-analysis-viz/` - 사용자 정의 다축 분류, 8종 차트, HTML 대시보드, Excel 보고서
+- `ipc-classification-guide/` - IPC/CPC 국제특허분류 체계 가이드 (현재 G06N 상세 지원, 확장 가능)
 
 **Commands:**
 - `analyze-patents.md` - 전체 파이프라인 오케스트레이션 (계획 → 검색 → 분석)
