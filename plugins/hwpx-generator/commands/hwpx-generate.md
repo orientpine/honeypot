@@ -11,7 +11,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 ## Phase 1: 요구사항 파악 (문서 유형, 내용, 양식)
 
 1. Parse `$ARGUMENTS` and normalize requirements.
-   - 문서 유형 분류: 공문/보고서/회의록/제안서/수학문제지.
+   - 문서 유형 분류: 공문/보고서/회의록/제안서.
    - 핵심 내용 추출: 제목, 섹션 구조, 필수 문구, 표/수식 포함 여부.
    - 양식 요구 추출: 사용자 템플릿 사용 여부, 레퍼런스 문서 동일 스타일 여부.
 2. Build execution context.
@@ -34,7 +34,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 
 1. Use Task tool with subagent_type="hwpx-generator::hwpx-builder"
    - Prompt: "Generate a production-ready `.hwpx` using this request `$ARGUMENTS`, selected format strategy (user template > default template > XML-first), and analyzer report if present. Return output path and generation path used."
-   - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`/`hwpx-math`), 생성 요약.
+   - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
 ## Phase 4: 검증 (validate.py)

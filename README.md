@@ -21,7 +21,7 @@
 | **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
 | **stock-consultation** | 주식/ETF 투자 상담 Multi-Agent 시스템. 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증 워크플로우. Bogle/Vanguard 철학 기반. | Agent |
 | **equity-research** | Professional equity research analysis with institutional-grade formatting. 티커와 함께 호출하면 기관급 주식 분석 리포트를 생성합니다. | Agent |
-| **hwpx-generator** | HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + 수학 수식 지원. | Agent+Skill |
+| **hwpx-generator** | HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 지원. | Agent+Skill |
 | **worktree-workflow** | Git worktree를 활용한 Claude Code 병렬 실행 워크플로우 | Agent |
 
 ---
@@ -85,7 +85,7 @@ honeypot/
 │   │   ├── agents/               # 2 agents (hwpx-builder, hwpx-analyzer)
 │   │   ├── commands/
 │   │   │   └── hwpx-generate.md  # HWPX 문서 생성 오케스트레이터 command
-│   │   └── skills/               # 3 skills (hwpx-core, hwpx-templates, hwpx-math)
+│   │   └── skills/               # 2 skills (hwpx-core, hwpx-templates)
 │   └── worktree-workflow/        # Git worktree 워크플로우
 │       └── agents/               # 1 agent
 ├── resource/                     # 개발 참고 자료

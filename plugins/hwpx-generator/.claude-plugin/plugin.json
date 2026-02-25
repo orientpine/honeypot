@@ -1,7 +1,7 @@
 {
   "name": "hwpx-generator",
-  "version": "1.0.0",
-  "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + 수학 수식 지원.",
+  "version": "2.0.0",
+  "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 지원.",
   "author": { "name": "Baekdong Cha", "email": "orientpine@gmail.com" },
   "license": "MIT"
 }
