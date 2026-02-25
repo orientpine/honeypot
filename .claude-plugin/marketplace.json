@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -153,8 +153,8 @@
     {
       "name": "patent-trend-analyzer",
       "source": "./plugins/patent-trend-analyzer",
-      "description": "KIPRIS API 기반 특허 동향 분석 - 키워드 클러스터링, 검색 최적화, 3축 분류, 시각화 대시보드 생성",
-      "version": "1.0.0",
+      "description": "KIPRIS API 기반 특허 동향 분석 - 키워드 클러스터링, 검색 최적화, 다축 분류, 시각화 대시보드 생성",
+      "version": "1.1.0",
       "strict": true,
       "agents": [
         "./agents/patent-planner.md",
