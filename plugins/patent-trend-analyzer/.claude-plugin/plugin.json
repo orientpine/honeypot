@@ -1,0 +1,10 @@
+{
+  "name": "patent-trend-analyzer",
+  "version": "1.0.0",
+  "description": "KIPRIS API 기반 특허 동향 분석 - 키워드 클러스터링, 검색 최적화, 3축 분류, 시각화 대시보드 생성",
+  "author": {
+    "name": "Gunju Park",
+    "email": "uio88890@gmail.com"
+  },
+  "license": "MIT"
+}
