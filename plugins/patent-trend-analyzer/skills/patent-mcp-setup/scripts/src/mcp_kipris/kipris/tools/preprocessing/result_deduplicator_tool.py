@@ -1,5 +1,6 @@
 # [GJ] Patent result deduplicator - cross-search deduplication with statistics
-# Applies dedup + IPC filter + domain exclusion BEFORE classification
+# Applies dedup + optional IPC filter + optional domain exclusion BEFORE classification
+# Domain-agnostic: IPC prefix and exclusion keywords are user-configurable
 
 import logging
 import os
@@ -12,10 +13,6 @@ from pydantic import BaseModel, Field
 from mcp_kipris.kipris._registry import register_tool
 from mcp_kipris.kipris.abc import ToolHandler
 from mcp_kipris.kipris.tools._formatters import generate_output_path, save_dataframe
-from mcp_kipris.kipris.tools.preprocessing._keyword_db import (
-    check_domain_exclusion,
-    classify_by_ipc,
-)
 
 logger = logging.getLogger("mcp-kipris")
 
@@ -23,35 +20,43 @@ logger = logging.getLogger("mcp-kipris")
 class ResultDeduplicatorArgs(BaseModel):
     input_directory: str = Field(
         ...,
-        description="Directory containing Excel/Markdown patent result files to deduplicate"
+        description="Directory containing Excel/Markdown patent result files to deduplicate",
     )
     dedup_column: str = Field(
         "applicationNumber",
-        description="Column name for deduplication (applicationNumber or ApplicationNumber)"
+        description="Column name for deduplication (applicationNumber or ApplicationNumber)",
     )
     apply_ipc_filter: bool = Field(
-        True,
-        description="Apply IPC relevance filter (keep only G06N 3/ patents)"
+        False,
+        description="Apply IPC relevance filter (default: false, requires ipc_prefix)",
+    )
+    ipc_prefix: str = Field(
+        "",
+        description="IPC code prefix for filtering (e.g., 'G06N 3/' or 'H01M 10/'). Only used when apply_ipc_filter=true.",
     )
     apply_domain_filter: bool = Field(
-        True,
-        description="Apply domain exclusion filter (remove LLM, Medical, Security, etc.)"
+        False,
+        description="Apply domain exclusion filter (default: false, requires exclusion_keywords)",
+    )
+    exclusion_keywords: str = Field(
+        "",
+        description="Comma-separated exclusion keywords for domain filtering (e.g., 'medical,blockchain,advertisement')",
     )
     title_column: str = Field(
         "inventionTitle",
-        description="Column name for patent title (for domain filtering)"
+        description="Column name for patent title (for domain filtering)",
     )
     ipc_column: str = Field(
         "ipcNumber",
-        description="Column name for IPC code"
+        description="Column name for IPC code",
     )
     output_format: str = Field(
         "excel",
-        description="Output format for deduplicated results (excel or markdown)"
+        description="Output format for deduplicated results (excel or markdown)",
     )
     output_prefix: str = Field(
         "deduplicated",
-        description="Prefix for output filename"
+        description="Prefix for output filename",
     )
 
 
@@ -59,7 +64,7 @@ class ResultDeduplicatorArgs(BaseModel):
 class ResultDeduplicatorTool(ToolHandler):
     def __init__(self):
         super().__init__("patent_result_deduplicator")
-        self.description = "Cross-search deduplication tool. Merges multiple patent result files, removes duplicates, applies IPC and domain filters, and reports overlap statistics."
+        self.description = "Cross-search deduplication tool. Merges multiple patent result files, removes duplicates, and optionally applies IPC and domain filters. Works for any patent domain."
 
     def get_tool_description(self) -> Tool:
         return Tool(
@@ -70,43 +75,53 @@ class ResultDeduplicatorTool(ToolHandler):
                 "properties": {
                     "input_directory": {
                         "type": "string",
-                        "description": "특허 검색 결과 파일이 있는 디렉토리 경로"
+                        "description": "Directory containing patent result files",
                     },
                     "dedup_column": {
                         "type": "string",
-                        "description": "중복 제거 기준 컬럼 (기본값: applicationNumber)",
-                        "default": "applicationNumber"
+                        "description": "Column for deduplication (default: applicationNumber)",
+                        "default": "applicationNumber",
                     },
                     "apply_ipc_filter": {
                         "type": "boolean",
-                        "description": "IPC 관련성 필터 적용 여부 (기본값: true)",
-                        "default": True
+                        "description": "Apply IPC filter (default: false)",
+                        "default": False,
+                    },
+                    "ipc_prefix": {
+                        "type": "string",
+                        "description": "IPC prefix for filtering (e.g., 'G06N 3/'). Required if apply_ipc_filter=true.",
+                        "default": "",
                     },
                     "apply_domain_filter": {
                         "type": "boolean",
-                        "description": "도메인 제외 필터 적용 여부 (기본값: true)",
-                        "default": True
+                        "description": "Apply domain exclusion filter (default: false)",
+                        "default": False,
+                    },
+                    "exclusion_keywords": {
+                        "type": "string",
+                        "description": "Comma-separated exclusion keywords for domain filtering",
+                        "default": "",
                     },
                     "title_column": {
                         "type": "string",
-                        "description": "특허 제목 컬럼명 (기본값: inventionTitle)",
-                        "default": "inventionTitle"
+                        "description": "Patent title column name (default: inventionTitle)",
+                        "default": "inventionTitle",
                     },
                     "ipc_column": {
                         "type": "string",
-                        "description": "IPC 코드 컬럼명 (기본값: ipcNumber)",
-                        "default": "ipcNumber"
+                        "description": "IPC code column name (default: ipcNumber)",
+                        "default": "ipcNumber",
                     },
                     "output_format": {
                         "type": "string",
-                        "description": "출력 형식 (excel, markdown)",
+                        "description": "Output format (excel, markdown)",
                         "enum": ["excel", "markdown"],
-                        "default": "excel"
+                        "default": "excel",
                     },
                     "output_prefix": {
                         "type": "string",
-                        "description": "출력 파일명 접두사 (기본값: deduplicated)",
-                        "default": "deduplicated"
+                        "description": "Output filename prefix (default: deduplicated)",
+                        "default": "deduplicated",
                     },
                 },
                 "required": ["input_directory"],
@@ -178,9 +193,11 @@ class ResultDeduplicatorTool(ToolHandler):
             overlap_rate = 0
             after_dedup = total_raw
 
-        # Step 5: IPC post-filter
+        # Step 5: IPC post-filter (configurable prefix)
         ipc_filtered = 0
-        if validated_args.apply_ipc_filter:
+        ipc_prefix = validated_args.ipc_prefix.strip()
+
+        if validated_args.apply_ipc_filter and ipc_prefix:
             ipc_col = None
             for col_name in [validated_args.ipc_column, "ipcNumber", "ipc", "IPC", "IPCNumber"]:
                 if col_name in merged_df.columns:
@@ -189,16 +206,25 @@ class ResultDeduplicatorTool(ToolHandler):
 
             if ipc_col:
                 before_ipc = len(merged_df)
-                # Keep only G06N 3/ related patents
+                # Normalize: match with and without spaces
+                prefix_nospace = ipc_prefix.replace(" ", "")
                 merged_df = merged_df[
-                    merged_df[ipc_col].fillna("").str.replace(" ", "").str.contains("G06N3/", regex=False)
-                    | merged_df[ipc_col].fillna("").str.contains("G06N 3/", regex=False)
+                    merged_df[ipc_col].fillna("").str.replace(" ", "").str.contains(
+                        prefix_nospace, regex=False
+                    )
+                    | merged_df[ipc_col].fillna("").str.contains(
+                        ipc_prefix, regex=False
+                    )
                 ]
                 ipc_filtered = before_ipc - len(merged_df)
 
-        # Step 6: Domain exclusion filter
+        # Step 6: Domain exclusion filter (configurable keywords)
         domain_excluded = {}
-        if validated_args.apply_domain_filter:
+        exclusion_terms = [
+            t.strip() for t in validated_args.exclusion_keywords.split(",") if t.strip()
+        ]
+
+        if validated_args.apply_domain_filter and exclusion_terms:
             title_col = None
             for col_name in [validated_args.title_column, "inventionTitle", "InventionName", "inventionName", "title"]:
                 if col_name in merged_df.columns:
@@ -208,11 +234,12 @@ class ResultDeduplicatorTool(ToolHandler):
             if title_col:
                 exclusion_mask = pd.Series([False] * len(merged_df), index=merged_df.index)
                 for idx, row in merged_df.iterrows():
-                    title = str(row.get(title_col, ""))
-                    domain = check_domain_exclusion(title)
-                    if domain:
-                        exclusion_mask.at[idx] = True
-                        domain_excluded[domain] = domain_excluded.get(domain, 0) + 1
+                    title = str(row.get(title_col, "")).upper()
+                    for term in exclusion_terms:
+                        if term.upper() in title:
+                            exclusion_mask.at[idx] = True
+                            domain_excluded[term] = domain_excluded.get(term, 0) + 1
+                            break
 
                 merged_df = merged_df[~exclusion_mask]
 
@@ -248,19 +275,25 @@ class ResultDeduplicatorTool(ToolHandler):
             lines.append(f"| {fs['file']} | {fs['count']:,}{error} |")
 
         lines.append(f"\n## Processing Pipeline")
-        lines.append(f"| Stage | Input | Removed | Output |")
-        lines.append(f"|-------|-------|---------|--------|")
+        lines.append("| Stage | Input | Removed | Output |")
+        lines.append("|-------|-------|---------|--------|")
 
         stage_input = total_raw
-        lines.append(f"| Deduplication | {stage_input:,} | {duplicates_removed:,} ({overlap_rate:.1f}%) | {after_dedup:,} |")
+        lines.append(
+            f"| Deduplication | {stage_input:,} | {duplicates_removed:,} ({overlap_rate:.1f}%) | {after_dedup:,} |"
+        )
 
         stage_input = after_dedup
-        if validated_args.apply_ipc_filter:
-            lines.append(f"| IPC Filter (G06N 3/) | {stage_input:,} | {ipc_filtered:,} | {stage_input - ipc_filtered:,} |")
+        if validated_args.apply_ipc_filter and ipc_prefix:
+            lines.append(
+                f"| IPC Filter ({ipc_prefix}) | {stage_input:,} | {ipc_filtered:,} | {stage_input - ipc_filtered:,} |"
+            )
             stage_input -= ipc_filtered
 
         if validated_args.apply_domain_filter and total_domain_excluded > 0:
-            lines.append(f"| Domain Exclusion | {stage_input:,} | {total_domain_excluded:,} | {final_count:,} |")
+            lines.append(
+                f"| Domain Exclusion | {stage_input:,} | {total_domain_excluded:,} | {final_count:,} |"
+            )
 
         lines.append(f"\n## Results")
         lines.append(f"- **Final unique records: {final_count:,}**")
@@ -269,7 +302,7 @@ class ResultDeduplicatorTool(ToolHandler):
 
         if domain_excluded:
             lines.append(f"\n## Domain Exclusions")
-            for domain, count in sorted(domain_excluded.items(), key=lambda x: -x[1]):
-                lines.append(f"- {domain}: {count:,} patents removed")
+            for term, count in sorted(domain_excluded.items(), key=lambda x: -x[1]):
+                lines.append(f"- {term}: {count:,} patents removed")
 
         return "\n".join(lines)

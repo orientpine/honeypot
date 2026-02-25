@@ -64,7 +64,7 @@ KIPRIS MCP 서버 도구를 활용해 특허를 검색하고, 배치로 내보�
 ```python
 # 한국 특허 - 페이지당 10건, 최신순 정렬
 patent_free_search(
-    query="에지 AI 경량화",
+    query="<L1에서 수립한 키워드>",
     page=1,
     sort="desc_sort",
     sort_spec="AD"  # AD = 출원일 기준 최신순
@@ -76,7 +76,7 @@ patent_free_search(
 ```python
 # 전체 결과를 Excel로 저장 (빈 페이지 감지 시 자동 종료)
 patent_batch_export(
-    query="온디바이스 추론",
+    query="<L1에서 수립한 키워드>",
     max_pages=50,
     output_path="./output/korea_patents.xlsx"
 )
@@ -87,10 +87,10 @@ patent_batch_export(
 L1에서 수립한 쿼리 목록을 순차 또는 병렬로 실행합니다.
 
 ```
-쿼리 1: "에지 AI 경량화"          → korea_q1.xlsx
-쿼리 2: "온디바이스 추론 최적화"    → korea_q2.xlsx
-쿼리 3: "edge inference"          → us_q1.xlsx (US)
-쿼리 4: "model compression"       → ep_q1.xlsx (EP)
+쿼리 1: "<한국어 키워드 1>"     → korea_q1.xlsx
+쿼리 2: "<한국어 키워드 2>"     → korea_q2.xlsx
+쿼리 3: "<영어 키워드 1>"       → us_q1.xlsx (US)
+쿼리 4: "<영어 키워드 2>"       → ep_q1.xlsx (EP)
 ```
 
 ### Step 4. 중복 제거
@@ -146,4 +146,4 @@ MCP 서버는 키 형식을 자동 감지하여 적절한 엔드포인트로 라
 - **배치 자동 종료**: `patent_batch_export` 는 빈 페이지 감지 시 자동 중단 (max_pages 초과 불필요)
 - **대용량 수집**: max_pages를 높게 설정해도 실제 결과가 적으면 일찍 종료됨
 - **오류 재시도**: API 타임아웃 시 동일 파라미터로 재호출하면 자동 재개
-- **IPC 범위**: 상위 코드(G06N 3)로 넓게 잡고, 결과가 너무 많으면 하위 코드(G06N 3/063)로 좁힘
+- **IPC 범위**: 상위 IPC 코드로 넓게 잡고, 결과가 너무 많으면 하위 코드로 좁힘

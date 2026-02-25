@@ -81,11 +81,11 @@ Track running API call count. Stop country expansion if budget is 80% consumed.
 For IPC-only broad searches, use:
 ```
 foreign_patent_ipc_batch_export(
-  ipc_code="G06N 3/",  // prefix search
+  ipc_code="[IPC prefix from plan]",  // e.g., prefix search covering all sub-codes
   country_code="US",
-  date_from="20190101",
-  date_to="20241231",
-  output_path="output/US_ipc_G06N3.xlsx"
+  date_from="YYYYMMDD",
+  date_to="YYYYMMDD",
+  output_path="output/US_ipc_{ipc_prefix}.xlsx"
 )
 ```
 
@@ -96,9 +96,9 @@ After all searches complete, run:
 patent_result_deduplicator(
   input_directory="output/",
   dedup_column="applicationNumber",
-  apply_ipc_filter=true,
-  ipc_prefix="G06N 3/",
-  apply_domain_exclusion=true,
+  apply_ipc_filter=false,       // Set to true and provide ipc_prefix if domain requires IPC filtering
+  apply_domain_exclusion=false, // Set to true and provide exclusion_keywords if domain requires exclusion
+  # Set ipc_prefix and exclusion_keywords as needed for your domain
   output_path="output/deduplicated_patents.xlsx"
 )
 ```
@@ -113,7 +113,7 @@ Output a summary report:
 ## Search Execution Summary
 | Query # | IPC Code | Keyword | Country | Raw Count | Method |
 |---------|----------|---------|---------|-----------|--------|
-| 1 | G06N 3/065 | neuromorphic | US | 87 | batch_export |
+| 1 | [IPC code] | [keyword] | [country] | [N] | batch_export |
 ...
 
 ## Deduplication Results
@@ -166,5 +166,5 @@ Hand deduplicated_patents.xlsx to patent-analyzer for classification and visuali
 - `desc_sort=true` + `sort_spec="AD"` returns newest patents first
 - Batch exports automatically stop when a page returns 0 results — no manual pagination needed
 - Large exports (>1000 patents) take approximately 2-3 minutes
-- IPC prefix search `"G06N 3/"` captures all sub-codes (G06N 3/065, 3/067, etc.)
+- IPC prefix search (e.g., `"H01M 10/"`) captures all sub-codes — use the prefix from your research plan
 - Save intermediate files frequently; API calls cannot be replayed cheaply
