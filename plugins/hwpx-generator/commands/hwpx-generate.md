@@ -63,6 +63,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] Task tool 기반 위임으로만 분석/생성을 수행한다.
 - [ ] 양식 우선순서(사용자 업로드 > 기본 양식 > XML-first)를 지킨다.
 - [ ] `validate.py` 검증 통과 전 결과를 완료 처리하지 않는다.
+- [ ] 입력 콘텐츠에 Markdown 서식 기호(`**`, `*`, `~~` 등)가 포함된 경우, HWPX 변환 전 인라인 서식을 multi-run으로 분할하거나 순수 텍스트로 정제한다.
 
 ## MUST NOT DO
 
@@ -70,6 +71,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] 템플릿 우선순서를 임의로 변경하지 않는다.
 - [ ] 검증 실패 결과를 숨기거나 무시하지 않는다.
 - [ ] `.hwp` 직접 생성을 지원한다고 안내하지 않는다.
+- [ ] Markdown 서식 기호(`**`, `*`, `#` 등)를 HWPX 텍스트(`<hp:t>`)에 그대로 포함시키지 않는다.
 
 ## Usage Example
 

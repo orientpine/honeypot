@@ -109,6 +109,66 @@ Glob: **/build_hwpx.py
 | paraPr | 20-22 | 섹션/표 셀 정렬 세트 |
 | borderFill | 3-8 | 표선, 회색/녹색/파란색 배지 배경 |
 
+### 6) 인라인 서식 변환용 (예약 ID, 전 템플릿 공통)
+
+| Group | IDs | Meaning |
+|---|---|---|
+| charPr | 30 | 인라인 볼드 (10pt, `<hh:bold/>`) |
+| charPr | 31 | 인라인 이탤릭 (10pt, `<hh:italic/>`) |
+| charPr | 32 | 인라인 볼드+이탤릭 (10pt, `<hh:bold/>` + `<hh:italic/>`) |
+| charPr | 33 | 인라인 밑줄 (10pt, `<hh:underline type="BOTTOM"/>`) |
+| charPr | 34 | 인라인 취소선 (10pt, `<hh:strikeout shape="SOLID"/>`) |
+
+## Markdown-to-HWPX 인라인 서식 변환
+
+입력 콘텐츠가 Markdown 형식(`.md` 파일 또는 Markdown 구문 포함 텍스트)인 경우,
+Markdown 서식 기호(`**`, `*`, `~~` 등)를 HWPX XML의 multi-run 구조로 변환해야 한다.
+
+### 변환 매핑
+
+| Markdown | charPrIDRef | 설명 |
+|---|---:|---|
+| `**텍스트**` | 30 | 볼드 |
+| `*텍스트*` | 31 | 이탤릭 |
+| `***텍스트***` | 32 | 볼드+이탤릭 |
+| `<u>텍스트</u>` | 33 | 밑줄 |
+| `~~텍스트~~` | 34 | 취소선 |
+| (없음) | 0 | 일반 본문 |
+
+### 변환 원칙
+
+1. Markdown 기호(`**`, `*`, `~~`, `#`, `` ` ``, `- `, `> `)는 `<hp:t>` 텍스트에 포함시키지 않는다.
+2. 서식이 바뀌는 지점마다 별도의 `<hp:run>`을 생성한다 (multi-run 분할).
+3. 예약 charPr ID 30-34는 모든 템플릿(base, gonmun, report, minutes, proposal)에 공통 정의되어 있다.
+4. 블록 레벨 Markdown(`#`, `-`, `>` 등)은 해당 기호를 제거하고 적절한 `paraPrIDRef`로 변환한다.
+
+### XML 예시: 혼합 서식 문단
+
+입력: `연구 결과 **유의미한** 차이가 *관찰*되었다.`
+
+```xml
+<hp:p id="..." paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
+  <hp:run charPrIDRef="0">
+    <hp:t>연구 결과 </hp:t>
+  </hp:run>
+  <hp:run charPrIDRef="30">
+    <hp:t>유의미한</hp:t>
+  </hp:run>
+  <hp:run charPrIDRef="0">
+    <hp:t> 차이가 </hp:t>
+  </hp:run>
+  <hp:run charPrIDRef="31">
+    <hp:t>관찰</hp:t>
+  </hp:run>
+  <hp:run charPrIDRef="0">
+    <hp:t>되었다.</hp:t>
+  </hp:run>
+  <hp:linesegarray>
+    <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
+  </hp:linesegarray>
+</hp:p>
+```
+
 ## Workflow 1. XML-first 문서 생성 (build_hwpx.py)
 
 1. 템플릿 선택: `base`, `gonmun`, `report`, `minutes`, `proposal`

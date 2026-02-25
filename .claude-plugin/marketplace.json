@@ -135,7 +135,7 @@
       "name": "hwpx-generator",
       "source": "./plugins/hwpx-generator",
       "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 지원.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "strict": true,
       "agents": [
         "./agents/hwpx-builder.md",

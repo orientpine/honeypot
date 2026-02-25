@@ -211,7 +211,22 @@ scripts/fix_namespaces.py
 | ZIP-level 후처리 | `python scripts/fix_namespaces.py <file.hwpx>` |
 | XML-first 생성 | `hwpx-core` 경로 우선, 본 후처리 생략 가능 |
 
-## 주의사항 (10개)
+## Markdown 서식 처리 (zip_replace 시 주의)
+
+`zip_replace()` 또는 `zip_replace_sequential()`로 치환할 값에 Markdown 서식 기호(`**`, `*`, `~~` 등)가 포함된 경우, 해당 기호가 HWPX 문서에 그대로 노출된다.
+
+### 대응 방법
+
+1. **치환 값에서 Markdown 기호를 사전 제거**한다.
+   - `**볼드 텍스트**` → `볼드 텍스트`
+   - `*이탤릭*` → `이탤릭`
+   - `~~취소선~~` → `취소선`
+
+2. ZIP-level 치환은 **단순 텍스트 교체**이므로, Markdown 인라인 서식을 HWPX의 multi-run 구조로 변환할 수 없다. 인라인 서식이 필요한 경우 `hwpx-core`의 XML-first 생성 경로를 사용해야 한다.
+
+3. 치환 값이 `.md` 파일에서 가져온 경우, Markdown 파싱 후 순수 텍스트만 추출하여 치환한다.
+
+## 주의사항 (11개)
 
 1. 양식 선택은 반드시 사용자 업로드 > 기본 양식 > `new()` 순서
 2. 치환 전 ObjectFinder 조사 생략 금지
@@ -223,3 +238,4 @@ scripts/fix_namespaces.py
 8. 치환 후 잔여 플레이스홀더를 반드시 재검증할 것
 9. XML-first 빌드와 ZIP-level 빌드를 혼동하지 말 것
 10. 스크립트 미탐지 시 임시 대체 코드 작성 대신 즉시 중단/보고
+11. Markdown 서식 기호가 포함된 값을 zip_replace에 직접 전달하지 말 것
