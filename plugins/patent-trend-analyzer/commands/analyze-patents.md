@@ -7,7 +7,7 @@ Full end-to-end pipeline for patent research: planning, search, and analysis. Or
 Provide a research topic when invoking this command. Example:
 
 ```
-/analyze-patents On-sensor AI inference chips, focusing on neuromorphic and edge computing patents from 2019-2024
+/analyze-patents [연구 주제와 분석 범위 및 기간을 입력하세요]
 ```
 
 ---
@@ -63,7 +63,7 @@ Invoke the patent-analyzer agent to classify patents, run trend analysis, genera
 ```
 Task(
   subagent_type="patent-trend-analyzer::patent-analyzer",
-  prompt="Analyze the collected patent data at output/deduplicated_patents.xlsx. Classify using the 3-axis taxonomy (Layer: OnSensor/OnDevice, Function: Adaptive Learning/Inference/Lightweight/Training). Generate all 8 static charts, the combined dashboard PNG, the interactive HTML dashboard, the multi-sheet Excel report, and the Markdown summary."
+  prompt="Analyze the collected patent data at output/deduplicated_patents.xlsx. Classify using the classification framework defined in Phase 1. Generate all 8 static charts, the combined dashboard PNG, the interactive HTML dashboard, the multi-sheet Excel report, and the Markdown summary."
 )
 ```
 
