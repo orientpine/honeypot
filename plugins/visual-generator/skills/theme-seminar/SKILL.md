@@ -1,9 +1,9 @@
 ---
 name: theme-seminar
-description: "visual-generator seminar 스타일(세미나/발표 자료) 테마 팔레트. style=seminar일 때 사용. 9종 무드(technical-report, clarity, tech-focus, growth, connection, innovation, knowledge, presentation, workshop) 각각 4색 팔레트 제공."
+description: "visual-generator seminar 테마(세미나/발표 자료) 무드 팔레트. theme=seminar일 때 사용. 9종 무드(technical-report, clarity, tech-focus, growth, connection, innovation, knowledge, presentation, workshop) 각각 4색 팔레트 제공."
 ---
 
-# Seminar 스타일 테마 팔레트
+# Seminar 테마 무드 팔레트
 
 세미나/발표 자료를 위한 9가지 무드 테마. 각 테마는 학술 발표와 전문 세미나에 적합한 4색 팔레트를 제공합니다.
 
@@ -13,7 +13,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 1: 기술 보고서 (technical-report)
+#### 무드 1: 기술 보고서 (technical-report)
 
 **용도**: 국책과제, 연구논문, 기술 제안서, 학술 발표
 
@@ -30,7 +30,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 2: 명료 (clarity)
+#### 무드 2: 명료 (clarity)
 
 **용도**: 설명, 정의, 구조, 분류, 비교
 
@@ -46,7 +46,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 3: 테크 (tech-focus)
+#### 무드 3: 테크 (tech-focus)
 
 **용도**: 기술, AI, 데이터, 시스템, 알고리즘
 
@@ -62,7 +62,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 4: 성장 (growth)
+#### 무드 4: 성장 (growth)
 
 **용도**: 발전, 학습, 진화, 향상, 성과
 
@@ -78,7 +78,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 5: 연결 (connection)
+#### 무드 5: 연결 (connection)
 
 **용도**: 네트워크, 관계, 협력, 소통, 통합
 
@@ -94,7 +94,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 6: 혁신 (innovation)
+#### 무드 6: 혁신 (innovation)
 
 **용도**: 변화, 창조, 돌파, 전환, 새로움
 
@@ -110,7 +110,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 7: 지식 (knowledge)
+#### 무드 7: 지식 (knowledge)
 
 **용도**: 큐레이션, 학습, 정보 관리, 지식 공유, 교육
 
@@ -127,7 +127,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 8: 발표 (presentation)
+#### 무드 8: 발표 (presentation)
 
 **용도**: 프레젠테이션, 세미나, 강연, 발표 자료
 
@@ -144,7 +144,7 @@ description: "visual-generator seminar 스타일(세미나/발표 자료) 테마
 
 ---
 
-#### 테마 9: 워크숍 (workshop)
+#### 무드 9: 워크숍 (workshop)
 
 **용도**: 협업, 실습, 팀워크, 워크숍, 공동 작업
 

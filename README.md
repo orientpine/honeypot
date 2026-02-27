@@ -13,7 +13,7 @@
 | 플러그인 | 설명 | 유형 |
 |----------|------|:----:|
 | **isd-generator** | ISD 연구계획서 전체 생성 (5개 Chapter + 이미지) | Agent+Command+Skill |
-| **visual-generator** | Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison 스타일 시각자료 생성 + Gemini 렌더링 | Agent+Command+Skill |
+| **visual-generator** | Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison 테마 시각자료 생성 + Gemini 렌더링 | Agent+Command+Skill |
 | **paper-style-generator** | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 (메타-플러그인) | Agent+Command+Skill |
 | **report-generator** | 연구 노트 → 국가기관 제출용 연구 보고서 자동 생성 | Agent+Command+Skill |
 | **investments-portfolio** | DC 연금 포트폴리오 분석 멀티 에이전트 시스템 | Agent+Command+Skill |
@@ -120,13 +120,13 @@ honeypot/
 
 **시각자료 프롬프트 생성 및 렌더링 (6개 테마 + 레이아웃)**
 
-| 테마 | 스타일 |
+| 테마 | 설명 |
 |------|--------|
 | theme-concept | Kurzgesagt 풍 인포그래픽 |
 | theme-gov | 정부/공공기관 PPT |
 | theme-seminar | 세미나/발표 자료 |
-| theme-whatif | What If 스타일 |
-| theme-pitch | 피치덱 스타일 |
+| theme-whatif | What If 테마 |
+| theme-pitch | 피치덱 테마 |
 | theme-comparison | 비교 분석 자료 |
 
 | 구성 | 항목 |

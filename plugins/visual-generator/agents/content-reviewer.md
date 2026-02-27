@@ -384,9 +384,9 @@ Task(
 | 스킬명 | 설명 |
 |--------|------|
 | `layout-types` | 24종 레이아웃 유형 정의 |
-| `theme-concept` | concept 스타일 테마 (TED 미니멀, 9종 무드 팔레트) |
-| `theme-gov` | gov 스타일 테마 (정부/공공기관, 9종 무드 팔레트) |
-| `theme-seminar` | seminar 스타일 테마 (세미나/발표, 9종 무드 팔레트) |
+| `theme-concept` | concept 테마 (TED 미니멀, 9종 무드 팔레트) |
+| `theme-gov` | gov 테마 (정부/공공기관, 9종 무드 팔레트) |
+| `theme-seminar` | seminar 테마 (세미나/발표, 9종 무드 팔레트) |
 | `theme-whatif` | whatif 목적 테마 (미래 비전 스냅샷) |
 | `theme-pitch` | pitch 목적 테마 (피치덱) |
 | `theme-comparison` | comparison 목적 테마 (Before/After) |
