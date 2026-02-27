@@ -151,7 +151,7 @@ honeypot/
 > 공상과학 영화 UI처럼 빛나는 HUD. 이미 성공한 미래 안에 서 있는 느낌.
 
 <p align="center">
-  <img src="./assets/theme-examples/images/04_theme_whatif.png" width="720" alt="What-If Theme Example">
+  <img src="./assets/theme-examples/images/04_theme_whatif.png?v=2" width="720" alt="What-If Theme Example">
 </p>
 
 #### theme-pitch — 피치덱
