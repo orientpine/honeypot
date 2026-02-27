@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.1.0  
+**Version**: 2.2.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -120,14 +120,55 @@ honeypot/
 
 **시각자료 프롬프트 생성 및 렌더링 (6개 테마 + 레이아웃)**
 
-| 테마 | 설명 |
-|------|--------|
-| theme-concept | Kurzgesagt 풍 인포그래픽 |
-| theme-gov | 정부/공공기관 PPT |
-| theme-seminar | 세미나/발표 자료 |
-| theme-whatif | What If 테마 |
-| theme-pitch | 피치덱 테마 |
-| theme-comparison | 비교 분석 자료 |
+동일한 주제(스마트 팩토리)를 6개 테마로 시각화한 예시:
+
+#### theme-concept — Kurzgesagt 풍 시각 스토리텔링
+
+> 텍스트 없이 장면과 시각적 메타포만으로 개념을 전달하는 교육용 일러스트레이션
+
+<p align="center">
+  <img src="./assets/theme-examples/images/01_theme_concept.png" width="720" alt="Concept Theme Example">
+</p>
+
+#### theme-gov — 정부/공공기관 PPT
+
+> 굵은 테두리 박스에 번호가 매겨진 체계적 격자. 공식 문서 톤.
+
+<p align="center">
+  <img src="./assets/theme-examples/images/02_theme_gov.png" width="720" alt="Gov Theme Example">
+</p>
+
+#### theme-seminar — 세미나/학술 발표
+
+> 에디토리얼 매거진 × 아이소메트릭 3D. 포토리얼리스틱 3D 아이콘과 다이나믹 타이포그래피.
+
+<p align="center">
+  <img src="./assets/theme-examples/images/03_theme_seminar.png" width="720" alt="Seminar Theme Example">
+</p>
+
+#### theme-whatif — 미래 비전 스냅샷
+
+> 공상과학 영화 UI처럼 빛나는 HUD. 이미 성공한 미래 안에 서 있는 느낌.
+
+<p align="center">
+  <img src="./assets/theme-examples/images/04_theme_whatif.png" width="720" alt="What-If Theme Example">
+</p>
+
+#### theme-pitch — 피치덱
+
+> Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자와 프로스티드 글래스 카드.
+
+<p align="center">
+  <img src="./assets/theme-examples/images/05_theme_pitch.png" width="720" alt="Pitch Theme Example">
+</p>
+
+#### theme-comparison — Before/After 비교
+
+> IMAX 분할 화면처럼 좌우 풀블리드 이미지 위에 핵심 수치가 떠 있다.
+
+<p align="center">
+  <img src="./assets/theme-examples/images/06_theme_comparison.png" width="720" alt="Comparison Theme Example">
+</p>
 
 | 구성 | 항목 |
 |------|------|
@@ -348,6 +389,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 2.2.0 | 2026-02-27 | visual-generator 6개 테마 예시 이미지 추가 (Gemini API 생성), README 시각적 개선 |
 | 2.1.0 | 2026-02-27 | README 전면 최신화: 표준 구조 반영, 11개 플러그인 문서화, visual-generator 6테마 체계 반영 |
 | 2.0.0 | 2026-01-11 | README 완전 재작성, 6개 플러그인 문서화 |
 | 1.0.0 | 2026-01-08 | 최초 작성 |
