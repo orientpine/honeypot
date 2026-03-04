@@ -37,14 +37,18 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
-## Phase 4: 검증 (validate.py)
+## Phase 4: 검증 (validate.py + page_guard.py)
 
-1. Run mandatory validation on the generated output.
+1. Run mandatory structural validation on the generated output.
    - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py --input "{generated_hwpx_path}"`
-2. Handle validation result.
-   - PASS: Phase 5로 진행.
-   - FAIL: 검증 오류를 첨부해 Phase 3을 재실행(최대 2회).
-3. Record validation summary for final response.
+2. When `reference_hwpx` was provided, run page drift guard (필수).
+   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py --reference "{reference_hwpx}" --output "{generated_hwpx_path}"`
+   - `page_guard.py`는 문단 수, 표 구조, 텍스트 길이 편차를 검사하여 쪽수 변동 위험을 사전 차단한다.
+3. Handle validation result.
+   - PASS (both): Phase 5로 진행.
+   - FAIL (validate.py): 검증 오류를 첨부해 Phase 3을 재실행(최대 2회).
+   - FAIL (page_guard.py): 원인(길이 과다/구조 변경)을 수정하여 Phase 3을 재실행(최대 2회).
+4. Record validation summary for final response.
 
 ## Phase 5: 결과 전달
 
@@ -63,6 +67,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] Task tool 기반 위임으로만 분석/생성을 수행한다.
 - [ ] 양식 우선순서(사용자 업로드 > 기본 양식 > XML-first)를 지킨다.
 - [ ] `validate.py` 검증 통과 전 결과를 완료 처리하지 않는다.
+- [ ] 레퍼런스 기반 작업 시 `page_guard.py` 통과 전 결과를 완료 처리하지 않는다.
 - [ ] 입력 콘텐츠에 Markdown 서식 기호(`**`, `*`, `~~` 등)가 포함된 경우, HWPX 변환 전 인라인 서식을 multi-run으로 분할하거나 순수 텍스트로 정제한다.
 
 ## MUST NOT DO
