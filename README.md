@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.2.0  
+**Version**: 2.3.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -23,6 +23,7 @@
 | **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
 | **equity-research** | 기관급 주식 분석 리포트 생성 | Agent |
 | **worktree-workflow** | Git worktree를 활용한 Claude Code 병렬 실행 워크플로우 | Agent |
+| **plugin-dev** | 플러그인 개발 종합 툴킷 (Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발) [^1] | Agent+Command+Skill |
 
 ---
 
@@ -55,7 +56,7 @@
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (11개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (12개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents (chapter1-5, figure)
@@ -91,8 +92,12 @@ honeypot/
 │   │   └── agents/                   # 1 agent (interview)
 │   ├── equity-research/              # 기관급 주식 분석
 │   │   └── agents/                   # 1 agent (equity-research-analyst)
-│   └── worktree-workflow/            # Git worktree 워크플로우
-│       └── agents/                   # 1 agent (worktree)
+│   ├── worktree-workflow/            # Git worktree 워크플로우
+│   │   └── agents/                   # 1 agent (worktree)
+│   └── plugin-dev/                   # 플러그인 개발 종합 툴킷 [^1]
+│       ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
+│       ├── commands/                 # create-plugin (워크플로우)
+│       └── skills/                   # 7 skills (hook, mcp, structure, settings, command, agent, skill)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -389,7 +394,10 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 2.3.0 | 2026-03-04 | plugin-dev 플러그인 추가 (Anthropic claude-code 공식 저장소에서 포팅) |
 | 2.2.0 | 2026-02-27 | visual-generator 6개 테마 예시 이미지 추가 (Gemini API 생성), README 시각적 개선 |
 | 2.1.0 | 2026-02-27 | README 전면 최신화: 표준 구조 반영, 11개 플러그인 문서화, visual-generator 6테마 체계 반영 |
 | 2.0.0 | 2026-01-11 | README 완전 재작성, 6개 플러그인 문서화 |
 | 1.0.0 | 2026-01-08 | 최초 작성 |
+
+[^1]: [anthropics/claude-code `plugins/plugin-dev`](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev)의 내용을 참조하여 포팅하였습니다. 원본 저자: Daisy Hollman (daisy@anthropic.com), 라이선스: MIT.

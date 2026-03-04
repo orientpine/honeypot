@@ -135,7 +135,7 @@
       "name": "hwpx-generator",
       "source": "./plugins/hwpx-generator",
       "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 지원.",
-      "version": "2.1.0",
+"version": "2.2.0",
       "strict": true,
       "agents": [
         "./agents/hwpx-builder.md",
@@ -149,6 +149,20 @@
       "description": "Git worktree를 활용한 Claude Code 병렬 실행 워크플로우",
       "strict": true,
       "agents": ["./agents/worktree.md"]
+    },
+    {
+      "name": "plugin-dev",
+      "source": "./plugins/plugin-dev",
+      "description": "Claude Code 플러그인 개발 종합 툴킷. Hook, MCP, 플러그인 구조, 설정, 커맨드/에이전트/스킬 개발 가이드 제공.",
+      "version": "0.1.0",
+      "strict": true,
+      "agents": [
+        "./agents/agent-creator.md",
+        "./agents/plugin-validator.md",
+        "./agents/skill-reviewer.md"
+      ],
+      "skills": ["./skills"],
+      "homepage": "https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev"
     }
   ]
 }
