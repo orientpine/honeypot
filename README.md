@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.3.0  
+**Version**: 2.3.1  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -248,6 +248,7 @@ honeypot/
 
 - **방식**: XML-first 빌드 + ZIP 치환
 - `build_hwpx.py` 기반 생성, `fix_namespaces.py` 필수
+- **v2.2.1**: `<hp:linesegarray>` 자동 제거 — 텍스트 수정 후 '문서 변조' 경고 방지 (3개 빌드 경로 모두 적용)
 
 | 구성 | 항목 |
 |------|------|
@@ -288,6 +289,22 @@ investments-portfolio, stock-consultation 등에서 공유하는 거시경제 �
 **Git worktree 기반 병렬 실행 워크플로우**
 
 Git worktree를 활용하여 Claude Code 인스턴스를 병렬로 실행하는 워크플로우.
+
+### plugin-dev
+
+**플러그인 개발 종합 툴킷** [^1]
+
+Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 가이드와 검증 도구.
+
+- **에이전트 생성**: 프론트매터/본문/워크플로 템플릿 기반 자동 생성
+- **플러그인 검증**: marketplace.json, plugin.json, 구조 규칙 준수 검사
+- **스킬 리뷰**: SKILL.md 스펙 준수, 프로그레시브 로딩, 리소스 구조 검토
+
+| 구성 | 항목 |
+|------|------|
+| Agents (3) | agent-creator, plugin-validator, skill-reviewer |
+| Command (1) | create-plugin (플러그인 생성 워크플로) |
+| Skills (7) | hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development |
 
 ---
 
@@ -394,6 +411,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 2.3.1 | 2026-03-05 | hwpx-generator v2.2.1: linesegarray 자동 제거로 '문서 변조' 경고 해결 (build_hwpx/pack/fix_namespaces 3경로 적용, 템플릿 정리) |
 | 2.3.0 | 2026-03-04 | plugin-dev 플러그인 추가 (Anthropic claude-code 공식 저장소에서 포팅) |
 | 2.2.0 | 2026-02-27 | visual-generator 6개 테마 예시 이미지 추가 (Gemini API 생성), README 시각적 개선 |
 | 2.1.0 | 2026-02-27 | README 전면 최신화: 표준 구조 반영, 11개 플러그인 문서화, visual-generator 6테마 체계 반영 |
