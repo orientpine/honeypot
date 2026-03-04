@@ -3,7 +3,8 @@
 HWPX namespace post-processing utility.
 
 Replace auto-generated XML namespace prefixes in HWPX files with
-Hangul Office standard prefixes.
+Hangul Office standard prefixes, and strip stale <hp:linesegarray>
+elements that cause 'document corrupted or tampered' warnings.
 
 Without this step, some viewers (especially on macOS) may display
 the document as blank pages after ZIP-level replacements.
@@ -17,9 +18,13 @@ import re
 import sys
 import zipfile
 
+_LINESEG_RE = re.compile(
+    r"\s*<[^>]*:linesegarray>.*?</[^>]*:linesegarray>",
+    re.DOTALL,
+)
 
 def fix_hwpx_namespaces(hwpx_path):
-    """Normalize HWPX XML namespace prefixes using regex replacements."""
+    """Normalize namespace prefixes and strip stale linesegarray elements."""
     ns_map = {
         "http://www.hancom.co.kr/hwpml/2011/head": "hh",
         "http://www.hancom.co.kr/hwpml/2011/core": "hc",
@@ -51,6 +56,9 @@ def fix_hwpx_namespaces(hwpx_path):
                         )
                         text = text.replace(f"<{old_prefix}:", f"<{new_prefix}:")
                         text = text.replace(f"</{old_prefix}:", f"</{new_prefix}:")
+
+                    # Strip stale linesegarray (prevents 'tampered' warning)
+                    text = _LINESEG_RE.sub("", text)
 
                     data = text.encode("utf-8")
 

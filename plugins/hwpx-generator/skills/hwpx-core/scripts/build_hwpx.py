@@ -53,6 +53,37 @@ def validate_xml(filepath: Path) -> None:
         raise SystemExit(f"Malformed XML in {filepath.name}: {e}")
 
 
+HP_NS = "http://www.hancom.co.kr/hwpml/2011/paragraph"
+
+
+def strip_linesegarray(work_dir: Path) -> None:
+    """Remove all <hp:linesegarray> elements from section XML files.
+
+    These elements are optional line-layout cache data. When text is modified
+    but linesegarray is left unchanged, the mismatch causes Hangul Office to
+    flag the document as 'corrupted or tampered'. Removing them is safe —
+    Hangul recalculates layout automatically on open.
+    """
+    contents_dir = work_dir / "Contents"
+    if not contents_dir.is_dir():
+        return
+
+    for xml_file in sorted(contents_dir.glob("section*.xml")):
+        tree = etree.parse(str(xml_file))
+        root = tree.getroot()
+        removed = 0
+        for lsa in root.xpath(f"//{{{ HP_NS }}}linesegarray"):
+            lsa.getparent().remove(lsa)
+            removed += 1
+        if removed:
+            tree.write(
+                str(xml_file),
+                pretty_print=True,
+                xml_declaration=True,
+                encoding="UTF-8",
+            )
+            print(f"  Stripped {removed} <hp:linesegarray> from {xml_file.name}")
+
 def update_metadata(content_hpf: Path, title: str | None, creator: str | None) -> None:
     """Update title and/or creator in content.hpf."""
     if not title and not creator:
@@ -205,10 +236,12 @@ def build(
         for hpf_file in work.rglob("*.hpf"):
             validate_xml(hpf_file)
 
-        # 6. Pack
-        pack_hwpx(work, output)
+        # 6. Strip stale linesegarray elements (prevents 'tampered' warning)
+        strip_linesegarray(work)
 
-    # 7. Final validation
+        # 7. Pack
+        pack_hwpx(work, output)
+    # 8. Final validation
     errors = validate_hwpx(output)
     if errors:
         print(f"WARNING: {output} has issues:", file=sys.stderr)
