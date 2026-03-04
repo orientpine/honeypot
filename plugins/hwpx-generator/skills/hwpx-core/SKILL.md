@@ -275,9 +275,6 @@ Markdown 서식 기호(`**`, `*`, `~~` 등)를 HWPX XML의 multi-run 구조로 �
   <hp:run charPrIDRef="0">
     <hp:t>되었다.</hp:t>
   </hp:run>
-  <hp:linesegarray>
-    <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-  </hp:linesegarray>
 </hp:p>
 ```
 
@@ -617,6 +614,7 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
 16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
 17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
+18. **linesegarray 자동 제거**: `<hp:linesegarray>`는 라인 레이아웃 캐시(optional)로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고를 유발한다. `build_hwpx.py`, `pack.py`, `fix_namespaces.py` 모두 패키징 시 자동 제거하며, section0.xml 작성 시 포함하지 않아도 된다 (한글이 열 때 자동 재계산)
 
 ## 빠른 실행 예시
 
