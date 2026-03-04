@@ -28,17 +28,21 @@ This agent orchestrates two skills:
    - Supported types: 공문(gonmun), 보고서(report), 회의록(minutes), 제안서(proposal).
 
 2. Select generation mode based on available format resources.
-   - First priority: user-uploaded HWPX template.
-   - Second priority: project default template.
+   - **레퍼런스 우선**: 사용자가 `.hwpx`를 첨부한 경우 반드시 레퍼런스 기반 워크플로우(Workflow 5)를 기본 적용.
+   - First priority: user-uploaded HWPX reference → `analyze_template.py` + 추출 XML 기반 복원/재작성.
+   - Second priority: user-uploaded HWPX template → `hwpx-templates` ZIP replacement.
+   - Third priority: project default template.
    - Fallback: XML-first generation via `hwpx-core`.
 
 3. Generate document content using the selected path.
+   - Reference present: analyze with `analyze_template.py`, extract header/section, rebuild with structure preserved.
    - Template present: execute `hwpx-templates` ZIP replacement workflow.
    - No template: execute `hwpx-core` XML-first build workflow.
 
 4. Apply post-processing and validation.
    - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`.
    - Validate output with `hwpx-core/scripts/validate.py`.
+   - **page_guard 필수**: 레퍼런스 기반 작업 시 `hwpx-core/scripts/page_guard.py`로 페이지 드리프트 위험 검사. `page_guard.py` 실패 시 원인 수정 후 재빌드.
    - If validation fails, return to generation/edit step and rebuild.
 
 5. Deliver result and report generation path.
@@ -116,6 +120,9 @@ HWPX XML 출력 (section0.xml):
 
 - HWPX only: do not claim or provide direct `.hwp` support.
 - Validation is mandatory: every output must pass `hwpx-core` `validate.py`.
+- **page_guard 필수**: 레퍼런스 기반 작업 시 `validate.py`와 별개로 `page_guard.py`도 반드시 통과해야 완료 처리.
+- **쪽수 동일 필수**: 레퍼런스 기반 작업에서 최종 결과의 쪽수는 레퍼런스와 동일해야 한다. 사용자 명시 승인 없이 쪽수 증가 금지.
+- **구조 변경 제한**: 사용자 요청 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집).
 - ZIP replacement path requires namespace repair: run `fix_namespaces.py` after replacement.
 - Do not hardcode XML blocks in the agent instructions; rely on skill scripts and templates.
 - Use relative path resolution first, then documented Glob fallback rules when locating scripts.

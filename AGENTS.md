@@ -90,7 +90,8 @@ toolbox/
 | General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
-| HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반 |
+| HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반, 레퍼런스 복원 우선 |
+| HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수 |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 12 plugins listed |
