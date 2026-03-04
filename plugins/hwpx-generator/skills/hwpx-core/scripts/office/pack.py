@@ -10,10 +10,15 @@ Usage:
 
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
+_LINESEG_RE = re.compile(
+    r"\s*<[^>]*:linesegarray>.*?</[^>]*:linesegarray>",
+    re.DOTALL,
+)
 
 def pack(input_dir: str, hwpx_path: str) -> None:
     """Create HWPX archive from a directory."""
@@ -38,6 +43,20 @@ def pack(input_dir: str, hwpx_path: str) -> None:
             if rel_path == "mimetype":
                 continue  # Already written
             full_path = root / rel_path
+
+            # Strip stale linesegarray from section XMLs (prevents 'tampered' warning)
+            if (
+                rel_path.startswith("Contents/")
+                and rel_path.endswith(".xml")
+                and "section" in rel_path
+            ):
+                data = full_path.read_bytes()
+                text = data.decode("utf-8")
+                cleaned = _LINESEG_RE.sub("", text)
+                if cleaned != text:
+                    zf.writestr(rel_path, cleaned.encode("utf-8"))
+                    continue
+
             zf.write(full_path, rel_path, compress_type=ZIP_DEFLATED)
 
     count = len(all_files)
