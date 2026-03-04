@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-02-27T00:00:00+09:00
-**Version:** 2.5.0
+**Generated:** 2026-03-04T00:00:00+09:00
+**Version:** 2.6.0
 **Branch:** main
 
 ## OVERVIEW
@@ -13,7 +13,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (11 plugins)
+│   └── marketplace.json              # Single marketplace registry (12 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
     │   ├── agents/                   # 6 agents
@@ -64,9 +64,16 @@ toolbox/
      │   ├── commands/
      │   │   └── hwpx-generate.md      # HWPX 문서 생성 오케스트레이터 command
      │   └── skills/                   # 2 skills (hwpx-core, hwpx-templates)
-     └── worktree-workflow/            # Git worktree 워크플로우
-         └── agents/                   # 1 agent
+     ├── worktree-workflow/            # Git worktree 워크플로우
+     │   └── agents/                   # 1 agent
+     └── plugin-dev/                   # 플러그인 개발 종합 툴킷 (Agent + Command + Skill) [1]
+         ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
+         ├── commands/
+         │   └── create-plugin.md      # 플러그인 생성 워크플로우 command
+         └── skills/                   # 7 skills (hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development)
 ```
+
+[1] https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev 의 내용을 참조하여 포팅함.
 
 ## WHERE TO LOOK
 
@@ -85,7 +92,8 @@ toolbox/
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
 | HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 11 plugins listed |
+| Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 12 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
