@@ -41,8 +41,5 @@
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
 </hs:sec>

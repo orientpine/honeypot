@@ -42,160 +42,106 @@
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 2. Empty line -->
   <hp:p id="1000000002" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 3. Title -->
   <hp:p id="1000000003" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="7">
       <hp:t>{{보고서 제목}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="2000" textheight="2000" baseline="1700" spacing="1200" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 4. Empty line -->
   <hp:p id="1000000004" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 5. Date -->
   <hp:p id="1000000005" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{작성일: YYYY년 MM월 DD일}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 6. Author -->
   <hp:p id="1000000006" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{작성자/부서}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 7. Empty line x2 -->
   <hp:p id="1000000007" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <hp:p id="1000000008" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 8. Section heading 1 -->
   <hp:p id="1000000009" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="8">
       <hp:t>1. {{섹션 제목}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1400" textheight="1400" baseline="1190" spacing="840" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 9. Body -->
   <hp:p id="1000000010" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{본문 내용}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 10. Empty line -->
   <hp:p id="1000000011" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 11. Section heading 2 -->
   <hp:p id="1000000012" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="8">
       <hp:t>2. {{섹션 제목}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1400" textheight="1400" baseline="1190" spacing="840" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 12. Body -->
   <hp:p id="1000000013" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{본문 내용}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 13. Empty line -->
   <hp:p id="1000000014" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 14. Table placeholder -->
   <hp:p id="1000000015" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{표 삽입 위치}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 15. Empty line -->
   <hp:p id="1000000016" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t/>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 16. Section heading 3 -->
   <hp:p id="1000000017" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="8">
       <hp:t>3. {{결론}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1400" textheight="1400" baseline="1190" spacing="840" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
   <!-- 17. Conclusion body -->
   <hp:p id="1000000018" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
     <hp:run charPrIDRef="0">
       <hp:t>{{결론 내용}}</hp:t>
     </hp:run>
-    <hp:linesegarray>
-      <hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="600" horzpos="0" horzsize="42520" flags="393216"/>
-    </hp:linesegarray>
   </hp:p>
 </hs:sec>
