@@ -1,6 +1,6 @@
 {
-  "name": "{{ name }}-paper-skills",
-  "source": "./plugins/{{ name }}-paper-skills",
+  "name": "{{ plugin_name }}",
+  "source": "./plugins/{{ plugin_name }}",
   "description": "{{ name | title }} 스타일 논문 작성 에이전트 및 스킬 세트. {{ paper_count }}편의 논문 분석 기반으로 자동 생성됨. (신뢰도: {{ '%.0f' | format(confidence.overall * 100) }}%)",
   "version": "1.0.0",
   "author": {
@@ -11,7 +11,6 @@
   "category": "documentation",
   "strict": true,
   "agents": [
-    "./agents/{{ name }}-paper-orchestrator.md",
     "./agents/{{ name }}-title-writer.md",
     "./agents/{{ name }}-abstract-writer.md",
     "./agents/{{ name }}-introduction-writer.md",
@@ -22,6 +21,6 @@
     "./agents/{{ name }}-verify.md"
   ],
   "skills": [
-    "./skills/{{ name }}-style-guide"
+    "./skills"
   ]
 }
