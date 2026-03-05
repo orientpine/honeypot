@@ -1,0 +1,38 @@
+total 4
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:13 .
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 ..
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 base
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 gonmun
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 minutes
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 proposal
+drwxr-xr-x 1 차백동 197609 0 Feb 25 22:14 report
+total 3
+drwxr-xr-x 1 차백동 197609   0 Feb 25 22:14 .
+drwxr-xr-x 1 차백동 197609   0 Feb 25 22:13 ..
+drwxr-xr-x 1 차백동 197609   0 Feb 25 22:14 Contents
+drwxr-xr-x 1 차백동 197609   0 Feb 25 22:14 META-INF
+-rw-r--r-- 1 차백동 197609  19 Feb 25 22:14 mimetype
+drwxr-xr-x 1 차백동 197609   0 Feb 25 22:14 Preview
+-rw-r--r-- 1 차백동 197609 267 Feb 25 22:14 settings.xml
+-rw-r--r-- 1 차백동 197609 294 Feb 25 22:14 version.xml
+---
+  1795 plugins/hwpx-generator/skills/hwpx-core/templates/base/Contents/content.hpf
+ 51572 plugins/hwpx-generator/skills/hwpx-core/templates/base/Contents/header.xml
+  3817 plugins/hwpx-generator/skills/hwpx-core/templates/base/Contents/section0.xml
+   867 plugins/hwpx-generator/skills/hwpx-core/templates/base/META-INF/container.rdf
+   481 plugins/hwpx-generator/skills/hwpx-core/templates/base/META-INF/container.xml
+   118 plugins/hwpx-generator/skills/hwpx-core/templates/base/META-INF/manifest.xml
+    19 plugins/hwpx-generator/skills/hwpx-core/templates/base/mimetype
+  4485 plugins/hwpx-generator/skills/hwpx-core/templates/base/Preview/PrvImage.png
+     2 plugins/hwpx-generator/skills/hwpx-core/templates/base/Preview/PrvText.txt
+   267 plugins/hwpx-generator/skills/hwpx-core/templates/base/settings.xml
+   294 plugins/hwpx-generator/skills/hwpx-core/templates/base/version.xml
+ 60575 plugins/hwpx-generator/skills/hwpx-core/templates/gonmun/header.xml
+  8654 plugins/hwpx-generator/skills/hwpx-core/templates/gonmun/section0.xml
+ 60333 plugins/hwpx-generator/skills/hwpx-core/templates/minutes/header.xml
+ 19206 plugins/hwpx-generator/skills/hwpx-core/templates/minutes/section0.xml
+ 65387 plugins/hwpx-generator/skills/hwpx-core/templates/proposal/header.xml
+ 18835 plugins/hwpx-generator/skills/hwpx-core/templates/proposal/section0.xml
+ 74985 plugins/hwpx-generator/skills/hwpx-core/templates/report/header.xml
+ 10670 plugins/hwpx-generator/skills/hwpx-core/templates/report/section0.xml
+382362 total

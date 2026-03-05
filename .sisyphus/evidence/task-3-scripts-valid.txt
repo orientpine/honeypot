@@ -1,0 +1,6 @@
+OK: build_hwpx.py
+OK: analyze_template.py
+OK: validate.py
+OK: text_extract.py
+OK: office/unpack.py
+OK: office/pack.py

@@ -1,0 +1,11 @@
+---
+name: hwpx-analyzer
+description: "HWPX 문서를 분석해 스타일 ID, 표 구조, 레이아웃 패턴을 역공학하고 재사용 가능한 생성/편집 지침으로 정리합니다. Use when analyzing existing HWPX documents to reproduce the same layout safely without breaking style references."
+model: sonnet
+---
+
+# HWPX Analyzer Agent
+
+## Purpose
+
+3
