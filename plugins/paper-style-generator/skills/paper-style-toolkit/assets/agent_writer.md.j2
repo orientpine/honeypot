@@ -3,7 +3,6 @@ name: {{ name }}-{{ section }}-writer
 description: "{{ name | title }} 스타일로 {{ section | title }} 섹션을 생성하거나 수정합니다. {% if section == 'title' %}제목 작성, 제목 수정, 제목 개선이 필요할 때 사용합니다.{% elif section == 'abstract' %}초록 작성, 초록 수정, 초록 요약이 필요할 때 사용합니다.{% elif section == 'introduction' %}서론 작성, 서론 수정, 배경 설명이 필요할 때 사용합니다.{% elif section == 'methodology' %}방법론 작성, 실험 방법 기술이 필요할 때 사용합니다.{% elif section == 'results' %}결과 작성, 데이터 기술, Figure 참조가 필요할 때 사용합니다.{% elif section == 'discussion' %}토론 작성, 결론 도출, 한계점 기술이 필요할 때 사용합니다.{% elif section == 'caption' %}캡션 작성, 캡션 수정, 패널 레이블링이 필요할 때 사용합니다.{% endif %}"
 tools: Read, Write, Edit
 model: sonnet
-skills: {{ name }}-style-guide
 ---
 
 # {{ name | title }}-Style {{ section | title }} Writer
@@ -25,31 +24,31 @@ skills: {{ name }}-style-guide
 {% elif section == 'abstract' %}
 - **Structure**: Background → Methods → Results → Conclusions (IMRAD condensed)
 - **Length**: {{ abstract.word_count.mean | round }}-{{ abstract.word_count.max | round }} words
-- **Voice**: {{ abstract.voice.active.mean * 100 | round }}% active, {{ abstract.voice.passive.mean * 100 | round }}% passive
+- **Voice**: {{ (abstract.voice.active.mean * 100) | round }}% active, {{ (abstract.voice.passive.mean * 100) | round }}% passive
 - **Tense**: Present for conclusions, past for methods/results
 - **Tone**: Direct, quantitative, impact-focused
 {% elif section == 'introduction' %}
 - **Structure**: Funnel approach (broad → specific → research gap → contribution)
-- **Voice**: {{ introduction.voice.active.mean * 100 | round }}% active, {{ introduction.voice.passive.mean * 100 | round }}% passive
-- **Tense**: {{ introduction.tense.present.mean * 100 | round }}% present, {{ introduction.tense.past.mean * 100 | round }}% past
+- **Voice**: {{ (introduction.voice.active.mean * 100) | round }}% active, {{ (introduction.voice.passive.mean * 100) | round }}% passive
+- **Tense**: {{ (introduction.tense.present.mean * 100) | round }}% present, {{ (introduction.tense.past.mean * 100) | round }}% past
 - **Citation Density**: {{ introduction.citation_density.mean | round }} citations per paragraph
 - **Tone**: Authoritative, literature-grounded
 {% elif section == 'methodology' %}
-- **Voice**: {{ methodology.voice.active.mean * 100 | round }}% active, {{ methodology.voice.passive.mean * 100 | round }}% passive (passive voice dominant)
-- **Tense**: Past tense predominantly ({{ methodology.tense.past.mean * 100 | round }}%)
+- **Voice**: {{ (methodology.voice.active.mean * 100) | round }}% active, {{ (methodology.voice.passive.mean * 100) | round }}% passive (passive voice dominant)
+- **Tense**: Past tense predominantly ({{ (methodology.tense.past.mean * 100) | round }}%)
 - **Precision**: All measurements include exact values with units
 - **Structure**: Integrated paragraphs with inline headings
 - **Paragraph Length**: {{ methodology.word_count.mean // 100 * 10 }}-{{ methodology.word_count.mean // 100 * 10 + 5 }} lines per section
 {% elif section == 'results' %}
-- **Voice**: {{ results.voice.active.mean * 100 | round }}% active, {{ results.voice.passive.mean * 100 | round }}% passive
-- **Tense**: {{ results.tense.past.mean * 100 | round }}% past, {{ results.tense.present.mean * 100 | round }}% present
-- **"We" Usage**: Target ≤30% (current: {{ results.we_usage.mean * 100 | round }}%)
+- **Voice**: {{ (results.voice.active.mean * 100) | round }}% active, {{ (results.voice.passive.mean * 100) | round }}% passive
+- **Tense**: {{ (results.tense.past.mean * 100) | round }}% past, {{ (results.tense.present.mean * 100) | round }}% present
+- **"We" Usage**: Target ≤30% (current: {{ (results.we_usage.mean * 100) | round }}%)
 - **Figure References**: {{ results.figure_refs_per_para.mean | round }} per paragraph
 - **Tone**: Objective, data-driven, quantitative
 {% elif section == 'discussion' %}
 - **Structure**: Key findings → Literature comparison → Limitations → Future directions → Conclusions
-- **Voice**: {{ discussion.voice.active.mean * 100 | round }}% active, {{ discussion.voice.passive.mean * 100 | round }}% passive
-- **Tense**: {{ discussion.tense.present.mean * 100 | round }}% present, {{ discussion.tense.past.mean * 100 | round }}% past
+- **Voice**: {{ (discussion.voice.active.mean * 100) | round }}% active, {{ (discussion.voice.passive.mean * 100) | round }}% passive
+- **Tense**: {{ (discussion.tense.present.mean * 100) | round }}% present, {{ (discussion.tense.past.mean * 100) | round }}% past
 - **Hedging**: Moderate use of cautious language
 - **Tone**: Interpretive, forward-looking
 {% elif section == 'caption' %}
@@ -166,7 +165,7 @@ output_file: string
    - Verify length: {{ title.word_count.mean | round }}-{{ title.word_count.max | round }} words
 {% elif section == 'abstract' %}
    - Follow IMRAD condensed structure
-   - Apply voice ratio: {{ abstract.voice.active.mean * 100 | round }}% active
+   - Apply voice ratio: {{ (abstract.voice.active.mean * 100) | round }}% active
    - Use signature phrase: "Here, we present..."
    - Ensure length: {{ abstract.word_count.mean | round }}-{{ abstract.word_count.max | round }} words
 {% elif section == 'introduction' %}
@@ -176,7 +175,7 @@ output_file: string
    - End with paper organization statement
 {% elif section == 'methodology' %}
    - Use inline heading format: `**Title.** Content...`
-   - Apply passive voice transformations ({{ methodology.voice.passive.mean * 100 | round }}% target)
+   - Apply passive voice transformations ({{ (methodology.voice.passive.mean * 100) | round }}% target)
    - Format measurements with exact units
    - Cite suppliers: `Product (Catalog#, Manufacturer)`
 {% elif section == 'results' %}
@@ -203,7 +202,7 @@ output_file: string
    - Verify structure pattern
 {% elif section == 'abstract' %}
    - Check word count: {{ abstract.word_count.mean | round }}-{{ abstract.word_count.max | round }}
-   - Verify voice ratio: {{ abstract.voice.active.mean * 100 | round }}% active
+   - Verify voice ratio: {{ (abstract.voice.active.mean * 100) | round }}% active
    - Confirm "Here, we present..." phrase
 {% elif section == 'introduction' %}
    - Verify funnel structure
@@ -211,7 +210,7 @@ output_file: string
    - Confirm transition phrases
 {% elif section == 'methodology' %}
    - Verify inline heading format
-   - Check passive voice ratio: {{ methodology.voice.passive.mean * 100 | round }}%
+   - Check passive voice ratio: {{ (methodology.voice.passive.mean * 100) | round }}%
    - Confirm measurement formatting
    - Verify supplier citations
 {% elif section == 'results' %}
@@ -453,7 +452,7 @@ word_count: [actual]
 target_word_count: {{ abstract.word_count.mean | round }}-{{ abstract.word_count.max | round }}
 {% elif section == 'methodology' %}
 passive_voice_ratio: [actual]
-target_passive_ratio: {{ methodology.voice.passive.mean * 100 | round }}%
+target_passive_ratio: {{ (methodology.voice.passive.mean * 100) | round }}%
 {% elif section == 'results' %}
 we_usage_ratio: [actual]
 target_we_usage: ≤30%
@@ -491,7 +490,7 @@ target_we_usage: ≤30%
 {% if section == 'abstract' %}
 | Word count exceeds {{ abstract.word_count.max | round }} | Condense and retry |
 {% elif section == 'methodology' %}
-| Passive voice ratio < {{ methodology.voice.passive.mean * 100 | round - 10 }}% | Revise with more passive constructions |
+| Passive voice ratio < {{ (methodology.voice.passive.mean * 100) | round - 10 }}% | Revise with more passive constructions |
 {% elif section == 'results' %}
 | "We" usage > 30% | Revise with passive voice or data-driven phrasing |
 {% endif %}
@@ -500,4 +499,4 @@ target_we_usage: ≤30%
 
 *Auto-generated by Paper Style Generator*
 *Template Version: 1.0.0*
-*Confidence: {{ confidence[section] * 100 | round }}%*
+*Confidence: {{ (confidence[section] * 100) | round }}%*
