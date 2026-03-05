@@ -21,8 +21,9 @@ description: "HWPX 템플릿 기반 문서 생성 및 ZIP-level 치환 워크플
 1. 양식 복사
 2. ObjectFinder 조사
 3. ZIP 치환
-4. 네임스페이스 후처리
-5. 결과 검증
+4. linesegarray 생성 (cell_writer.py)
+5. 네임스페이스 후처리
+6. 결과 검증
 
 ```text
 [1] 템플릿 파일 복사
@@ -31,9 +32,11 @@ description: "HWPX 템플릿 기반 문서 생성 및 ZIP-level 치환 워크플
     ↓
 [3] 치환 매핑 설계 및 ZIP-level 치환
     ↓
-[4] fix_namespaces.py 실행 (ZIP-level 작업에서만)
+[4] cell_writer.py --hwpx 실행 (linesegarray 생성 + 셀 높이 조정)
     ↓
-[5] ObjectFinder로 잔여 플레이스홀더 검증
+[5] fix_namespaces.py 실행 (ZIP-level 작업에서만)
+    ↓
+[6] ObjectFinder로 잔여 플레이스홀더 검증
 ```
 
 ## ObjectFinder 전수 조사
@@ -110,8 +113,9 @@ def zip_replace_sequential(src_path, dst_path, old, new_list):
   1) 양식 복사
   2) ObjectFinder 조사
   3) 일괄 치환 + 순차 치환
-  4) `scripts/fix_namespaces.py` 실행
-  5) 재검증
+  4) `cell_writer.py --hwpx` 실행 (linesegarray 생성)
+  5) `scripts/fix_namespaces.py` 실행
+  6) 재검증
 
 예시:
 
@@ -136,6 +140,10 @@ zip_replace_sequential(
     ["항목 1", "항목 2", "항목 3"],
 )
 
+# Step 4: Generate linesegarray (cell heights + line layout)
+subprocess.run(["python", "cell_writer.py", "--hwpx", work_path], check=True)
+
+# Step 5: Fix namespace prefixes
 subprocess.run(["python", "scripts/fix_namespaces.py", work_path], check=True)
 ```
 
