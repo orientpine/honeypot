@@ -56,13 +56,12 @@ def validate_xml(filepath: Path) -> None:
 HP_NS = "http://www.hancom.co.kr/hwpml/2011/paragraph"
 
 
-def strip_linesegarray(work_dir: Path) -> None:
+def _strip_linesegarray(work_dir: Path) -> None:
     """Remove all <hp:linesegarray> elements from section XML files.
 
-    These elements are optional line-layout cache data. When text is modified
-    but linesegarray is left unchanged, the mismatch causes Hangul Office to
-    flag the document as 'corrupted or tampered'. Removing them is safe —
-    Hangul recalculates layout automatically on open.
+    Fallback when cell_writer-based generation is unavailable or fails.
+    Hangul Office recalculates layout automatically on open, so removal
+    is safe — but non-Hangul viewers may not recalculate.
     """
     contents_dir = work_dir / "Contents"
     if not contents_dir.is_dir():
@@ -83,6 +82,53 @@ def strip_linesegarray(work_dir: Path) -> None:
                 encoding="UTF-8",
             )
             print(f"  Stripped {removed} <hp:linesegarray> from {xml_file.name}")
+
+
+def generate_linesegarray(work_dir: Path) -> None:
+    """Generate correct <hp:linesegarray> for all section XML files.
+
+    Uses cell_writer.process_section_file() to produce accurate line-layout
+    cache data so that non-Hangul viewers render correctly.  Falls back to
+    stripping stale linesegarray elements if generation fails.
+    """
+    contents_dir = work_dir / "Contents"
+    if not contents_dir.is_dir():
+        return
+
+    header_path = contents_dir / "header.xml"
+    if not header_path.is_file():
+        # No header → cannot determine styles; fall back to strip.
+        _strip_linesegarray(work_dir)
+        return
+
+    try:
+        from cell_writer import process_section_file
+    except ImportError:
+        print("  WARN: cell_writer not available, falling back to strip")
+        _strip_linesegarray(work_dir)
+        return
+
+    for xml_file in sorted(contents_dir.glob("section*.xml")):
+        try:
+            count = process_section_file(xml_file, header_path)
+            print(f"  Generated {count} <hp:linesegarray> in {xml_file.name}")
+        except Exception as exc:
+            print(f"  WARN: lineseg generation failed for {xml_file.name}: {exc}")
+            print(f"  Falling back to strip for {xml_file.name}")
+            # Per-file strip fallback.
+            try:
+                tree = etree.parse(str(xml_file))
+                root = tree.getroot()
+                for lsa in root.xpath(f"//{{{ HP_NS }}}linesegarray"):
+                    lsa.getparent().remove(lsa)
+                tree.write(
+                    str(xml_file),
+                    pretty_print=True,
+                    xml_declaration=True,
+                    encoding="UTF-8",
+                )
+            except Exception:
+                pass  # Best-effort fallback.
 
 def update_metadata(content_hpf: Path, title: str | None, creator: str | None) -> None:
     """Update title and/or creator in content.hpf."""
@@ -236,8 +282,8 @@ def build(
         for hpf_file in work.rglob("*.hpf"):
             validate_xml(hpf_file)
 
-        # 6. Strip stale linesegarray elements (prevents 'tampered' warning)
-        strip_linesegarray(work)
+        # 6. Generate linesegarray (with strip fallback)
+        generate_linesegarray(work)
 
         # 7. Pack
         pack_hwpx(work, output)
