@@ -88,7 +88,7 @@
       "name": "paper-style-generator",
       "source": "./plugins/paper-style-generator",
       "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "strict": true,
       "agents": [
         "./agents/pdf-converter.md",

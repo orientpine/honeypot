@@ -1,0 +1,175 @@
+# {{ name | title }} Propagation Mode Guide
+
+이 문서는 Orchestrator의 Propagation Management Mode에 대한 상세 실행 가이드입니다.
+섹션 수정 후 관련 섹션으로 변경사항을 자동 전파하는 절차를 설명합니다.
+
+## Propagation Workflow
+
+```
+┌─────────────────┐
+│ 섹션 수정 감지   │
+│ (예: Abstract)  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│  Step 1: Verify Agent로 불일치 탐지     │
+│  → Orchestrator가 응답을 파일로 저장    │
+│  → 영향받는 섹션 목록 + 심각도 분류     │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│  Step 2: 사용자에게 확인 요청           │
+│  → CRITICAL/WARNING/INFO 분류 표시      │
+│  → 모두 업데이트 / 선택 / 건너뛰기     │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│  Step 3: 승인된 섹션 Writer 호출        │
+│  → 컨텍스트: 수정된 내용 전달           │
+│  → 순서: Intro → Methods → Results      │
+│          → Discussion → Captions        │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│  Step 4: 재검증 (Verify Agent)          │
+│  → Orchestrator가 응답을 파일로 저장    │
+│  → 최종 일관성 확인                     │
+└─────────────────────────────────────────┘
+```
+
+## Step 1: Detect Inconsistencies
+
+**Task Invocation:**
+```markdown
+Task(
+  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
+  prompt="Verify consistency after modification of {modified_section}.
+
+  Input files:
+  - output/{paper_topic}/abstract_draft.md
+  - output/{paper_topic}/introduction_draft.md
+  - output/{paper_topic}/methodology_draft.md
+  - output/{paper_topic}/results_draft.md
+  - output/{paper_topic}/discussion_draft.md
+  - output/{paper_topic}/captions_draft.md
+
+  Focus: Identify sections affected by changes in {modified_section}.
+
+  Return: structured propagation report with severity levels",
+  background=false
+)
+```
+
+**⚠️ Verify agent는 Read-only입니다. Orchestrator가 응답을 파일로 저장:**
+```
+Write output/{paper_topic}/propagation_report.md ← verify 응답 내용
+```
+
+**Parse Propagation Report:**
+- Extract list of affected sections
+- Categorize by severity (CRITICAL, WARNING, INFO)
+
+## Step 2: User Confirmation
+
+**Display to User:**
+```
+섹션 '{modified_section}'의 수정사항이 다음 섹션에 영향을 미칩니다:
+
+[CRITICAL]
+- Introduction: Sample size mismatch (n=63 → n=51)
+- Discussion: Performance metrics outdated
+
+[WARNING]
+- Captions: Figure 2 description inconsistent
+
+다음 섹션을 업데이트할까요?
+1. 모두 업데이트 (Y)
+2. 업데이트 안 함 (N)
+3. 선택적 업데이트 (S)
+
+선택:
+```
+
+**User Response Handling:**
+- `Y`: 모든 affected sections 업데이트
+- `N`: 업데이트 건너뛰기 (경고 기록)
+- `S`: 사용자가 선택한 섹션만 업데이트
+
+## Step 3: Update Affected Sections
+
+**For each approved section:**
+```markdown
+Task(
+  subagent_type="{{ name }}-paper-skills::{{ name }}-{section}-writer",
+  prompt="Update {section} section to reflect changes in {modified_section}.
+
+  Context:
+  - Modified section: output/{paper_topic}/{modified_section}_draft.md
+  - Current section: output/{paper_topic}/{section}_draft.md
+  - Inconsistencies: [list from propagation_report.md]
+
+  Output:
+  - output/{paper_topic}/{section}_draft.md (overwrite)",
+  background=false
+)
+```
+
+**Section Update Order:**
+1. Introduction (if affected)
+2. Methodology (if affected)
+3. Results (if affected)
+4. Discussion (if affected)
+5. Captions (if affected)
+
+## Step 4: Re-verification
+
+**Task Invocation:**
+```markdown
+Task(
+  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
+  prompt="Re-verify consistency after propagation updates.
+
+  Input files:
+  - output/{paper_topic}/abstract_draft.md
+  - output/{paper_topic}/introduction_draft.md
+  - output/{paper_topic}/methodology_draft.md
+  - output/{paper_topic}/results_draft.md
+  - output/{paper_topic}/discussion_draft.md
+  - output/{paper_topic}/captions_draft.md
+
+  Return: structured consistency report",
+  background=false
+)
+```
+
+**Orchestrator가 응답을 파일로 저장:**
+```
+Write output/{paper_topic}/consistency_check_report.md ← verify 응답 내용 (overwrite)
+```
+
+**Final Report:**
+- Display remaining inconsistencies (if any)
+- Confirm propagation completion
+- Update `manuscript_complete.md` if all sections consistent
+
+## Propagation Impact Analysis
+
+**IF Abstract is modified:**
+- Introduction: Background summary may need update
+- Discussion: Conclusions may need realignment
+
+**IF Methodology is modified:**
+- Results: Method references may need update
+- Discussion: Limitations section may need revision
+
+**IF Results are modified:**
+- Abstract: Key findings must be updated
+- Discussion: Interpretation must be revised
+
+**IF key numbers/terms are changed:**
+- Search all sections for occurrences
+- Report all locations requiring update

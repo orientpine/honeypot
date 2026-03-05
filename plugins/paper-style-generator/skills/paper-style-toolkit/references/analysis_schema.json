@@ -1,0 +1,190 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Paper Style Analysis Output",
+  "description": "style-analyzer 에이전트의 출력 구조 스키마. skill-generator의 Jinja2 템플릿이 이 구조를 소비합니다. style-analyzer는 이 스키마에 맞는 JSON을 생성해야 합니다.",
+  "type": "object",
+  "required": [
+    "paper_count",
+    "confidence",
+    "field_characteristics",
+    "measurement_format",
+    "voice_tense_summary",
+    "high_freq_verbs",
+    "title",
+    "abstract",
+    "introduction",
+    "methodology",
+    "results",
+    "discussion",
+    "caption",
+    "sections",
+    "voice_tense",
+    "vocabulary",
+    "measurement",
+    "citation"
+  ],
+  "properties": {
+    "paper_count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "분석된 논문 수. Used by: skill_style_guide.md.j2, agent_verify.md.j2, readme.md.j2"
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["overall"],
+      "properties": {
+        "overall": { "type": "number", "minimum": 0, "maximum": 1, "description": "전체 분석 신뢰도 (0-1)" },
+        "title": { "type": "number" },
+        "abstract": { "type": "number" },
+        "introduction": { "type": "number" },
+        "methodology": { "type": "number" },
+        "results": { "type": "number" },
+        "discussion": { "type": "number" },
+        "caption": { "type": "number" }
+      },
+      "description": "섹션별 분석 신뢰도 (0-1). Used by: marketplace_hybrid.json.j2, skill_style_guide.md.j2, agent_writer.md.j2 footer"
+    },
+    "field_characteristics": {
+      "type": "object",
+      "properties": {
+        "primary_field": { "type": "string" },
+        "secondary_fields": { "type": "array", "items": { "type": "string" } },
+        "research_type": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } }
+      },
+      "description": "분야 특성. Used by: skill_style_guide.md.j2"
+    },
+    "measurement_format": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["pattern"],
+        "properties": {
+          "pattern": { "type": "string" },
+          "examples": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "description": "측정값 형식 패턴. Keys: temperature, concentration, time 등. Used by: skill_style_guide.md.j2, agent_verify.md.j2"
+    },
+    "voice_tense_summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "active": { "type": "string" },
+          "passive": { "type": "string" },
+          "past": { "type": "string" },
+          "present": { "type": "string" },
+          "primary_tense": { "type": "string" }
+        }
+      },
+      "description": "섹션별 Voice/Tense 요약 (표시용 문자열). Used by: skill_style_guide.md.j2, readme.md.j2"
+    },
+    "high_freq_verbs": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          { "type": "string", "description": "동사" },
+          { "type": "integer", "description": "빈도수" }
+        ]
+      },
+      "description": "고빈도 동사 [(verb, count), ...]. Used by: skill_style_guide.md.j2"
+    },
+    "principles": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "description": "핵심 원칙. Optional. Used by: skill_style_guide.md.j2"
+    },
+    "voice_tense": { "type": "object", "description": "상세 Voice/Tense 분석. Used by: ref_voice_tense.md.j2" },
+    "vocabulary": { "type": "object", "description": "어휘 분석 결과. Used by: ref_vocabulary.md.j2" },
+    "measurement": { "type": "object", "description": "측정 형식 상세. Used by: ref_measurement.md.j2" },
+    "citation": { "type": "object", "description": "인용 스타일 분석. Used by: ref_citation.md.j2" },
+    "sections": {
+      "type": "object",
+      "description": "섹션별 상세 분석 (ref_*_template.md.j2 렌더링용). Keys: title, abstract, introduction, methodology, results, discussion, caption",
+      "properties": {
+        "title": { "type": "object" },
+        "abstract": { "type": "object" },
+        "introduction": { "type": "object" },
+        "methodology": { "type": "object" },
+        "results": { "type": "object" },
+        "discussion": { "type": "object" },
+        "caption": { "type": "object" }
+      }
+    },
+    "title": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='title') 렌더링용" },
+    "abstract": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='abstract') 렌더링용" },
+    "introduction": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='introduction') 렌더링용" },
+    "methodology": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='methodology') 렌더링용" },
+    "results": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='results') 렌더링용" },
+    "discussion": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='discussion') 렌더링용" },
+    "caption": { "$ref": "#/$defs/section_analysis", "description": "agent_writer.md.j2 (section='caption') 렌더링용" }
+  },
+  "$defs": {
+    "section_analysis": {
+      "type": "object",
+      "description": "섹션별 분석 결과. 섹션에 따라 일부 필드만 사용됨.",
+      "properties": {
+        "voice": {
+          "type": "object",
+          "properties": {
+            "active": { "type": "object", "properties": { "mean": { "type": "number" } } },
+            "passive": { "type": "object", "properties": { "mean": { "type": "number" } } }
+          },
+          "description": "Voice 비율 (0-1). active.mean + passive.mean ≈ 1.0"
+        },
+        "tense": {
+          "type": "object",
+          "properties": {
+            "past": { "type": "object", "properties": { "mean": { "type": "number" } } },
+            "present": { "type": "object", "properties": { "mean": { "type": "number" } } }
+          },
+          "description": "Tense 비율 (0-1). past.mean + present.mean ≈ 1.0"
+        },
+        "word_count": {
+          "type": "object",
+          "properties": {
+            "mean": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "description": "Title, Abstract, Caption 섹션에서 사용"
+        },
+        "we_usage": {
+          "type": "object",
+          "properties": { "mean": { "type": "number" } },
+          "description": "Results 섹션 전용. 'We' 사용 비율 (0-1)"
+        },
+        "figure_refs_per_para": {
+          "type": "object",
+          "properties": { "mean": { "type": "number" } },
+          "description": "Results 섹션 전용. 문단당 Figure 참조 수"
+        },
+        "citation_density": {
+          "type": "object",
+          "properties": { "mean": { "type": "number" }, "max": { "type": "number" } },
+          "description": "Introduction 섹션 전용. 문단당 인용 수"
+        },
+        "high_freq_verbs": { "type": "array", "items": { "type": "string" }, "description": "섹션별 고빈도 동사" },
+        "high_freq_keywords": { "type": "array", "items": { "type": "string" }, "description": "Title 섹션 전용" },
+        "transition_phrases": { "type": "array", "items": { "type": "string" }, "description": "Introduction 섹션 전용" },
+        "hedging_expressions": { "type": "array", "items": { "type": "string" }, "description": "Introduction 섹션 전용" },
+        "opening_phrases": { "type": "array", "items": { "type": "string" }, "description": "Abstract 섹션 전용" },
+        "limitation_phrases": { "type": "array", "items": { "type": "string" }, "description": "Discussion 섹션 전용" },
+        "future_direction_phrases": { "type": "array", "items": { "type": "string" }, "description": "Discussion 섹션 전용" },
+        "impact_patterns": { "type": "array", "items": { "type": "string" }, "description": "Discussion 섹션 전용" },
+        "figure_ref_formats": { "type": "array", "items": { "type": "string" }, "description": "Results 섹션 전용" },
+        "statistical_formats": { "type": "array", "items": { "type": "string" }, "description": "Results, Caption 섹션" },
+        "title_patterns": { "type": "array", "items": { "type": "string" }, "description": "Caption 섹션 전용" },
+        "structure_pattern": { "type": "string", "description": "Title 섹션 전용" },
+        "panel_label_format": { "type": "string", "description": "Caption 섹션 전용" }
+      }
+    }
+  }
+}

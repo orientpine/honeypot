@@ -272,11 +272,16 @@ Generated: [Date]
 
 **FORBIDDEN TOOLS**: Write, Edit, Bash (any modification tools)
 
-## Output Directory
+## Output Mechanism
 
-- **Report path**: `output/{paper_topic}/`
-- **File naming**: `consistency_check_report_{descriptor}.md`
-- **Example**: `output/bladderCancer/consistency_check_report_v1.md`
+**⚠️ 이 에이전트는 Read-only입니다. 파일을 직접 생성하지 않습니다.**
+
+검증 결과는 **텍스트 응답**으로 반환됩니다. 호출한 Orchestrator가 이 응답을 파일로 저장합니다:
+
+- `output/{paper_topic}/consistency_check_report.md` (Full Auto Mode)
+- `output/{paper_topic}/propagation_report.md` (Propagation Mode)
+
+**Report Format**: 구조화된 Markdown (Executive Summary → Category별 Issues → Action Items → Checklist)
 
 ---
 

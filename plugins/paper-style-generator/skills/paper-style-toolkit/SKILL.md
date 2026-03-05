@@ -10,6 +10,7 @@ Use this skill for reusable resources needed by paper-style-generator agents.
 - Run conversion and analysis scripts from `scripts/`.
 - Load linguistic configuration from `references/`.
 - Load template assets from `assets/`.
+- Validate style analysis input against `references/analysis_schema.json` before rendering.
 
 ## 스크립트 참조 및 실행 (CRITICAL)
 
