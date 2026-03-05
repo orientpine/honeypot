@@ -10,13 +10,13 @@ Claude Code 스킬 세트를 자동 생성하는 메타-플러그인 오케스�
 ### 1.1 목적
 
 - **입력**: PDF 논문 10편 이상 (동일 저자 또는 동일 분야)
-- **출력**: `{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 하이브리드 플러그인 (9 agents + 1 skill)
+- **출력**: `{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 하이브리드 플러그인 (1 command + 8 agents + 1 skill)
 
 ### 1.2 생성되는 구성 요소 (Hybrid)
 
 | 유형 | 이름 | 목적 |
 |------|------|------|
-| Agent | `{name}-paper-orchestrator` | 논문 전체 생성 및 전파 관리 |
+| Command | `{name}-paper-generate` | 논문 전체 생성 및 전파 관리 |
 | Agent | `{name}-title-writer` | 논문 제목 생성 |
 | Agent | `{name}-abstract-writer` | Abstract 작성 |
 | Agent | `{name}-introduction-writer` | Introduction 작성 |
@@ -175,10 +175,11 @@ Task(subagent_type="paper-style-generator:skill-generator")
 - output_path: {CWD}/my-marketplace/plugins/{style_name}-paper-skills/
 
 출력:
-- 9개 에이전트 파일
+- 1개 커맨드 파일
+- 8개 에이전트 파일
 - 1개 스킬 폴더
 - .claude-plugin/plugin.json
-- marketplace.json
+- marketplace.json 엔트리 추가
 - README.md
 ```
 
@@ -189,9 +190,12 @@ Task(subagent_type="paper-style-generator:skill-generator")
 ├── .claude-plugin/
 │   └── marketplace.json                     # plugins[] 배열 (honeypot 패턴)
 └── plugins/
-    └── {name}-paper-skills/                 # 플러그인 폴더
-        ├── agents/                          # 9 Agents
-        │   ├── {name}-paper-orchestrator.md
+    └── {plugin_name}/                    # 플러그인 폴더 (중복 시 -v2, -v3 자동 증가)
+        ├── .claude-plugin/
+        │   └── plugin.json                  # 플러그인 메타데이터
+        ├── commands/                        # 1 Command (오케스트레이터)
+        │   └── {name}-paper-generate.md
+        ├── agents/                          # 8 Agents
         │   ├── {name}-title-writer.md
         │   ├── {name}-abstract-writer.md
         │   ├── {name}-introduction-writer.md
@@ -208,6 +212,7 @@ Task(subagent_type="paper-style-generator:skill-generator")
         │           ├── vocabulary-patterns.md
         │           ├── measurement-formats.md
         │           ├── citation-style.md
+        │           ├── propagation-guide.md
         │           └── section-templates/...
         └── README.md
 ```
@@ -326,20 +331,21 @@ Task(subagent_type="paper-style-generator:skill-generator")
 ## 9. 메타데이터
 
 ```yaml
-version: "2.0.0"
+version: "2.1.0"
 created: "2026-01-08"
-updated: "2026-01-16"
+updated: "2026-03-05"
 category: "documentation"
 workflow:
   - PDF 변환 (MinerU)
   - 스타일 분석 (깊은 분석)
-  - 스킬 생성 (9 agents + 1 skill)
+  - 스킬 생성 (1 command + 8 agents + 1 skill)
 dependencies:
   - mineru (pip install mineru)
   - jinja2 (템플릿 렌더링)
 output:
-  location: "{CWD}/my-marketplace/plugins/{name}-paper-skills/"
+  location: "{CWD}/my-marketplace/plugins/{plugin_name}/"
   marketplace_pattern: "honeypot plugins[] array"
-  agents_count: 9
+  agents_count: 8
+  commands_count: 1
   skills_count: 1
 ```

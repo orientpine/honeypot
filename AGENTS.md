@@ -35,7 +35,7 @@ toolbox/
     │   ├── agents/                   # 3 agents
     │   │   ├── pdf-converter.md      # MinerU PDF→MD conversion
     │   │   ├── style-analyzer.md     # Deep style pattern extraction
-    │   │   └── skill-generator.md    # Hybrid plugin generation (9 agents + 1 skill)
+    │   │   └── skill-generator.md    # Hybrid plugin generation (1 command + 8 agents + 1 skill)
     │   ├── commands/
     │   │   └── paper-style-generate.md  # Main workflow orchestrator command
     │   └── skills/
@@ -243,14 +243,15 @@ Glob: **/{script-name}.py
 - **Workflow**: `paper-style-generate` (command) → `pdf-converter` → `style-analyzer` → `skill-generator`
 - **Input**: PDF papers from same author/research group or same field
 - **Output**: Hybrid plugin in `{CWD}/my-marketplace/plugins/{name}-paper-skills/`
-  - Agents (9): `{name}-paper-orchestrator`, `{name}-title-writer`, `{name}-abstract-writer`, `{name}-introduction-writer`, `{name}-methodology-writer`, `{name}-results-writer`, `{name}-discussion-writer`, `{name}-caption-writer`, `{name}-verify`
+  - Command (1): `{name}-paper-generate.md` (오케스트레이터)
+  - Agents (8): `{name}-title-writer`, `{name}-abstract-writer`, `{name}-introduction-writer`, `{name}-methodology-writer`, `{name}-results-writer`, `{name}-discussion-writer`, `{name}-caption-writer`, `{name}-verify`
   - Skill (1): `{name}-style-guide`
   - Plugin metadata: `.claude-plugin/plugin.json`
 - **Orchestrator Features**:
   - Sequential section generation: Title → Abstract → Introduction → Methodology → Results → Discussion → Captions
   - Final verification via `{name}-verify`
   - Cross-section consistency tracking (sample sizes, metrics, biomarkers)
-  - Execution modes: Full Auto, Interactive, Resume from section
+  - Execution modes: Full Auto, Propagation Management
   - Output: `output/{paper_topic}/manuscript_complete.md`
 - **Style Analysis Extracts**:
   - Voice ratio (active/passive) per section
