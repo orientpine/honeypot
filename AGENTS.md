@@ -35,7 +35,7 @@ toolbox/
     │   ├── agents/                   # 3 agents
     │   │   ├── pdf-converter.md      # MinerU PDF→MD conversion
     │   │   ├── style-analyzer.md     # Deep style pattern extraction
-    │   │   └── skill-generator.md    # 10-skill set generation (including orchestrator)
+    │   │   └── skill-generator.md    # Hybrid plugin generation (9 agents + 1 skill)
     │   ├── commands/
     │   │   └── paper-style-generate.md  # Main workflow orchestrator command
     │   └── skills/
@@ -242,17 +242,10 @@ Glob: **/{script-name}.py
 - **Purpose**: Analyze PDF papers (10+) and auto-generate paper writing skill sets
 - **Workflow**: `paper-style-generate` (command) → `pdf-converter` → `style-analyzer` → `skill-generator`
 - **Input**: PDF papers from same author/research group or same field
-- **Output**: 10 independent Claude skills in `~/.claude/skills/{name}-gen/`
-  1. `{name}-common` - Shared style guide
-  2. `{name}-abstract` - Abstract writing
-  3. `{name}-introduction` - Introduction section
-  4. `{name}-methodology` - Methods section
-  5. `{name}-results` - Results section
-  6. `{name}-discussion` - Discussion/Conclusions
-  7. `{name}-caption` - Figure/Table captions
-  8. `{name}-title` - Paper title generation
-  9. `{name}-verify` - Pre-publication verification
-  10. **`{name}-orchestrator`** - **Full paper auto-generation (NEW)**
+- **Output**: Hybrid plugin in `{CWD}/my-marketplace/plugins/{name}-paper-skills/`
+  - Agents (9): `{name}-paper-orchestrator`, `{name}-title-writer`, `{name}-abstract-writer`, `{name}-introduction-writer`, `{name}-methodology-writer`, `{name}-results-writer`, `{name}-discussion-writer`, `{name}-caption-writer`, `{name}-verify`
+  - Skill (1): `{name}-style-guide`
+  - Plugin metadata: `.claude-plugin/plugin.json`
 - **Orchestrator Features**:
   - Sequential section generation: Title → Abstract → Introduction → Methodology → Results → Discussion → Captions
   - Final verification via `{name}-verify`

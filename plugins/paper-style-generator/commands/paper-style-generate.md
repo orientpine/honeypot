@@ -10,21 +10,22 @@ Claude Code 스킬 세트를 자동 생성하는 메타-플러그인 오케스�
 ### 1.1 목적
 
 - **입력**: PDF 논문 10편 이상 (동일 저자 또는 동일 분야)
-- **출력**: `{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 9개 섹션별 스킬 세트
+- **출력**: `{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 하이브리드 플러그인 (9 agents + 1 skill)
 
-### 1.2 생성되는 스킬 세트
+### 1.2 생성되는 구성 요소 (Hybrid)
 
-| 스킬 | 목적 |
-|------|------|
-| `{name}-common` | 공통 스타일 가이드 (측정값, 인용, 어휘) |
-| `{name}-abstract` | Abstract 작성 |
-| `{name}-introduction` | Introduction 작성 |
-| `{name}-methodology` | Methods 작성 |
-| `{name}-results` | Results 작성 |
-| `{name}-discussion` | Discussion 작성 |
-| `{name}-caption` | Figure/Table 캡션 |
-| `{name}-title` | 논문 제목 생성 |
-| `{name}-verify` | 검증 스킬 |
+| 유형 | 이름 | 목적 |
+|------|------|------|
+| Agent | `{name}-paper-orchestrator` | 논문 전체 생성 및 전파 관리 |
+| Agent | `{name}-title-writer` | 논문 제목 생성 |
+| Agent | `{name}-abstract-writer` | Abstract 작성 |
+| Agent | `{name}-introduction-writer` | Introduction 작성 |
+| Agent | `{name}-methodology-writer` | Methods 작성 |
+| Agent | `{name}-results-writer` | Results 작성 |
+| Agent | `{name}-discussion-writer` | Discussion 작성 |
+| Agent | `{name}-caption-writer` | Figure/Table 캡션 작성 |
+| Agent | `{name}-verify` | 일관성 검증 (읽기 전용) |
+| Skill | `{name}-style-guide` | 공통 스타일 가이드 |
 
 ---
 
@@ -174,7 +175,9 @@ Task(subagent_type="paper-style-generator:skill-generator")
 - output_path: {CWD}/my-marketplace/plugins/{style_name}-paper-skills/
 
 출력:
-- 9개 스킬 폴더
+- 9개 에이전트 파일
+- 1개 스킬 폴더
+- .claude-plugin/plugin.json
 - marketplace.json
 - README.md
 ```

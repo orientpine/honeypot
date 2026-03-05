@@ -111,7 +111,7 @@ resource/{paper_topic}/
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 8: VERIFICATION                                      │
-│  └── Task(subagent_type="{{ name }}-verify-agent")         │
+│  └── Task(subagent_type="{{ name }}-verify")               │
 │      → output/{paper_topic}/consistency_check_report.md     │
 └─────────────────────────────────────────────────────────────┘
                               │
@@ -288,7 +288,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify-agent",
+  subagent_type="{{ name }}-verify",
   prompt="Verify consistency across all sections for paper topic: {paper_topic}.
   
   Input files:
@@ -409,7 +409,7 @@ IF consistency_check_report.md contains CRITICAL issues:
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify-agent",
+  subagent_type="{{ name }}-verify",
   prompt="Verify consistency after modification of {modified_section}.
   
   Input files:
@@ -489,7 +489,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify-agent",
+  subagent_type="{{ name }}-verify",
   prompt="Re-verify consistency after propagation updates.
   
   Input files:
@@ -709,7 +709,7 @@ Write output/bladderCancer/introduction_draft.md
 
 ### Verification Agent (Task 도구로 호출)
 
-- `{{ name }}-verify-agent`: 일관성 검증 (읽기 전용)
+- `{{ name }}-verify`: 일관성 검증 (읽기 전용)
 
 ### Style Guide (Skills)
 
