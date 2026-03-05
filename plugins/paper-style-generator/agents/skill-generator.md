@@ -39,6 +39,8 @@ model: sonnet
 │   └── marketplace.json                     # plugins[] 배열 (honeypot 패턴)
 └── plugins/
     └── {name}-paper-skills/                 # 플러그인 폴더
+        ├── .claude-plugin/
+        │   └── plugin.json
         ├── agents/
         │   ├── {name}-paper-orchestrator.md
         │   ├── {name}-title-writer.md
@@ -86,6 +88,7 @@ model: sonnet
 |------|------|
 | 9개 에이전트 | Orchestrator + 7개 Writer + Verify |
 | 1개 스킬 | Style Guide (공통 참조) |
+| `plugin.json` | 플러그인 메타데이터 |
 | `marketplace.json` | 플러그인 등록 메타데이터 (9 agents + 1 skill) |
 | `README.md` | 사용 가이드 |
 
@@ -267,32 +270,33 @@ output = template.render(
 )
 ```
 
-### 4.2 템플릿 파일 구조 (17개 템플릿)
+### 4.2 템플릿 파일 구조 (18개 템플릿)
 
 ```
 skills/paper-style-toolkit/assets/
 ├── marketplace_root.json.j2            # 1. my-marketplace 초기화 (plugins[] 빈 배열)
 ├── marketplace_hybrid.json.j2          # 2. 플러그인 엔트리 (plugins[] 배열 항목)
-├── agent_orchestrator.md.j2            # 3. Orchestrator 에이전트
-├── agent_writer.md.j2                  # 4. Writer 에이전트 (7번 렌더링)
-├── agent_verify.md.j2                  # 5. Verify 에이전트
-├── skill_style_guide.md.j2             # 6. Style Guide 스킬 진입점
-├── ref_voice_tense.md.j2               # 7. Voice/Tense 참조
-├── ref_vocabulary.md.j2                # 8. Vocabulary 참조
-├── ref_measurement.md.j2               # 9. Measurement 참조
-├── ref_citation.md.j2                  # 10. Citation 참조
-├── ref_section_abstract.md.j2          # 11. Abstract 템플릿
-├── ref_section_introduction.md.j2      # 12. Introduction 템플릿
-├── ref_section_methodology.md.j2       # 13. Methodology 템플릿
-├── ref_section_results.md.j2           # 14. Results 템플릿
-├── ref_section_discussion.md.j2        # 15. Discussion 템플릿
-├── ref_section_caption.md.j2           # 16. Caption 템플릿
-└── ref_section_title.md.j2             # 17. Title 템플릿
+├── plugin.json.j2                      # 3. 생성 플러그인 plugin.json
+├── agent_orchestrator.md.j2            # 4. Orchestrator 에이전트
+├── agent_writer.md.j2                  # 5. Writer 에이전트 (7번 렌더링)
+├── agent_verify.md.j2                  # 6. Verify 에이전트
+├── skill_style_guide.md.j2             # 7. Style Guide 스킬 진입점
+├── ref_voice_tense.md.j2               # 8. Voice/Tense 참조
+├── ref_vocabulary.md.j2                # 9. Vocabulary 참조
+├── ref_measurement.md.j2               # 10. Measurement 참조
+├── ref_citation.md.j2                  # 11. Citation 참조
+├── ref_abstract_template.md.j2         # 12. Abstract 템플릿
+├── ref_introduction_template.md.j2     # 13. Introduction 템플릿
+├── ref_methodology_template.md.j2      # 14. Methodology 템플릿
+├── ref_results_template.md.j2          # 15. Results 템플릿
+├── ref_discussion_template.md.j2       # 16. Discussion 템플릿
+├── ref_caption_template.md.j2          # 17. Caption 템플릿
+└── ref_title_template.md.j2            # 18. Title 템플릿
 ```
 
 **렌더링 규칙**:
 - `agent_writer.md.j2`: 7번 렌더링 (section 변수: title, abstract, introduction, methodology, results, discussion, caption)
-- `ref_section_*.md.j2`: 각 섹션별 1번씩 렌더링
+- `ref_*_template.md.j2`: 각 섹션별 1번씩 렌더링
 
 ---
 
@@ -572,6 +576,7 @@ def phase_1_6_legacy_integration(marketplace_data: dict):
 ```bash
 # 플러그인 폴더 생성
 mkdir -p ./my-marketplace/plugins/{name}-paper-skills/agents/
+mkdir -p ./my-marketplace/plugins/{name}-paper-skills/.claude-plugin/
 mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
 mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/references/
 mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/references/section-templates/
@@ -589,7 +594,7 @@ mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
   "source": "./plugins/{name}-paper-skills",
   "description": "{Name} 스타일 논문 작성 에이전트 및 스킬 세트. {paper_count}편의 논문 분석 기반. (신뢰도: {confidence}%)",
   "version": "1.0.0",
-  "author": {"name": "Paper Style Generator"},
+  "author": {"name": "Paper Style Generator", "email": "orientpine@gmail.com"},
   "license": "MIT",
   "keywords": ["paper-writing", "{name}-style", "academic-writing", "auto-generated"],
   "category": "documentation",
@@ -636,16 +641,23 @@ plugin_entry = json.loads(template.render(name=name, **metadata))
 add_plugin_to_marketplace(marketplace_data, plugin_entry)
 ```
 
-**4.2 Orchestrator 에이전트**
+**4.2 plugin.json 생성**
 ```python
 PLUGIN_DIR = f'./my-marketplace/plugins/{name}-paper-skills'
 
+template = env.get_template('plugin.json.j2')
+output = template.render(name=name)
+write_file(f'{PLUGIN_DIR}/.claude-plugin/plugin.json', output)
+```
+
+**4.3 Orchestrator 에이전트**
+```python
 template = env.get_template('agent_orchestrator.md.j2')
 output = template.render(name=name, **analysis)
 write_file(f'{PLUGIN_DIR}/agents/{name}-paper-orchestrator.md', output)
 ```
 
-**4.3 Writer 에이전트 (7번 렌더링)**
+**4.4 Writer 에이전트 (7번 렌더링)**
 ```python
 sections = ['title', 'abstract', 'introduction', 'methodology', 'results', 'discussion', 'caption']
 template = env.get_template('agent_writer.md.j2')
@@ -654,21 +666,21 @@ for section in sections:
     write_file(f'{PLUGIN_DIR}/agents/{name}-{section}-writer.md', output)
 ```
 
-**4.4 Verify 에이전트**
+**4.5 Verify 에이전트**
 ```python
 template = env.get_template('agent_verify.md.j2')
 output = template.render(name=name, **analysis)
 write_file(f'{PLUGIN_DIR}/agents/{name}-verify.md', output)
 ```
 
-**4.5 Style Guide 스킬**
+**4.6 Style Guide 스킬**
 ```python
 template = env.get_template('skill_style_guide.md.j2')
 output = template.render(name=name, **analysis)
 write_file(f'{PLUGIN_DIR}/skills/{name}-style-guide/SKILL.md', output)
 ```
 
-**4.6 Reference 파일 (11개)**
+**4.7 Reference 파일 (11개)**
 ```python
 SKILL_DIR = f'{PLUGIN_DIR}/skills/{name}-style-guide'
 
@@ -695,7 +707,7 @@ write_file(f'{SKILL_DIR}/references/citation-style.md', output)
 # Section Templates (7개)
 sections = ['abstract', 'introduction', 'methodology', 'results', 'discussion', 'caption', 'title']
 for section in sections:
-    template = env.get_template(f'ref_section_{section}.md.j2')
+    template = env.get_template(f'ref_{section}_template.md.j2')
     output = template.render(**analysis['sections'][section])
     write_file(f'{SKILL_DIR}/references/section-templates/{section}.md', output)
 ```
@@ -976,12 +988,13 @@ file ./my-marketplace/plugins/{name}-paper-skills/**/*.json
 version: "3.0.0"
 architecture: "my-marketplace"
 template_engine: "jinja2"
-templates_count: 17
+templates_count: 18
 agents_generated: 9
 skills_generated: 1
 output_base: "{CWD}/my-marketplace/"
 output_structure:
   - .claude-plugin/marketplace.json (plugins[] 배열에 추가)
+  - plugins/{name}-paper-skills/.claude-plugin/plugin.json
   - plugins/{name}-paper-skills/agents/ (9 files)
   - plugins/{name}-paper-skills/skills/{name}-style-guide/ (1 SKILL.md + 11 references)
   - plugins/{name}-paper-skills/README.md
