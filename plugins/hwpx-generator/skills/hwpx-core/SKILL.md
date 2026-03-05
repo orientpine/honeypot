@@ -97,18 +97,18 @@ Glob: **/build_hwpx.py
 절대 금지: 스크립트를 찾지 못했을 때 자체 Python 코드를 작성하지 않습니다.
 즉시 중단 후 경로 확인을 요청합니다.
 
-## 스크립트 요약 (7)
+## 스크립트 요약 (8)
 
 | Script | Purpose |
 |---|---|
 | `scripts/build_hwpx.py` | 템플릿 + XML 오버라이드로 `.hwpx` 조립 |
+| `scripts/cell_writer.py` | linesegarray 생성 + 셀/테이블 높이 자동 조정 (**NEW**) |
 | `scripts/analyze_template.py` | 레퍼런스 HWPX 구조/스타일 분석 |
 | `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | 본문/표 텍스트 추출 |
 | `scripts/validate.py` | ZIP/XML/필수 엔트리 구조 검증 |
 | `scripts/office/unpack.py` | HWPX를 디렉토리로 풀어 XML 편집 준비 |
 | `scripts/office/pack.py` | 수정 디렉토리를 HWPX로 재패키징 |
-
 ## 단위 변환 (HWP Units)
 
 | Item | Value | Note |
@@ -614,7 +614,7 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
 16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
 17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
-18. **linesegarray 자동 제거**: `<hp:linesegarray>`는 라인 레이아웃 캐시(optional)로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고를 유발한다. `build_hwpx.py`, `pack.py`, `fix_namespaces.py` 모두 패키징 시 자동 제거하며, section0.xml 작성 시 포함하지 않아도 된다 (한글이 열 때 자동 재계산)
+18. **linesegarray 자동 생성**: `<hp:linesegarray>`는 라인 레이아웃 캐시로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고 및 비-한글 뷰어에서 표시 오류를 유발한다. `build_hwpx.py`와 `pack.py`는 패키징 시 `cell_writer.py`를 호출하여 올바른 linesegarray를 자동 생성한다. 생성 실패 시 기존 방식(자동 제거)으로 폴백한다. section0.xml 작성 시 linesegarray를 포함할 필요 없다 — 빌드 파이프라인이 자동 생성한다. ZIP-level 치환 워크플로우(hwpx-templates)에서는 `cell_writer.py --hwpx`를 `fix_namespaces.py` 전에 실행한다.
 
 ## 빠른 실행 예시
 
