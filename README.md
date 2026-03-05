@@ -248,7 +248,7 @@ honeypot/
 
 - **방식**: XML-first 빌드 + ZIP 치환
 - `build_hwpx.py` 기반 생성, `fix_namespaces.py` 필수
-- **v2.2.1**: `<hp:linesegarray>` 자동 제거 — 텍스트 수정 후 '문서 변조' 경고 방지 (3개 빌드 경로 모두 적용)
+- **v2.3.0**: `<hp:linesegarray>` 자동 생성 — 한컴오피스 외 뷰어에서도 정확한 텍스트 레이아웃 보장 (cell_writer.py, 3개 빌드 경로 통합)
 
 | 구성 | 항목 |
 |------|------|
@@ -411,7 +411,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
-| 2.3.1 | 2026-03-05 | hwpx-generator v2.2.1: linesegarray 자동 제거로 '문서 변조' 경고 해결 (build_hwpx/pack/fix_namespaces 3경로 적용, 템플릿 정리) |
+| 2.3.1 | 2026-03-05 | hwpx-generator v2.3.0: linesegarray 자동 생성으로 전환 (cell_writer.py 신규, build_hwpx/pack 통합, 뷰어 호환성 보장) |
 | 2.3.0 | 2026-03-04 | plugin-dev 플러그인 추가 (Anthropic claude-code 공식 저장소에서 포팅) |
 | 2.2.0 | 2026-02-27 | visual-generator 6개 테마 예시 이미지 추가 (Gemini API 생성), README 시각적 개선 |
 | 2.1.0 | 2026-02-27 | README 전면 최신화: 표준 구조 반영, 11개 플러그인 문서화, visual-generator 6테마 체계 반영 |
