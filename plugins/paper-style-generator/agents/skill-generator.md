@@ -16,11 +16,11 @@ model: sonnet
 
 ## 1. Overview
 
-### 1.1 생성되는 에이전트 및 스킬 (Hybrid 구조)
+### 1.1 생성되는 커맨드, 에이전트 및 스킬 (Hybrid 구조)
 
 | 유형 | 이름 | 파일 위치 | 목적 |
 |------|------|----------|------|
-| **Agent** | Orchestrator | `agents/{name}-paper-orchestrator.md` | 논문 전체 자동 생성 |
+| **Command** | Orchestrator | `commands/{name}-paper-generate.md` | 논문 전체 자동 생성 |
 | **Agent** | Title Writer | `agents/{name}-title-writer.md` | 논문 제목 생성 |
 | **Agent** | Abstract Writer | `agents/{name}-abstract-writer.md` | Abstract 작성 |
 | **Agent** | Introduction Writer | `agents/{name}-introduction-writer.md` | Introduction 작성 |
@@ -29,7 +29,7 @@ model: sonnet
 | **Agent** | Discussion Writer | `agents/{name}-discussion-writer.md` | Discussion 작성 |
 | **Agent** | Caption Writer | `agents/{name}-caption-writer.md` | Figure/Table 캡션 |
 | **Agent** | Verify | `agents/{name}-verify.md` | 검증 에이전트 |
-| **Skill** | Style Guide | `skills/{name}-style-guide/SKILL.md` | 공통 스타일 가이드 (9개 에이전트가 참조) |
+| **Skill** | Style Guide | `skills/{name}-style-guide/SKILL.md` | 공통 스타일 가이드 (8개 에이전트가 참조) |
 
 ### 1.2 출력 구조 (my-marketplace Pattern)
 
@@ -41,8 +41,9 @@ model: sonnet
     └── {name}-paper-skills/                 # 플러그인 폴더
         ├── .claude-plugin/
         │   └── plugin.json
+        ├── commands/
+        │   └── {name}-paper-generate.md
         ├── agents/
-        │   ├── {name}-paper-orchestrator.md
         │   ├── {name}-title-writer.md
         │   ├── {name}-abstract-writer.md
         │   ├── {name}-introduction-writer.md
@@ -87,10 +88,11 @@ model: sonnet
 
 | 항목 | 설명 |
 |------|------|
-| 9개 에이전트 | Orchestrator + 7개 Writer + Verify |
+| 1개 커맨드 | Orchestrator (논문 전체 자동 생성) |
+| 8개 에이전트 | 7개 Writer + Verify |
 | 1개 스킬 | Style Guide (공통 참조) |
 | `plugin.json` | 플러그인 메타데이터 |
-| `marketplace.json` | 플러그인 등록 메타데이터 (9 agents + 1 skill) |
+| `marketplace.json` | 플러그인 등록 메타데이터 (1 command + 8 agents + 1 skill) |
 | `README.md` | 사용 가이드 |
 
 ---
@@ -259,7 +261,7 @@ description: "{Name} 스타일의 논문 전체 자동 생성 오케스트레이
 ```python
 from jinja2 import Environment, FileSystemLoader
 
-env = Environment(loader=FileSystemLoader('skills/paper-style-toolkit/assets'))
+env = Environment(loader=FileSystemLoader('skills/paper-style-toolkit/assets'), newline_sequence='\n')
 template = env.get_template('skill_methodology.md.j2')
 
 output = template.render(
@@ -278,7 +280,7 @@ skills/paper-style-toolkit/assets/
 ├── marketplace_root.json.j2            # 1. my-marketplace 초기화 (plugins[] 빈 배열)
 ├── marketplace_hybrid.json.j2          # 2. 플러그인 엔트리 (plugins[] 배열 항목)
 ├── plugin.json.j2                      # 3. 생성 플러그인 plugin.json
-├── agent_orchestrator.md.j2            # 4. Orchestrator 에이전트
+├── command_orchestrator.md.j2         # 4. Orchestrator 커맨드
 ├── agent_writer.md.j2                  # 5. Writer 에이전트 (7번 렌더링)
 ├── agent_verify.md.j2                  # 6. Verify 에이전트
 ├── skill_style_guide.md.j2             # 7. Style Guide 스킬 진입점
@@ -323,13 +325,20 @@ def normalize_name(name: str) -> str:
     name = re.sub(r'-+', '-', name)
     # 앞뒤 하이픈 제거
     name = name.strip('-')
+    # 빈 문자열 검증 (비ASCII만 입력된 경우)
+    if not name:
+        raise ValueError(
+            f"정규화 후 유효한 이름이 없습니다. "
+            f"영문 알파벳을 포함한 이름을 입력해 주세요. "
+            f"예: 'hakho', 'nature-methods', 'ieee-sensors'"
+        )
     return name
 
 # 예시
 # "Hakho Lee" → "hakho-lee"
 # "My_Style_2024" → "my-style-2024"
 # "테스트 Style!" → "style"
-```
+# "논문스타일" → ValueError (영문 없음)
 
 ### Phase 1: my-marketplace 초기화
 
@@ -504,7 +513,6 @@ def integrate_legacy_skill(skill_info: dict, marketplace_data: dict) -> dict:
         "version": "1.0.0",
         "author": {"name": "Paper Style Generator (Legacy Import)"},
         "license": "MIT",
-        "keywords": ["paper-writing", f"{base_name}-style", "legacy-import"],
         "category": "documentation",
         "strict": True,
         "agents": agents if agents else None,
@@ -578,11 +586,12 @@ def phase_1_6_legacy_integration(marketplace_data: dict):
 
 ```bash
 # 플러그인 폴더 생성
-mkdir -p ./my-marketplace/plugins/{name}-paper-skills/agents/
-mkdir -p ./my-marketplace/plugins/{name}-paper-skills/.claude-plugin/
-mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
-mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/references/
-mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/references/section-templates/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/agents/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/commands/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/.claude-plugin/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/skills/{name}-style-guide/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/skills/{name}-style-guide/references/
+mkdir -p ./my-marketplace/plugins/{plugin_name}/skills/{name}-style-guide/references/section-templates/
 ```
 
 ### Phase 3: marketplace.json에 플러그인 추가
@@ -593,8 +602,8 @@ mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
 
 ```json
 {
-  "name": "{name}-paper-skills",
-  "source": "./plugins/{name}-paper-skills",
+  "name": "{plugin_name}",
+  "source": "./plugins/{plugin_name}",
   "description": "{Name} 스타일 논문 작성 에이전트 및 스킬 세트. {paper_count}편의 논문 분석 기반. (신뢰도: {confidence}%)",
   "version": "1.0.0",
   "author": {"name": "Paper Style Generator", "email": "orientpine@gmail.com"},
@@ -602,7 +611,6 @@ mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
   "category": "documentation",
   "strict": true,
   "agents": [
-    "./agents/{name}-paper-orchestrator.md",
     "./agents/{name}-title-writer.md",
     "./agents/{name}-abstract-writer.md",
     "./agents/{name}-introduction-writer.md",
@@ -612,8 +620,7 @@ mkdir -p ./my-marketplace/plugins/{name}-paper-skills/skills/{name}-style-guide/
     "./agents/{name}-caption-writer.md",
     "./agents/{name}-verify.md"
   ],
-  "skills": ["./skills/{name}-style-guide"]
-}
+  "skills": ["./skills"]
 ```
 
 **추가 로직**:
@@ -630,27 +637,33 @@ def add_plugin_to_marketplace(marketplace_data: dict, plugin_entry: dict):
 
 ### Phase 4: 템플릿 렌더링
 
+> **Note**: Phase 1.5에서 확정된 `plugin_name`을 모든 템플릿에 전달합니다:
+> ```python
+> plugin_name = get_unique_plugin_name(marketplace_data, name)
+> # 예: "hakho-paper-skills" 또는 "hakho-paper-skills-v2" (중복 시)
+> ```
+
 **4.1 플러그인 엔트리 생성 (marketplace_hybrid.json.j2)**
 ```python
 template = env.get_template('marketplace_hybrid.json.j2')
-plugin_entry = json.loads(template.render(name=name, **metadata))
+plugin_entry = json.loads(template.render(name=name, plugin_name=plugin_name, **metadata))
 add_plugin_to_marketplace(marketplace_data, plugin_entry)
 ```
 
 **4.2 plugin.json 생성**
 ```python
-PLUGIN_DIR = f'./my-marketplace/plugins/{name}-paper-skills'
+PLUGIN_DIR = f'./my-marketplace/plugins/{plugin_name}'
 
 template = env.get_template('plugin.json.j2')
-output = template.render(name=name)
+output = template.render(name=name, plugin_name=plugin_name)
 write_file(f'{PLUGIN_DIR}/.claude-plugin/plugin.json', output)
 ```
 
-**4.3 Orchestrator 에이전트**
+**4.3 Orchestrator 커맨드**
 ```python
-template = env.get_template('agent_orchestrator.md.j2')
-output = template.render(name=name, **analysis)
-write_file(f'{PLUGIN_DIR}/agents/{name}-paper-orchestrator.md', output)
+template = env.get_template('command_orchestrator.md.j2')
+output = template.render(name=name, plugin_name=plugin_name, **analysis)
+write_file(f'{PLUGIN_DIR}/commands/{name}-paper-generate.md', output)
 ```
 
 **4.4 Writer 에이전트 (7번 렌더링)**
@@ -658,14 +671,14 @@ write_file(f'{PLUGIN_DIR}/agents/{name}-paper-orchestrator.md', output)
 sections = ['title', 'abstract', 'introduction', 'methodology', 'results', 'discussion', 'caption']
 template = env.get_template('agent_writer.md.j2')
 for section in sections:
-    output = template.render(name=name, section=section, **analysis)
+    output = template.render(name=name, plugin_name=plugin_name, section=section, **analysis)
     write_file(f'{PLUGIN_DIR}/agents/{name}-{section}-writer.md', output)
 ```
 
 **4.5 Verify 에이전트**
 ```python
 template = env.get_template('agent_verify.md.j2')
-output = template.render(name=name, **analysis)
+output = template.render(name=name, plugin_name=plugin_name, **analysis)
 write_file(f'{PLUGIN_DIR}/agents/{name}-verify.md', output)
 ```
 
@@ -675,6 +688,12 @@ template = env.get_template('skill_style_guide.md.j2')
 output = template.render(name=name, **analysis)
 write_file(f'{PLUGIN_DIR}/skills/{name}-style-guide/SKILL.md', output)
 ```
+
+# SKILL.md 500줄 제한 사전 검증
+line_count = len(output.splitlines())
+if line_count > 500:
+    print(f"⚠️ SKILL.md가 {line_count}줄입니다 (최대 500줄). Jinja2 슬라이스 범위를 축소하여 재생성합니다.")
+    # 재생성: 데이터 슬라이스 축소 ([:10] → [:5] 등) 후 재렌더링
 
 **4.7 Reference 파일 (11개)**
 ```python
@@ -711,14 +730,14 @@ for section in sections:
 **4.8 README.md 생성**
 ```python
 template = env.get_template('readme.md.j2')
-output = template.render(name=name, **analysis)
+output = template.render(name=name, plugin_name=plugin_name, **analysis)
 write_file(f'{PLUGIN_DIR}/README.md', output)
 ```
 
 **4.9 Propagation Guide 참조 파일 생성**
 ```python
 template = env.get_template('ref_propagation_guide.md.j2')
-output = template.render(name=name, **analysis)
+output = template.render(name=name, plugin_name=plugin_name, **analysis)
 write_file(f'{SKILL_DIR}/references/propagation-guide.md', output)
 ```
 
@@ -732,14 +751,15 @@ write_file(f'{SKILL_DIR}/references/propagation-guide.md', output)
 
 ### 6.1 생성된 파일 검증
 
-- [ ] 9개 에이전트 파일 존재 (`agents/` 디렉토리)
+- [ ] 1개 커맨드 파일 존재 (`commands/` 디렉토리)
+- [ ] 8개 에이전트 파일 존재 (`agents/` 디렉토리)
 - [ ] 1개 스킬 폴더 존재 (`skills/{name}-style-guide/`)
 - [ ] 12개 참조 파일 존재 (`references/` 디렉토리, propagation-guide.md 포함)
 - [ ] marketplace.json 유효한 JSON
 - [ ] 모든 .md 파일 frontmatter 유효
 - [ ] README.md 생성됨
 - [ ] propagation-guide.md 생성됨 (`references/` 디렉토리)
-- [ ] analysis_schema.json 기준 입력 데이터 검증 통과
+- [ ] analysis_schema.json 기준 입력 데이터 검증 통과 (**Phase 4 전 필수 실행** — 아래 6.3.6 참조)
 
 ### 6.2 내용 검증
 
@@ -904,6 +924,69 @@ def generate_with_validation(generator_func, validator_func, max_retries: int = 
     return False
 ```
 
+#### 6.3.6 에이전트 파일 크기 검증
+
+에이전트 파일이 지나치게 길면 토큰 소비 증가 및 로딩 성능 저하가 발생합니다.
+
+```python
+def validate_agent_line_count(file_path: str, max_lines: int = 600) -> tuple[bool, int]:
+    """에이전트 파일 라인 수 검증 (600줄 소프트 리밋)"""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        line_count = sum(1 for _ in f)
+    return line_count <= max_lines, line_count
+
+# 검증 대상: 모든 에이전트 파일
+for agent_file in glob.glob(f'{PLUGIN_DIR}/agents/*.md'):
+    is_valid, count = validate_agent_line_count(agent_file)
+    if not is_valid:
+        print(f"⚠️ {agent_file}이 {count}줄입니다 (권장 600줄 이하). 데이터 슬라이스를 축소하여 재생성합니다.")
+        # 재생성 트리거: for 루프 슬라이스 범위 축소 ([:10] → [:5] 등)
+```
+
+#### 6.3.7 스키마 검증 필수화 (Phase 4 전 MANDATORY)
+
+**⚠️ Phase 4 템플릿 렌더링 전에 반드시 실행해야 합니다.** 체크리스트 항목이 아닌 필수 단계입니다.
+
+```python
+import json
+import jsonschema  # pip install jsonschema
+
+def validate_analysis_schema(analysis_data: dict, schema_path: str) -> tuple[bool, list[str]]:
+    """분석 데이터가 템플릿이 요구하는 구조와 일치하는지 검증"""
+    with open(schema_path, 'r', encoding='utf-8') as f:
+        schema = json.load(f)
+    
+    errors = []
+    try:
+        jsonschema.validate(instance=analysis_data, schema=schema)
+    except jsonschema.ValidationError as e:
+        errors.append(f"스키마 검증 실패: {e.message}")
+        errors.append(f"누락 경로: {'.'.join(str(p) for p in e.absolute_path)}")
+    except jsonschema.SchemaError as e:
+        errors.append(f"스키마 자체 오류: {e.message}")
+    
+    return len(errors) == 0, errors
+
+# Phase 4 시작 전 필수 실행
+SCHEMA_PATH = 'skills/paper-style-toolkit/references/analysis_schema.json'
+is_valid, errors = validate_analysis_schema(analysis_data, SCHEMA_PATH)
+if not is_valid:
+    print(f"❌ 스키마 검증 실패. 템플릿 렌더링을 진행할 수 없습니다.")
+    for error in errors:
+        print(f"  - {error}")
+    print("해결: Phase 2 (style-analyzer)를 재실행하거나 분석 데이터를 수동 수정하세요.")
+    # 여기서 중단 — Phase 4로 진행하지 않음
+    raise SystemExit("스키마 검증 실패")
+```
+
+**검증 항목** (analysis_schema.json이 확인하는 필수 필드):
+- `voice_tense_summary`: 섹션별 active/passive 비율
+- `high_freq_verbs`: 고빈도 동사 리스트
+- `measurement_format`: 측정값 표기 패턴
+- `confidence`: 섹션별 신뢰도
+- `paper_count`: 분석 논문 수
+- 각 섹션 데이터: `abstract`, `introduction`, `methodology`, `results`, `discussion`, `caption`, `title`
+
 ### 6.4 전체 검증 체크리스트
 
 **생성 완료 후 반드시 확인:**
@@ -915,6 +998,8 @@ def generate_with_validation(generator_func, validator_func, max_retries: int = 
 | 경로 슬래시(/) | `grep "\\\\"` | 재생성 (경로 수정) |
 | LF 줄바꿈 | `file` 명령 | 자동 변환 |
 | JSON 유효성 | `json.loads()` | 재생성 |
+| Agent 파일 ≤ 600줄 | `wc -l` | 데이터 슬라이스 축소 후 재생성 |
+| Schema 검증 통과 | `analysis_schema.json` 대조 | Phase 2 재실행 또는 사용자 확인 |
 
 ```bash
 # 검증 명령어 예시
@@ -942,16 +1027,17 @@ version: "3.0.0"
 architecture: "my-marketplace"
 template_engine: "jinja2"
 templates_count: 20
-agents_generated: 9
+commands_generated: 1
+agents_generated: 8
 skills_generated: 1
 output_base: "{CWD}/my-marketplace/"
 output_structure:
   - .claude-plugin/marketplace.json (plugins[] 배열에 추가)
   - plugins/{name}-paper-skills/.claude-plugin/plugin.json
-  - plugins/{name}-paper-skills/agents/ (9 files)
+  - plugins/{name}-paper-skills/commands/ (1 file)
+  - plugins/{name}-paper-skills/agents/ (8 files)
   - plugins/{name}-paper-skills/skills/{name}-style-guide/ (1 SKILL.md + 12 references)
   - plugins/{name}-paper-skills/README.md
-  - plugins/{name}-paper-skills/skills/{name}-style-guide/references/propagation-guide.md
 features:
   - name_normalization: "소문자, 하이픈, 특수문자 제거"
   - duplicate_handling: "-v2, -v3 자동 증가"

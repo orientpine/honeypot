@@ -46,7 +46,7 @@
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
+  subagent_type="{{ plugin_name }}::{{ name }}-verify",
   prompt="Verify consistency after modification of {modified_section}.
 
   Input files:
@@ -104,7 +104,7 @@ Write output/{paper_topic}/propagation_report.md ← verify 응답 내용
 **For each approved section:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-paper-skills::{{ name }}-{section}-writer",
+  subagent_type="{{ plugin_name }}::{{ name }}-{section}-writer",
   prompt="Update {section} section to reflect changes in {modified_section}.
 
   Context:
@@ -130,7 +130,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
+  subagent_type="{{ plugin_name }}::{{ name }}-verify",
   prompt="Re-verify consistency after propagation updates.
 
   Input files:
