@@ -128,7 +128,7 @@ output_file: string
 
 1. **Load Style Guide**
    - Read `{{ name }}-style-guide/SKILL.md`
-   - Load `references/section-templates/{{ section }}-template.md`
+   - Load `references/section-templates/{{ section }}.md`
 {% if section == 'methodology' %}
    - Load `references/measurement-formats.md`
 {% elif section == 'results' %}
@@ -276,7 +276,7 @@ output_file: string
 ### Primary Resources
 
 - **Main Guide**: `{{ name }}-style-guide/SKILL.md`
-- **Section Template**: `references/section-templates/{{ section }}-template.md`
+- **Section Template**: `references/section-templates/{{ section }}.md`
 - **Voice/Tense Patterns**: `references/voice-tense-patterns.md`
 - **Vocabulary Patterns**: `references/vocabulary-patterns.md`
 {% if section in ['methodology', 'results', 'caption'] %}
