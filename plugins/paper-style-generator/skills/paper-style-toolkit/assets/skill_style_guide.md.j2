@@ -1,8 +1,6 @@
 ---
 name: {{ name }}-style-guide
-description: |
-  {{ name | title }} 논문 작성 스타일 가이드. Voice/Tense 패턴, 어휘 패턴, 측정 단위 형식, 인용 스타일, 섹션별 템플릿을 제공합니다.
-  모든 {{ name | title }} Writer Agent가 참조합니다.
+description: "{{ name | title }} 논문 작성 스타일 가이드. Voice/Tense 패턴, 어휘 패턴, 측정 단위 형식, 인용 스타일, 섹션별 템플릿을 제공합니다. Use when writing academic papers in {{ name | title }} style or checking style compliance."
 ---
 
 # {{ name | title }} Paper Style Guide
@@ -38,8 +36,10 @@ description: |
 
 | Type | Format | Example |
 |------|--------|---------|
-{% for mtype, mformat in measurement_format.items() | slice(5) %}
+{% for mtype, mformat in measurement_format.items() %}
+{% if loop.index0 < 5 %}
 | {{ mtype | title }} | `{{ mformat.pattern }}` | {{ mformat.examples[0] if mformat.examples else 'N/A' }} |
+{% endif %}
 {% endfor %}
 
 ## Detailed References

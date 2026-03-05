@@ -1,7 +1,8 @@
 {
   "name": "my-marketplace",
   "owner": {
-    "name": "{{ owner_name | default('User') }}"
+    "name": "{{ owner_name | default('User') }}",
+    "url": "{{ owner_url | default('') }}"
   },
   "metadata": {
     "version": "1.0.0",
