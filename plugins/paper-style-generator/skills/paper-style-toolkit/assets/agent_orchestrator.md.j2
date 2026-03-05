@@ -3,7 +3,6 @@ name: {{ name }}-paper-orchestrator
 description: "{{ name | title }} 스타일로 전체 논문을 자동 생성하고, 섹션 수정 시 관련 섹션으로 변경사항을 전파합니다. 논문 작성을 시작하거나 섹션 간 일관성을 유지해야 할 때 사용합니다."
 tools: Read, Write, Edit, Glob, Grep, Task
 model: opus
-skills: {{ name }}-style-guide
 ---
 
 # {{ name | title }} Paper Orchestrator
@@ -62,56 +61,56 @@ resource/{paper_topic}/
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 1: TITLE GENERATION                                  │
-│  └── Task(subagent_type="{{ name }}-title-writer")         │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-title-writer")         │
 │      → output/{paper_topic}/title_options.md                │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 2: ABSTRACT GENERATION                               │
-│  └── Task(subagent_type="{{ name }}-abstract-writer")      │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-abstract-writer")      │
 │      → output/{paper_topic}/abstract_draft.md               │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 3: INTRODUCTION                                      │
-│  └── Task(subagent_type="{{ name }}-introduction-writer")  │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-introduction-writer")  │
 │      → output/{paper_topic}/introduction_draft.md           │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 4: METHODOLOGY                                       │
-│  └── Task(subagent_type="{{ name }}-methodology-writer")   │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-methodology-writer")   │
 │      → output/{paper_topic}/methodology_draft.md            │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 5: RESULTS                                           │
-│  └── Task(subagent_type="{{ name }}-results-writer")       │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-results-writer")       │
 │      → output/{paper_topic}/results_draft.md                │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 6: DISCUSSION                                        │
-│  └── Task(subagent_type="{{ name }}-discussion-writer")    │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-discussion-writer")    │
 │      → output/{paper_topic}/discussion_draft.md             │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 7: CAPTIONS                                          │
-│  └── Task(subagent_type="{{ name }}-caption-writer")       │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-caption-writer")       │
 │      → output/{paper_topic}/captions_draft.md               │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 8: VERIFICATION                                      │
-│  └── Task(subagent_type="{{ name }}-verify")               │
+│  └── Task(subagent_type="{{ name }}-paper-skills::{{ name }}-verify")               │
 │      → output/{paper_topic}/consistency_check_report.md     │
 └─────────────────────────────────────────────────────────────┘
                               │
@@ -130,7 +129,7 @@ resource/{paper_topic}/
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-title-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-title-writer",
   prompt="Generate paper title options based on research topic: {paper_topic}. 
   
   Input resources:
@@ -152,7 +151,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-abstract-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-abstract-writer",
   prompt="Generate abstract for paper topic: {paper_topic}.
   
   Input resources:
@@ -174,7 +173,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-introduction-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-introduction-writer",
   prompt="Generate introduction section for paper topic: {paper_topic}.
   
   Input resources:
@@ -196,7 +195,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-methodology-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-methodology-writer",
   prompt="Generate methodology section for paper topic: {paper_topic}.
   
   Input resources:
@@ -218,7 +217,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-results-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-results-writer",
   prompt="Generate results section for paper topic: {paper_topic}.
   
   Input resources:
@@ -241,7 +240,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-discussion-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-discussion-writer",
   prompt="Generate discussion section for paper topic: {paper_topic}.
   
   Input resources:
@@ -264,7 +263,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-caption-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-caption-writer",
   prompt="Generate figure and table captions for paper topic: {paper_topic}.
   
   Input resources:
@@ -288,7 +287,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
   prompt="Verify consistency across all sections for paper topic: {paper_topic}.
   
   Input files:
@@ -409,7 +408,7 @@ IF consistency_check_report.md contains CRITICAL issues:
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
   prompt="Verify consistency after modification of {modified_section}.
   
   Input files:
@@ -463,7 +462,7 @@ Task(
 **For each approved section:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-{section}-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-{section}-writer",
   prompt="Update {section} section to reflect changes in {modified_section}.
   
   Context:
@@ -489,7 +488,7 @@ Task(
 **Task Invocation:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-verify",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-verify",
   prompt="Re-verify consistency after propagation updates.
   
   Input files:
@@ -662,7 +661,7 @@ mkdir -p resource/bladderCancer
 **올바른 패턴:**
 ```markdown
 Task(
-  subagent_type="{{ name }}-abstract-writer",
+  subagent_type="{{ name }}-paper-skills::{{ name }}-abstract-writer",
   prompt="...",
   background=false
 )

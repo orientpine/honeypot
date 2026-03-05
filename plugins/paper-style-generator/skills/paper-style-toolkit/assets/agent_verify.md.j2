@@ -3,7 +3,6 @@ name: {{ name }}-verify
 description: "{{ name | title }} 스타일 논문의 섹션 간 일관성을 검증하고 불일치를 보고합니다. 논문 검증, 일관성 확인이 필요할 때 사용합니다. 직접 수정하지 않고 보고만 합니다."
 tools: Read, Glob, Grep
 model: sonnet
-skills: {{ name }}-style-guide
 ---
 
 # {{ name | title }} Manuscript Verification Agent
@@ -53,10 +52,10 @@ IF key numbers/terms changed:
 
 | Section | Expected Style ({{ name | title }}) |
 |---------|----------------|
-| Introduction | {{ introduction.tense.present.mean * 100 | round }}% present tense, {{ introduction.voice.active.mean * 100 | round }}% active voice |
-| Methods | {{ methodology.tense.past.mean * 100 | round }}% past tense, {{ methodology.voice.passive.mean * 100 | round }}% passive voice |
-| Results | {{ results.tense.past.mean * 100 | round }}% past tense, {{ results.voice.active.mean * 100 | round }}% active voice, "We" usage ≤30% |
-| Discussion | {{ discussion.tense.present.mean * 100 | round }}% present tense, {{ discussion.voice.active.mean * 100 | round }}% active voice |
+| Introduction | {{ (introduction.tense.present.mean * 100) | round }}% present tense, {{ (introduction.voice.active.mean * 100) | round }}% active voice |
+| Methods | {{ (methodology.tense.past.mean * 100) | round }}% past tense, {{ (methodology.voice.passive.mean * 100) | round }}% passive voice |
+| Results | {{ (results.tense.past.mean * 100) | round }}% past tense, {{ (results.voice.active.mean * 100) | round }}% active voice, "We" usage ≤30% |
+| Discussion | {{ (discussion.tense.present.mean * 100) | round }}% present tense, {{ (discussion.voice.active.mean * 100) | round }}% active voice |
 
 ### 3. Structural Checks (WARNING)
 

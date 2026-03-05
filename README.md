@@ -187,11 +187,9 @@ honeypot/
 
 1. MinerU로 PDF → Markdown 변환
 2. 스타일 패턴 추출 (Voice, Tense, 전환어 등)
-3. 10개 독립 스킬 세트 생성:
-   - `{name}-common`, `{name}-abstract`, `{name}-introduction`
-   - `{name}-methodology`, `{name}-results`, `{name}-discussion`
-   - `{name}-caption`, `{name}-title`, `{name}-verify`
-   - `{name}-orchestrator` (전체 논문 자동 생성)
+3. 하이브리드 플러그인 생성 (9 agents + 1 skill):
+   - Agents: `{name}-paper-orchestrator`, `{name}-title-writer`, `{name}-abstract-writer`, `{name}-introduction-writer`, `{name}-methodology-writer`, `{name}-results-writer`, `{name}-discussion-writer`, `{name}-caption-writer`, `{name}-verify`
+   - Skill: `{name}-style-guide` (스타일 가이드 + 11개 참조 문서)
 
 | 구성 | 항목 |
 |------|------|
