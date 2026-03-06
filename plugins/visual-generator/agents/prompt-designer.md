@@ -72,9 +72,10 @@ content-organizer → content-reviewer → [prompt-designer] → renderer-agent
 - 시각 메타포: {theme-{theme}의 렌더링 스타일 테이블에서 시각 메타포 지시 사항}
 
 ### Content Placement
-{CONTENT 블록에 기재된 실제 텍스트를 직접 인용하여 이미지 내 배치 위치와 방식을 설명. 메타라벨(역할 분류명) 사용 금지}
-- {위치 표현}: '{CONTENT에 있는 실제 텍스트}' 텍스트를 {크기/방식}으로 배치
-- {위치 표현}: '{CONTENT에 있는 실제 텍스트}' 텍스트를 {크기/방식}으로 배치
+{CONTENT 블록의 항목을 번호 참조(Title N, Main N, Data N)로 지시하여 이미지 내 배치 위치와 방식을 설명. 실제 텍스트 인용 금지(이중 렌더링 방지), 메타라벨(역할 분류명) 사용 금지}
+- {위치 표현}: Title {N}을(를) {크기/방식}으로 배치
+- {위치 표현}: Main {N}–{M}을(를) {크기/방식}으로 배치
+- {위치 표현}: Data {N}을(를) {크기/방식}으로 배치
 - 시각 요소: {아이콘, 연결선, 도형 등 비텍스트 시각 요소의 배치와 역할}
 ```
 
@@ -349,31 +350,41 @@ CONTENT BLOCK 작성 후 다음을 확인하세요:
 - [ ] 모든 텍스트가 실제 이미지에 표시될 내용인지 확인
 - [ ] 각 텍스트 항목이 의미 있는 한국어인지 확인 (깨진 텍스트, 의미 불명 문자열 없음)
 - [ ] **이미지 플레이스홀더 검증**: `[Image 1]`, `[Image 2]`, `[사진]`, `[이미지]`, `[아이콘]` 등 대괄호 이미지 참조가 CONTENT/INSTRUCTION 어디에도 포함되지 않았는지 확인
-- [ ] **Content Placement 메타라벨 검증**: Content Placement 내 배치 설명에 '보조 지표', '핵심 성과', '핵심 모듈명' 등 역할 분류명이 포함되지 않았는지 확인. 모든 배치 설명이 CONTENT의 실제 텍스트를 직접 인용하는지 확인
+- [ ] **Content Placement 번호 참조 검증**: Content Placement 내 모든 배치 설명이 번호 참조(`Title N`, `Main N`, `Data N`)만 사용하는지 확인. CONTENT의 실제 텍스트가 직접 인용(재등장)되지 않았는지 확인. '보조 지표', '핵심 성과', '핵심 모듈명' 등 메타라벨이 포함되지 않았는지 확인
+- [ ] **전수 대응 정방향 검증**: CONTENT의 **모든** 항목(Title, Main, Data)이 Content Placement에서 1회 이상 번호 참조되는지 확인. 참조되지 않는 고아 항목이 있으면 Content Placement에 배치 추가 또는 CONTENT에서 제거
+- [ ] **전수 대응 역방향 검증**: Content Placement에서 참조하는 모든 번호가 CONTENT에 실제 존재하는지 확인
+- [ ] **Data Elements 비중복 검증**: Data Elements의 각 항목이 Main Content의 어떤 항목과도 동일하거나 부분 포함 관계가 아닌지 확인. 중복이면 Data Elements에서 제거
 - [ ] **comparison 장면 묘사 검증**: comparison 테마인 경우, Content Placement에 좌우 장면이 5가지 요소(환경, 주체, 행동, 톤, 오버레이)로 상세 묘사되었는지 확인
 
-## 구성 지시어 렌더링 방지 (Composition Directive Rendering Prevention) — CRITICAL
+## 구성 지시어 렌더링 방지 (Content Placement 번호 참조 체계) — CRITICAL
 
-Gemini는 프롬프트의 **모든 텍스트**를 렌더링 대상으로 간주합니다. INSTRUCTION 블록의 Content Placement에서도 **메타라벨(역할 분류명)**을 사용하면 Gemini가 해당 라벨을 이미지 위에 텍스트로 그대로 렌더링합니다.
+Gemini는 프롬프트의 **모든 텍스트**를 렌더링 대상으로 간주합니다. Content Placement에서 CONTENT 텍스트를 직접 인용하면 동일 텍스트가 프롬프트에 2회 등장하여 **이중 렌더링**됩니다. 메타라벨(역할 분류명)을 사용해도 해당 라벨이 이미지에 렌더링됩니다.
 
-### 핵심 원칙: 실제 텍스트를 직접 참조하라
+### 핵심 원칙: 번호로만 참조하라
 
-Content Placement에서 CONTENT 항목의 배치를 설명할 때, **역할 분류명(메타라벨)**이 아닌 **CONTENT에 기재된 실제 텍스트 자체**를 인용하여 배치를 지시합니다.
+CONTENT 블록이 렌더링될 텍스트의 **유일한 원본(Single Source of Truth)**입니다. Content Placement에서는 CONTENT 항목을 **섹션 약어 + 번호**(`Title N`, `Main N`, `Data N`)로만 참조합니다.
+
+### 참조 형식
+
+| CONTENT 섹션 | 참조 약어 | 예시 |
+|-------------|----------|------|
+| `### Title Area` | `Title N` | `Title 1`, `Title 2` |
+| `### Main Content` | `Main N` | `Main 1`, `Main 1–5`, `Main 3, 7` |
+| `### Data Elements` | `Data N` | `Data 1`, `Data 1–3` |
 
 ### 금지 패턴 vs 올바른 패턴
 
-| 금지 (메타라벨 사용 — 렌더링 유출) | 올바른 (실제 텍스트 직접 참조) |
-|------|------|
-| `박스 하단: 보조 지표 텍스트 소수 배치` | `하단 영역에 '단일 모델 운용'과 '확장성 고수준' 텍스트를 소형으로 나란히 배치` |
-| `좌측 카드: 핵심 모듈명 배치` | `좌측 글래스 카드 안에 '인지 파운데이션 모델' 텍스트 배치` |
-| `상단 배너: 핵심 비전 텍스트` | `상단 배너에 '제조업 디지털 전환 선도' 텍스트 배치` |
-| `우측: 기능 설명 텍스트 나열` | `우측에 '기종 무관 범용 적용', '실시간 환경 학습' 텍스트를 세로로 나열` |
-| `하단: 주요 성과 라벨 배치` | `하단에 '불량률 30% 감소', '생산성 25% 향상' 텍스트를 나란히 배치` |
-| `KPI 영역: 핵심 성과 수치` | `좌측 글래스 패널에 '처리 속도 3초', '정확도 99.2%' 수치 배치` |
+| 금지 (텍스트 직접 인용 — 이중 렌더링) | 금지 (메타라벨 — 렌더링 유출) | 올바른 (번호 참조) |
+|------|------|------|
+| `하단에 '단일 모델 운용' 텍스트 배치` | `하단: 보조 지표 텍스트 배치` | `하단 영역에 Data 1–2를 소형으로 나란히 배치` |
+| `좌측에 '인지 파운데이션 모델' 배치` | `좌측: 핵심 모듈명 배치` | `좌측 카드 안에 Main 1을 소제목으로 배치` |
+| `상단에 '제조업 디지털 전환 선도' 배치` | `상단: 핵심 비전 텍스트` | `상단 배너에 Title 1을 대형 볼드로 중앙 배치` |
+| `우측에 '기종 무관 범용 적용' 나열` | `우측: 기능 설명 나열` | `우측에 Main 2–4를 세로로 나열` |
+| `하단에 '불량률 30% 감소' 배치` | `하단: 주요 성과 라벨` | `하단에 Main 5–7을 나란히 배치` |
 
 ### 메타라벨 금지 목록 (Content Placement에서 사용 금지)
 
-다음 단어는 **Content Placement 설명 텍스트**에서도 사용하면 안 됩니다. Gemini가 이를 이미지 위에 텍스트로 렌더링할 수 있습니다:
+번호 참조 체계에서도 다음 메타라벨은 여전히 금지입니다:
 
 | 카테고리 | 금지 메타라벨 |
 |----------|-------------|
@@ -386,16 +397,101 @@ Content Placement에서 CONTENT 항목의 배치를 설명할 때, **역할 분�
 
 이 규칙은 **모든 6개 테마**(gov, seminar, concept, whatif, pitch, comparison)에 동일하게 적용됩니다.
 
-- **CONTENT 블록**: 메타라벨 절대 포함 금지 (기존 규칙)
-- **INSTRUCTION > Content Placement**: 메타라벨 사용 금지 (신규 규칙). 반드시 CONTENT에 기재된 실제 텍스트를 작은따옴표(')로 인용하여 배치 지시
+- **CONTENT 블록**: 메타라벨 절대 포함 금지, 렌더링될 텍스트의 유일한 원본
+- **INSTRUCTION > Content Placement**: **번호 참조만 허용** (`Title N`, `Main N`, `Data N`). 텍스트 직접 인용 금지, 메타라벨 사용 금지
 - **INSTRUCTION > 기타 서브섹션**: Image Purpose, Key Message 등에서는 맥락 설명으로 사용 가능 (이 영역은 Gemini가 렌더링하지 않음)
 
 ### 검증 체크리스트 (Content Placement 작성 후)
 
-- [ ] Content Placement 내 모든 배치 설명이 CONTENT에 기재된 **실제 텍스트를 직접 인용**하는가?
+- [ ] Content Placement 내 모든 배치 설명이 **번호 참조**(`Title N`, `Main N`, `Data N`)만 사용하는가?
+- [ ] CONTENT에 있는 **실제 텍스트가 Content Placement에 직접 인용(재등장)되지 않았는가**?
 - [ ] '보조 지표', '핵심 성과', '주요 모듈' 등 **분류 라벨이 배치 설명에 포함되지 않았는가**?
-- [ ] 배치 설명에서 참조하는 텍스트가 CONTENT 블록에 **실제로 존재하는가**?
+- [ ] 참조 번호가 CONTENT 블록의 실제 항목 번호와 **정확히 일치하는가**?
 - [ ] 영역 설명이 '좌측 카드', '상단 배너', '하단 영역' 등 **순수 위치 표현**만 사용하는가?
+
+---
+
+## CONTENT ↔ Content Placement 전수 대응 원칙 (CRITICAL)
+
+Gemini는 CONTENT 블록의 **모든 항목**을 렌더링합니다. Content Placement에서 참조되지 않은 항목은 배치 지침 없이 이미지의 빈 공간에 **작은 텍스트로 임의 배치**됩니다. 이것이 "의도하지 않은 작은 글씨" 문제의 근본 원인입니다.
+
+### 3가지 대응 규칙
+
+| 규칙 | 설명 | 위반 시 결과 |
+|------|------|-------------|
+| **정방향 전수 대응** | CONTENT의 **모든** 항목(Title, Main, Data)은 Content Placement에서 반드시 1회 이상 번호 참조되어야 한다 | 고아 항목 → 작은 텍스트로 임의 렌더링 |
+| **역방향 완전성** | Content Placement에서 참조하는 모든 번호(`Title N`, `Main N`, `Data N`)는 CONTENT에 실제로 존재해야 한다 | 존재하지 않는 참조 → Gemini 혼란 |
+| **Data Elements 비중복** | Data Elements의 항목은 Main Content의 어떤 항목과도 텍스트가 동일하거나 부분 포함 관계이면 안 된다 | 중복 → 같은 텍스트가 크기만 다르게 2회 렌더링 |
+
+### 검증 절차
+
+프롬프트 생성 완료 후 다음 3단계를 **반드시** 수행합니다:
+
+**Step 1. 정방향 검증** — CONTENT → Content Placement
+```
+CONTENT의 각 항목(Title 1, Main 1, Main 2, ..., Data 1, ...)에 대해:
+  → Content Placement에서 해당 번호가 참조되어 있는가?
+  → 참조되지 않은 항목이 있으면:
+     (a) Content Placement에 배치를 추가하거나
+     (b) 해당 항목을 CONTENT에서 제거한다 (INSTRUCTION의 Key Message/Image Purpose로 이동)
+```
+
+**Step 2. 역방향 검증** — Content Placement → CONTENT
+```
+Content Placement의 각 번호 참조(Title N, Main N, Data N)에 대해:
+  → CONTENT에 해당 번호의 항목이 실제로 존재하는가?
+  → 존재하지 않는 번호가 참조되면 즉시 수정한다
+```
+
+**Step 3. Data Elements 중복 검증**
+```
+Data Elements의 각 항목에 대해:
+  → Main Content의 어떤 항목과 동일하거나 부분 포함 관계인가?
+  → 중복이면 Data Elements에서 해당 항목을 제거한다
+```
+
+### 잘못된 예시 (고아 항목 + 중복)
+
+```markdown
+## CONTENT
+
+### Title Area
+- 메인 제목: KIMM-NEXT 50
+
+### Main Content
+1. 2026 ABCD 타운홀 미팅
+2. 차백동
+3. 다음 50년          ← 고아: Content Placement에서 미참조
+4. 질문 중심 전환      ← 고아: 개념 키워드 (Key Message에 속함)
+5. 발표 아젠다         ← 고아: 개념 키워드 (Image Purpose에 속함)
+
+### Data Elements
+- 2026               ← 중복: Main 1 "2026 ABCD 타운홀 미팅"에 포함
+- 50년               ← 중복: Title "KIMM-NEXT 50"에 포함
+- 20분               ← 고아: Content Placement에서 미참조
+```
+
+### 올바른 예시 (전수 대응 + 비중복)
+
+```markdown
+## CONTENT
+
+### Title Area
+- 메인 제목: KIMM-NEXT 50
+
+### Main Content
+1. 정답을 찾는 시대에서, 질문을 던지는 시대로
+2. 2026 ABCD 타운홀 미팅
+3. 차백동
+
+### Content Placement (INSTRUCTION 블록 내)
+- 좌상 앵커에 Title 1을 대형 볼드로 배치
+- 우상 앵커에 Main 1을 중형 세미볼드로 배치
+- 좌하 앵커에 Main 2를 보조색 소제목으로 배치
+- 우하 앵커에 Main 3을 결론 앵커로 배치
+```
+
+> "다음 50년", "질문 중심 전환", "발표 아젠다"는 **INSTRUCTION의 Key Message**에만 기술합니다. CONTENT에 넣으면 이미지에 작은 텍스트로 렌더링됩니다.
 
 ---
 
@@ -425,21 +521,19 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 
 ### 올바른 배치 정보 처리 방법
 
-텍스트의 배치 위치와 역할은 **INSTRUCTION 블록의 ### Content Placement** 서브섹션에 자연어로 기술합니다. **반드시 CONTENT에 기재된 실제 텍스트를 직접 인용하여 배치를 지시합니다.**
+텍스트의 배치 위치와 역할은 **INSTRUCTION 블록의 ### Content Placement** 서브섹션에 **번호 참조**로 기술합니다. CONTENT 텍스트를 직접 인용하지 않습니다.
 
 ```markdown
 ### Content Placement
-- 화면 중앙에 'VLA 코어' 텍스트를 대형으로 배치
-- 좌측 상단 글래스 카드 안에 '인지 파운데이션 모델' 배치
-- 좌측 하단 글래스 카드 안에 '전문가 모델 플랫폼' 배치
-- 우측에 '기종 무관 범용 적용' 텍스트를 강조색으로 표시
-- 하단 영역에 '단일 모델 운용'과 '확장성 고수준' 텍스트를 소형으로 나란히 배치
-- 중앙에서 좌측/우측으로 연결선, 우측에서 하단 적용 항목으로 분기하는 구조
+1. 화면 중앙에 Main 1을 대형으로 배치
+2. 좌측 상단 카드 안에 Main 2를 소제목으로 배치
+3. 좌측 하단 카드 안에 Main 3을 소제목으로 배치
+4. 우측에 Main 4를 강조색으로 표시
+5. 하단 영역에 Data 1–2를 소형으로 나란히 배치
+6. 시각 요소: 중앙에서 좌측/우측으로 연결선, 우측에서 하단으로 분기 구조
 ```
 
-> **주의**: `보조 지표 텍스트 배치`, `핵심 모듈명 배치` 같은 **메타라벨을 사용하면 안 됩니다**. Gemini가 '보조 지표'를 이미지에 별도 텍스트로 렌더링합니다. 반드시 '단일 모델 운용' 같은 **실제 CONTENT 텍스트를 직접 인용**하세요.
-
-이 배치 정보는 INSTRUCTION 블록에만 존재하므로 Gemini가 렌더링하지 않고 레이아웃 지시로 해석합니다.
+> **주의**: 텍스트 직접 인용(`'VLA 코어' 배치`)과 메타라벨(`핵심 모듈명 배치`) 모두 금지입니다. **번호 참조**(`Main 1`)만 사용하세요.
 
 ## Workflow
 
@@ -490,9 +584,25 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
     |   +-- 렌더링 방지 규칙 포함
     |
     +-- Step 2-6. 품질 검증
-        +-- 텍스트 밀도 체크 (테마별 최대값)
-        +-- 금지 패턴 검출
-        +-- 100줄 이상 확인
+    |   +-- 텍스트 밀도 체크 (테마별 최대값)
+    |   +-- 금지 패턴 검출
+    |   +-- 100줄 이상 확인
+    |
+    +-- Step 2-6a. 공간-의미 역검증 (축 기반 레이아웃에만 적용)
+    |   +-- 적용 대상: Strategy Map, 2×2 매트릭스, 포지셔닝 맵 등 축(axis) 기반 레이아웃
+    |   +-- 적용 제외: 리스트, 플로우차트, 비전 다이어그램, 타임라인 등 축 없는 레이아웃
+    |   +-- 검증 절차:
+    |       1. CONTENT에서 축 라벨(X축, Y축)과 사분면/영역별 항목 추출
+    |       2. 각 항목의 의미가 해당 사분면의 축 값(High/Low)과 일치하는지 확인
+    |       3. 불일치 발견 시 → 축 라벨 또는 항목 배치 수정 후 재검증
+    |   +-- layout-types 스킬의 "검증 규칙: 공간-의미 역검증" 섹션 참조
+    |
+    +-- Step 2-6b. CONTENT ↔ Content Placement 전수 대응 검증 (모든 레이아웃 필수)
+        +-- 정방향: CONTENT의 모든 항목(Title, Main, Data)이 Content Placement에서 번호 참조되는지 확인
+        +-- 고아 항목 발견 시 → Content Placement에 배치 추가 또는 CONTENT에서 제거 (Key Message/Image Purpose로 이동)
+        +-- 역방향: Content Placement의 모든 번호 참조가 CONTENT에 실제 존재하는지 확인
+        +-- Data Elements 중복 검증: Data Elements 항목이 Main Content 항목과 동일/부분 포함이면 제거
+        +-- "CONTENT ↔ Content Placement 전수 대응 원칙" 섹션 참조
 
 [Phase 3: 프롬프트 파일 저장]
     |
@@ -590,7 +700,11 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 - [ ] CONTENT 블록에 번호 목록만 사용 (테이블 형식 절대 금지)
 - [ ] CONTENT 블록에 역할/메타데이터 텍스트가 포함되지 않았는지 검증 (이미지에 렌더링될 순수 텍스트만 포함)
 - [ ] 배치 정보(영역 구분, 시각 요소 위치)는 INSTRUCTION의 Content Placement 서브섹션에 기술
-- [ ] Content Placement에서 CONTENT 텍스트를 직접 인용(작은따옴표)하여 배치 지시. 메타라벨('보조 지표', '핵심 성과', '주요 모듈' 등) 사용 금지
+- [ ] Content Placement에서 번호 참조(`Title N`, `Main N`, `Data N`)만 사용하여 배치 지시. CONTENT 텍스트 직접 인용 금지, 메타라벨('보조 지표', '핵심 성과', '주요 모듈' 등) 사용 금지
+- [ ] 축 기반 레이아웃(Strategy Map, 2×2 매트릭스 등)에서 공간-의미 역검증 수행: 각 사분면 항목이 해당 축 값(High/Low)과 일치하는지 확인
+- [ ] 테마 라벨 탈맥락화 규칙 적용: seminar 테마는 메타 정보 `> 테마:`에 `editorial-3d`, Visual Style에 `에디토리얼 매거진 × 아이소메트릭 3D 인포그래픽 슬라이드` 사용
+- [ ] CONTENT ↔ Content Placement 전수 대응 검증 수행: 정방향(모든 CONTENT 항목이 참조됨), 역방향(모든 참조가 CONTENT에 존재), Data Elements 비중복 확인
+- [ ] CONTENT에 개념 키워드(Key Message/Image Purpose에 속하는 추상적 핵심어) 포함 금지 — 이미지에 표시할 구체적 텍스트만 포함
 - [ ] 테마별 텍스트 밀도 준수 (concept:15, gov:25, seminar:25, whatif:20, pitch:18, comparison:12) — 절대 상한 25개
 - [ ] 렌더링 방지 규칙 FORBIDDEN ELEMENTS에 명시
 - [ ] 각 프롬프트 100줄 이상 생성
@@ -611,10 +725,23 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 **메타 정보** (필수, 순서 고정):
 ```
 > 생성일: {YYYY-MM-DD}
-> 테마: {theme}
+> 테마: {theme_label}
 > 무드: {mood}
 > 레이아웃: {layout}
 ```
+
+**테마 라벨 탈맥락화 규칙** (Gemini가 테마명을 장면으로 해석하는 것을 방지):
+
+| 입력 theme | `> 테마:` 라벨 (메타 정보) | Visual Style `테마:` 값 | 이유 |
+|:----------:|:-------------------------:|:----------------------:|------|
+| concept | concept | concept | 장면 유발 위험 없음 |
+| gov | gov | gov | 장면 유발 위험 없음 |
+| **seminar** | **editorial-3d** | **에디토리얼 매거진 × 아이소메트릭 3D 인포그래픽 슬라이드** | "seminar"가 세미나실 장면을 유발 |
+| whatif | whatif | whatif | 장면 유발 위험 없음 |
+| pitch | pitch | pitch | 장면 유발 위험 없음 |
+| comparison | comparison | comparison | 장면 유발 위험 없음 |
+
+> **원칙**: 테마명이 물리적 장소/행위를 연상시키면, Gemini가 해당 장소를 3D 장면으로 렌더링합니다. 이 경우 테마의 **시각적 본질**을 설명하는 대체 라벨을 사용합니다.
 
 **블록 구분자** (필수, 정확한 마크다운 헤딩 사용):
 - `## INSTRUCTION` — 반드시 이 형태. `# INSTRUCTION BLOCK`, `### INSTRUCTION`, `INSTRUCTION:` 등 금지
@@ -628,7 +755,7 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 - `### Key Message`
 - `### Visual Style`
 - `### Rendering Style` — 서피스, 배경, 코너/엣지, 연결선, 시각 장식, 공간 구성, 시각 메타포 7개 항목
-- `### Content Placement` — CONTENT 텍스트의 영역별 배치 위치와 시각 요소(아이콘, 연결선, 도형) 배치 설명
+- `### Content Placement` — CONTENT 항목을 번호 참조(`Title N`, `Main N`, `Data N`)로 지시하여 영역별 배치 위치 설명 + 시각 요소(아이콘, 연결선, 도형) 배치 설명. 텍스트 직접 인용 금지
 
 **서브섹션** (CONFIGURATION 블록 내 필수):
 - `### Canvas Settings`
@@ -657,7 +784,15 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 - [ ] CONTENT에 역할 라벨(핵심 비전, 핵심 모듈명, 기능 설명, 주요 연구 분야 등) 포함 금지
 - [ ] CONTENT에 영역 구분자(비전 박스, 연구영역 1, 기대효과 1 등) 포함 금지
 - [ ] 시각 요소 배치 설명(연결선, 화살표, 아이콘 위치)을 CONTENT에 포함 금지 (INSTRUCTION의 Content Placement에 배치)
-- [ ] Content Placement에서 메타라벨('보조 지표', '핵심 모듈명', '기능 설명', '핵심 성과' 등 역할 분류명) 사용 금지 — 반드시 CONTENT에 기재된 실제 텍스트를 직접 인용하여 배치 지시
+- [ ] Content Placement에서 CONTENT 텍스트를 직접 인용(재등장)하여 배치 지시 금지 — 반드시 번호 참조(`Title N`, `Main N`, `Data N`)만 사용
+- [ ] Content Placement에서 메타라벨('보조 지표', '핵심 모듈명', '기능 설명', '핵심 성과' 등 역할 분류명) 사용 금지
+- [ ] seminar 테마에서 프롬프트 메타 정보 `> 테마:`에 'seminar' 단어 사용 금지 (→ `editorial-3d` 사용)
+- [ ] seminar 테마에서 Visual Style에 '세미나', 'seminar', '발표장', '강연장' 등 물리적 장소/행위 연상 단어 사용 금지
+- [ ] CONTENT에 Content Placement에서 참조하지 않는 고아 항목 포함 금지 — 모든 CONTENT 항목은 Content Placement에서 반드시 참조되어야 함
+- [ ] Data Elements에 Main Content와 동일하거나 부분 포함되는 텍스트 중복 포함 금지
+- [ ] CONTENT에 개념 키워드(Key Message, Image Purpose에 속하는 추상적 핵심어: "질문 중심 전환", "발표 아젠다" 등) 포함 금지 — INSTRUCTION에만 기술
+- [ ] Content Placement에 CONTENT에 없는 새로운 텍스트를 도입 금지 (번호 참조 체계에서는 자동 방지됨)
+- [ ] Content Placement에 메타 지시문("텍스트 수를 최소화 유지" 등 디자인 지침) 포함 금지
 - [ ] concept 테마에서 텍스트 요소를 CONTENT에 포함 금지 (시각 요소 목록만 허용)
 - [ ] whatif/comparison 테마에서 장면 묘사(인물 외모, 표정, 환경, 조명)를 CONTENT에 포함 금지 (INSTRUCTION에 배치)
 - [ ] comparison 테마에서 `[Image 1]`, `[Image 2]` 등 이미지 플레이스홀더를 Content Placement에 사용 금지 (반드시 5가지 요소를 포함한 자연어 장면 묘사로 대체)
@@ -700,9 +835,10 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 - 시각 메타포: 플랫 인포그래픽. 채워진 아이콘, 단색 차트 바, 표, 조직도. 2D 평면적
 
 ### Content Placement
-- 상단 배너에 '제조업 디지털 전환 선도' 텍스트를 대형 볼드로 중앙 배치
-- 중앙 3개 직각 박스에 각각 'AI 품질 예측 모델', '실시간 공정 최적화', '디지털 트윈 플랫폼' 텍스트를 박스 헤더에 배치. 박스 헤더는 주조색 배경 + 흰색 글씨, 본문은 흰색 배경
-- 하단 주석 영역에 '불량률 30% 감소', '생산성 25% 향상', '에너지 효율 20% 개선' 텍스트를 나란히 배치
+- 상단 배너 좌측에 Title 1을 대형 볼드로 배치
+- 상단 배너 우측에 Main 1을 중형 세미볼드로 배치
+- 중앙 3개 직각 박스에 각각 Main 2, Main 3, Main 4를 박스 헤더에 배치. 박스 헤더는 주조색 배경 + 흰색 글씨, 본문은 흰색 배경
+- 하단 주석 영역에 Main 5, Main 6, Main 7을 나란히 배치
 - 시각 요소: 상단 배너에서 중앙 3개 박스로 방사형 연결선, 중앙 박스에서 하단 항목으로 하향 화살표, 각 박스에 관련 플랫 아이콘(AI 칩, 기어, 모니터)
 
 ## CONFIGURATION
@@ -750,7 +886,7 @@ Gemini는 CONTENT 블록의 **모든 텍스트를 이미지에 렌더링**합니
 7. 에너지 효율 20% 개선
 
 ### Data Elements
-- 성과 지표: 불량률 30% 감소, 생산성 25% 향상, 에너지 20% 절감
+(Main Content와 중복되므로 별도 Data Elements 없음)
 
 ## FORBIDDEN ELEMENTS
 
