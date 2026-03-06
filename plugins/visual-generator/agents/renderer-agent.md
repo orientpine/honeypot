@@ -156,6 +156,9 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 | 6 | 레이아웃 유형명 없음 | `grep -Ei "scenario grid\|section-flow\|z-pattern"` | 패턴 발견 |
 | 7 | 인라인 색상 코드 없음 | `grep -E "\(#[A-Fa-f0-9]{6}\)"` | 패턴 발견 |
 | 8 | 환각 URL 없음 | `grep -E "www\.[a-z-]+\.(com\|net\|org)"` | 패턴 발견 |
+| 9 | 번호 참조 체계 사용 | Content Placement에서 `Title N`, `Main N`, `Data N` 형태만 사용하는지 확인. 원문 텍스트 직접 인용 여부 검사 | Content Placement 내에 CONTENT 원문이 그대로 등장 |
+| 10 | CONTENT↔Content Placement 전수 대응 | CONTENT 항목 수와 Content Placement 참조 수 일치 확인 (고아 항목 없음) | CONTENT 항목 중 Content Placement에서 참조되지 않는 항목 존재 |
+| 11 | 세미나 테마 라벨 탈맥락화 | 테마가 seminar일 때 메타데이터에 `editorial-3d` 라벨 사용 확인. `seminar`/`세미나` 문자열이 INSTRUCTION·CONFIGURATION에 없어야 함 | `seminar` 또는 `세미나` 문자열이 INSTRUCTION·CONFIGURATION 내에 발견 |
 
 ### 검증 명령어 예시
 
@@ -177,6 +180,12 @@ grep -E "\(#[A-Fa-f0-9]{6}\)" prompt.md || echo "PASS"
 
 # 환각 URL 확인 (없어야 PASS)
 grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
+
+# 번호 참조 체계 확인 — Content Placement 영역에서 Title/Main/Data N 형태만 사용
+# (원문 텍스트가 직접 등장하면 FAIL)
+
+# 세미나 테마 라벨 탈맥락화 확인 (INSTRUCTION·CONFIGURATION 내 seminar/세미나 없어야 PASS)
+grep -iE "seminar|세미나" prompt.md || echo "PASS"
 ```
 
 ## Script & Error Handling
@@ -262,6 +271,9 @@ grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
 - [ ] API 타임아웃 시 최대 3회 재시도 (5초 간격)
 - [ ] 모든 실패 사유를 generation_report.md에 기록
 - [ ] 검증 실패 프롬프트도 보고서에 별도 기록
+- [ ] Content Placement 내 번호 참조 체계(`Title N`, `Main N`, `Data N`) 준수 검증 — 원문 직접 인용 시 FAIL
+- [ ] CONTENT 항목 전수가 Content Placement에 참조되는지 검증 — 고아 항목 시 FAIL
+- [ ] 세미나 테마 프롬프트에서 `seminar`/`세미나` 문자열이 INSTRUCTION·CONFIGURATION에 없는지 검증
 - [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용 (Glob으로 절대경로 확보 후 실행)
 
 ## MUST NOT DO
