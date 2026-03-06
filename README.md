@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.3.5  
+**Version**: 2.4.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -409,6 +409,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 2.4.0 | 2026-03-07 | visual-generator v2.0.0: XML-tag 프롬프트 시스템 전면 개편 — 4-block 마크다운(INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) → 5-tag XML(`<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`) 전환. render_text/scene_context 분류 체계, 한국어 타이포그래피 가이드 추가 |
 | 2.3.5 | 2026-03-06 | visual-generator v1.11.0: Data Elements 메타라벨 방지 원칙, Content Placement 조사 문장 형식 강제, 세미나 테마 원 번호 마커 금지, renderer 검증 #12·#13 추가 |
 | 2.3.4 | 2026-03-06 | visual-generator v1.10.1: renderer-agent에 번호 참조 체계·고아 항목·세미나 라벨 탈맥락화 검증 3종 추가 |
 | 2.3.3 | 2026-03-06 | visual-generator v1.10.0: CONTENT↔Content Placement 전수 대응 원칙 추가 (고아 항목·Data 중복·개념 키워드 혼입 방지) |

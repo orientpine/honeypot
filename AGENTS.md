@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-06T00:00:00+09:00
+**Generated:** 2026-03-07T00:00:00+09:00
 **Version:** 2.6.4
 **Branch:** main
 
@@ -26,7 +26,7 @@ toolbox/
     │   ├── commands/
     │   │   └── isd-generate.md       # Master orchestrator command (Chapter 3→1→2→4→5)
     │   └── skills/                   # 11 skills (chapter guides, core-resources, etc.)
-     ├── visual-generator/             # 시각자료 통합 플러그인 (Agent + Command + Skill)
+     ├── visual-generator/             # 시각자료 통합 플러그인 (XML-tag v2.0.0, Agent + Command + Skill)
      │   ├── agents/                   # 4 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent)
      │   ├── commands/
      │   │   └── visual-generate.md    # 시각자료 생성 오케스트레이터 command
@@ -82,7 +82,7 @@ toolbox/
 | Generate full ISD proposal | `plugins/isd-generator/commands/isd-generate.md` | Uses `skills/input-template/` |
 | Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
 | Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
-| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. Concept=Kurzgesagt 풍 장면 스토리텔링 |
+| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. XML-tag 5개(`<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`) 기반 |
 | **Generate paper writing skills from PDFs** | `plugins/paper-style-generator/commands/paper-style-generate.md` | MinerU + Jinja2 templates |
 | Portfolio analysis | `plugins/investments-portfolio/commands/portfolio-analyze.md` | Korean DC pension multi-agent |
 | Generate research report | `plugins/report-generator/commands/report-generate.md` | 연구노트 → 보고서 자동 생성 |
