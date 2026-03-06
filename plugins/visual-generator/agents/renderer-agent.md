@@ -159,6 +159,8 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 | 9 | 번호 참조 체계 사용 | Content Placement에서 `Title N`, `Main N`, `Data N` 형태만 사용하는지 확인. 원문 텍스트 직접 인용 여부 검사 | Content Placement 내에 CONTENT 원문이 그대로 등장 |
 | 10 | CONTENT↔Content Placement 전수 대응 | CONTENT 항목 수와 Content Placement 참조 수 일치 확인 (고아 항목 없음) | CONTENT 항목 중 Content Placement에서 참조되지 않는 항목 존재 |
 | 11 | 세미나 테마 라벨 탈맥락화 | 테마가 seminar일 때 메타데이터에 `editorial-3d` 라벨 사용 확인. `seminar`/`세미나` 문자열이 INSTRUCTION·CONFIGURATION에 없어야 함 | `seminar` 또는 `세미나` 문자열이 INSTRUCTION·CONFIGURATION 내에 발견 |
+| 12 | Data Elements 메타라벨 | Data Elements 각 항목이 구조 설명 접미사(`~개`, `~명`, `~종`, `~단계`, `~가지`, `선택`, `인원`)를 포함하는지 검사. 순수 수치가 아닌 메타 설명형 항목 금지 | 구조 설명형 항목 발견 (예: `보기 4개`, `협업 인원 5`, `항목 3종`) |
+| 13 | Content Placement 조사 형식 | Content Placement 각 행에 한국어 조사(`을`, `를`, `에`, `으로`, `로`)가 포함된 완전 문장인지 확인. 라벨 나열 형식(`Main 3 좌하단 보기 카드 1`) 금지 | 조사 없는 라벨 나열 형식 발견, 또는 카드/데이터 역할명(`보기 카드`, `정답 박스`, `데이터 칩`, `힌트 카드`) 발견 |
 
 ### 검증 명령어 예시
 
@@ -274,6 +276,8 @@ grep -iE "seminar|세미나" prompt.md || echo "PASS"
 - [ ] Content Placement 내 번호 참조 체계(`Title N`, `Main N`, `Data N`) 준수 검증 — 원문 직접 인용 시 FAIL
 - [ ] CONTENT 항목 전수가 Content Placement에 참조되는지 검증 — 고아 항목 시 FAIL
 - [ ] 세미나 테마 프롬프트에서 `seminar`/`세미나` 문자열이 INSTRUCTION·CONFIGURATION에 없는지 검증
+- [ ] Data Elements에 구조 설명형 메타라벨(`~개`, `~명`, `~종`, `~단계` 접미사 항목)이 없는지 검증
+- [ ] Content Placement의 모든 배치 지시가 한국어 조사(을/를/에/으로)를 포함한 완전 문장인지 검증 — 라벨 나열 형식 및 카드/데이터 역할명(`보기 카드`, `정답 박스`, `데이터 칩`) 금지
 - [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용 (Glob으로 절대경로 확보 후 실행)
 
 ## MUST NOT DO
