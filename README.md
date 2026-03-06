@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.3.3  
+**Version**: 2.3.4  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -409,6 +409,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 2.3.4 | 2026-03-06 | visual-generator v1.10.1: renderer-agent에 번호 참조 체계·고아 항목·세미나 라벨 탈맥락화 검증 3종 추가 |
 | 2.3.3 | 2026-03-06 | visual-generator v1.10.0: CONTENT↔Content Placement 전수 대응 원칙 추가 (고아 항목·Data 중복·개념 키워드 혼입 방지) |
 | 2.3.2 | 2026-03-06 | visual-generator v1.9.0: 이중 렌더링 방지(번호 참조 체계), 세미나 테마 장면화 방지(테마 라벨 탈맥락화), 축 기반 레이아웃 공간-의미 역검증 추가 |
 | 2.3.1 | 2026-03-05 | hwpx-generator v2.3.0: linesegarray 자동 생성으로 전환 (cell_writer.py 신규, build_hwpx/pack 통합, 뷰어 호환성 보장) |
