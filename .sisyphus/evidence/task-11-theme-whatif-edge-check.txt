@@ -1,0 +1,1 @@
+EDGE CHECK PASSED: No LEFT/RIGHT in golden example

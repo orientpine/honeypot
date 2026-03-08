@@ -13,7 +13,7 @@ content-organizer 출력을 검토해 PASS/REJECT를 결정한다. 목적은 XML
 
 파이프라인:
 ```
-content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
+content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> renderer-agent
 ```
 
 ## Input
@@ -28,6 +28,7 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 
 ### 1. 개념 추출 적절성
 - 핵심 개념 수, 명확성, 원문 충실도, 중복 여부
+- `scene_context` 구체 시각 요소 수: 3개 미만이면 최대 2점 감점 (색상/질감/조명/오브젝트 중심 묘사)
 
 ### 2. 테마 선택 적합성
 - 콘텐츠와 테마/무드의 정합성
@@ -42,9 +43,13 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - `render_text`에 서술적 문장이 섞이지 않았는가 (1~5)
 - `scene_context`에 렌더링 대상 키워드가 누락되지 않았는가 (1~5)
 - `render_text` 항목 수가 테마 상한을 넘지 않았는가 (1~5)
+- `render_text` 항목 중 빈 값, `[내용]`, `{TEXT}`, ①②③ 발견 시 해당 차원 **1점** 처리
 
 ## PASS/REJECT Logic
 
+### Hard Reject (즉시 REJECT — 점수 무관)
+아래 중 하나라도 해당하면 점수 계산 없이 즉시 REJECT한다:
+- `render_text` 항목 수가 테마 상한의 **150%를 초과**하는 경우 (예: seminar 상한 25 → 38개 이상 시 즉시 REJECT)
 PASS는 아래를 모두 만족해야 한다.
 - 각 차원 평균 >= 3.5
 - 전체 평균 >= 3.5

@@ -63,7 +63,7 @@ honeypot/
 │   │   ├── commands/                 # isd-generate (오케스트레이터)
 │   │   └── skills/                   # 11 skills (chapter guides, core-resources 등)
 │   ├── visual-generator/             # 시각자료 생성
-│   │   ├── agents/                   # 4 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent)
+│   │   ├── agents/                   # 5 agents (content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent)
 │   │   ├── commands/                 # visual-generate (오케스트레이터)
 │   │   └── skills/                   # 8 skills (layout-types, theme-*, slide-renderer)
 │   ├── paper-style-generator/        # 논문 스타일 스킬 생성
@@ -177,7 +177,7 @@ honeypot/
 
 | 구성 | 항목 |
 |------|------|
-| Agents (4) | content-organizer, content-reviewer, prompt-designer, renderer-agent |
+| Agents (5) | content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent |
 | Command (1) | visual-generate (오케스트레이터) |
 | Skills (8) | layout-types, theme-concept, theme-gov, theme-seminar, theme-whatif, theme-pitch, theme-comparison, slide-renderer |
 

@@ -6,7 +6,7 @@
 
 파이프라인:
 ```
-content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
+content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> renderer-agent
 ```
 
 ## Inputs
@@ -39,6 +39,12 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
     +-- XML-tag 형식으로 생성 지시를 명시
     +-- output: 01_*.md, 02_*.md, prompt_index.md
 
+[Phase 3.5: prompt-validator]
+    +-- Task(subagent_type="visual-generator:prompt-validator")
+    +-- REJECT 시 prompt-designer 재실행 (최대 2회)
+    +-- REJECT 사유를 재호출 프롬프트에 포함
+    +-- output: validation_result.md
+
 [Phase 4: renderer-agent]
     +-- Task(subagent_type="visual-generator:renderer-agent")
     +-- XML-tag 검증 수행 지시를 명시
@@ -53,6 +59,8 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - Phase 3 호출 시 XML-tag 형식 생성을 명시한다
 - Phase 4 호출 시 XML-tag 검증 수행을 명시한다
 - 실패 시 보고서에 단계별 사유를 남긴다
+- Phase 3.5 호출 시 scene-richness-spec.md, validation-rules-map.md, korean-typography-spec.md 준수 확인을 명시한다
+- REJECT 사유를 prompt-designer 재호출 프롬프트에 포함한다
 
 ## MUST NOT DO
 

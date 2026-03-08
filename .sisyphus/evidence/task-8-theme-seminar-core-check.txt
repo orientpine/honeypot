@@ -1,0 +1,1 @@
+PASS: All 5 XML tags and Golden Reference Example found
