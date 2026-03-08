@@ -45,11 +45,23 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
 - `render_text` 항목 수가 테마 상한을 넘지 않았는가 (1~5)
 - `render_text` 항목 중 빈 값, `[내용]`, `{TEXT}`, ①②③ 발견 시 해당 차원 **1점** 처리
 
+### 6. 텍스트 밀도 충족성 (Text Density Adequacy)
+- `render_text` 항목 수가 `slide_type`에 따른 최소 요건을 충족하는가
+  - `body` 슬라이드: ≥ 8항목
+  - `title` 슬라이드: ≥ 3항목
+- `render_text`에 정량적 지표(KPI, 수치, 비율, 단위)가 최소 2개 포함되어 있는가 (`body` 슬라이드에만 적용)
+- **미달 시 2점 감점**
+- **Hard Reject 조건**: `render_text` 항목 수가 최소 요건의 50% 미만인 경우 즉시 REJECT
+  - 예: body 슬라이드에 4개 미만 → 즉시 REJECT
+  - 예: title 슬라이드에 2개 미만 → 즉시 REJECT
+- `render_text` 항목 중 빈 값, `[내용]`, `{TEXT}`, ①②③ 발견 시 해당 차원 **1점** 처리
+
 ## PASS/REJECT Logic
 
 ### Hard Reject (즉시 REJECT — 점수 무관)
 아래 중 하나라도 해당하면 점수 계산 없이 즉시 REJECT한다:
 - `render_text` 항목 수가 테마 상한의 **150%를 초과**하는 경우 (예: seminar 상한 25 → 38개 이상 시 즉시 REJECT)
+- `render_text` 항목 수가 최소 요건의 **50% 미만**인 경우 (예: body 슬라이드 < 4개, title 슬라이드 < 2개)
 PASS는 아래를 모두 만족해야 한다.
 - 각 차원 평균 >= 3.5
 - 전체 평균 >= 3.5
@@ -75,6 +87,7 @@ REJECT는 아래 중 하나라도 해당하면 확정한다.
 | 레이아웃 선택 | X.X | - |
 | 구성용 텍스트 혼입 | X.X | - |
 | 텍스트 추출 정확성 | X.X | - |
+| 텍스트 밀도 충족성 | X.X | - |
 | 전체 | X.X | PASS/REJECT |
 ```
 
