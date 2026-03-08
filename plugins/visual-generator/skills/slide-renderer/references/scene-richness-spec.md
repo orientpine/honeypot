@@ -185,6 +185,14 @@ Maintain proper balance between content and empty space.
 - **Maximum 3-5 text items per slide** (for concept theme)
 - **Spacing**: Minimum 16px between text elements
 
+### Minimum Text Density Requirements
+
+| Slide Type | Minimum `<text_to_render>` Items |
+|-----------|----------------------------------|
+| Body slides (data, process, comparison, analysis) | ≥ 8 items |
+| Title / Cover slides (metadata: title, subtitle, presenter, event) | ≥ 3 items |
+
+**Note**: Theme-specific upper limits remain unchanged (seminar 25, pitch 18, etc.). Prompts that fall below minimum thresholds must be supplemented with additional data points, KPI breakdowns, or specific metrics before proceeding to the renderer.
 ### Implementation
 
 ```xml
@@ -212,6 +220,7 @@ Use these criteria to evaluate `<scene>` descriptions before rendering:
 - ✅ Composition principles reflected (rule of thirds, hierarchy, depth, focal point)
 - ✅ Negative space guidance provided (30-40% target)
 - ✅ Specific, concrete visual descriptions (not vague)
+- ✅ Text density: ≥ 8 items for body slides, ≥ 3 items for title/cover slides
 
 **Example**: "Isometric 3D icons with frosted glass cards on a bright neutral background with subtle gradient. Soft-rounded boundaries and thin connecting flow lines organize the composition. Mini props and icons create visual interest in the midground. The hero title dominates the upper-left quadrant (rule of thirds), with supporting visuals in the right third. Foreground: bold text. Midground: 3D elements. Background: gradient. Maintain 35% negative space. No watermarks, no artifacts, no placeholder text."
 
@@ -283,7 +292,7 @@ badge_2: "Industry 4.0 Ready"
 
 <typography>
 Bold Modern Korean Sans-serif (Gothic style, Extra-Bold weight for titles, Bold for headers, Medium for body). 
-Font family: Nanum Gothic Bold, Pretendard ExtraBold, or equivalent.
+Font family: Heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) weight for titles and Bold (700) weight for headers and body text. Ensure crisp character formation with no distortion.
 All Korean text must be rendered with crisp, perfectly formed characters with no distortion.
 Text hierarchy: Title (Extra-Bold, 72pt) > Section Header (Bold, 36pt) > Body (Medium, 18pt) > Footer (Regular, 14pt).
 Line height: 1.4 for body text, 1.2 for headers.

@@ -7,6 +7,10 @@ This document provides comprehensive guidelines for rendering Korean text (Hangu
 
 ## Section 1: Mandatory Typography Directive
 
+> ⚠️ **CRITICAL: Never include specific font family names in `<typography>` output.**
+> Gemini renders font names as visible text in the image (e.g., "Nanum Gothic ExtraBold" appears literally in the slide).
+> Use only descriptive style hints like "heavy-weight Gothic-style sans-serif Korean font at 800+ weight".
+
 **Use this EXACT phrase in `<typography>` tags when describing Korean text rendering:**
 
 > All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Use Bold weight (700+) for titles, Medium weight (500) for body text.
@@ -40,7 +44,7 @@ Korean text is composed of syllable blocks (음절 블록), each containing mult
 
 3. **Vague font hints**: Generic descriptions don't guide Gemini toward complete syllable rendering
    - ❌ `Korean text`
-   - ✅ `Heavy-weight Gothic-style Korean (e.g., Pretendard ExtraBold, 800+), each syllable as a complete block`
+   - ✅ `Heavy-weight Gothic-style sans-serif Korean font at ExtraBold (800+), each syllable as a complete block`
 
 4. **Mixed weight without hierarchy**: Causes visual confusion and potential rendering issues
    - ❌ `Korean and English at the same weight`
@@ -82,10 +86,10 @@ Apply this weight hierarchy consistently across all slide themes:
 
 | Text Level | Weight | Font Examples | Use Case |
 |-----------|--------|----------------|----------|
-| **Title** | ExtraBold / 800+ | Nanum Gothic ExtraBold, Pretendard ExtraBold, Apple SD Gothic Neo Bold, Malgun Gothic Bold | Main slide title, section headers |
-| **Section Header** | Bold / 700 | Nanum Gothic Bold, Pretendard Bold, Apple SD Gothic Neo Bold | Subsection titles, card headers |
-| **Body Text** | Medium / 500 | Nanum Gothic Medium, Pretendard Medium, Apple SD Gothic Neo Regular | Main content, descriptions, labels |
-| **Caption / Small Text** | Regular / 400 | Nanum Gothic Regular, Pretendard Regular | Footnotes, source attribution, fine print |
+| **Title** | ExtraBold / 800+ | Heavy-weight Korean Gothic sans-serif at ExtraBold (800+) | Main slide title, section headers |
+| **Section Header** | Bold / 700 | Heavy-weight Korean Gothic sans-serif at Bold (700) | Subsection titles, card headers |
+| **Body Text** | Medium / 500 | Korean Gothic sans-serif at Medium (500) | Main content, descriptions, labels |
+| **Caption / Small Text** | Regular / 400 | Korean Gothic sans-serif at Regular (400) | Footnotes, source attribution, fine print |
 
 ### Critical Constraint: Minimum Weight = 500 (Medium)
 - **Rendered text below weight 400 (Regular) may become illegible** in Gemini API output
@@ -95,10 +99,10 @@ Apply this weight hierarchy consistently across all slide themes:
 
 ### Font Family Recommendations
 **Preferred (Heavy Gothic Sans-Serif):**
-- Nanum Gothic ExtraBold / Bold
-- Pretendard ExtraBold / Bold
-- Apple SD Gothic Neo Bold
-- Malgun Gothic Bold
+- Heavy-weight Korean Gothic sans-serif at ExtraBold (800+)
+- Heavy-weight Korean Gothic sans-serif at ExtraBold (800+)
+- Heavy-weight Korean Gothic sans-serif at Bold (700)
+- Korean Gothic sans-serif at Bold (700)
 
 **Avoid (Thin/Light Serif):**
 - Korean myeongjo (명조체) fonts
@@ -186,7 +190,7 @@ Phonetic anchoring is a technique where Korean text is paired with its romanized
 ### Placement in Prompts
 1. **In `<typography>` tag**: Include phonetic hints for key terms
    ```
-   Heavy-weight Gothic-style Korean (e.g., Pretendard ExtraBold, 800+).
+   Heavy-weight Gothic-style sans-serif Korean font at ExtraBold (800+).
    Key terms: 스마트 팩토리(Seu-ma-teu Paek-to-ri), 품질 관리(Pum-jil Gwal-li)
    ```
 
@@ -222,7 +226,7 @@ Phonetic anchoring is a technique where Korean text is paired with its romanized
 
 | ❌ Incorrect | ✅ Correct |
 |-------------|-----------|
-| `Korean text` | `Heavy-weight Gothic-style Korean (e.g., Pretendard ExtraBold, 800+)` |
+| `Korean text` | `Heavy-weight Gothic-style sans-serif Korean font at ExtraBold (800+)` |
 | `Korean font` | `Korean Sans-serif (Gothic style, weight 700+), each syllable as a complete block` |
 | `nice Korean typography` | `Professional-grade Korean typography with crisp, anti-aliased Hangul characters` |
 
@@ -291,7 +295,7 @@ When rendering Korean text:
 ### For Theme Developers
 When defining theme typography:
 1. **Specify**: Weight hierarchy (ExtraBold → Bold → Medium → Regular)
-2. **Recommend**: Gothic-style sans-serif fonts (Nanum Gothic, Pretendard, etc.)
+2. **Recommend**: Gothic-style sans-serif fonts with heavy weights (800+ for titles, 700+ for headers, 500+ for body)
 3. **Avoid**: Serif fonts and weights below 400
 4. **Document**: Contrast requirements for each background type
 5. **Include**: Phonetic anchoring examples for domain-specific terms
