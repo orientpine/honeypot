@@ -13,7 +13,7 @@ model: sonnet
 
 파이프라인:
 ```
-content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
+content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> renderer-agent
 ```
 
 ## Input Schema
@@ -46,8 +46,14 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - 권장 레이아웃: {layout}
 - 레이아웃 근거: {이유}
 - render_text: ["이미지에 표시할 텍스트", "수치", "키워드"]
-- scene_context: ["장면 묘사용 맥락", "설명 문장"]
+- scene_context: ["장면 묘사용 맥락 최소 5개 이상의 구체 시각 요소를 포함한 설명 문장"]
 ```
+
+# scene_context 작성 기준:
+# - 최소 5개 이상의 구체 시각 요소 포함 (색상, 질감, 조명, 오브젝트, 공간 배치)
+# - 추상/범용 표현 금지: "현대적", "효율적", "정교한" 등 정보량 없는 수식어
+# - 구체 묘사 예시: "빛을 받아 반짝이는 금속 표면", "어두운 배경의 네온 블루 조명", "3D 아이소메트릭 공장 내부"
+# - downstream(prompt-designer)의 <scene> 품질에 직접 영향을 미치는 upstream 입력
 
 ## Text Classification Rule (CRITICAL)
 
@@ -99,6 +105,10 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - `render_text`는 실제 렌더링 문자열만 포함한다
 - `scene_context`는 장면 묘사 전용 맥락만 포함한다
 - `slide_plan.md` 테이블에 `render_text_count` 컬럼을 반드시 포함한다
+- `scene_context`는 최소 5개 이상의 구체 시각 요소(색상, 질감, 조명, 오브젝트, 공간 배치)로 작성한다
+- 추상/범용 표현("현대적", "효율적", "혁신적") 대신 색상, 질감, 조명, 오브젝트 중심의 구체 묘사를 사용한다
+- `render_text` 의미성을 보장한다: 빈 값, ①②③, [내용], {TEXT}, 플레이스홀더 금지
+- 이 에이전트는 prompt-designer의 upstream이므로, 부실한 scene_context는 즉시 <scene> 품질 저하로 이어진다
 
 ## MUST NOT DO
 

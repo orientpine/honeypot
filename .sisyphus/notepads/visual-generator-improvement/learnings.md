@@ -226,3 +226,13 @@ grep -E "(Section-Flow|Z-Pattern)" plugins/visual-generator/references/themes/wh
 - Output file: ~7MB PNG (5504x3072)
 - Processing time: ~30 seconds per image
 - Model: gemini-3-pro-image-preview with thinking mode enabled
+
+## [2026-03-07] Task 17: Gemini GenerateContentConfig 품질 제어 파라미터
+
+### Applied Pattern
+- Keep model and image configuration immutable (`gemini-3-pro-image-preview`, `16:9`, `4K`, `TEXT/IMAGE`) and extend only `GenerateContentConfig` with deterministic quality controls.
+- Define `SYSTEM_INSTRUCTION` once near API constants and reference it in the request to avoid prompt drift.
+
+### Verified Keywords for Prompt Quality Gate
+- Required tokens for regression checks: `Korean`, `Gothic`, `watermark`, `contrast`, `negative space`.
+- QA assertions pass when these tokens are present in script-level instruction text and config includes `temperature`, `top_p`, `system_instruction`.

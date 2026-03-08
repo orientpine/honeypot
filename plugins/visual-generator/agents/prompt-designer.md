@@ -34,7 +34,9 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 
 ### `<scene>`
 - 장면 묘사 전용 컨테이너
-- 자연어 3~5문장
+- 최소 5문장 (concept 테마: 최소 7문장)
+- Scene Guide 7요소(서피스/배경/코너/연결선/시각장식/공간구성/시각메타포) 중 최소 5개 포함
+- EXCELLENT 등급 목표: 5문장 이상, 7요소 중 5+, 네거티브 프롬프팅 포함 (scene-richness-spec.md 기준)
 - 분위기, 조명, 시각 메타포, 공간 성격을 설명
 - 번호 목록 금지
 
@@ -48,13 +50,16 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - 서체 계열, 위계, 가독성 지시
 - 한글 렌더링 힌트 필수
 - `Korean Sans-serif (Gothic style)` 계열 권장
+- `korean-typography-spec.md`의 필수 문구 적용 필수: "All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts."
+- Heavy-weight Gothic-style Hangul (Pretendard ExtraBold, Nanum Gothic ExtraBold, 800+ weight) 권장
+- Thin/light Korean serif 회피
 
 ### `<canvas>`
 - 해상도, 비율, 배경, 팔레트를 자연어로 기술
 - 모델 이름, 스크립트 경로, 명령어는 넣지 않음
 
 ### `<layout>`
-- 공간 배치를 자연어 3~5문장으로 설명
+- 공간 배치를 자연어 최소 5문장으로 설명
 - `<text_to_render>`의 값을 큰따옴표로 인용해 배치 지시
 - 번호 참조 체계 사용 금지
 
@@ -162,6 +167,12 @@ subtitle: "..."
 - `<layout>`에는 문자열을 큰따옴표로 인용해 배치한다
 - 테마별 항목 상한을 지킨다
 - `<typography>`에 한글 렌더링 힌트를 반드시 넣는다
+- `validation-rules-map.md`의 모든 규칙(orphan/ghost 방지, 이중렌더링 방지, 메타라벨 금지, ①②③ 금지)을 준수한다
+- `<text_to_render>` 값은 의미성을 가져야 한다: 빈 값, [내용], {TEXT}, ①②③, 플레이스홀더 금지
+- `<layout>`에서 `<text_to_render>`의 모든 value를 큰따옴표로 인용한다 (고아 항목 방지)
+- `<scene>` 또는 `<canvas>` 안에 네거티브 프롬프팅을 포함한다 (scene-richness-spec.md 참조): "No watermarks, no blurry text, no numbered lists as visual elements, no artifacts"
+- 선택된 레이아웃의 layout-types SKILL.md 해당 섹션에서 `시각화 원칙`과 `검증 규칙`을 읽고, 그 레이아웃의 구성 원칙을 `<scene>` 작성에 반영한다 (layout-types SKILL.md 수정 금지)
+- 동일 프레젠테이션의 여러 슬라이드를 생성할 때: 색상 팔레트, 조명 방향, 서피스 텍스쳐, 아이콘 스타일을 슬라이드 간 일관되게 유지한다 (슬라이드 간 스타일 일관성)
 
 ## MUST NOT DO
 
@@ -183,3 +194,6 @@ subtitle: "..."
 | `theme-pitch` | scene 톤과 팔레트 |
 | `theme-comparison` | scene 톤과 팔레트 |
 | `layout-types` | 공간 배치 패턴 |
+| `slide-renderer references/scene-richness-spec.md` | scene 풍부함 기준 + 네거티브 프롬프팅 + 구성 원칙 |
+| `slide-renderer references/validation-rules-map.md` | v1.11.0 검증 규칙 매핑 |
+| `slide-renderer references/korean-typography-spec.md` | 한글 타이포그래피 필수 사양 |

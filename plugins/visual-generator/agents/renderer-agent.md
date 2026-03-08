@@ -13,7 +13,7 @@ prompt-designer가 생성한 XML-tag 프롬프트를 검증한 뒤 렌더링을 
 
 파이프라인:
 ```
-content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
+content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> renderer-agent
 ```
 
 ## Input
@@ -41,6 +41,9 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - 환각 URL 패턴 검출
 - 플레이스홀더 검출 (`[내용]`, `{TEXT}` 등)
 - 언어 혼입 검출 (한글/영문 병기)
+- Check 12: `<scene>` 최소 문장 수 (기본 5문장, concept 7문장) 검증
+- Check 13: `<text_to_render>` ↔ `<layout>` 교차 참조 완전성 (고아/유령 없음) 검증
+- Check 14: `<text_to_render>` 빈 값/플레이스홀더 탐지
 
 ## Theme Limits
 
@@ -89,6 +92,7 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - XML 태그 검증 8개를 모두 수행한다
 - 환각 URL, 플레이스홀더, 언어 혼입 체크를 유지한다
 - 실패 사유를 `generation_report.md`에 기록한다
+- prompt-validator가 1차 게이트, renderer-agent는 최종 방어선으로 동작한다
 
 ## MUST NOT DO
 

@@ -19,6 +19,9 @@ Gemini API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 �
 import os
 import sys
 import time
+import json
+import re
+import shutil
 import argparse
 from pathlib import Path
 
@@ -28,6 +31,20 @@ from google.genai import types
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 MODEL_NAME = "gemini-3-pro-image-preview"
+SYSTEM_INSTRUCTION = """You are an expert visual designer creating high-quality presentation slides. Follow these quality requirements strictly:
+
+Korean Typography: All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts (Bold/ExtraBold weight 700+). Each Korean syllable block must be complete and legible. Never use thin or light Korean serif fonts.
+
+Visual Composition: Maintain clear visual hierarchy with distinct foreground, midground, and background depth layers. Apply rule of thirds for focal point placement. Ensure primary information elements capture immediate attention.
+
+Negative Rendering Constraints: Never render watermarks, blurry text, numbered lists as visual elements, placeholder text, artifacts, meta-labels like 'Data:' or 'Note:', or any decorative elements not specified in the prompt.
+
+White Space: Maintain 30-40% negative space for visual breathing room and readability. Do not overcrowd the composition with excessive elements.
+
+Text Contrast: All text placed over images must have sufficient contrast for legibility. Use text-shadow, outline, or semi-transparent backing when text overlaps complex or busy backgrounds. Ensure WCAG-level contrast aesthetically.
+"""
+QUALITY_THRESHOLD = 7.0
+MAX_QUALITY_RETRIES = 2
 
 if not GEMINI_API_KEY:
     print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -65,40 +82,179 @@ def generate_image(
     Returns:
         bool: 생성 성공 여부
     """
-    for attempt in range(max_retries):
-        try:
-            response = client.models.generate_content(
-                model=MODEL_NAME,
-                contents=prompt_text,
-                config=types.GenerateContentConfig(
-                    response_modalities=["TEXT", "IMAGE"],
-                    image_config=types.ImageConfig(
-                        aspect_ratio="16:9", image_size="4K"
+    def _request_image(current_prompt: str, save_path: str) -> bool:
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model=MODEL_NAME,
+                    contents=current_prompt,
+                    config=types.GenerateContentConfig(
+                        response_modalities=["TEXT", "IMAGE"],
+                        image_config=types.ImageConfig(
+                            aspect_ratio="16:9", image_size="4K"
+                        ),
+                        temperature=0.7,
+                        top_p=0.9,
+                        system_instruction=SYSTEM_INSTRUCTION,
                     ),
-                ),
+                )
+
+                # 사고 과정 출력 (있는 경우)
+                for part in response.parts:
+                    if hasattr(part, "thought") and part.thought:
+                        if part.text:
+                            print(f"  [사고 과정] {part.text[:100]}...")
+
+                # 이미지 저장
+                for part in response.parts:
+                    if part.inline_data is not None:
+                        image = part.as_image()
+                        image.save(save_path)
+                        return True
+
+                print(f"  [경고] 이미지 데이터 없음, 재시도 {attempt + 1}/{max_retries}")
+
+            except Exception as e:
+                print(f"  [에러] {e}, 재시도 {attempt + 1}/{max_retries}")
+                if attempt < max_retries - 1:
+                    time.sleep(5)
+
+        return False
+
+    total_quality_attempts = MAX_QUALITY_RETRIES + 1
+    best_score = -1.0
+    best_image_path = None
+    current_prompt = prompt_text
+
+    for quality_attempt in range(total_quality_attempts):
+        candidate_output_path = output_path
+        if total_quality_attempts > 1:
+            candidate_output_path = (
+                f"{output_path}.quality_attempt_{quality_attempt + 1}.png"
             )
 
-            # 사고 과정 출력 (있는 경우)
-            for part in response.parts:
-                if hasattr(part, "thought") and part.thought:
-                    if part.text:
-                        print(f"  [사고 과정] {part.text[:100]}...")
+        if not _request_image(current_prompt, candidate_output_path):
+            return False
 
-            # 이미지 저장
-            for part in response.parts:
-                if part.inline_data is not None:
-                    image = part.as_image()
-                    image.save(output_path)
-                    return True
+        quality_result = evaluate_image_quality(client, candidate_output_path)
+        criteria = quality_result.get("criteria", {})
+        score = float(quality_result.get("score", 0.0))
+        feedback = quality_result.get("feedback", "")
 
-            print(f"  [경고] 이미지 데이터 없음, 재시도 {attempt + 1}/{max_retries}")
+        korean_score = int(round(criteria.get("korean_text_readability", 0)))
+        layout_score = int(round(criteria.get("layout_suitability", 0)))
+        color_score = int(round(criteria.get("color_palette_compliance", 0)))
 
-        except Exception as e:
-            print(f"  [에러] {e}, 재시도 {attempt + 1}/{max_retries}")
-            if attempt < max_retries - 1:
-                time.sleep(5)
+        if score > best_score:
+            best_score = score
+            best_image_path = candidate_output_path
 
-    return False
+        if score >= QUALITY_THRESHOLD:
+            print(
+                f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
+                f"평균 {score:.1f} (한글:{korean_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 통과"
+            )
+            if candidate_output_path != output_path:
+                shutil.copyfile(candidate_output_path, output_path)
+            break
+
+        print(
+            f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
+            f"평균 {score:.1f} (한글:{korean_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 재시도"
+        )
+
+        if quality_attempt < MAX_QUALITY_RETRIES:
+            current_prompt = f"{prompt_text}\n\n[품질 보정 힌트] {feedback}"
+
+    if best_image_path is None:
+        return False
+
+    if best_score < QUALITY_THRESHOLD:
+        if best_image_path != output_path:
+            shutil.copyfile(best_image_path, output_path)
+        print(f"[품질 평가] 기준 미달, 최고 점수 이미지 채택 (평균 {best_score:.1f})")
+
+    for cleanup_attempt in range(total_quality_attempts):
+        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.png")
+        if temp_path.exists():
+            temp_path.unlink()
+
+    return True
+
+
+def evaluate_image_quality(client, image_path: str) -> dict:
+    """
+    Gemini 비전 모델로 생성된 이미지 품질 평가
+    Returns: {"score": float, "feedback": str, "criteria": dict}
+    """
+    evaluation_prompt = """아래 이미지를 엄격하게 평가하세요. 반드시 JSON만 출력하세요.
+
+평가 기준(각 0~10, 소수점 허용):
+1) korean_text_readability: 한글 텍스트 가독성
+2) layout_suitability: 레이아웃 구성 적합성
+3) color_palette_compliance: 지정 팔레트 준수 여부
+
+출력 형식(JSON only):
+{
+  "korean_text_readability": 0,
+  "layout_suitability": 0,
+  "color_palette_compliance": 0,
+  "feedback": "재생성을 위한 구체적 개선 지침 1~3문장"
+}
+"""
+
+    try:
+        image_bytes = Path(image_path).read_bytes()
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=[
+                types.Part.from_text(text=evaluation_prompt),
+                types.Part.from_bytes(data=image_bytes, mime_type="image/png"),
+            ],
+            config=types.GenerateContentConfig(
+                response_modalities=["TEXT"],
+                temperature=0.1,
+                top_p=0.1,
+            ),
+        )
+
+        response_text = ""
+        if hasattr(response, "text") and response.text:
+            response_text = response.text
+        elif hasattr(response, "parts"):
+            response_text = "\n".join(
+                part.text for part in response.parts if hasattr(part, "text") and part.text
+            )
+
+        json_match = re.search(r"\{[\s\S]*\}", response_text)
+        payload = json.loads(json_match.group(0)) if json_match else {}
+
+        def _score(value):
+            try:
+                return max(0.0, min(10.0, float(value)))
+            except (TypeError, ValueError):
+                return 0.0
+
+        criteria = {
+            "korean_text_readability": _score(payload.get("korean_text_readability", 0)),
+            "layout_suitability": _score(payload.get("layout_suitability", 0)),
+            "color_palette_compliance": _score(payload.get("color_palette_compliance", 0)),
+        }
+        avg_score = sum(criteria.values()) / 3.0
+        feedback = str(payload.get("feedback", ""))
+
+        return {"score": avg_score, "feedback": feedback, "criteria": criteria}
+
+    except Exception as e:
+        return {
+            "score": 0.0,
+            "feedback": f"품질 평가 실패: {e}",
+            "criteria": {
+                "korean_text_readability": 0.0,
+                "layout_suitability": 0.0,
+                "color_palette_compliance": 0.0,
+            },
+        }
 
 
 def process_prompts(prompts_dir: str, output_dir: str) -> dict:
@@ -132,7 +288,7 @@ def process_prompts(prompts_dir: str, output_dir: str) -> dict:
     print(f"  - 프롬프트 폴더: {prompts_dir}")
     print(f"  - 출력 폴더: {output_dir}")
     print(f"  - 모델: {MODEL_NAME}")
-    print(f"  - 설정: 4K, 16:9, 사고모드 활성화, 고급 텍스트 렌더링")
+    print("  - 설정: 4K, 16:9, 사고모드 활성화, 고급 텍스트 렌더링")
     print()
 
     # API 클라이언트 초기화

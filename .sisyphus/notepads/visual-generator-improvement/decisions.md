@@ -141,3 +141,12 @@ Agent files are **instructions for Claude**, not **configuration files**. When C
 - [ ] Document path resolution in agent file
 - [ ] Add fallback: if relative path fails, ask user for full path
 
+## [2026-03-07] Task 17: Slide Renderer API Config 확장
+
+### Decision
+- Add `SYSTEM_INSTRUCTION` as a top-level constant directly after `MODEL_NAME` and pass it through `types.GenerateContentConfig(system_instruction=...)`.
+- Add sampling controls (`temperature=0.7`, `top_p=0.9`) without modifying existing model, modality, aspect ratio, image size, retry, or file I/O logic.
+
+### Rationale
+- Keeps generation behavior tunable while preserving all existing production-safe defaults and output pipeline contracts.
+
