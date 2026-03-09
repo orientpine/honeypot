@@ -409,6 +409,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
 | 2.5.0 | 2026-03-09 | visual-generator v2.2.0: 폰트명 유출 차단, 최소 텍스트 밀도(body≥8) 강제, Style Sheet 기반 슬라이드 일관성, prompt-validator 강화(밀도/폰트/팔레트 검증 추가) |
 | 2.4.1 | 2026-03-08 | visual-generator v2.1.1: Golden Reference `<text_to_render>` key:value 형식 통일(4개 테마), 파이프라인 다이어그램 prompt-validator 반영, layout-types Progressive Disclosure 분리(938→82줄 + references/layout-catalog.md), scene-richness-spec 테마명 교정, README agent 수 5개 반영 |
 | 2.4.0 | 2026-03-07 | visual-generator v2.0.0: XML-tag 프롬프트 시스템 전면 개편 — 4-block 마크다운(INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) → 5-tag XML(`<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`) 전환. render_text/scene_context 분류 체계, 한국어 타이포그래피 가이드 추가 |
