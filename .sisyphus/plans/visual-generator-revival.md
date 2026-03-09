@@ -1075,7 +1075,7 @@ Max Concurrent: 6 (Wave 2)
   - Message: `refactor(visual-gen): update reference docs tag names for 4-block`
   - Files: `plugins/visual-generator/skills/slide-renderer/references/scene-richness-spec.md`, `plugins/visual-generator/skills/slide-renderer/references/validation-rules-map.md`, `plugins/visual-generator/skills/slide-renderer/references/korean-typography-spec.md`
 
-- [ ] 14. End-to-End Integration Test with Gemini Rendering
+- [x] 14. End-to-End Integration Test with Gemini Rendering
 
   **What to do**:
   - **목적**: 전체 파이프라인(content-organizer → content-reviewer → prompt-designer → prompt-validator → renderer-agent)이 4-block 형식으로 정상 동작하는지 검증
@@ -1184,7 +1184,7 @@ Max Concurrent: 6 (Wave 2)
   - Message: `test(visual-gen): end-to-end integration test with Gemini rendering`
   - Files: `.sisyphus/evidence/task-14-*` (증거 파일만 커밋, output/ 디렉토리는 gitignored이므로 .sisyphus/evidence/ 내에 출력)
 
-- [ ] 15. Version Bump v3.0.0 + AGENTS.md + Registry Updates
+- [x] 15. Version Bump v3.0.0 + AGENTS.md + Registry Updates
 
   **What to do**:
   - **`plugins/visual-generator/.claude-plugin/plugin.json`**: version "2.2.0" → "3.0.0"
@@ -1261,19 +1261,19 @@ Max Concurrent: 6 (Wave 2)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Rejection → fix → re-run.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists (read file, grep pattern). For each "Must NOT Have": search codebase for forbidden patterns — reject with file:line if found. Check evidence files exist in .sisyphus/evidence/. Compare deliverables against plan.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
   Review all changed files for: XML tags remaining, inconsistent format references, broken cross-references between agents/skills. Check no AI slop: excessive comments, over-abstraction, generic descriptions. Verify all agent descriptions updated. Verify version numbers consistent.
   Output: `Files [N clean/N issues] | XML Remnants [0/N] | VERDICT`
 
-- [ ] F3. **Real Manual QA with Gemini Rendering** — `unspecified-high` (+ `slide-renderer` skill)
+- [x] F3. **Real Manual QA with Gemini Rendering** — `unspecified-high` (+ `slide-renderer` skill)
   Generate prompts for at least 2 themes (gov + concept). Render with Gemini API. Verify: body slides ≥80 lines, no color codes in images, no font names in images, concept theme has zero text, slides within same batch have consistent palette/style. Save rendered images and quality scores.
   Output: `Themes [N/N tested] | Quality [avg score] | Consistency [PASS/FAIL] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
   For each task: read "What to do", read actual diff. Verify 1:1 — everything in spec was built, nothing beyond spec. Check guardrails: no layout-types changes, no reference doc content rewrites, no content-organizer schema changes. Flag unaccounted changes.
   Output: `Tasks [N/N compliant] | Guardrails [N/N intact] | VERDICT`
 
