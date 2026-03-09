@@ -1,0 +1,79 @@
+TASK 1: Font Name Removal from korean-typography-spec.md
+==========================================================
+
+OBJECTIVE:
+Replace all specific font family names (Nanum Gothic, Pretendard, Apple SD Gothic Neo, Malgun Gothic)
+with descriptive style hints in korean-typography-spec.md
+
+VERIFICATION RESULTS:
+====================
+
+1. FONT NAME REMOVAL VERIFICATION
+   Pattern: "Nanum Gothic|Pretendard|Apple SD Gothic Neo|Malgun Gothic"
+   Result: 1 match found (in CRITICAL warning example text only)
+   Status: ✅ PASS
+   
+   The only remaining match is in the CRITICAL warning block (line 11):
+   > Gemini renders font names as visible text in the image (e.g., "Nanum Gothic ExtraBold" appears literally in the slide).
+   
+   This is intentional as it demonstrates the problem being warned against.
+   All actual font name references have been removed.
+
+2. WEIGHT GUIDELINES PRESERVATION VERIFICATION
+   Pattern: "800\+|700|500"
+   Result: 25 matches found
+   Status: ✅ PASS
+   
+   Weight guidelines (800+, 700, 500) are preserved throughout the document.
+
+3. CRITICAL WARNING VERIFICATION
+   Pattern: "CRITICAL: Never include specific font family names"
+   Result: 1 match found
+   Status: ✅ PASS
+   
+   Warning block successfully added to Section 1.
+
+CHANGES MADE:
+=============
+
+1. Added CRITICAL warning block after Section 1 title (line 8)
+   - Warns against including specific font family names in <typography> output
+   - Explains Gemini rendering behavior
+   - Provides guidance on using descriptive hints instead
+
+2. Replaced font names in 10 locations:
+   - Line 43: Anti-pattern example
+   - Line 85: Table - Title row
+   - Line 86: Table - Section Header row
+   - Line 87: Table - Body Text row
+   - Line 88: Table - Caption row
+   - Line 98: Preferred fonts list item 1
+   - Line 99: Preferred fonts list item 2
+   - Line 100: Preferred fonts list item 3
+   - Line 101: Preferred fonts list item 4
+   - Line 189: Phonetic anchoring example
+   - Line 225: Anti-pattern table example
+   - Line 294: Theme Developers section recommendation
+
+REPLACEMENT PATTERNS APPLIED:
+=============================
+
+- "Nanum Gothic ExtraBold" → "Heavy-weight Korean Gothic sans-serif at ExtraBold (800+)"
+- "Nanum Gothic Bold" → "Heavy-weight Korean Gothic sans-serif at Bold (700)"
+- "Pretendard ExtraBold" → "Heavy-weight Korean Gothic sans-serif at ExtraBold (800+)"
+- "Pretendard Bold" → "Heavy-weight Korean Gothic sans-serif at Bold (700)"
+- "Apple SD Gothic Neo Bold" → "Heavy-weight Korean Gothic sans-serif at Bold (700)"
+- "Malgun Gothic Bold" → "Korean Gothic sans-serif at Bold (700)"
+- "Nanum Gothic" (standalone) → "Korean Gothic sans-serif"
+- "Pretendard" (standalone) → "Korean Gothic sans-serif"
+
+DOCUMENT INTEGRITY:
+===================
+
+✅ Section structure preserved
+✅ Weight hierarchy (ExtraBold/800+, Bold/700, Medium/500, Regular/400) maintained
+✅ All 305 lines intact
+✅ No unintended deletions
+✅ Meaning and guidance preserved in all sections
+
+FINAL STATUS: ✅ TASK COMPLETE

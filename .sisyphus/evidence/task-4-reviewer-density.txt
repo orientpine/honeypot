@@ -1,0 +1,51 @@
+TASK: Add 6th Review Dimension "Text Density Adequacy" to content-reviewer.md
+FILE: plugins/visual-generator/agents/content-reviewer.md
+DATE: 2026-03-08
+
+=== VERIFICATION RESULTS ===
+
+✅ STEP 1: File Read Complete
+- File location: C:\Users\BaekdongCha\Documents\honeypot\plugins\visual-generator\agents\content-reviewer.md
+- Total lines: 104
+- Structure verified: Overview → Review Dimensions → PASS/REJECT Logic → Output
+
+✅ STEP 2: 6th Review Dimension Added
+- Location: Lines 48-57
+- Title: "### 6. 텍스트 밀도 충족성 (Text Density Adequacy)"
+- Content includes:
+  * render_text item count requirements (body ≥ 8, title ≥ 3)
+  * Quantitative metrics requirement (≥ 2 for body slides)
+  * 2-point deduction for non-compliance
+  * Hard Reject condition: < 50% of minimum requirement
+
+✅ STEP 3: PASS/REJECT Logic Updated
+- Location: Lines 61-64
+- Hard Reject section now includes 2 conditions:
+  1. render_text count > 150% of theme upper limit (existing)
+  2. render_text count < 50% of minimum requirement (NEW)
+- Examples provided: body < 4 items, title < 2 items
+
+✅ STEP 4: Output Table Updated
+- Location: Lines 83-91
+- Table now has 6 review dimensions + total row
+- Row 6 added: "| 텍스트 밀도 충족성 | X.X | - |"
+- All 5 existing dimensions preserved
+
+✅ STEP 5: Grep Verification
+- Pattern "텍스트 밀도|Text Density": 3 matches found
+  * Line 48: Dimension title
+  * Line 90: Output table row
+  * (Also found in prompt-designer.md - expected)
+- Pattern "Hard Reject": 2 matches found
+  * Line 54: Hard Reject condition in dimension 6
+  * Line 61: Hard Reject section header
+
+=== SUMMARY ===
+✅ All 5 existing dimensions preserved
+✅ 6th dimension "텍스트 밀도 충족성" added with complete specifications
+✅ Hard Reject logic updated with density condition
+✅ Output table updated with 6th row
+✅ No duplicate lines in final version
+✅ File structure intact
+
+TASK COMPLETED SUCCESSFULLY
