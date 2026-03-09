@@ -37,10 +37,12 @@ Before/After 차이를 한 화면에서 직관적으로 비교하는 테마다.
 
 ## 한글 타이포그래피 가이드
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, e.g. Nanum Gothic, Pretendard)`
+- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
 - 위계 비율: 좌우 제목 > 핵심 수치 > 보조 라벨
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 - **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, text-on-background contrast for both panels)
+
+> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
 
 ## XML-Tag 출력 매핑
 
@@ -84,7 +86,7 @@ after_badge: "AI-DRIVEN"
 </text_to_render>
 
 <typography>
-Font family: Heavy Gothic-style Korean Sans-serif (Nanum Gothic ExtraBold, Pretendard Black)
+Font family: Heavy Gothic-style Korean sans-serif at ExtraBold (800+)
 before_title / after_title: 64pt, bold, ALL-CAPS badge style
 before_stat1, before_stat2 / after_stat1, after_stat2: 80pt, extra-bold, key metric emphasis
 before_label1, before_label2 / after_label1, after_label2: 36pt, medium weight, descriptive sub-label
