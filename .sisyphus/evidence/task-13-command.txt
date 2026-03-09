@@ -1,5 +1,0 @@
-Orchestrate end-to-end HWPX document generation from user intent and inputs in `$ARGUMENTS`.
-
-## Configuration Options
-4
-8

@@ -1,8 +1,0 @@
-PASS: File exists at correct path
-PASS: Mandatory phrase found verbatim
-PASS: File encoding UTF-8
-PASS: Document structure complete
-
-File path: C:\Users\BaekdongCha\Documents\honeypot\plugins\visual-generator\skills\slide-renderer\references\korean-typography-spec.md
-File size: 14378 bytes
-Lines: 306

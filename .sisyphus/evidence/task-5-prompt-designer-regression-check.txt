@@ -1,1 +1,0 @@
-PASS: Old weak criterion removed

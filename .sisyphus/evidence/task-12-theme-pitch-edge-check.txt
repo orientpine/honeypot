@@ -1,1 +1,0 @@
-PASS: edge check - all 3 reference docs found

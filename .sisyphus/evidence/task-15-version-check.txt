@@ -1,8 +1,0 @@
-=== plugin.json ===
-  "version": "3.0.0",
-
-=== marketplace.json visual-generator ===
-      "version": "3.0.0",
-
-=== marketplace.json metadata ===
-    "version": "2.2.0",

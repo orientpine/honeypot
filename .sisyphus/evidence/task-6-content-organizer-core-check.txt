@@ -1,8 +1,0 @@
-Core QA Check: PASS
-
-Required keywords:
-  ✓ scene_context
-  ✓ 최소 5개
-  ✓ 시각 요소
-
-All mandatory keywords present in content-organizer.md
