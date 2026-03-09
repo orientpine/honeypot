@@ -89,7 +89,7 @@ kpi_13: "고객 만족도: 4.9/5.0"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Headline in Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) at 120pt for title. KPI numbers in tabular-lining numerals at 72pt, high-contrast white on dark teal panels. KPI labels in Medium weight Gothic Korean at 36pt, secondary #4ECDC4 color. Body labels in Regular weight Korean Sans-serif at 28pt, muted white with 80% opacity. Crisp anti-aliased Korean typography, Professional typesetting, HUD-style UI text clarity. KPI numerals glow with subtle outer luminance matching accent #FF6B35.
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Headline in Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) for title at extra-large scale. KPI numbers in tabular-lining numerals at large scale, high-contrast white on dark teal panels. KPI labels in Medium weight Gothic Korean at medium scale, secondary #4ECDC4 color. Body labels in Regular weight Korean Sans-serif at body scale, muted white with 80% opacity. Crisp anti-aliased Korean typography, Professional typesetting, HUD-style UI text clarity. KPI numerals glow with subtle outer luminance matching accent #FF6B35.
 </typography>
 
 <canvas>

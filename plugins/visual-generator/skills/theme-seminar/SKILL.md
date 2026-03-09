@@ -105,7 +105,7 @@ footer: "2026년 스마트 제조 혁신 사례"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Font hierarchy: hero_stat (ExtraBold 900, 72pt scale), title (ExtraBold 800, 48pt scale), section headers (Bold 700, 24pt scale), body items (Medium 500, 18pt scale). "99.7%" hero statistic rendered in large accent color (#2980B9) with high contrast. Korean labels in Bold Modern Korean sans-serif at ExtraBold (800+).
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Font hierarchy: hero_stat (ExtraBold 900, extra-large scale), title (ExtraBold 800, large scale), section headers (Bold 700, medium scale), body items (Medium 500, body scale). "99.7%" hero statistic rendered in large accent color (#2980B9) with high contrast. Korean labels in Bold Modern Korean sans-serif at ExtraBold (800+).
 </typography>
 
 <canvas>

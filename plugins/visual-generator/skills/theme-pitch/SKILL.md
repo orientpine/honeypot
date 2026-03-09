@@ -90,7 +90,7 @@ source: "내부 대시보드 기준 2025.12"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) for hero number and titles, Bold (700) for KPI labels. Hero number "247%" at 120pt in accent purple #BF5AF2, center-aligned, extra-bold weight. Hero label "연간 매출 성장률" at 28pt in #F5F5F7, center-aligned. KPI numbers at 36pt in #0A84FF, left-aligned within frosted-glass cards. KPI labels at 16pt in #86868B, left-aligned within cards. Subtitle at 18pt in #86868B, center-bottom. Source attribution at 12pt in #86868B, right-bottom corner. Crisp anti-aliased Korean typography with professional typesetting.
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) for hero number and titles, Bold (700) for KPI labels. Hero number "247%" at extra-large scale in accent purple #BF5AF2, center-aligned, extra-bold weight. Hero label "연간 매출 성장률" at medium scale in #F5F5F7, center-aligned. KPI numbers at standard scale in #0A84FF, left-aligned within frosted-glass cards. KPI labels at small scale in #86868B, left-aligned within cards. Subtitle at caption scale in #86868B, center-bottom. Source attribution at footnote scale in #86868B, right-bottom corner. Crisp anti-aliased Korean typography with professional typesetting.
 </typography>
 
 <canvas>

@@ -53,7 +53,7 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - `korean-typography-spec.md`의 필수 문구 적용 필수: "All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts."
 - Heavy-weight Gothic-style Hangul (800+ weight) 권장
 - Thin/light Korean serif 회피
-- **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명(Nanum Gothic, Pretendard, Apple SD Gothic Neo, Malgun Gothic)을 절대 사용하지 않는다. Gemini가 이미지 내 보이는 텍스트로 렌더링한다. 대신: "heavy-weight Gothic-style sans-serif Korean font at 800+ weight"
+- **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명을 절대 사용하지 않는다. Gemini가 이미지 내 보이는 텍스트로 렌더링한다. 금지 폰트명 목록은 `korean-typography-spec.md`의 CRITICAL warning 참조. 대신: "heavy-weight Gothic-style sans-serif Korean font at 800+ weight"
 
 ### `<canvas>`
 - 해상도, 비율, 배경, 팔레트를 자연어로 기술
@@ -162,7 +162,7 @@ subtitle: "..."
     +-- <text_to_render> 형식 확인: key: "value"
     +-- 항목 수 상한 확인
     +-- <text_to_render> 항목 수 확인: 본문 슬라이드 ≥ 8, 타이틀 슬라이드 ≥ 3
-    +-- <typography> 내 폰트 패밀리명 부재 확인 (Nanum Gothic, Pretendard 등)
+    +-- <typography> 내 폰트 패밀리명 부재 확인 (`korean-typography-spec.md` CRITICAL warning 참조)
     +-- 번호 목록 미사용 확인
 
 [Phase 4: 결과 저장]
@@ -196,7 +196,7 @@ subtitle: "..."
 - `pt`/`px` 단위를 사용하지 않는다
 - 마크다운 장식(`**`, `#`)을 태그 내부에 넣지 않는다
 - `${CLAUDE_PLUGIN_ROOT}`를 사용하지 않는다
-- `<typography>`에 구체적 폰트 패밀리명(Nanum Gothic, Pretendard, Apple SD Gothic Neo, Malgun Gothic)을 사용하지 않는다 - Gemini가 이미지 내 보이는 텍스트로 렌더링한다
+- `<typography>`에 구체적 폰트 패밀리명을 사용하지 않는다 — `korean-typography-spec.md`의 CRITICAL warning에 금지 폰트명 목록 명시됨. Gemini가 이미지 내 보이는 텍스트로 렌더링한다
 
 ## Resources
 
