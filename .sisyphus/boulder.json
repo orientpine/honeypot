@@ -1,7 +1,10 @@
 {
   "active_plan": "C:/Users/BaekdongCha/Documents/honeypot/.sisyphus/plans/visual-generator-recovery.md",
   "started_at": "2026-03-08T13:33:02.831Z",
-  "session_ids": ["ses_332594256ffeW6tsu666Y5zuzg"],
+  "session_ids": [
+    "ses_332594256ffeW6tsu666Y5zuzg",
+    "ses_32e799d2cffeUa7nveUVghaxkD"
+  ],
   "plan_name": "visual-generator-recovery",
   "status": "in_progress",
   "worktree_path": "C:/Users/BaekdongCha/Documents/honeypot"

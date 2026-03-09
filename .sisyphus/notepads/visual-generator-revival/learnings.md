@@ -133,3 +133,28 @@ key: "value"   (flat format ONLY — no tables, no numbered lists, no subsection
 - gov 시나리오: 프롬프트 라인수/4-block/금지 패턴 점검 및 Gemini 렌더링 성공(3장, 품질 점수 9.2~10.0).
 - concept 시나리오: render_text 미사용, FORBIDDEN 텍스트 렌더링 금지 확인, 4-block 구조 확인.
 - 팔레트 일관성: gov 본문 슬라이드 간 primary/secondary/accent/background 동일 확인.
+
+## [완료] Task 15: Version Bump to v3.0.0 (2026-03-09)
+
+### Registry Updates Completed
+- ✅ `plugins/visual-generator/.claude-plugin/plugin.json`: version 1.8.1 → 3.0.0
+- ✅ `.claude-plugin/marketplace.json`: visual-generator version 2.2.0 → 3.0.0, description updated to "4-block v3.0.0"
+- ✅ `AGENTS.md`: Generated date 2026-03-09T00:00:00+09:00 → 2026-03-09T23:00:00+09:00
+- ✅ `AGENTS.md` STRUCTURE: "XML-tag v2.2.0" → "4-block v3.0.0"
+- ✅ `AGENTS.md` WHERE TO LOOK: XML-tag 5개 참조 → 4-block 마크다운 참조로 변경
+- ✅ `README.md`: v3.0.0 entry added to version history (newest at top)
+
+### Verification Results
+- plugin.json version: "3.0.0" ✓
+- marketplace.json version: "3.0.0" ✓
+- AGENTS.md v3.0.0 references: 1 (STRUCTURE section) ✓
+- AGENTS.md XML-tag v2.2.0 references: 0 (fully removed) ✓
+- README.md v3.0.0 entry: Present with full description ✓
+
+### Commit
+- Hash: a7dc1db
+- Message: "chore(visual-gen): bump to v3.0.0, update AGENTS.md and registry"
+- Files: 4 changed, 15 insertions(+), 14 deletions(-)
+
+### Key Takeaway
+Version bump completed successfully. All registry files synchronized. AGENTS.md now reflects 4-block format as the current standard for visual-generator v3.0.0.
