@@ -1,0 +1,16 @@
+=== VERSION CHECK ===
+plugin.json:
+  "version": "3.0.0",
+
+marketplace.json (visual-generator):
+      "version": "3.0.0",
+
+=== AGENTS.md v3.0.0 reference count ===
+1
+
+=== AGENTS.md XML-tag v2.2.0 reference count (must be 0) ===
+0
+0
+
+=== README.md v3.0.0 presence ===
+| 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
