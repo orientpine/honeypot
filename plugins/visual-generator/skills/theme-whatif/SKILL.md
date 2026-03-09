@@ -37,11 +37,13 @@ description: "visual-generator whatif 목적 테마 장면 가이드와 XML-tag 
 
 ## 한글 타이포그래피 가이드
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, e.g. Nanum Gothic, Pretendard)`
+- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
 - 위계 비율: 선언문 > KPI > 라벨 > 보조텍스트
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 
 - **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, HUD UI text clarity)
+
+> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
 ## XML-Tag 출력 매핑
 
 - `<scene>`: 미래 비전 장면을 3~5문장으로 명확히 묘사
@@ -87,7 +89,7 @@ kpi_13: "고객 만족도: 4.9/5.0"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Headline in Bold Modern Korean Sans-serif (Heavy Gothic style, e.g. Pretendard ExtraBold) at 120pt for title. KPI numbers in tabular-lining numerals at 72pt, high-contrast white on dark teal panels. KPI labels in Medium weight Gothic Korean at 36pt, secondary #4ECDC4 color. Body labels in Regular weight Korean Sans-serif at 28pt, muted white with 80% opacity. Crisp anti-aliased Korean typography, Professional typesetting, HUD-style UI text clarity. KPI numerals glow with subtle outer luminance matching accent #FF6B35.
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Headline in Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) at 120pt for title. KPI numbers in tabular-lining numerals at 72pt, high-contrast white on dark teal panels. KPI labels in Medium weight Gothic Korean at 36pt, secondary #4ECDC4 color. Body labels in Regular weight Korean Sans-serif at 28pt, muted white with 80% opacity. Crisp anti-aliased Korean typography, Professional typesetting, HUD-style UI text clarity. KPI numerals glow with subtle outer luminance matching accent #FF6B35.
 </typography>
 
 <canvas>
