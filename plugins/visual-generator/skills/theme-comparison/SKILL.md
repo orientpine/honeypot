@@ -87,10 +87,10 @@ after_badge: "AI-DRIVEN"
 
 <typography>
 Font family: Heavy Gothic-style Korean sans-serif at ExtraBold (800+)
-before_title / after_title: 64pt, bold, ALL-CAPS badge style
-before_stat1, before_stat2 / after_stat1, after_stat2: 80pt, extra-bold, key metric emphasis
-before_label1, before_label2 / after_label1, after_label2: 36pt, medium weight, descriptive sub-label
-before_badge / after_badge: 28pt, uppercase, rounded pill background
+before_title / after_title: large scale, bold, ALL-CAPS badge style
+before_stat1, before_stat2 / after_stat1, after_stat2: hero scale, extra-bold, key metric emphasis
+before_label1, before_label2 / after_label1, after_label2: medium weight, descriptive sub-label
+before_badge / after_badge: small scale, uppercase, rounded pill background
 LEFT panel text: white (#FFFFFF) on dark overlay for contrast against heavy industrial background
 RIGHT panel text: dark charcoal (#2D3436) on light frosted overlay for contrast against bright clean background
 Crisp anti-aliased Korean typography, Professional typesetting, no pixelation
