@@ -47,6 +47,7 @@ concept는 기본적으로 텍스트 렌더링을 사용하지 않는다.
 - 필요 시 캡션 수준의 최소 문자열만 허용하며 가독성 키워드를 포함한다
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 - **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, 자모분리 방지)
+- ⚠️ **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명을 절대 사용하지 마세요. Gemini가 이미지 내 보이는 텍스트로 렌더링합니다. 금지 폰트명 목록은 `korean-typography-spec.md`의 CRITICAL warning 참조.
 
 ## XML-Tag 출력 매핑
 
