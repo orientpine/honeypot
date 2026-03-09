@@ -51,8 +51,9 @@ content-organizer -> content-reviewer -> prompt-designer -> renderer-agent
 - 한글 렌더링 힌트 필수
 - `Korean Sans-serif (Gothic style)` 계열 권장
 - `korean-typography-spec.md`의 필수 문구 적용 필수: "All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts."
-- Heavy-weight Gothic-style Hangul (Pretendard ExtraBold, Nanum Gothic ExtraBold, 800+ weight) 권장
+- Heavy-weight Gothic-style Hangul (800+ weight) 권장
 - Thin/light Korean serif 회피
+- **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명(Nanum Gothic, Pretendard, Apple SD Gothic Neo, Malgun Gothic)을 절대 사용하지 않는다. Gemini가 이미지 내 보이는 텍스트로 렌더링한다. 대신: "heavy-weight Gothic-style sans-serif Korean font at 800+ weight"
 
 ### `<canvas>`
 - 해상도, 비율, 배경, 팔레트를 자연어로 기술
@@ -148,10 +149,20 @@ subtitle: "..."
     +-- <canvas>에 3840x2160, 16:9, 팔레트 반영
     +-- <layout>에서 value를 큰따옴표로 인용해 배치
 
+[Phase 2.5: Style Sheet 관리]
+    +-- 첫 번째 슬라이드(slide_index=0) 생성 시:
+        +-- palette, surface_style, lighting_direction, icon_style, glass_effect, corner_radius 추출
+        +-- {output_path}/style_sheet.md에 저장 (style_sheet_mode: "create")
+    +-- 두 번째 슬라이드부터:
+        +-- {output_path}/style_sheet.md를 읽어 동일 스타일 적용 (style_sheet_mode: "follow")
+        +-- 팔레트 색상 코드, 서피스 스타일, 조명 방향을 일관되게 유지
+
 [Phase 3: 품질 검증]
     +-- 5개 태그 존재 확인
     +-- <text_to_render> 형식 확인: key: "value"
     +-- 항목 수 상한 확인
+    +-- <text_to_render> 항목 수 확인: 본문 슬라이드 ≥ 8, 타이틀 슬라이드 ≥ 3
+    +-- <typography> 내 폰트 패밀리명 부재 확인 (Nanum Gothic, Pretendard 등)
     +-- 번호 목록 미사용 확인
 
 [Phase 4: 결과 저장]
@@ -173,6 +184,9 @@ subtitle: "..."
 - `<scene>` 또는 `<canvas>` 안에 네거티브 프롬프팅을 포함한다 (scene-richness-spec.md 참조): "No watermarks, no blurry text, no numbered lists as visual elements, no artifacts"
 - 선택된 레이아웃의 layout-types SKILL.md 해당 섹션에서 `시각화 원칙`과 `검증 규칙`을 읽고, 그 레이아웃의 구성 원칙을 `<scene>` 작성에 반영한다 (layout-types SKILL.md 수정 금지)
 - 동일 프레젠테이션의 여러 슬라이드를 생성할 때: 색상 팔레트, 조명 방향, 서피스 텍스쳐, 아이콘 스타일을 슬라이드 간 일관되게 유지한다 (슬라이드 간 스타일 일관성)
+- **최소 텍스트 밀도 강제**: 본문 슬라이드의 `<text_to_render>`는 최소 8항목, 타이틀/커버 슬라이드는 최소 3항목을 포함한다
+- 밀도 부족 시 자동 보강: 핵심 메시지를 KPI/수치/세부 항목으로 분해한다 (추상적 선언 1개 -> 구체적 데이터 포인트 3개)
+- **PhD급 청중 품질 기준**: 공학 박사 수준 청중을 위한 시각자료는 구체적 수치, 방법론 키워드, 성과 지표로 채워져야 한다. 각 슬라이드에 최소 2개의 정량적 지표(%, 건, 억원, 초 등)를 포함한다
 
 ## MUST NOT DO
 
@@ -182,6 +196,7 @@ subtitle: "..."
 - `pt`/`px` 단위를 사용하지 않는다
 - 마크다운 장식(`**`, `#`)을 태그 내부에 넣지 않는다
 - `${CLAUDE_PLUGIN_ROOT}`를 사용하지 않는다
+- `<typography>`에 구체적 폰트 패밀리명(Nanum Gothic, Pretendard, Apple SD Gothic Neo, Malgun Gothic)을 사용하지 않는다 - Gemini가 이미지 내 보이는 텍스트로 렌더링한다
 
 ## Resources
 
@@ -194,6 +209,6 @@ subtitle: "..."
 | `theme-pitch` | scene 톤과 팔레트 |
 | `theme-comparison` | scene 톤과 팔레트 |
 | `layout-types` | 공간 배치 패턴 |
-| `slide-renderer references/scene-richness-spec.md` | scene 풍부함 기준 + 네거티브 프롬프팅 + 구성 원칙 |
+| `slide-renderer references/scene-richness-spec.md` | scene 풍부함 기준 + EXCELLENT 등급 목표 (text density ≥ 8 for body slides) |
 | `slide-renderer references/validation-rules-map.md` | v1.11.0 검증 규칙 매핑 |
 | `slide-renderer references/korean-typography-spec.md` | 한글 타이포그래피 필수 사양 |
