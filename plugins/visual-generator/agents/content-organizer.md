@@ -26,6 +26,15 @@ model: sonnet
 - **vs prompt-designer**: 프롬프트를 생성하지 않음. 테마, 레이아웃, 핵심 개념까지만 결정
 - **vs renderer-agent**: 이미지 관련 작업 수행하지 않음
 
+## Content Classification Schema
+
+각 슬라이드의 개념은 다음 두 가지 분류로 구분됩니다:
+
+- **`render_text`**: 이미지에 텍스트로 렌더링될 콘텐츠 (제목, 수치, 레이블, 주요 메시지 등)
+- **`scene_context`**: 장면 묘사 및 시각적 컨텍스트 (배경, 분위기, 시각적 메타포, 시각적 요소 설명 등)
+
+**특별 규칙**: concept 테마는 `scene_context`만 사용하고 `render_text`를 사용하지 않습니다.
+
 ## Input Schema
 
 | 필드 | 설명 | 필수 | 기본값 |
@@ -60,6 +69,7 @@ model: sonnet
 ### 슬라이드 1: {제목}
 - **핵심 메시지**: {한 문장}
 - **주요 개념**: ["개념1", "개념2", "개념3"]
+- **콘텐츠 분류**: render_text (텍스트 렌더링) / scene_context (장면 묘사)
 - **권장 레이아웃**: {레이아웃명}
 - **레이아웃 근거**: {선택 이유}
 
