@@ -1,0 +1,17 @@
+[시작] 3개 슬라이드 프롬프트 처리
+  - 프롬프트 폴더: .sisyphus/evidence/task-14-gov-output/prompts
+  - 출력 폴더: .sisyphus/evidence/task-14-gov-output/images
+  - 모델: gemini-3-pro-image-preview
+  - 설정: 4K, 16:9, 사고모드 활성화, 고급 텍스트 렌더링
+
+[1/3] 01_title
+[품질 평가] 시도 1/3: 평균 10.0 (한글:10, 레이아웃:10, 색상:10) → 통과
+  [OK] Saved: .sisyphus/evidence/task-14-gov-output/images/01_title.png
+[2/3] 02_overview
+[품질 평가] 시도 1/3: 평균 10.0 (한글:10, 레이아웃:10, 색상:10) → 통과
+  [OK] Saved: .sisyphus/evidence/task-14-gov-output/images/02_overview.png
+[3/3] 03_details
+  [SKIP] Already exists: .sisyphus/evidence/task-14-gov-output/images/03_details.png
+
+==================================================
+[완료] 성공: 3, 실패: 0
