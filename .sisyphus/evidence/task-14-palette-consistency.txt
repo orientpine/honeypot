@@ -1,0 +1,20 @@
+[Palette Consistency Verification]
+
+theme_recommendation check:
+NOTE: theme_recommendation.md location may differ
+
+Extracted palette lines:
+=== .sisyphus/evidence/task-14-gov-output/prompts/02_overview.md ===
+- Primary: #1E3A5F (deep navy)
+- Secondary: #4A90A4 (steel blue)
+- Accent: #2E7D5A (forest green)
+- Background: #F5F7FA (off-white)
+
+=== .sisyphus/evidence/task-14-gov-output/prompts/03_details.md ===
+- Primary: #1E3A5F (deep navy)
+- Secondary: #4A90A4 (steel blue)
+- Accent: #2E7D5A (forest green)
+- Background: #F5F7FA (off-white)
+
+Result:
+PASS: Gov body slide palettes are identical across prompts.

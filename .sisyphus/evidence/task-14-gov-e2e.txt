@@ -1,0 +1,31 @@
+=== LINE COUNTS ===
+   88 .sisyphus/evidence/task-14-gov-output/prompts/01_title.md
+  107 .sisyphus/evidence/task-14-gov-output/prompts/02_overview.md
+  111 .sisyphus/evidence/task-14-gov-output/prompts/03_details.md
+   20 .sisyphus/evidence/task-14-gov-output/prompts/style_sheet.md
+  326 total
+
+=== 4-BLOCK STRUCTURE CHECK ===
+--- .sisyphus/evidence/task-14-gov-output/prompts/01_title.md ---
+4
+--- .sisyphus/evidence/task-14-gov-output/prompts/02_overview.md ---
+4
+--- .sisyphus/evidence/task-14-gov-output/prompts/03_details.md ---
+4
+
+=== NO XML TAGS ===
+PASS: No XML tags found
+
+=== NO PT/PX UNITS ===
+PASS: No pt/px units
+
+=== STYLE_SHEET.MD EXISTS ===
+.sisyphus/evidence/task-14-gov-output/prompts/style_sheet.md
+PASS
+
+=== CONTENT KEY:VALUE FORMAT ===
+slide_title: "핵심 성과 지표"
+badge_one: "01"
+adoption_rate: "도입률 34%"
+adoption_note: "중견 제조기업 중심 단계별 구축"
+badge_two: "02"
