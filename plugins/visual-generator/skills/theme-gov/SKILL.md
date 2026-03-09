@@ -42,11 +42,13 @@ description: "visual-generator gov 테마 무드 팔레트와 XML-tag 장면 가
 
 ## 한글 타이포그래피 가이드
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, e.g. Nanum Gothic, Pretendard)`
+- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
 - 위계 비율: 제목 > 부제목 > 본문 > 보조수치
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 - 번호/지표는 동일 계열 폰트로 통일한다
 - **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul 필수, 자모분리 방지)
+
+> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
 
 ## XML-Tag 출력 매핑
 
@@ -104,7 +106,7 @@ footer_right: "하반기 목표: 클라우드 전환율 80% · AI 도입 200개 
 </text_to_render>
 
 <typography>
-Heavy Gothic-style Korean sans-serif (Pretendard ExtraBold / Nanum Gothic Bold). Title at 120pt in #1E3A5F. Roman numeral headers at 64pt bold. Metric figures at 80pt in #4A90A4. Sub-labels at 36pt medium weight. Bottom summary strip at 32pt regular. Crisp anti-aliased Korean typography with professional typesetting. All numerals in the same Gothic family for visual unity.
+Heavy Gothic-style Korean sans-serif at ExtraBold (800+) for titles, Bold (700) for headers. Title at 120pt in #1E3A5F. Roman numeral headers at 64pt bold. Metric figures at 80pt in #4A90A4. Sub-labels at 36pt medium weight. Bottom summary strip at 32pt regular. Crisp anti-aliased Korean typography with professional typesetting. All numerals in the same Gothic family for visual unity.
 </typography>
 
 <canvas>
