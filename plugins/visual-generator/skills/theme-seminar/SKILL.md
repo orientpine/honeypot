@@ -42,13 +42,14 @@ description: "visual-generator seminar 테마 무드 팔레트와 XML-tag 장면
 
 ## 한글 타이포그래피 가이드
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, e.g. Nanum Gothic, Pretendard)`
+- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
 - 위계 비율: 제목 > 부제목 > 카드라벨 > KPI
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 - 숫자 강조는 굵게, 본문은 중간 굵기로 균형 유지
 - **상세 기준 참조**: `korean-typography-spec.md` (Heavy Gothic-style Hangul 필수, 자모분리 방지)
-- Heavy Gothic-style Hangul (예: Pretendard ExtraBold, Nanum Gothic ExtraBold, 800+ weight) 권장
+- Heavy Gothic-style Hangul (800+ weight) 권장
 - Thin/Light Korean serif 회피
+> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
 
 ## XML-Tag 출력 매핑
 
@@ -104,7 +105,7 @@ footer: "2026년 스마트 제조 혁신 사례"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Font hierarchy: hero_stat (ExtraBold 900, 72pt scale), title (ExtraBold 800, 48pt scale), section headers (Bold 700, 24pt scale), body items (Medium 500, 18pt scale). "99.7%" hero statistic rendered in large accent color (#2980B9) with high contrast. Korean labels in Bold Modern Korean Sans-serif (Pretendard ExtraBold or Nanum Gothic ExtraBold).
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Font hierarchy: hero_stat (ExtraBold 900, 72pt scale), title (ExtraBold 800, 48pt scale), section headers (Bold 700, 24pt scale), body items (Medium 500, 18pt scale). "99.7%" hero statistic rendered in large accent color (#2980B9) with high contrast. Korean labels in Bold Modern Korean sans-serif at ExtraBold (800+).
 </typography>
 
 <canvas>

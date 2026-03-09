@@ -37,11 +37,12 @@ description: "visual-generator pitch 목적 테마 장면 가이드와 XML-tag �
 
 ## 한글 타이포그래피 가이드
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, e.g. Nanum Gothic, Pretendard)`
+- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
 - 위계 비율: 핵심숫자 > 제목 > 보조설명 > CTA
 - 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
 
 - **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, high-contrast dark background text)
+> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
 ## XML-Tag 출력 매핑
 
 - `<scene>`: 다크 프리미엄 톤을 3~5문장으로 기술
@@ -89,7 +90,7 @@ source: "내부 대시보드 기준 2025.12"
 </text_to_render>
 
 <typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Bold Modern Korean Sans-serif (Gothic style, e.g. Pretendard ExtraBold, Nanum Gothic Bold). Hero number "247%" at 120pt in accent purple #BF5AF2, center-aligned, extra-bold weight. Hero label "연간 매출 성장률" at 28pt in #F5F5F7, center-aligned. KPI numbers at 36pt in #0A84FF, left-aligned within frosted-glass cards. KPI labels at 16pt in #86868B, left-aligned within cards. Subtitle at 18pt in #86868B, center-bottom. Source attribution at 12pt in #86868B, right-bottom corner. Crisp anti-aliased Korean typography with professional typesetting.
+All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Bold heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) for hero number and titles, Bold (700) for KPI labels. Hero number "247%" at 120pt in accent purple #BF5AF2, center-aligned, extra-bold weight. Hero label "연간 매출 성장률" at 28pt in #F5F5F7, center-aligned. KPI numbers at 36pt in #0A84FF, left-aligned within frosted-glass cards. KPI labels at 16pt in #86868B, left-aligned within cards. Subtitle at 18pt in #86868B, center-bottom. Source attribution at 12pt in #86868B, right-bottom corner. Crisp anti-aliased Korean typography with professional typesetting.
 </typography>
 
 <canvas>
