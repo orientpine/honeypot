@@ -1,2 +1,9 @@
-6
+=== v3.0.0 references in AGENTS.md ===
+1
+
+=== XML-tag v2.2.0 remaining (must be 0) ===
 0
+0
+
+=== 4-block v3.0.0 in AGENTS.md ===
+     ├── visual-generator/             # 시각자료 통합 플러그인 (4-block v3.0.0, Agent + Command + Skill)
