@@ -67,26 +67,28 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
   - scene에 text_to_render로 가야 할 항목 포함
   - canvas 핵심 스펙 누락
 
-### 5) v1.11.0 Compliance (v1.11.0 검증 규칙 준수)
-- 이중 렌더링 금지: 인덱스 참조 표현 금지 (예: "첫 번째 항목")
-- concept keyword contamination 금지: 추상 키워드가 text_to_render에 부유
-- 원형 번호 마커 금지: ①②③ in text_to_render
-- 번호 목록 금지: scene/layout/typography에서 1., 2. 금지
-- REJECT 기준: v1.11.0 위반 하나라도 발견
+### 5) Font Name Leakage Detection (폰트명 유출 검출)
+- `<typography>` 내부에 구체적 폰트 패밀리명이 포함되어 있는가
+- 금지 패턴: "Nanum Gothic", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic"
+- 이 패턴 중 하나라도 발견 시 즉시 REJECT
+- 사유: Gemini가 폰트명을 이미지 내 보이는 텍스트로 렌더링함
+- REJECT 기준: 위 4개 폰트명 중 하나라도 `<typography>` 안에 존재
 
-### 6) Theme-Specific Rules (테마 특수 규칙)
-- concept: `<text_to_render>` MUST be empty (0 items), `<scene>` MUST be >=7 sentences
-- comparison: `<scene>` must describe LEFT and RIGHT separately, text_to_render max 12
-- gov/seminar: max 25 items
-- whatif: max 20 items
-- pitch: max 18 items
-- REJECT 기준: 테마 규칙 또는 상한 위반
+### 6) Text Density Validation (텍스트 밀도 검증)
+- `<text_to_render>` 항목 수가 slide_type별 최소 요건을 충족하는가
+- 기준:
+  - body 슬라이드: ≥ 8 items
+  - title 슬라이드: ≥ 3 items
+- REJECT 기준:
+  - 최소 요건의 50% 미만 (body < 4항목, title < 2항목): 즉시 REJECT
+  - 최소 요건 미달이지만 50% 이상: REJECT + 보강 권고 사유 반환
 
-### 7) Korean Text Quality (한글 텍스트 품질)
-- `<typography>`는 Gothic-style, Heavy-weight Korean fonts를 명시해야 함
-- "crisp" 또는 "legible" Korean typography 문구를 포함해야 함
-- 제목 글꼴 두께(Bold/Extra-Bold) 명시 필요
-- REJECT 기준: typography에 한글 폰트 명세 누락
+### 7) Palette Consistency Check (팔레트 일관성 검증)
+- `{output_path}/style_sheet.md`가 존재하는 경우, 현재 슬라이드의 `<canvas>` 팔레트가 style_sheet.md의 팔레트와 일치하는가
+- 검증 항목: primary, secondary, accent 색상 코드 일치 여부
+- REJECT 기준:
+  - style_sheet.md 없으면 SKIP (첫 번째 슬라이드)
+  - style_sheet.md 있는데 `<canvas>` 팔레트가 불일치 시 REJECT
 
 ## Workflow
 
@@ -106,9 +108,9 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
       +-- Dimension 2: Content Completeness check
       +-- Dimension 3: Cross-Tag Consistency (orphan/ghost)
       +-- Dimension 4: Logical Completeness
-      +-- Dimension 5: v1.11.0 Compliance
-      +-- Dimension 6: Theme-Specific Rules
-      +-- Dimension 7: Korean Text Quality
+      +-- Dimension 5: Font Name Leakage Detection
+      +-- Dimension 6: Text Density Validation
+      +-- Dimension 7: Palette Consistency Check
       +-- Overall: PASS if all 7 pass; REJECT if any fails
       +-- On REJECT: produce specific line-level correction instructions
 
