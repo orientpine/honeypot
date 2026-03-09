@@ -438,13 +438,13 @@ CONTENT:
 
 | Rule # | Rule Name | v1.X.X | Key Validation |
 |--------|-----------|--------|-----------------|
-| 1 | Double-Rendering Prevention | v1.9.0 | No index-based references in `<layout>` |
-| 2 | Seminar Theme Scene-ification Prevention | v1.9.0 | No abstract concept labels in `<text_to_render>` |
+| 1 | Double-Rendering Prevention | v1.9.0 | No index-based references in `### Content Placement` |
+| 2 | Seminar Theme Scene-ification Prevention | v1.9.0 | No abstract concept labels in `## CONTENT` |
 | 3 | Axis-Based Layout Space-Meaning Verification | v1.9.0 | Spatial hierarchy matches semantic hierarchy |
-| 4 | CONTENT↔Placement Full Correspondence | v1.10.0 | Count match: `<text_to_render>` items = `<layout>` references |
-| 5 | Orphan Item Prevention | v1.10.0 | Every `<text_to_render>` value appears in `<layout>` |
-| 6 | Data Duplication Prevention | v1.10.0 | No value appears in multiple tags |
-| 7 | Concept Keyword Contamination Prevention | v1.10.0 | No floating concept words in `<text_to_render>` |
+| 4 | CONTENT↔Placement Full Correspondence | v1.10.0 | Count match: `## CONTENT` values = `### Content Placement` references |
+| 5 | Orphan Item Prevention | v1.10.0 | Every `## CONTENT` value appears in `### Content Placement` |
+| 6 | Data Duplication Prevention | v1.10.0 | No value appears in multiple sections |
+| 7 | Concept Keyword Contamination Prevention | v1.10.0 | No floating concept words in `## CONTENT` |
 | 8 | Reference Number System Validation | v1.10.1 | Explicit check for index-based references |
 | 9 | Seminar Label Decontextualization Validation | v1.10.1 | Explicit check for meta-labels in seminar themes |
 | 10 | Orphan Item Explicit Check | v1.10.1 | Explicit count-match verification |
