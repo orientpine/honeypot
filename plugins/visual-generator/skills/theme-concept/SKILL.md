@@ -1,92 +1,361 @@
 ---
 name: theme-concept
-description: "visual-generator concept 테마 무드 팔레트와 XML-tag 장면 가이드. Use when theme=concept."
+description: "visual-generator concept 테마(Kurzgesagt 풍 시각 스토리텔링) 무드 팔레트. theme=concept일 때 사용. 텍스트 없이 장면으로 개념을 설명하는 교육용 일러스트레이션. 9종 무드 각각 4색 팔레트 제공."
 ---
 
-# Concept Theme
+# Concept 테마 무드 팔레트
 
-Kurzgesagt 풍 장면 스토리텔링 전용 테마다. 핵심 원칙은 텍스트 없이 장면으로만 설명하는 것이다.
+Kurzgesagt 풍 시각 스토리텔링을 위한 9가지 무드 테마. 텍스트 없이 **장면과 시각적 메타포만으로** 개념을 전달하는 교육용 일러스트레이션입니다.
 
-## Mood Palette (9)
+**시각 정체성**: "Kurzgesagt처럼 — 채도 높은 플랫 벡터 일러스트로 복잡한 개념을 한 장면에 담는다"
 
-| mood | primary | secondary | accent | foreground |
-|------|---------|-----------|--------|------------|
-| technical-report | #1B2838 | #00BCD4 | #FF6F00 | #E0F7FA |
-| clarity | #0D2137 | #26C6DA | #FFCA28 | #ECEFF1 |
-| tech-focus | #0A1628 | #2979FF | #00E5FF | #E8EAF6 |
-| growth | #1B3A2D | #66BB6A | #FFD54F | #E8F5E9 |
-| connection | #1A1A3E | #AB47BC | #26C6DA | #F3E5F5 |
-| innovation | #212121 | #FF7043 | #FF4081 | #FFF3E0 |
-| knowledge | #0D1B2A | #1E88E5 | #FFC107 | #E3F2FD |
-| presentation | #0E3B43 | #E53935 | #FFEE58 | #E0F2F1 |
-| workshop | #2E3B2E | #FF8A65 | #4DD0E1 | #FFF8E1 |
+**색상 전략**: 어두운 배경 위에 고채도 전경 요소를 배치합니다. 각 도형은 단일 채도 높은 색으로 채우고, 난색과 한색의 강한 대비를 활용합니다. 그라데이션은 배경에서만 미세하게 허용합니다.
 
-## Scene Guide (Rendering Style -> `<scene>`)
+**핵심 원칙**: 이 테마에는 **텍스트가 없습니다**. 모든 정보는 장면 구성, 캐릭터 행동, 시각적 메타포로 전달합니다.
 
-`<scene>`는 아래 요소를 번호 없이 자연어로 작성한다.
-- 서피스: 플랫 벡터 도형과 캐릭터
-- 배경: 어두운 단색/미세 그라데이션
-- 코너: 큰 라운딩 기반
-- 연결선: 화살표 대신 입자 흐름/행동 연쇄
-- 시각장식: 글로우, 보케, 리듬감 있는 레이어
-- 공간구성: 풀블리드, 전경-중경-후경
-- 시각메타포: 추상 개념을 물리 장면으로 번역
+---
 
-**Concept 테마 특칙**: `scene-richness-spec.md` (최소 7문장, 7요소 전부 포함 목표, 시각 메타포 집중, negative prompting 필수)
+#### 무드 1: 기술 탐구 (technical-report) - 권장
 
-## Positive Scene Direction
+**용도**: 기술 원리, 연구 과정, 시스템 작동 원리를 장면으로 설명
 
-- 핵심 메시지는 캐릭터/행동/환경/결과의 시각 대비로 전달한다
-- 텍스트 라벨 대신 오브젝트 관계와 스케일로 의미를 표현한다
-- 장면 요소는 캔버스 경계 안에서 완결되게 배치한다
+**색상 팔레트**:
+- 주조: #1B2838 (딥 스페이스) - 배경, 깊이감
+- 보조: #00BCD4 (일렉트릭 시안) - 기술 요소, 데이터 흐름, 연결선
+- 강조: #FF6F00 (비비드 오렌지) - 핵심 포인트, 에너지, 반응
+- 전경: #E0F7FA (아이스 화이트) - 전경 요소, 하이라이트
 
-## 한글 타이포그래피 가이드
+**스타일 노트**:
+- 우주/실험실 분위기의 깊은 배경
+- 기계, 회로, 분자 등 기술 요소를 귀여운 캐릭터로 의인화
+- 시안 계열 글로우로 데이터/에너지 흐름 표현
 
-concept는 기본적으로 텍스트 렌더링을 사용하지 않는다.
-- `<typography>`에는 다음 힌트를 최소로 유지한다: `Korean Sans-serif (Gothic style)`
-- 필요 시 캡션 수준의 최소 문자열만 허용하며 가독성 키워드를 포함한다
-- 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
-- **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, 자모분리 방지)
-- ⚠️ **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명을 절대 사용하지 마세요. Gemini가 이미지 내 보이는 텍스트로 렌더링합니다. 금지 폰트명 목록은 `korean-typography-spec.md`의 CRITICAL warning 참조.
+---
 
-## XML-Tag 출력 매핑
+#### 무드 2: 명료 (clarity)
 
-- `<scene>`: 중심 장면을 **최소 7문장**으로 상세 기술 (concept 특칙)
-- `<text_to_render>`: 비워 둔다 (항목 0개)
-- `<typography>`: 텍스트 최소 사용 원칙과 한글 힌트
-- `<canvas>`: 3840x2160, 16:9, 무드 팔레트 반영
-- `<layout>`: 장면 요소 위치를 자연어로 기술
+**용도**: 개념 정의, 구조 설명, 작동 원리를 시각적으로 분해
 
-**검증 규칙**: `validation-rules-map.md` (text_to_render 항목 수 = 0 엄격 준수, ghost reference 방지)
+**색상 팔레트**:
+- 주조: #0D2137 (미드나이트 네이비) - 배경
+- 보조: #26C6DA (틸) - 구조 요소, 프레임
+- 강조: #FFCA28 (선샤인 옐로) - 핵심 개념, 하이라이트
+- 전경: #ECEFF1 (라이트 그레이) - 전경 요소
 
-무드 톤 가이드:
-- `technical-report`: 구조적이고 차분한 탐구 장면
-- `innovation`: 강한 대비와 전환 순간 강조
-- `knowledge`: 발견과 학습의 깊이감 강조
+**스타일 노트**:
+- 깨끗하고 명확한 장면 구성
+- X-ray/단면도 스타일로 내부 구조를 보여주는 시각 기법
+- 옐로 하이라이트로 "이것이 핵심" 포인트 강조
 
-## Golden Reference Example
+---
 
-**Topic**: 탄소중립 도시 비전
-**Layout**: `full_bleed`
-**Theme**: concept / mood: `knowledge`
+#### 무드 3: 테크 (tech-focus)
 
-```xml
-<scene>
-A vast aerial view of a futuristic carbon-neutral city stretches across the entire canvas, rendered in Kurzgesagt flat-vector style against a deep navy (#0D1B2A) background with subtle radial gradient toward the center. In the foreground, oversized translucent leaf-shaped solar collectors rise from geometric rooftops, their surfaces glowing with soft cerulean (#1E88E5) energy pulses that flow downward through luminous conduit lines embedded in building walls. The mid-ground reveals a network of elevated green corridors connecting tower clusters, where tiny flat-vector citizens walk among miniature forests growing on bridge surfaces — each tree canopy rendered as layered concentric circles in graduating emerald-to-lime tones with gentle bokeh particles drifting upward like fireflies. A colossal wind turbine array occupies the right third of the scene, blades abstracted into sweeping golden (#FFC107) arcs that trail particle streams suggesting perpetual rotation, their bases wrapped in moss-textured geometric patterns. Below street level, a cross-section cutaway exposes an underground hydrogen pipeline network illustrated as glowing blue capillaries branching through earth layers rendered in warm brown gradients, with tiny animated spark nodes at each junction point pulsing rhythmically. The sky transitions from deep navy at the edges to a hopeful dawn gradient at the horizon line, populated by simplified bird silhouettes and a large circular sun motif composed of concentric golden rings with a white-hot center. Negative space is used deliberately: no text, no labels, no numbers appear anywhere — the entire narrative of carbon neutrality is conveyed purely through the visual metaphor of organic energy flowing from nature into human infrastructure and back again, creating a closed-loop visual cycle that the viewer traces naturally from solar collectors to buildings to underground networks to turbines to sky and back down.
-</scene>
+**용도**: AI, 데이터, 디지털 시스템, 로봇, 자동화를 장면으로 표현
 
-<text_to_render>
-</text_to_render>
+**색상 팔레트**:
+- 주조: #0A1628 (다크 네이비) - 배경
+- 보조: #2979FF (일렉트릭 블루) - 디지털 요소, 인터페이스
+- 강조: #00E5FF (네온 시안) - 활성 상태, 데이터 흐름
+- 전경: #E8EAF6 (라벤더 화이트) - 전경 요소
 
-<typography>
-Korean Sans-serif (Gothic style). Crisp anti-aliased Korean typography. Professional typesetting. No text elements rendered on canvas.
-</typography>
+**스타일 노트**:
+- 디지털 세계를 물리적 공간처럼 표현
+- 데이터를 물방울/입자/빛줄기로 시각화
+- 로봇/AI를 친근한 캐릭터로 의인화
 
-<canvas>
-3840x2160 pixels, 16:9 aspect ratio. Background: deep navy #0D1B2A. Color palette — primary: #0D1B2A, secondary: #1E88E5, accent: #FFC107, foreground: #E3F2FD. Subtle radial gradient from center. Rich layered depth with foreground-midground-background separation.
-</canvas>
+---
 
-<layout>
-Full-bleed composition with no margins. Left third: solar collector towers and building cluster with green corridors. Center: elevated walkways and citizen activity zone with bokeh particle field. Right third: wind turbine array with golden arc trails. Lower quarter: underground cross-section cutaway showing hydrogen pipeline network. Upper edge: dawn gradient sky with bird silhouettes and concentric sun motif. Visual flow guides the eye in a clockwise loop from top-left solar panels through center activity to right turbines, down through underground pipes, and back up.
-</layout>
+#### 무드 4: 성장 (growth)
+
+**용도**: 발전, 진화, 학습, 성장 과정을 장면의 변화로 표현
+
+**색상 팔레트**:
+- 주조: #1B3A2D (딥 포레스트) - 배경
+- 보조: #66BB6A (비비드 그린) - 성장 요소, 식물, 확장
+- 강조: #FFD54F (골드) - 성과, 열매, 성취
+- 전경: #E8F5E9 (민트 화이트) - 전경 요소
+
+**스타일 노트**:
+- 자연 성장(씨앗→나무)을 기술 성장에 메타포로 활용
+- 아래에서 위로 성장하는 방향성
+- 골드 요소로 성취/결실 표현
+
+---
+
+#### 무드 5: 연결 (connection)
+
+**용도**: 네트워크, 협력, 관계, 생태계를 연결된 장면으로 표현
+
+**색상 팔레트**:
+- 주조: #1A1A3E (딥 인디고) - 배경
+- 보조: #AB47BC (비비드 퍼플) - 연결선, 노드
+- 강조: #26C6DA (터콰이즈) - 활성 연결, 데이터 교환
+- 전경: #F3E5F5 (라벤더) - 전경 요소
+
+**스타일 노트**:
+- 캐릭터/요소들이 빛나는 선으로 연결된 구도
+- 네트워크 토폴로지를 물리적 공간에 배치
+- 퍼플-시안 대비로 연결의 에너지 표현
+
+---
+
+#### 무드 6: 혁신 (innovation)
+
+**용도**: 변화, 돌파, 패러다임 전환을 극적인 장면으로 표현
+
+**색상 팔레트**:
+- 주조: #212121 (차콜 블랙) - 배경
+- 보조: #FF7043 (비비드 오렌지) - 변화 요소, 에너지
+- 강조: #FF4081 (핫 핑크) - 돌파 포인트, 폭발
+- 전경: #FFF3E0 (웜 화이트) - 전경 요소
+
+**스타일 노트**:
+- 에너지 폭발, 변환, 전환의 역동적 장면
+- 어둠을 뚫고 나오는 밝은 에너지 표현
+- 오렌지-핑크 그라데이션으로 혁신의 열기
+
+---
+
+#### 무드 7: 지식 (knowledge)
+
+**용도**: 학습, 발견, 탐구, 지식 축적을 탐험 장면으로 표현
+
+**색상 팔레트**:
+- 주조: #0D1B2A (미드나이트) - 배경
+- 보조: #1E88E5 (로얄 블루) - 지식 구조, 책, 아카이브
+- 강조: #FFC107 (앰버 골드) - 발견, 깨달음, 빛
+- 전경: #E3F2FD (아이스 블루) - 전경 요소
+
+**스타일 노트**:
+- 도서관/관측소/연구실을 판타지 세계로 표현
+- 지식을 빛나는 구체/결정체로 시각화
+- 골드 빛이 어둠을 비추는 "발견의 순간"
+
+---
+
+#### 무드 8: 발표 (presentation)
+
+**용도**: 핵심 메시지를 임팩트 있는 단일 장면으로 전달
+
+**색상 팔레트**:
+- 주조: #0E3B43 (딥 틸) - 배경
+- 보조: #E53935 (비비드 레드) - 핵심 요소, 주목
+- 강조: #FFEE58 (브라이트 옐로) - 하이라이트, 에너지
+- 전경: #E0F2F1 (민트) - 전경 요소
+
+**스타일 노트**:
+- 한 장면에 하나의 강렬한 메시지
+- 스케일 대비(거대한 요소 vs 작은 캐릭터)로 임팩트
+- 레드-옐로 조합으로 시선 집중
+
+---
+
+#### 무드 9: 워크숍 (workshop)
+
+**용도**: 협업, 실행, 현장 활동을 활기찬 장면으로 표현
+
+**색상 팔레트**:
+- 주조: #2E3B2E (다크 올리브) - 배경
+- 보조: #FF8A65 (코랄 오렌지) - 활동, 에너지, 협업
+- 강조: #4DD0E1 (스카이 시안) - 도구, 결과물
+- 전경: #FFF8E1 (웜 크림) - 전경 요소
+
+**스타일 노트**:
+- 캐릭터들이 함께 무언가를 만드는 장면
+- 도구/장비를 귀엽고 단순하게 표현
+- 따뜻한 오렌지 톤으로 협업의 에너지
+
+---
+
+## 렌더링 스타일 (Rendering Style)
+
+이 스타일의 시각적 DNA를 정의합니다. prompt-designer가 INSTRUCTION/CONFIGURATION 블록 생성 시 반드시 참조해야 합니다.
+
+| 차원 | 지시 사항 |
+|------|-----------|
+| **서피스 (도형/캐릭터)** | 플랫 벡터 일러스트레이션. 둥근 기하학적 형태(rounded geometric shapes)와 부드러운 곡선(smooth curves). 각 도형은 단일 고채도 색상으로 채움(bold color blocking). 테두리 없음. 그림자는 같은 색의 어두운 톤으로 최소한만 사용. |
+| **배경** | 어두운 단색 또는 미세한 대각선 그라데이션(주조색 기반). 배경에 미세한 별/입자/보케 2-4개 허용. 배경은 전경 요소를 돋보이게 하는 무대 역할. |
+| **코너/엣지** | 모든 형태에 큰 라운딩 적용. 날카로운 모서리 없음. 캐릭터와 사물 모두 부드럽고 친근한 형태. 원(circle), 캡슐(pill), 둥근 사각형이 기본 도형. |
+| **연결선** | 연결선 대신 **시각적 근접성과 행동**으로 관계를 표현. 필요 시 빛나는 입자 흐름(glowing particle stream) 또는 에너지 선(energy beam)으로 연결. 전통적 화살표 사용하지 않음. |
+| **시각 장식** | 빛나는 글로우 효과(glow), 작은 빛 입자(particles), 반투명 원형 보케, 에너지 파동(ripple). 플랫하되 깊이감을 빛과 레이어로 표현. 전통적 아이콘/불릿 사용하지 않음. |
+| **타이포그래피** | **텍스트 없음**. 이 테마에서는 어떤 텍스트도 이미지에 렌더링하지 않는다. 모든 정보는 시각적 요소(캐릭터, 사물, 환경, 행동, 스케일)로 전달한다. |
+| **공간 구성** | 풀블리드(edge-to-edge) 장면. 전체 캔버스를 하나의 연속된 장면으로 활용. 프레임/테두리 의식 없이 영화의 한 장면처럼 구성. 전경-중경-후경의 3레이어 깊이감. 핵심 요소는 화면의 1/3 지점에 배치(삼분법). **세이프 존**: 모든 핵심 시각 요소(캐릭터, 주요 오브젝트, 행동의 결과물)는 캔버스 가장자리에서 **5% 이상 안쪽**에 완전히 포함되어야 한다. 배경 환경(하늘, 지면, 그라데이션)만 가장자리까지 확장을 허용한다. |
+| **시각 메타포** | **시각 스토리텔링(Visual Storytelling)**. 복잡한 개념을 일상적 장면이나 판타지 세계로 번역. 추상 개념을 물리적 사물로 의인화. 스케일 대비(거대 vs 미소)로 중요도 표현. 인과관계를 장면 내 행동 시퀀스로 보여줌. |
+
+---
+
+## 장면 구성 가이드 (Scene Composition)
+
+concept 스타일의 장면은 다음 **5가지 요소**를 통해 정보를 전달합니다:
+
+### 1. 캐릭터/주체 (WHO)
+- 개념의 주체를 **단순화된 캐릭터**로 표현 (사람, 로봇, 의인화된 사물)
+- Kurzgesagt 특유의 둥글고 귀여운 캐릭터 스타일
+- 표정은 단순하되 감정을 명확히 전달 (점 눈, 작은 입)
+
+### 2. 행동 (DOING)
+- 캐릭터가 무언가를 **하고 있는** 상태 (정지 금지)
+- 행동이 곧 메시지: "무엇을 하고 있는가"가 핵심 개념을 전달
+- 과장된 포즈로 행동의 의미를 명확히
+
+### 3. 환경 (WHERE)
+- 어두운 배경 위에 구체적인 환경 단서 배치
+- 장소가 맥락을 제공 (농장, 실험실, 도시, 우주 등)
+- 환경 요소도 둥글고 단순한 형태로 표현
+
+### 4. 시각적 결과 (RESULT)
+- 행동의 결과를 **시각적으로** 보여줌 (텍스트 수치 대신)
+- 크기 대비: 작았던 것이 커지는 것으로 성장 표현
+- 색상 대비: 어두운 영역이 밝아지는 것으로 개선 표현
+- 양적 대비: 적었던 것이 많아지는 것으로 증가 표현
+
+### 5. 스케일/비율 (SCALE)
+- 중요한 것은 크게, 덜 중요한 것은 작게
+- 거시적 관점(우주에서 본 지구)과 미시적 관점(세포 내부) 자유롭게 활용
+- 스케일 자체가 메시지를 전달
+
+### 6. 캔버스 완결성 (COMPLETENESS) — 렌더링 품질 규칙
+
+장면의 모든 핵심 요소가 캔버스 안에서 **완결된 형태**로 렌더링되어야 합니다:
+
+| 규칙 | 설명 |
+|------|------|
+| **세이프 존 5%** | 캐릭터, 주요 오브젝트, 행동 결과물은 캔버스 상하좌우 가장자리에서 최소 5%(4K 기준: 가로 192px, 세로 108px) 안쪽에 완전히 포함되어야 한다 |
+| **잘림 금지** | 핵심 요소(캐릭터의 몸, 주요 오브젝트)가 캔버스 경계에서 잘리면 안 된다. 캐릭터의 머리, 손, 발이 프레임 밖으로 나가지 않는다 |
+| **배경만 블리드** | 캔버스 가장자리까지 확장되는 것은 배경 요소(하늘, 지면, 그라데이션, 별/입자)만 허용된다 |
+| **의도적 출혈 금지** | "일부러 잘리게" 배치하는 크롭 기법을 사용하지 않는다. 모든 핵심 요소는 온전한 전체 형태를 보여준다 |
+| **여유 공간** | 핵심 요소 주변에 숨 쉴 공간(breathing room)을 확보한다. 요소가 캔버스 경계에 빽빽하게 밀착되지 않는다 |
+
+---
+
+## 시각적 번역 가이드 (Visual Translation)
+
+추상 개념을 장면으로 번역하는 방법:
+
+| 추상 개념 | 시각적 표현 방법 |
+|-----------|-----------------|
+| 효율 향상 | 적은 캐릭터가 더 많은 결과물을 만드는 장면 |
+| 비용 절감 | 큰 동전/자원 더미가 작아지면서 결과물은 유지되는 장면 |
+| 자동화 | 로봇/기계가 대신 일하고 사람은 관찰하는 장면 |
+| 안전성 | 보호막/쉴드 안에서 안전한 캐릭터 |
+| 연결/협력 | 빛나는 선으로 연결된 캐릭터들이 함께 무언가를 만드는 장면 |
+| 데이터 흐름 | 빛 입자가 파이프/경로를 통해 이동하는 장면 |
+| 혁신/변화 | 어둠을 뚫고 나오는 밝은 빛/에너지 폭발 |
+| 문제 해결 | 어두운 장애물이 밝은 도구에 의해 제거되는 장면 |
+
+---
+
+## 권장 레이아웃
+
+concept 스타일에 특히 적합한 레이아웃 우선순위:
+
+| 우선순위 | 레이아웃 | 이유 |
+|:--------:|----------|------|
+| 1 | Central (중심) | 핵심 캐릭터/개념을 중심에 두고 주변 요소가 둘러싼 장면 — 한 눈에 파악 |
+| 2 | Section-Flow (섹션-플로우) | 상단 대형 장면 + 하단 작은 장면 시퀀스 — 원인과 결과를 한 화면에 |
+| 3 | Contrast (대비) | 좌우 장면 대비(어둠 vs 빛, 전 vs 후) — 변화를 극적으로 표현 |
+| 4 | Evolution (진화) | 좌→우로 성장/변화하는 연속 장면 — 진행 과정 표현 |
+
+**비권장**: Swimlane, Org-Network, Strategy Map (텍스트 의존도 높음)
+
+---
+
+## 콘텐츠 표현 규칙
+
+concept 스타일에는 **텍스트가 없습니다**:
+
+| 규칙 | 설명 |
+|------|------|
+| 텍스트 제로 | CONTENT 블록에 텍스트 요소를 넣지 않는다. 모든 정보는 장면으로 전달 |
+| 장면 묘사만 | INSTRUCTION 블록에 장면 구성(캐릭터, 행동, 환경, 결과)을 상세히 기술 |
+| 시각적 메타포 | 추상 개념은 반드시 물리적 시각 요소로 번역하여 INSTRUCTION에 기술 |
+| CONTENT 역할 변경 | CONTENT 블록은 "장면에 포함될 시각 요소 목록"으로 사용 (텍스트가 아닌 사물/캐릭터 목록) |
+
+### CONTENT 블록 작성 방식 (이 테마 전용)
+
+이 테마에서 CONTENT 블록은 **렌더링될 텍스트가 아닌**, 장면에 포함될 **시각 요소 목록**으로 작성합니다:
+
+```markdown
+## CONTENT
+
+### Scene Elements (시각 요소)
+
+| 요소 | 형태 | 역할 |
+|------|------|------|
+| 고령 농부 캐릭터 | 둥근 체형, 점 눈, 밀짚모자 | 주인공 — 현재 상태 표현 |
+| 트랙터 | 둥근 사각형, 큰 바퀴, 오렌지색 | 작업 도구 |
+| 자율화 모듈 | 시안색 글로우, 안테나, LED | 기술 솔루션 |
+| 모니터 대시보드 | 둥근 사각형 스크린, 글래스모피즘 | 원격 관제 |
+| 밭 | 정렬된 녹색 줄, 부드러운 언덕 | 환경/배경 |
+
+### Scene Composition (장면 구성)
+
+- 전경: 실내에서 모니터를 바라보는 농부 캐릭터
+- 중경: 모니터 화면에 트랙터 위치와 센서 데이터
+- 후경: 창 너머로 보이는 자율주행 트랙터와 정돈된 밭
 ```
+
+---
+
+## 렌더링 금지 요소 (CRITICAL)
+
+프롬프트 생성 시 다음 요소는 **절대 포함 금지**:
+
+| 유형 | 금지 예시 | 설명 |
+|------|-----------|------|
+| **이미지 플레이스홀더** | `[Image 1]`, `[Image 2]`, `[사진]`, `[이미지]`, `[아이콘]` | **대괄호 이미지 참조는 Gemini가 그대로 텍스트로 렌더링함.** 시각 요소는 INSTRUCTION의 Content Placement에서 자연어로 묘사할 것 |
+| **모든 텍스트** | 제목, 라벨, 수치, 범례, 설명문 | 이 테마에 텍스트는 없다 |
+| 위치 지시자 | `[상단]`, `[하단 결론1]`, `[왼쪽 영역]` | 레이아웃 배치 힌트 |
+| 레이아웃 유형명 | `TED 스타일`, `미니멀 인포그래픽` | 메타포/레이아웃 이름 |
+| 색상 코드 | `(#HEXCODE)`, `Primary Color` | CONFIGURATION에서만 사용 |
+| 크기 힌트 | `(대형)`, `(중형)`, `48pt` | 사용하지 않음 |
+| 역할 라벨 | `Main Title`, `Sub-header` | 사용하지 않음 |
+| 차트/그래프 | 막대차트, 파이차트, 라인차트 | 시각적 메타포로 대체 |
+| 표/테이블 | 격자형 데이터 표 | 시각적 비교 장면으로 대체 |
+| 아이콘/불릿 | ●, ■, ①②③ 등 | 캐릭터와 사물로 대체 |
+| **엣지 클리핑** | 캐릭터/주요 오브젝트가 캔버스 가장자리에서 잘리는 것 | 모든 핵심 요소는 세이프 존(5%) 안에 온전히 포함되어야 한다 |
+
+**이 테마의 이미지에는 단 하나의 글자도 렌더링되어서는 안 됩니다.**
+
+---
+
+## 구성 지시어 렌더링 방지 (Content Placement 메타라벨 금지) — CRITICAL
+
+concept 테마는 텍스트가 없지만, INSTRUCTION 블록의 Content Placement에서 **장면 요소의 역할 분류명(메타라벨)**을 사용하면 Gemini가 해당 라벨을 이미지에 텍스트로 렌더링할 수 있습니다. 장면 요소를 설명할 때 역할 분류명 대신 **구체적인 시각 묘사**를 사용합니다.
+
+| 금지 (메타라벨 — 렌더링 유출) | 올바른 (구체적 시각 묘사) |
+|------|------|
+| `중앙: 핵심 캐릭터 배치` | `중앙에 둥근 체형의 농부 캐릭터가 태블릿을 들고 서 있다` |
+| `우측: 기술 솔루션 요소` | `우측에 시안색 글로우를 내뿜는 안테나 장착 자율주행 트랙터` |
+| `하단: 성과 시각화 요소` | `하단에 밝은 녹색으로 빛나는 정돈된 밭고랑이 펼쳐져 있다` |
+
+**금지 메타라벨 목록**: 핵심 캐릭터, 기술 솔루션, 성과 요소, 핵심 비전, 주요 모듈, 결과 시각화, 메인 장면, 보조 장면
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+concept 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: 시각 스토리텔링의 목적 (개념 설명, 원리 전달 등)
+- `### Target Audience`: 교육 대상, 발표 청중 등
+- `### Key Message`: 장면으로 전달할 핵심 개념 한 문장
+- `### Visual Style`: `concept` 스타일 명시 + Kurzgesagt 특성
+- `### Rendering Style`: 서피스(플랫 벡터), 배경(어두운 단색/그라데이션), 코너/엣지(큰 라운딩), 연결선(입자 흐름), 시각 장식(글로우, 보케), 공간 구성(풀블리드, 3레이어 깊이), 시각 메타포(시각 스토리텔링) 7개 차원
+- `### Content Placement`: 장면 구성 상세 — 전경/중경/후경 배치, 캐릭터 위치, 행동, 환경 단서, 시각적 결과 배치. **역할 분류명 대신 구체적 시각 묘사 사용**
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 (테마별 주조색)
+- `### Background Treatment`: 어두운 단색 + 미세한 별/입자/보케
+- `### Color Palette`: 주조/보조/강조/전경 4색 (테마별)
+- `### Layout Structure`: Central/Section-Flow/Contrast/Evolution 중 선택 + 영역 구분
+- `### Typography`: 텍스트 없음 규칙 명시
+
+### CONTENT 블록 포함 내용 (이 테마 전용)
+- `### Scene Elements (시각 요소)`: 장면에 포함될 캐릭터, 사물, 환경 요소 목록 (텍스트 아님)
+- `### Scene Composition (장면 구성)`: 전경/중경/후경 배치 설명
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- **모든 텍스트** (제목, 라벨, 수치, 범례, 설명문), 위치 지시자, 색상 코드, 차트/그래프, 표/테이블, 아이콘/불릿, 엣지 클리핑 등

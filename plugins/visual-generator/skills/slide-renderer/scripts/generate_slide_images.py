@@ -37,11 +37,13 @@ Korean Typography: All Korean text must be rendered with crisp, perfectly formed
 
 Visual Composition: Maintain clear visual hierarchy with distinct foreground, midground, and background depth layers. Apply rule of thirds for focal point placement. Ensure primary information elements capture immediate attention.
 
-Negative Rendering Constraints: Never render watermarks, blurry text, numbered lists as visual elements, placeholder text, artifacts, meta-labels like 'Data:' or 'Note:', or any decorative elements not specified in the prompt.
+Negative Rendering Constraints: Never render watermarks, blurry text, numbered lists as visual elements, placeholder text, artifacts, meta-labels like 'Data:' or 'Note:', or any decorative elements not specified in the prompt. Never render hex color codes (e.g., #1E3A5F, #FFFFFF) as visible text in the image. Color codes are configuration-only and must never appear as text elements.
 
 White Space: Maintain 30-40% negative space for visual breathing room and readability. Do not overcrowd the composition with excessive elements.
 
 Text Contrast: All text placed over images must have sufficient contrast for legibility. Use text-shadow, outline, or semi-transparent backing when text overlaps complex or busy backgrounds. Ensure WCAG-level contrast aesthetically.
+
+Zero-Text Rendering: If the prompt specifies a Kurzgesagt-style illustration or explicitly requests zero text rendering, render NO text elements whatsoever in the image. Treat any text-like strings in the prompt as visual element descriptions, not as text to render.
 """
 QUALITY_THRESHOLD = 7.0
 MAX_QUALITY_RETRIES = 2
@@ -82,6 +84,7 @@ def generate_image(
     Returns:
         bool: 생성 성공 여부
     """
+
     def _request_image(current_prompt: str, save_path: str) -> bool:
         for attempt in range(max_retries):
             try:
@@ -112,7 +115,9 @@ def generate_image(
                         image.save(save_path)
                         return True
 
-                print(f"  [경고] 이미지 데이터 없음, 재시도 {attempt + 1}/{max_retries}")
+                print(
+                    f"  [경고] 이미지 데이터 없음, 재시도 {attempt + 1}/{max_retries}"
+                )
 
             except Exception as e:
                 print(f"  [에러] {e}, 재시도 {attempt + 1}/{max_retries}")
@@ -223,7 +228,9 @@ def evaluate_image_quality(client, image_path: str) -> dict:
             response_text = response.text
         elif hasattr(response, "parts"):
             response_text = "\n".join(
-                part.text for part in response.parts if hasattr(part, "text") and part.text
+                part.text
+                for part in response.parts
+                if hasattr(part, "text") and part.text
             )
 
         json_match = re.search(r"\{[\s\S]*\}", response_text)
@@ -236,9 +243,13 @@ def evaluate_image_quality(client, image_path: str) -> dict:
                 return 0.0
 
         criteria = {
-            "korean_text_readability": _score(payload.get("korean_text_readability", 0)),
+            "korean_text_readability": _score(
+                payload.get("korean_text_readability", 0)
+            ),
             "layout_suitability": _score(payload.get("layout_suitability", 0)),
-            "color_palette_compliance": _score(payload.get("color_palette_compliance", 0)),
+            "color_palette_compliance": _score(
+                payload.get("color_palette_compliance", 0)
+            ),
         }
         avg_score = sum(criteria.values()) / 3.0
         feedback = str(payload.get("feedback", ""))
@@ -275,9 +286,19 @@ def process_prompts(prompts_dir: str, output_dir: str) -> dict:
     output_path.mkdir(parents=True, exist_ok=True)
 
     # 프롬프트 파일 목록 (메타/인덱스 파일 제외)
-    exclude_files = ["prompt_index.md", "공통및특화작업구조설명.md"]
+    exclude_files = [
+        "prompt_index.md",
+        "공통및특화작업구조설명.md",
+        "style_sheet.md",
+        "validation_result.md",
+    ]
+    # 화이트리스트 방식: 숫자로 시작하는 파일만 렌더링 대상 (01_, 02_, 10_, 11_ 등)
     prompt_files = sorted(
-        [f for f in prompts_path.glob("*.md") if f.name not in exclude_files]
+        [
+            f
+            for f in prompts_path.glob("*.md")
+            if re.match(r"^\d+_", f.name) and f.name not in exclude_files
+        ]
     )
 
     if not prompt_files:
@@ -312,12 +333,16 @@ def process_prompts(prompts_dir: str, output_dir: str) -> dict:
         # 프롬프트 내용 추출 (전체 사용)
         prompt_content = extract_prompt_content(str(prompt_file))
 
-        # 이미지 생성
-        if generate_image(client, prompt_content, str(output_file)):
-            print(f"  [OK] Saved: {output_file}")
-            results["success"].append(slide_name)
-        else:
-            print(f"  [FAIL] Failed: {slide_name}")
+        # 이미지 생성 (개별 파일 실패 시 해당 파일만 스킵하고 계속 진행)
+        try:
+            if generate_image(client, prompt_content, str(output_file)):
+                print(f"  [OK] Saved: {output_file}")
+                results["success"].append(slide_name)
+            else:
+                print(f"  [FAIL] Failed: {slide_name}")
+                results["failed"].append(slide_name)
+        except Exception as e:
+            print(f"  [ERROR] Unexpected error for {slide_name}: {e}")
             results["failed"].append(slide_name)
 
         # API 호출 간 대기 (rate limit 방지)

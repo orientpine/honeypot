@@ -1,130 +1,283 @@
 ---
 name: theme-comparison
-description: "visual-generator comparison 목적 테마 장면 가이드와 XML-tag 매핑. Use when theme=comparison."
+description: "visual-generator comparison 목적 테마(Before/After 비교). theme=comparison 또는 purpose=comparison일 때 사용. 단일 팔레트 + 대비 메타포(Contrast) 레이아웃 가이드 + 비교 항목 작성법 포함."
 ---
 
-# Comparison Theme
+# Comparison (Before/After 비교) 테마
 
-Before/After 차이를 한 화면에서 직관적으로 비교하는 테마다.
+**용도**: 두 상태를 나란히 배치하여 차이점을 명확히 보여줍니다. 변화의 임팩트를 시각적으로 증명합니다.
 
-## Palette
+**시각 정체성**: "IMAX 분할 화면처럼 — 좌우 풀블리드 이미지 위에 핵심 수치가 떠 있다"
 
-| role | color |
-|------|-------|
-| primary | #2D3436 |
-| secondary | #00B894 |
-| accent | #FF7675 |
-| background | #F5F6FA |
-
-## Scene Guide (Rendering Style -> `<scene>`)
-
-`<scene>`는 좌우 장면을 분리해 자연어로 기술한다.
-- LEFT: 기존 상태의 밀도, 문제, 낮은 성과
-- RIGHT: 개선 상태의 정돈, 효율, 높은 성과
-- 서피스: 풀블리드 이미지와 오버레이 텍스트
-- 배경: 50:50 분할 구조
-- 코너: 직각 분할 경계
-- 연결선: 중앙 전환 화살표 또는 VS 배지
-- 시각장식: 최소 아이콘, 핵심 수치 강조
-
-**품질 기준**: `scene-richness-spec.md` (최소 5문장: LEFT 2~3문장 + RIGHT 2~3문장, negative prompting, split structure)
-
-## Positive Scene Direction
-
-- 좌우 장면은 동일 주제를 다른 상태로 명확히 묘사한다
-- 장면 설명에는 환경, 주체, 행동, 톤을 포함한다
-- 텍스트는 오버레이 수치와 짧은 라벨만 유지한다
-
-## 한글 타이포그래피 가이드
-
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
-- 위계 비율: 좌우 제목 > 핵심 수치 > 보조 라벨
-- 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
-- **상세 기준**: `korean-typography-spec.md` (Heavy Gothic-style Hangul, text-on-background contrast for both panels)
-
-> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
-
-## XML-Tag 출력 매핑
-
-- `<scene>`: LEFT/RIGHT 장면을 각각 1~2문장으로 기술
-- `<text_to_render>`: 최대 12항목, 대응 수치/라벨만 포함
-- `<typography>`: 비교용 위계와 한글 힌트
-- `<canvas>`: 3840x2160, 16:9, 분할 대비 톤
-- `<layout>`: 인용 문자열을 좌우 오버레이에 대응 배치
-**검증 규칙**: `validation-rules-map.md` (LEFT/RIGHT 대응 orphan 방지, 비교쌍 완전성 검증)
-
-무드 톤 가이드:
-- LEFT는 차분하고 무거운 톤
-- RIGHT는 밝고 선명한 톤
-- 변화 강조는 중앙 전환 요소로 처리
+**활용 상황**:
+- Before/After 비교
+- As-Is/To-Be 분석
+- 방법 A vs 방법 B 장단점
+- 경쟁사 대비 우위
+- 개선 전후 성과 비교
 
 ---
 
-## Golden Reference Example
+## 색상 팔레트
 
-**주제**: 기존 공정 vs AI 공정 비교
-**레이아웃**: `split_comparison` | **테마**: comparison
+| 역할 | 색상 | HEX | 용도 |
+|------|------|-----|------|
+| 주조 | 차콜 그레이 | #2D3436 | Before 영역, 기존/문제 상태 표현 |
+| 보조 | 에메랄드 | #00B894 | After 영역, 개선/목표 상태 표현 |
+| 강조 | 코랄 레드 | #FF7675 | 핵심 차이점 강조, 변화 포인트 |
+| 배경 | 라이트 그레이 | #F5F6FA | 전체 배경, 중립적 기반 |
 
-```xml
-<scene>
-LEFT side shows a traditional factory floor with heavy steel machinery, dim fluorescent lighting casting yellow shadows on oil-stained concrete, workers in hardhats manually inspecting products on a slow conveyor belt with clipboards. RIGHT side depicts a modern AI-enhanced production line with sleek white robotic arms, bright LED panel lighting, holographic quality dashboards floating above the line, and a single engineer monitoring multiple screens. A bold circular VS badge sits at the center dividing the two worlds with a sharp vertical split. No cartoon style, no flat illustration, no watermark, no border, no text outside overlay zones.
-</scene>
+**팔레트 특징**:
+- 차콜(어둠) → 에메랄드(밝음)로 개선 방향성 암시
+- 코랄 강조색이 "핵심 변화점"을 즉각 인지시킴
+- 중립적 배경으로 양쪽 비교에 편향 없음
 
-<text_to_render>
-before_title: "기존 수동 공정"
-before_stat1: "불량률 12.4%"
-before_stat2: "공정 시간 48h"
-before_label1: "수작업 검수"
-before_label2: "사후 대응"
-before_badge: "LEGACY"
-after_title: "AI 스마트 공정"
-after_stat1: "불량률 1.8%"
-after_stat2: "공정 시간 12h"
-after_label1: "실시간 AI 검수"
-after_label2: "예측 정비"
-after_badge: "AI-DRIVEN"
-</text_to_render>
+---
 
-<typography>
-Font family: Heavy Gothic-style Korean sans-serif at ExtraBold (800+)
-before_title / after_title: large scale, bold, ALL-CAPS badge style
-before_stat1, before_stat2 / after_stat1, after_stat2: hero scale, extra-bold, key metric emphasis
-before_label1, before_label2 / after_label1, after_label2: medium weight, descriptive sub-label
-before_badge / after_badge: small scale, uppercase, rounded pill background
-LEFT panel text: white (#FFFFFF) on dark overlay for contrast against heavy industrial background
-RIGHT panel text: dark charcoal (#2D3436) on light frosted overlay for contrast against bright clean background
-Crisp anti-aliased Korean typography, Professional typesetting, no pixelation
-</typography>
+## 권장 레이아웃
 
-<canvas>
-Width: 3840
-Height: 2160
-Aspect ratio: 16:9
-Color palette: primary #2D3436, secondary #00B894, accent #FF7675, background #F5F6FA
-Split structure: 50:50 vertical divide
-LEFT panel: darker industrial tone with muted warm overlay (#2D3436 at 60% opacity)
-RIGHT panel: lighter clean tone with bright cool overlay (#F5F6FA at 40% opacity)
-Center divider: 4px solid #00B894 vertical line with VS badge
-</canvas>
+### 대비 메타포 (Contrast) - 최우선 권장
+좌우 대칭 배치로 동일한 기준에서 두 상태를 비교합니다.
 
-<layout>
-LEFT half (x: 0–1920):
-  "기존 수동 공정" — top-left (x:120, y:140), left-aligned
-  "LEGACY" — pill badge below title (x:120, y:240)
-  "불량률 12.4%" — center-left hero stat (x:960, y:800), center-aligned
-  "공정 시간 48h" — below hero stat (x:960, y:1000), center-aligned
-  "수작업 검수" — lower-left label (x:300, y:1500)
-  "사후 대응" — lower-left label (x:300, y:1650)
-
-RIGHT half (x: 1920–3840):
-  "AI 스마트 공정" — top-right (x:2040, y:140), left-aligned
-  "AI-DRIVEN" — pill badge below title (x:2040, y:240)
-  "불량률 1.8%" — center-right hero stat (x:2880, y:800), center-aligned
-  "공정 시간 12h" — below hero stat (x:2880, y:1000), center-aligned
-  "실시간 AI 검수" — lower-right label (x:2220, y:1500)
-  "예측 정비" — lower-right label (x:2220, y:1650)
-
-CENTER (x: 1920):
-  VS badge — circular, centered vertically (y:900), #00B894 background, white text
-</layout>
 ```
+┌───────────────┐   VS   ┌───────────────┐
+│  Before (현재) │        │  After (목표)  │
+│ - 항목 1       │        │ - 항목 1       │
+│ - 항목 2       │        │ - 항목 2       │
+│ - 항목 3       │        │ - 항목 3       │
+└───────────────┘        └───────────────┘
+```
+
+**핵심 원칙**:
+- 좌우 패널의 크기, 항목 수, 정렬을 **동일하게** 맞춤
+- 대비 포인트는 **1-2개만** 대형으로 강조
+- 항목은 **대응 관계**가 보이도록 같은 순서로 배치
+
+### 상하 분할 (대형 화면용)
+```
+┌─────────────────────────────┐
+│         Before (현재)        │
+│   - 문제점 1   - 문제점 2    │
+├─────────────────────────────┤
+│              ↓              │
+├─────────────────────────────┤
+│         After (목표)         │
+│   + 개선점 1   + 개선점 2    │
+└─────────────────────────────┘
+```
+
+---
+
+## 스타일 노트
+
+### 대비 강조 기법
+- **색상 대비**: Before는 차콜(#2D3436), After는 에메랄드(#00B894)
+- **아이콘 대비**: Before에 ✗/↓, After에 ✓/↑ 사용
+- **수치 대비**: 동일 지표의 전후 수치 나란히 표시
+
+### 항목 매칭 규칙
+| Before | After |
+|--------|-------|
+| 수동 처리 (3시간) | 자동 처리 (10분) |
+| 오류율 15% | 오류율 0.5% |
+| 인력 5명 필요 | 인력 1명 운영 |
+
+### 시각적 연결
+- 중앙에 **→** 또는 **VS** 표시로 전환 암시
+- 변화 방향 화살표는 **1개만** 사용 (과도한 장식 배제)
+
+---
+
+## 비교 항목 작성 가이드
+
+### 좋은 예
+| 구분 | Before | After |
+|------|--------|-------|
+| 처리 시간 | 3시간 | 10분 |
+| 오류율 | 15% | 0.5% |
+| 비용 | 월 500만원 | 월 50만원 |
+
+### 나쁜 예
+| 구분 | Before | After |
+|------|--------|-------|
+| 속도 | 느림 | 빠름 |
+| 품질 | 낮음 | 높음 |
+| 효율 | 비효율적 | 효율적 |
+
+**원칙**: 정성적 표현 대신 **정량적 수치**로 차이를 명확히
+
+---
+
+## 적합/부적합 케이스
+
+**적합**: Before/After 변화 증명, As-Is/To-Be 시스템 비교, 방법 A vs 방법 B 의사결정, 경쟁사 대비 우위, 개선 전후 KPI 비교
+
+**부적합**: 3개 이상 대안 비교 (다자 비교), 관계망/순환/계층, 시간 순서 프로세스, 단일 상태 설명 (비교 대상 없음), 미래 비전 몰입 → `theme-whatif`
+
+---
+
+## 콘텐츠 표현 규칙
+
+comparison 스타일의 텍스트는 **개조식 명사구**를 따릅니다:
+
+| 규칙 | 설명 | 예시 |
+|------|------|------|
+| 개조식 | 핵심 키워드 중심의 간결한 명사구 | ✗ "고령 농부가 수동으로 트랙터를 운전한다" → ✓ "고령 농부의 수동 트랙터 운전" |
+| 서술어 최소화 | 종결어미(~다, ~합니다) 대신 명사형 종결 | ✗ "작업 효율이 저하된다" → ✓ "작업효율 저하" |
+| 정량적 대비 | 정성적 표현 대신 구체적 수치로 차이 표현 | ✗ "느림 → 빠름" → ✓ "3시간 → 10분" |
+| **한글 단독 표기** | 한영 병기 절대 금지. 한글 또는 영문 약어 하나만 사용 | ✗ "연구 (Research)", "분석(Analysis)" → ✓ "연구", "분석" / 약어만 허용: "AI", "IoT" |
+
+---
+
+## 렌더링 스타일 (Rendering Style)
+
+이 스타일의 시각적 DNA를 정의합니다. prompt-designer가 INSTRUCTION/CONFIGURATION 블록 생성 시 반드시 참조해야 합니다.
+
+| 차원 | 지시 사항 |
+|------|-----------|
+| **서피스 (박스/패널)** | 패널 없음. 좌우 50:50으로 분할된 전면 이미지 영역. 텍스트는 반투명 오버레이 위에 배치한다. 오버레이는 이미지 하단 30% 영역에 그라데이션(투명→반투명 검정/흰색)으로 처리한다. |
+| **배경** | 좌측 50% = Before 상태를 직관적으로 표현하는 풀블리드 시각 요소(어둡고 복잡한 톤). 우측 50% = After 상태를 직관적으로 표현하는 풀블리드 시각 요소(밝고 정돈된 톤). 중앙에 수직 구분선 또는 대형 화살표(→) 배지. |
+| **코너/엣지** | 완전 직각(0px radius). 좌우 이미지 영역이 정확히 50:50으로 분할된다. 이미지가 캔버스 끝까지 채운다(edge-to-edge). |
+| **연결선** | 중앙에 대형 방향 화살표(→) 1개만 배치. Before에서 After로의 전환을 암시한다. 패널 내부에는 연결선 없음. 화살표 색상은 강조색(#FF7675) 또는 흰색. |
+| **시각 장식** | 최소화. 체크마크(✓)/엑스마크(✗) 아이콘을 핵심 변화 지표 옆에만 사용. 변화율 배지(+45%, -30%) 대형 표시. 중앙 "VS" 또는 "→" 배지. 이미지 자체가 장식 역할을 하므로 추가 장식은 배제한다. |
+| **타이포그래피** | 2단 위계(제목/핵심 수치)만 사용. 제목은 오버레이 상단에 볼드 배치. 핵심 수치(최대 3개)는 대형 볼드. 텍스트는 반투명 오버레이 위에서 흰색 또는 밝은 색으로 표시하여 이미지 위 가독성을 확보한다. |
+| **공간 구성** | 이미지 95% + 텍스트 오버레이 5%. 화면의 95% 이상을 시각 요소가 차지한다. 텍스트는 이미지 위에 오버레이로만 존재한다. 양쪽 동일한 구조: 상단 제목 + 하단 핵심 지표 3개 이내. |
+| **시각 메타포** | 시각 대비(Visual Contrast). 왼쪽은 어둡고/복잡하고/혼란스러운 시각 요소, 오른쪽은 밝고/정돈되고/효율적인 시각 요소. 동일 주제의 두 상태를 이미지로 직관적으로 대비시킨다. 텍스트가 아닌 이미지가 메시지의 주체이다. |
+
+---
+
+### 이미지 중심 원칙 (CRITICAL)
+
+Comparison 테마는 **이미지가 메시지의 주체**입니다. 텍스트는 보조 역할만 합니다.
+
+- 각 측면(Before/After)에 텍스트 요소는 **최대 3개** (제목 1개 + 핵심 지표 2개)
+- 이미지가 캔버스의 95% 이상을 채운다
+- 텍스트는 반드시 이미지 위 반투명 오버레이에 배치한다
+- Before/After 차이는 **이미지의 시각적 대비**로 전달하고, 텍스트는 수치 보조만 한다
+- 양쪽 이미지의 구도, 크기, 위치를 정확히 대칭시킨다
+
+---
+
+### 장면 묘사 가이드 (Scene Description Guide) — CRITICAL
+
+이 테마의 **좌우 이미지 장면**은 반드시 INSTRUCTION 블록의 `### Content Placement`에서 **자연어로 상세히 묘사**해야 합니다. `[Image 1]`, `[Image 2]` 같은 **플레이스홀더를 절대 사용하지 않습니다** — Gemini가 그대로 텍스트로 렌더링합니다.
+
+#### 올바른 장면 묘사 (INSTRUCTION의 Content Placement에 배치)
+
+```markdown
+### Content Placement
+- 좌측 50% (Before 장면): 먼지가 이는 들판에서 낡고 녹슨 트랙터를 수동 조작하는 고령 농부. 
+  구부정한 자세로 핸들을 잡고 있으며, 트랙터 주변에 고르지 않은 밭고랑이 보인다. 
+  전체적으로 어둡고 탁한 톤. 하단에 반투명 검정 그라데이션 오버레이.
+- 우측 50% (After 장면): 정돈된 녹색 밭 위를 주행하는 첨단 자율주행 트랙터(KIMM 로고). 
+  센서와 안테나가 장착된 깨끗한 외관. 배경에 작은 모니터실에서 태블릿을 보며 
+  미소 짓는 관리자. 밝고 선명한 톤. 하단에 반투명 흰색 그라데이션 오버레이.
+- 중앙: 대형 흰색 화살표(→)로 Before→After 전환 암시
+- 오버레이 텍스트: 각 측면의 반투명 오버레이 위에 제목과 핵심 수치 배치
+```
+
+#### 잘못된 장면 묘사 (절대 금지)
+
+```markdown
+### Content Placement
+- 좌측: [Image 1] Before 이미지 배치
+- 우측: [Image 2] After 이미지 배치
+```
+
+> **왜 잘못되었는가**: `[Image 1]`, `[Image 2]`는 Gemini에 의해 **이미지 위에 그대로 텍스트로 렌더링**됩니다. 실제 장면이 생성되지 않고 플레이스홀더 텍스트가 화면을 차지하여 이미지 중심 원칙을 완전히 위반합니다.
+
+#### 장면 묘사 필수 요소 (Before/After 각각)
+
+| 요소 | 설명 | 예시 |
+|------|------|------|
+| **환경/배경** | 장면이 일어나는 공간 | "먼지가 이는 들판", "정돈된 녹색 밭" |
+| **주체/인물** | 장면의 중심 인물 또는 장비 | "고령 농부", "자율주행 트랙터" |
+| **행동/상태** | 주체가 무엇을 하고 있는지 | "수동 조작 중", "자율 주행 중" |
+| **톤/분위기** | 시각적 톤 (Before=어둡고 탁한, After=밝고 선명한) | "전체적으로 어둡고 탁한 톤" |
+| **오버레이 처리** | 텍스트 가독성을 위한 오버레이 | "하단 반투명 검정 그라데이션 오버레이" |
+
+---
+
+## 렌더링 금지 요소 (CRITICAL)
+
+프롬프트 생성 시 다음 요소는 **CONTENT BLOCK에 절대 포함 금지**:
+
+| 유형 | 금지 예시 | 설명 |
+|------|-----------|------|
+| **이미지 플레이스홀더** | `[Image 1]`, `[Image 2]`, `[사진]`, `[이미지]`, `[Before 이미지]`, `[After 이미지]` | **대괄호 이미지 참조는 Gemini가 그대로 텍스트로 렌더링함.** 장면 묘사는 반드시 INSTRUCTION의 Content Placement에 자연어로 기술할 것 |
+| 위치 지시자 | `[상단]`, `[하단 결론1]`, `[왼쪽 영역]` | 레이아웃 배치 힌트 |
+| 레이아웃 유형명 | `대비 메타포`, `Before/After 비교`, `Contrast` | 메타포/레이아웃 이름 |
+| 색상 코드 | `(#HEXCODE)`, `Primary Color` | CONFIGURATION에서만 사용 |
+| 크기 힌트 | `(대형)`, `(중형)`, `48pt` | INSTRUCTION에서만 사용 |
+| 역할 라벨 | `Main Title`, `Sub-header` | INSTRUCTION에서만 사용 |
+| **장면 묘사 텍스트** | `고령 농부`, `깨끗한 실내`, `자율주행 트랙터가 보이는 들판` | 장면 묘사는 INSTRUCTION의 Content Placement에서만 기술. CONTENT에 포함하면 이미지 위에 텍스트로 렌더링됨 |
+| **한영 병기 텍스트** | `연구 (Research)`, `분석(Analysis)`, `목표 / Goal` | 한글과 영어를 괄호·슬래시로 병기하는 모든 형태 금지. 한글 단독 또는 고유 영문 약어(AI, IoT, CNN 등) 단독만 허용 |
+
+CONTENT에는 **이미지 위 반투명 오버레이에 표시될 순수한 텍스트(제목, 핵심 수치)만** 포함합니다.
+
+---
+
+## 렌더링 완결성 (Rendering Completeness) — CRITICAL
+
+이 테마의 Gemini 렌더링 결과물에서 다음 품질 기준을 반드시 충족해야 합니다:
+
+| 규칙 | 설명 |
+|------|------|
+| **플레이스홀더 금지** | `[Image 1]`, `[Image 2]`, `[사진]`, `[아이콘]` 등 대괄호 플레이스홀더가 이미지에 렌더링되면 안 된다. 모든 장면은 INSTRUCTION의 Content Placement에서 자연어로 상세히 묘사하여 Gemini가 실제 이미지를 생성하도록 한다 |
+| **이미지 우선** | 좌우 각 50% 영역이 반드시 실제 이미지(사진/일러스트)로 채워져야 한다. 텍스트 박스, 불릿 리스트, 빈 영역으로 대체되면 안 된다 |
+| **오버레이 텍스트 가독성** | 반투명 오버레이 위의 텍스트(제목, 핵심 수치)는 반드시 읽을 수 있어야 한다. 오버레이 투명도가 텍스트 가독성을 해치면 안 된다 |
+| **좌우 대칭** | Before/After 양쪽의 구도, 크기, 오버레이 위치가 대칭이어야 한다. 한쪽이 이미지이고 다른 쪽이 텍스트 리스트이면 안 된다 |
+| **중앙 구분** | 중앙의 화살표(→) 또는 VS 배지가 명확하게 렌더링되어야 한다 |
+| **깨진 텍스트 금지** | 한글/영문이 깨지거나 알아볼 수 없는 문자열로 렌더링되면 안 된다 |
+
+### 프롬프트 작성 시 완결성 확보 방법
+
+| 기법 | 설명 |
+|------|------|
+| **구체적 장면 묘사** | `[Image]` 대신 "먼지가 이는 들판에서 낡은 트랙터를 수동 조작하는 고령 농부" 처럼 구체적으로 기술 |
+| **Before/After 톤 명시** | Before: "어둡고, 탁하고, 복잡한 톤", After: "밝고, 선명하고, 정돈된 톤" |
+| **오버레이 텍스트 명시** | 렌더링할 텍스트를 CONTENT에 정확히 나열. 모호한 참조(`위 내용 참조`) 금지 |
+| **대칭 구도 지시** | "양쪽 이미지의 구도, 크기, 오버레이 위치를 정확히 대칭시킨다" 명시 |
+
+---
+
+## 구성 지시어 렌더링 방지 (Content Placement 메타라벨 금지) — CRITICAL
+
+INSTRUCTION 블록의 Content Placement에서 CONTENT 텍스트의 배치를 설명할 때, **역할 분류명(메타라벨)**을 사용하면 Gemini가 해당 라벨을 이미지에 텍스트로 렌더링합니다. 반드시 CONTENT에 기재된 **실제 텍스트를 직접 인용**하여 배치를 지시합니다.
+
+| 금지 (메타라벨 — 렌더링 유출) | 올바른 (실제 텍스트 인용) |
+|------|------|
+| `좌측 오버레이: Before 핵심 지표` | `좌측 오버레이에 '수동 처리 3시간', '오류율 15%' 텍스트 배치` |
+| `우측 오버레이: After 핵심 지표` | `우측 오버레이에 '자동 처리 10분', '오류율 0.5%' 텍스트 배치` |
+| `중앙: 변화율 배지` | `중앙에 '→' 화살표 배치, 하단에 '10배 속도 향상' 텍스트` |
+
+**금지 메타라벨 목록**: 보조 지표, 보조 텍스트, 핵심 성과, 핵심 지표, 변화율 라벨, Before 라벨, After 라벨, 메인 타이틀, 비교 항목
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+comparison 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: Before/After 비교 슬라이드의 목적 (변화 증명, 개선 효과 등)
+- `### Target Audience`: 의사결정자, 평가위원 등
+- `### Key Message`: 핵심 변화 포인트 한 문장
+- `### Visual Style`: `comparison` 스타일 명시 + IMAX 분할 화면 특성
+- `### Rendering Style`: 서피스(패널 없음, 50:50 분할 이미지), 배경(좌측 어둡고 복잡 / 우측 밝고 정돈), 코너/엣지(완전 직각), 연결선(중앙 대형 화살표 1개), 시각 장식(최소, ✓/✗ 아이콘, 변화율 배지), 공간 구성(이미지 95%+텍스트 오버레이 5%), 시각 메타포(시각 대비) 7개 차원
+- `### Content Placement`: **좌우 장면을 자연어로 상세히 묘사** (환경, 주체, 행동, 톤, 오버레이 처리 포함). 중앙 화살표/VS 배치. CONTENT에 기재된 **실제 텍스트를 직접 인용**(작은따옴표)하여 오버레이 텍스트 배치 위치 설명. **`[Image N]` 플레이스홀더 및 메타라벨(역할 분류명) 절대 금지**
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 #F5F6FA
+- `### Background Treatment`: 좌측 50%(어두운 톤 이미지) / 우측 50%(밝은 톤 이미지) + 중앙 구분
+- `### Color Palette`: 주조(#2D3436), 보조(#00B894), 강조(#FF7675), 배경(#F5F6FA)
+- `### Layout Structure`: 대비 메타포(Contrast) 좌우 대칭 + 영역 구분
+- `### Typography`: 2단 위계(제목/핵심 수치), 오버레이 위 밝은 텍스트
+
+### CONTENT 블록 포함 내용 (텍스트 오버레이 ONLY)
+- `### Title Area`: Before/After 제목 (번호 목록 형태)
+- `### Main Content`: **오버레이에 표시될 텍스트만** 번호 목록으로 나열 — Before 항목과 After 항목의 대응 수치. **장면 묘사, 이미지 참조(`[Image N]`), 환경 설명 절대 포함 금지** — 이들은 INSTRUCTION의 Content Placement에 배치
+- `### Data Elements`: 전후 핵심 수치 (최대 3개)
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- `[Image 1]`, `[Image 2]` 등 이미지 플레이스홀더, pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, 장면 묘사 텍스트, 테이블 형식 CONTENT 등
