@@ -1,6 +1,6 @@
 ---
 name: renderer-agent
-description: "최종 검증 및 이미지 렌더링 에이전트"
+description: "최종 4-block 프롬프트 검증 및 이미지 렌더링"
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 ---
@@ -88,7 +88,11 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
     |   +-- Grep: "{.*}" 패턴 검색 (템플릿 변수)
     |   +-- 플레이스홀더 발견 시 FAIL
     |
-    +-- Step 2-5. 검증 결과 기록
+    +-- Step 2-5. 환각 URL 검증
+    |   +-- Grep: "www\.[a-z-]+\.(com|net|org)" 패턴 검색
+    |   +-- 환각 URL 발견 시 FAIL
+    |
+    +-- Step 2-6. 검증 결과 기록
         +-- PASS: 렌더링 대기열에 추가
         +-- FAIL: 실패 사유 기록, 해당 프롬프트 스킵
 
@@ -148,14 +152,28 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 
 | # | 검증 항목 | 검증 방법 | FAIL 조건 |
 |:-:|-----------|-----------|-----------|
-| 1 | 4-block 구조 | Grep "## INSTRUCTION", "## CONFIGURATION", "## CONTENT", "## FORBIDDEN ELEMENTS" | 4개 미만 발견 |
-| 2 | pt/px 패턴 없음 | `grep -E "[0-9]+pt\|[0-9]+px"` | 패턴 발견 |
-| 3 | 언어 병기 없음 | 한글(영문) 또는 영문(한글) 패턴 | 패턴 발견 |
-| 4 | 플레이스홀더 없음 | `[내용]`, `{변수}` 형태 | 패턴 발견 |
-| 5 | 위치 지시자 없음 | `grep -E "\[[A-Z가-힣].*\]"` | 패턴 발견 |
-| 6 | 레이아웃 유형명 없음 | `grep -Ei "scenario grid\|section-flow\|z-pattern"` | 패턴 발견 |
-| 7 | 인라인 색상 코드 없음 | `grep -E "\(#[A-Fa-f0-9]{6}\)"` | 패턴 발견 |
-| 8 | 환각 URL 없음 | `grep -E "www\.[a-z-]+\.(com\|net\|org)"` | 패턴 발견 |
+| 1 | 4-block 구조 | `## INSTRUCTION`, `## CONFIGURATION`, `## CONTENT`, `## FORBIDDEN ELEMENTS` 존재 확인 | 4개 블록 미만 |
+| 2 | CONTENT key:"value" 형식 | `## CONTENT` 블록 내 `key: "value"` 형식 준수 확인 | 형식 불일치 |
+| 3 | Content Placement 인용 | `### Content Placement`에서 `## CONTENT` value를 작은따옴표로 인용 확인 | 미인용 value 존재 |
+| 4 | 번호 목록 부재 | CONTENT 영역 내 번호 목록(①②③, 1. 2. 3.) 패턴 검색 | 패턴 발견 |
+| 5 | pt/px 단위 부재 | `grep -E "[0-9]+pt\|[0-9]+px"` | 패턴 발견 |
+| 6 | CONTENT 마크다운 부재 | CONTENT value 내 `**`, `*`, `#` 등 마크다운 포맷 검색 | 패턴 발견 |
+| 7 | 테마별 항목 상한 | CONTENT key:value 쌍 수가 테마별 상한 이하 확인 | 상한 초과 |
+| 8 | Typography 한글 힌트 | `### Typography` 서브섹션에 Korean font hint 포함 확인 | 한글 힌트 없음 |
+| 12 | Scene Description 최소 문장 | `### Scene Description` 문장 수 ≥ 5 (concept ≥ 7) | 최소 문장 수 미달 |
+| 13 | CONTENT ↔ Content Placement 일관성 | `## CONTENT`의 모든 value가 `### Content Placement`에 인용, 역방향도 확인 (orphan/ghost 없음) | orphan 또는 ghost 존재 |
+| 14 | CONTENT 빈 값 | `## CONTENT` key에 빈 value(`""`) 존재 여부 확인 | 빈 value 존재 |
+
+### 테마별 CONTENT 항목 상한
+
+| 테마 | 상한 |
+|------|:----:|
+| concept | 0 |
+| gov | 25 |
+| seminar | 25 |
+| whatif | 20 |
+| pitch | 18 |
+| comparison | 12 |
 
 ### 검증 명령어 예시
 
@@ -163,17 +181,26 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 # 4-block 구조 확인 (4개 모두 있어야 PASS)
 grep -c "## INSTRUCTION\|## CONFIGURATION\|## CONTENT\|## FORBIDDEN ELEMENTS" prompt.md
 
+# CONTENT key:"value" 형식 확인
+grep -A 100 "## CONTENT" prompt.md | grep -E '^[A-Za-z_]+: "' || echo "FORMAT FAIL"
+
 # pt/px 패턴 확인 (없어야 PASS)
 grep -E "[0-9]+pt|[0-9]+px" prompt.md || echo "PASS"
 
-# 플레이스홀더 확인 (없어야 PASS)
-grep -E "\[.*내용.*\]|\{[A-Z_]+\}" prompt.md || echo "PASS"
+# 번호 목록 확인 (없어야 PASS)
+grep -A 100 "## CONTENT" prompt.md | grep -E "①|②|③|^[0-9]+\." || echo "PASS"
 
-# 위치 지시자 확인 (없어야 PASS)
-grep -E "\[[A-Z가-힣]+-?[0-9]*\]|\[상단\]|\[하단\]|\[왼쪽\]|\[오른쪽\]" prompt.md || echo "PASS"
+# CONTENT 마크다운 포맷 확인 (없어야 PASS)
+grep -A 100 "## CONTENT" prompt.md | grep -E "\*\*.*\*\*" || echo "PASS"
 
-# 인라인 색상 코드 확인 (없어야 PASS)
-grep -E "\(#[A-Fa-f0-9]{6}\)" prompt.md || echo "PASS"
+# Typography 한글 힌트 확인
+grep -A 10 "### Typography" prompt.md | grep -i "korean" || echo "FAIL"
+
+# Scene Description 문장 수 확인
+grep -A 50 "### Scene Description" prompt.md | grep -c "\."
+
+# CONTENT 빈 값 확인 (없어야 PASS)
+grep -A 100 "## CONTENT" prompt.md | grep -E '^[A-Za-z_]+: ""$' && echo "FAIL" || echo "PASS"
 
 # 환각 URL 확인 (없어야 PASS)
 grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
