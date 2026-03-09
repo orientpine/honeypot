@@ -7,15 +7,15 @@ This document provides comprehensive guidelines for rendering Korean text (Hangu
 
 ## Section 1: Mandatory Typography Directive
 
-> ⚠️ **CRITICAL: Never include specific font family names in `<typography>` output.**
+> ⚠️ **CRITICAL: Never include specific font family names in Typography subsection.**
 > Gemini renders font names as visible text in the image (e.g., "Nanum Gothic ExtraBold" appears literally in the slide).
 > Use only descriptive style hints like "heavy-weight Gothic-style sans-serif Korean font at 800+ weight".
 
-**Use this EXACT phrase in `<typography>` tags when describing Korean text rendering:**
+**Use this EXACT phrase in Typography subsection when describing Korean text rendering:**
 
 > All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Use Bold weight (700+) for titles, Medium weight (500) for body text.
 
-This phrase encapsulates the core requirements for Korean text rendering in Gemini-generated slides. Copy it verbatim when specifying typography in `<typography>` XML tags.
+This phrase encapsulates the core requirements for Korean text rendering in Gemini-generated slides. Copy it verbatim when specifying typography in Typography subsection.
 
 ---
 
@@ -52,9 +52,9 @@ Korean text is composed of syllable blocks (음절 블록), each containing mult
 
 ---
 
-## Section 3: `<scene>` Level Korean Text Description
+## Section 3: Scene Description Level Korean Text Description
 
-When describing Korean text elements inside `<scene>` tags, use these standardized phrases to guide Gemini toward correct rendering:
+When describing Korean text elements inside Scene Description subsection, use these standardized phrases to guide Gemini toward correct rendering:
 
 ### Recommended Phrases
 - **"clearly legible Korean typography"** — Emphasizes readability and completeness
@@ -71,11 +71,11 @@ blocks in heavy-weight Gothic style, while body text maintains professional-grad
 typesetting with sufficient spacing and contrast.
 ```
 
-### Integration with `<typography>` Tag
-- `<scene>`: Describe the visual appearance and context of Korean text
-- `<typography>`: Specify technical font parameters (weight, family, rendering hints)
+### Integration with Typography Subsection
+- Scene Description: Describe the visual appearance and context of Korean text
+- Typography: Specify technical font parameters (weight, family, rendering hints)
 
-Both tags should work together to ensure complete Korean text rendering.
+Both sections should work together to ensure complete Korean text rendering.
 
 ---
 
@@ -188,16 +188,16 @@ Phonetic anchoring is a technique where Korean text is paired with its romanized
 - **Proper Nouns**: Company names, product names in Korean
 
 ### Placement in Prompts
-1. **In `<typography>` tag**: Include phonetic hints for key terms
-   ```
-   Heavy-weight Gothic-style sans-serif Korean font at ExtraBold (800+).
-   Key terms: 스마트 팩토리(Seu-ma-teu Paek-to-ri), 품질 관리(Pum-jil Gwal-li)
-   ```
+1. **In Typography subsection**: Include phonetic hints for key terms
+    ```
+    Heavy-weight Gothic-style sans-serif Korean font at ExtraBold (800+).
+    Key terms: 스마트 팩토리(Seu-ma-teu Paek-to-ri), 품질 관리(Pum-jil Gwal-li)
+    ```
 
-2. **In `<scene>` description**: Use phonetic anchoring for important Korean text elements
-   ```
-   The slide title reads "스마트 팩토리(Seu-ma-teu Paek-to-ri)" in large, bold Korean text.
-   ```
+2. **In Scene Description**: Use phonetic anchoring for important Korean text elements
+    ```
+    The slide title reads "스마트 팩토리(Seu-ma-teu Paek-to-ri)" in large, bold Korean text.
+    ```
 
 ### Theme-Specific Examples
 
@@ -278,7 +278,7 @@ Phonetic anchoring is a technique where Korean text is paired with its romanized
 ## Summary: Quick Reference
 
 ### For Prompt Designers
-When creating `<typography>` tags for Korean text:
+When creating Typography subsections for Korean text:
 1. **Always include**: Font weight (700+), font family (Gothic/sans-serif), syllable completeness hint
 2. **Always specify**: Contrast level, background color context
 3. **Consider adding**: Phonetic anchoring for technical terms
