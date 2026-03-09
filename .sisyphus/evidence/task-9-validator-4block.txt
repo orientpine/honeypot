@@ -1,0 +1,8 @@
+=== XML tag references remaining ===
+0
+=== 4-block section references ===
+20
+=== REJECT-only policy preserved ===
+19
+=== 7 dimensions preserved ===
+7

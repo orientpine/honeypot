@@ -1,0 +1,39 @@
+135:### `<scene>`
+143:### `<text_to_render>`
+149:### `<typography>`
+156:- **CRITICAL**: `<typography>` 태그에 구체적 폰트 패밀리명을 절대 사용하지 않는다. Gemini가 이미지 내 보이는 텍스트로 렌더링한다. 금지 폰트명 목록은 `korean-typography-spec.md`의 CRITICAL warning 참조. 대신: "heavy-weight Gothic-style sans-serif Korean font at 800+ weight"
+158:### `<canvas>`
+162:### `<layout>`
+164:- `<text_to_render>`의 값을 큰따옴표로 인용해 배치 지시
+170:- `<text_to_render>`는 비워 둔다
+171:- `<scene>`를 가장 풍부하게 작성한다
+175:- `<text_to_render>` 최대 25항목
+179:- `<scene>`에 미래 비전 몰입 장면을 명시
+180:- `<text_to_render>` 최대 20항목
+183:- `<text_to_render>` 최대 18항목
+187:- `<scene>`에서 LEFT/RIGHT 장면을 분리해 기술
+188:- `<text_to_render>` 최대 12항목
+213:<scene>
+217:<text_to_render>
+222:<typography>
+226:<canvas>
+230:<layout>
+246:    +-- theme 규칙에 따라 <scene> 작성
+247:    +-- render_text만 추려 <text_to_render> 작성
+248:    +-- <typography>에 Korean Sans-serif 힌트 포함
+249:    +-- <canvas>에 3840x2160, 16:9, 팔레트 반영
+250:    +-- <layout>에서 value를 큰따옴표로 인용해 배치
+262:    +-- <text_to_render> 형식 확인: key: "value"
+264:    +-- <text_to_render> 항목 수 확인: 본문 슬라이드 ≥ 8, 타이틀 슬라이드 ≥ 3
+265:    +-- <typography> 내 폰트 패밀리명 부재 확인 (`korean-typography-spec.md` CRITICAL warning 참조)
+277:- `<text_to_render>`에는 렌더링 대상 문자열만 넣는다
+278:- `<layout>`에는 문자열을 큰따옴표로 인용해 배치한다
+280:- `<typography>`에 한글 렌더링 힌트를 반드시 넣는다
+282:- `<text_to_render>` 값은 의미성을 가져야 한다: 빈 값, [내용], {TEXT}, ①②③, 플레이스홀더 금지
+283:- `<layout>`에서 `<text_to_render>`의 모든 value를 큰따옴표로 인용한다 (고아 항목 방지)
+284:- `<scene>` 또는 `<canvas>` 안에 네거티브 프롬프팅을 포함한다 (scene-richness-spec.md 참조): "No watermarks, no blurry text, no numbered lists as visual elements, no artifacts"
+285:- 선택된 레이아웃의 layout-types SKILL.md 해당 섹션에서 `시각화 원칙`과 `검증 규칙`을 읽고, 그 레이아웃의 구성 원칙을 `<scene>` 작성에 반영한다 (layout-types SKILL.md 수정 금지)
+287:- **최소 텍스트 밀도 강제**: 본문 슬라이드의 `<text_to_render>`는 최소 8항목, 타이틀/커버 슬라이드는 최소 3항목을 포함한다
+295:- 장면 설명 문장을 `<text_to_render>`에 넣지 않는다
+299:- `<typography>`에 구체적 폰트 패밀리명을 사용하지 않는다 — `korean-typography-spec.md`의 CRITICAL warning에 금지 폰트명 목록 명시됨. Gemini가 이미지 내 보이는 텍스트로 렌더링한다
+38 .sisyphus/evidence/task-1-no-xml-tags.txt

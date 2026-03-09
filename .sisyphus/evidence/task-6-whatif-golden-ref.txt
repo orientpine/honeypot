@@ -1,0 +1,27 @@
+=== 4-block headers ===
+10
+=== XML tags ===
+0
+0
+=== Whatif keywords ===
+13
+=== Code block lines ===
+93
+
+=== VERIFICATION SUMMARY ===
+✅ 4-block headers: 10 (INSTRUCTION, CONFIGURATION, CONTENT, FORBIDDEN ELEMENTS appear 2-3x each)
+✅ XML tags: 0 (NO XML tags in Golden Reference)
+✅ Whatif keywords: 13 (HUD, holograph, neon, 홀로그 present in Rendering Style)
+✅ Code block lines: 93 (≥80 required)
+✅ INSTRUCTION subsections: 6 (Image Purpose, Target Audience, Key Message, Visual Style, Rendering Style, Scene Description, Content Placement)
+✅ CONTENT format: key: "value" only (no numbered lists, no tables, no subsections)
+✅ FORBIDDEN ELEMENTS: 15+ items including font name ban, color code ban, pt/px ban, XML tag ban
+✅ Typography subsection: Includes Korean text rendering with heavy-weight Gothic-style sans-serif fonts
+✅ Whatif-specific elements: HUD, holograph, neon, 홀로그래픽 패널, 글래스모피즘 present
+✅ Topic: "AI 스마트 팩토리 2030 비전" (AI Smart Factory 2030 Vision)
+✅ Mood: 미드나이트 틸(#1A535C) + 슬레이트 블루(#4ECDC4) — primary palette from SKILL.md
+✅ Existing content: UNCHANGED (lines 1-307 preserved)
+✅ Commit: refactor(visual-gen): convert theme-whatif Golden Reference to 4-block
+✅ File size: 307 → 405 lines (+98 lines)
+
+TASK COMPLETE

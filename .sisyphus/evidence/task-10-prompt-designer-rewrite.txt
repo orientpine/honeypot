@@ -1,0 +1,13 @@
+=== Line count ===
+587 plugins/visual-generator/agents/prompt-designer.md
+=== Style Sheet refs ===
+21
+=== Scene Description refs ===
+13
+=== XML tags remaining ===
+0
+0
+=== Theme rules (6 themes) ===
+43
+=== Concept zero-text rule ===
+4

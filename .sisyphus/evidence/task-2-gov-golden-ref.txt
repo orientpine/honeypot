@@ -1,0 +1,14 @@
+[Check 1] 4-block header count
+8
+
+[Check 2] Golden Reference code block line count
+101
+
+[Check 3] Numbered list matches (tail 20)
+
+[Check 4] XML tag match count
+0
+
+[Check 5] Font ban evidence (tail 5)
+- pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, 기관 로고/마크, 기관명/부처명, 국가 상징, 테이블 형식 CONTENT 등
+- 폰트 패밀리명 직접 지정: Noto Sans, Pretendard, Nanum Gothic, Apple SD Gothic Neo
