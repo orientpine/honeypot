@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-08T00:00:00+09:00
-**Version:** 2.6.5
+**Generated:** 2026-03-09T00:00:00+09:00
+**Version:** 2.7.0
 **Branch:** main
 
 ## OVERVIEW
@@ -26,7 +26,7 @@ toolbox/
     │   ├── commands/
     │   │   └── isd-generate.md       # Master orchestrator command (Chapter 3→1→2→4→5)
     │   └── skills/                   # 11 skills (chapter guides, core-resources, etc.)
-     ├── visual-generator/             # 시각자료 통합 플러그인 (XML-tag v2.0.0, Agent + Command + Skill)
+     ├── visual-generator/             # 시각자료 통합 플러그인 (XML-tag v2.2.0, Agent + Command + Skill)
      │   ├── agents/                   # 5 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent, prompt-validator)
      │   ├── commands/
      │   │   └── visual-generate.md    # 시각자료 생성 오케스트레이터 command
