@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 2.4.0  
+**Version**: 3.1.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -156,7 +156,7 @@ honeypot/
 > 공상과학 영화 UI처럼 빛나는 HUD. 이미 성공한 미래 안에 서 있는 느낌.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/orientpine/honeypot/main/assets/theme-examples/images/04_theme_whatif.png" width="720" alt="What-If Theme Example">
+  <img src="./assets/theme-examples/images/04_theme_whatif.png" width="720" alt="What-If Theme Example">
 </p>
 
 #### theme-pitch — 피치덱
@@ -409,6 +409,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.1.0 | 2026-03-10 | 6개 테마 예시 프롬프트를 v3.0.0 Golden Reference로 업데이트 + Gemini API로 전체 이미지 재생성. 임시/계획 파일 정리. |
 | 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
 | 2.5.0 | 2026-03-09 | visual-generator v2.2.0: 폰트명 유출 차단, 최소 텍스트 밀도(body≥8) 강제, Style Sheet 기반 슬라이드 일관성, prompt-validator 강화(밀도/폰트/팔레트 검증 추가) |
 | 2.4.1 | 2026-03-08 | visual-generator v2.1.1: Golden Reference `<text_to_render>` key:value 형식 통일(4개 테마), 파이프라인 다이어그램 prompt-validator 반영, layout-types Progressive Disclosure 분리(938→82줄 + references/layout-catalog.md), scene-richness-spec 테마명 교정, README agent 수 5개 반영 |
