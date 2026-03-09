@@ -35,9 +35,16 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
     +-- output: review_result.md, concepts_revised.md(optional)
 
 [Phase 3: prompt-designer]
-    +-- Task(subagent_type="visual-generator:prompt-designer")
-    +-- XML-tag 형식으로 생성 지시를 명시
-    +-- output: 01_*.md, 02_*.md, prompt_index.md
+    +-- 슬라이드 반복 루프 (slide_plan.md의 각 슬라이드에 대해):
+        +-- 첫 번째 슬라이드(slide_index=0, is_first_slide=true):
+            +-- Task(subagent_type="visual-generator:prompt-designer")
+            +-- 파라미터: slide_plan, concepts, theme, layout, style_sheet_mode="create", output_path
+            +-- prompt-designer가 {output_path}/style_sheet.md를 생성
+        +-- 두 번째 슬라이드부터(is_first_slide=false):
+            +-- Task(subagent_type="visual-generator:prompt-designer")
+            +-- 파라미터: slide_plan, concepts, theme, layout, style_sheet_mode="follow", style_sheet_path="{output_path}/style_sheet.md"
+            +-- prompt-designer가 style_sheet.md를 읽고 동일 팔레트/스타일 적용
+    +-- output: 01_*.md, 02_*.md, prompt_index.md, style_sheet.md
 
 [Phase 3.5: prompt-validator]
     +-- Task(subagent_type="visual-generator:prompt-validator")
@@ -61,6 +68,8 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
 - 실패 시 보고서에 단계별 사유를 남긴다
 - Phase 3.5 호출 시 scene-richness-spec.md, validation-rules-map.md, korean-typography-spec.md 준수 확인을 명시한다
 - REJECT 사유를 prompt-designer 재호출 프롬프트에 포함한다
+- Phase 3 호출 시 첫 번째 슬라이드 여부(is_first_slide)를 판별하여 style_sheet_mode를 "create" 또는 "follow"로 전달한다
+- 두 번째 슬라이드부터 style_sheet_path를 prompt-designer에 전달하여 슬라이드 간 팔레트 일관성을 보장한다
 
 ## MUST NOT DO
 
