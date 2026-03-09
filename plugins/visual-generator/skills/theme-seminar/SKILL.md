@@ -1,118 +1,351 @@
 ---
 name: theme-seminar
-description: "visual-generator seminar 테마 무드 팔레트와 XML-tag 장면 가이드. Use when theme=seminar."
+description: "visual-generator seminar 테마(세미나/발표 자료) 무드 팔레트. theme=seminar일 때 사용. 9종 무드(technical-report, clarity, tech-focus, growth, connection, innovation, knowledge, presentation, workshop) 각각 4색 팔레트 제공."
 ---
 
-# Seminar Theme
+# Seminar 테마 무드 팔레트
 
-세미나/학술 발표용 에디토리얼 3D 톤을 위한 스킬이다.
+세미나/발표 자료를 위한 9가지 무드 테마. 각 테마는 학술 발표와 전문 세미나에 적합한 4색 팔레트를 제공합니다.
 
-## Mood Palette (9)
+**시각 정체성**: "에디토리얼 매거진 × 아이소메트릭 3D — 잡지 표지처럼 다이나믹한 타이포그래피와 포토리얼리스틱 3D 아이콘이 조화를 이루는 그래픽 중심 레이아웃"
 
-| mood | primary | secondary | accent | background |
-|------|---------|-----------|--------|------------|
-| technical-report | #2C3E50 | #5D6D7E | #2980B9 | #F8F9FA |
-| clarity | #2D3436 | #636E72 | #74B9FF | #FAFAFA |
-| tech-focus | #0984E3 | #2D3436 | #00CEC9 | #F5F6FA |
-| growth | #00B894 | #1E3A3A | #55EFC4 | #F8FFFC |
-| connection | #6C5CE7 | #3D3D6B | #A29BFE | #F8F7FF |
-| innovation | #E17055 | #6B3A3A | #FDCB6E | #FFFAF5 |
-| knowledge | #1E3A5F | #6B5B95 | #E07B39 | #FFFFFF |
-| presentation | #0D4F4F | #5D6D7E | #FF6B6B | #F8F9FA |
-| workshop | #2D5A3D | #6B6B6B | #4ECDC4 | #FFFEF5 |
+**색상 전략**: 각 무드별 4색 팔레트를 사용하되, 3D 아이콘의 사실적 재질감과 조화를 이루도록 팔레트를 적용합니다. 배경과 섹션 구분선은 팔레트 색상, 3D 아이콘은 포토리얼리스틱 재질(금속, 유리, 콘크리트 등)로 렌더링합니다.
 
-## Scene Guide (Rendering Style -> `<scene>`)
+---
 
-`<scene>`는 아래 요소를 번호 없이 자연어로 묘사한다.
-- 서피스: 아이소메트릭 3D 아이콘과 프로스티드 카드
-- 배경: 밝은 중성 배경과 은은한 그라데이션
-- 코너: 소프트 라운딩 카드 경계
-- 연결선: 얇고 정돈된 흐름선
-- 시각장식: 미니 소품, 아이콘, 글래스 레이어
-- 공간구성: 텍스트와 3D 오브젝트의 에디토리얼 혼합
-- 시각메타포: 세미나실 장면이 아닌 평면 인포그래픽 슬라이드
+#### 무드 1: 기술 보고서 (technical-report)
 
-**품질 기준 참조**: `scene-richness-spec.md` (최소 5문장, 7요소 중 5+ 포함, negative prompting 필수)
+**용도**: 국책과제, 연구논문, 기술 제안서, 학술 발표
 
-## Positive Scene Direction
+**색상 팔레트**:
+- 주조: #2C3E50 (네이비) - 핵심 요소, 메인 텍스트
+- 보조: #5D6D7E (슬레이트 블루) - 보조 요소, 연결선
+- 강조: #2980B9 (딥 블루) - 하이라이트, 강조점
+- 배경: #F8F9FA (오프 화이트) - 전체 배경
 
-- 장면 묘사는 3D 아이콘, 프로스티드 글래스 카드, 정돈된 레이아웃 중심으로 작성한다
-- 연구/발표 맥락은 공간 소품과 오브젝트로 표현한다
-- 텍스트는 `<text_to_render>`에만 담고, `<scene>`은 장면 설명만 유지한다
+**스타일 노트**:
+- 정부 보고서와 학술 자료 사이의 중간 톤
+- 차분하고 신뢰감 있는 분위기
+- 학술/연구 맥락에 최적화
 
-## 한글 타이포그래피 가이드
+---
 
-- 권장 힌트: `Bold Modern Korean Sans-serif (Gothic style, Bold/ExtraBold weight Korean sans-serif)`
-- 위계 비율: 제목 > 부제목 > 카드라벨 > KPI
-- 가독성 키워드: `Crisp anti-aliased Korean typography`, `Professional typesetting`
-- 숫자 강조는 굵게, 본문은 중간 굵기로 균형 유지
-- **상세 기준 참조**: `korean-typography-spec.md` (Heavy Gothic-style Hangul 필수, 자모분리 방지)
-- Heavy Gothic-style Hangul (800+ weight) 권장
-- Thin/Light Korean serif 회피
-> ⚠️ **TYPOGRAPHY CRITICAL**: `<typography>` 태그에 구체적 폰트명 금지. Heavy-weight Gothic-style Korean sans-serif at 800+ weight 등 서술적 표현만 사용.
+#### 무드 2: 명료 (clarity)
 
-## XML-Tag 출력 매핑
+**용도**: 설명, 정의, 구조, 분류, 비교
 
-- `<scene>`: 무드 톤과 장면 메타포를 3~5문장으로 기술
-- `<text_to_render>`: 최대 25항목, 렌더링 문자열만 `key: "value"`
-- `<typography>`: 한글 서체 힌트와 위계 규칙
-- `<canvas>`: 3840x2160, 16:9, 해당 무드 팔레트
-- `<layout>`: `<text_to_render>` 값을 큰따옴표로 인용해 위치 지정
+**색상 팔레트**:
+- 주조: #2D3436 (차콜) - 핵심 요소, 메인 텍스트
+- 보조: #636E72 (슬레이트) - 보조 요소, 연결선
+- 강조: #74B9FF (스카이) - 하이라이트, 강조점
+- 배경: #FAFAFA (화이트) - 전체 배경
 
-**검증 규칙 참조**: `validation-rules-map.md` (orphan/ghost 방지, 이중렌더링 방지, 메타라벨 금지)
+**스타일 노트**:
+- 가장 중립적, 범용적
+- 높은 가독성과 명확한 구분
 
-무드 톤 가이드:
-- `technical-report`: 차분하고 정밀한 분위기
-- `innovation`: 역동적이되 과장 없는 대비
-- `presentation`: 명확한 시선 유도와 중간 대비
+---
 
+#### 무드 3: 테크 (tech-focus)
 
-## Golden Reference Example
+**용도**: 기술, AI, 데이터, 시스템, 알고리즘
 
-**주제**: Smart Factory AI 품질검사 시스템
-**레이아웃**: hero_number
-**테마 무드**: technical-report
+**색상 팔레트**:
+- 주조: #0984E3 (블루) - 핵심 요소, 데이터 흐름
+- 보조: #2D3436 (다크 블루) - 구조, 프레임
+- 강조: #00CEC9 (시안) - 하이라이트, 활성 상태
+- 배경: #F5F6FA (라이트 그레이) - 전체 배경
 
-```xml
-<scene>
-A sleek isometric 3D AI quality inspection control room bathed in cool blue-white lighting, with frosted glass panels displaying real-time defect detection feeds. The foreground features a robotic inspection arm with neon-blue sensor beams scanning a factory conveyor belt, casting sharp shadows on a metallic grey surface. In the midground, multiple holographic data dashboards show quality metrics with animated bar graphs and heat maps against a light neutral background. A deep perspective grid recedes toward a bright vanishing point in the background, creating depth. Visual hierarchy draws the eye from the robot arm to the central KPI display. No watermarks, no blurry text, no numbered lists as visual elements, no meta-labels, no artifacts.
-</scene>
+**스타일 노트**:
+- 디지털/테크 느낌
+- 데이터 시각화에 적합
 
-<text_to_render>
-hero_stat: "99.7%"
-hero_label: "불량 검출 정확도"
-title: "AI 품질검사 시스템"
-subtitle: "스마트 팩토리 실시간 모니터링"
-kpi_1_value: "0.3%"
-kpi_1_label: "불량률"
-kpi_2_value: "4K"
-kpi_2_label: "초당 검사 이미지"
-kpi_3_value: "98초"
-kpi_3_label: "불량 감지 반응시간"
-section_1: "AI 비전 시스템"
-item_1: "딥러닝 기반 결함 분류"
-item_2: "멀티스펙트럼 이미징"
-item_3: "실시간 엣지 컴퓨팅"
-section_2: "도입 효과"
-effect_1: "생산성 47% 향상"
-effect_2: "검사 비용 62% 절감"
-effect_3: "불량 유출 98% 감소"
-section_3: "적용 분야"
-field_1: "반도체 웨이퍼 검사"
-field_2: "자동차 부품 검사"
-field_3: "식품 이물 탐지"
-footer: "2026년 스마트 제조 혁신 사례"
-</text_to_render>
+---
 
-<typography>
-All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts. Each Korean syllable block must be complete and legible. Font hierarchy: hero_stat (ExtraBold 900, extra-large scale), title (ExtraBold 800, large scale), section headers (Bold 700, medium scale), body items (Medium 500, body scale). "99.7%" hero statistic rendered in large accent color (#2980B9) with high contrast. Korean labels in Bold Modern Korean sans-serif at ExtraBold (800+).
-</typography>
+#### 무드 4: 성장 (growth)
 
-<canvas>
-3840x2160 pixels, 16:9 aspect ratio. Background: light neutral #F8F9FA with subtle top-to-bottom gradient. Primary color #2C3E50 for structural elements and borders. Secondary #5D6D7E for supporting panels. Accent #2980B9 for hero statistics and highlights. Maintain 35% negative space for clean readability. Frosted glass card effects with soft rounded corners.
-</canvas>
+**용도**: 발전, 학습, 진화, 향상, 성과
 
-<layout>
-Position "99.7%" as the dominant hero statistic in the upper-center, extra-large scale (occupying 20% of canvas height). Place "불량 검출 정확도" as the hero label directly below "99.7%" in medium scale. Position "AI 품질검사 시스템" as the slide title in upper-left quadrant. Arrange "딥러닝 기반 결함 분류", "멀티스펙트럼 이미징", "실시간 엣지 컴퓨팅" as bulleted items in the left column under "AI 비전 시스템". Arrange "생산성 47% 향상", "검사 비용 62% 절감", "불량 유출 98% 감소" in the center column under "도입 효과". Arrange "반도체 웨이퍼 검사", "자동차 부품 검사", "식품 이물 탐지" in the right column under "적용 분야". Place "스마트 팩토리 실시간 모니터링" as subtitle below the title. Position "0.3%", "4K", "98초" as KPI values with "불량률", "초당 검사 이미지", "불량 감지 반응시간" labels in a bottom row. Place "2026년 스마트 제조 혁신 사례" as footer text at the bottom center.
-</layout>
-```
+**색상 팔레트**:
+- 주조: #00B894 (민트) - 핵심 요소, 성장 방향
+- 보조: #1E3A3A (다크 그린) - 기반, 출발점
+- 강조: #55EFC4 (라임) - 하이라이트, 성과
+- 배경: #F8FFFC (민트 화이트) - 전체 배경
+
+**스타일 노트**:
+- 자연스러운 성장 느낌
+- 긍정적/희망적 분위기
+
+---
+
+#### 무드 5: 연결 (connection)
+
+**용도**: 네트워크, 관계, 협력, 소통, 통합
+
+**색상 팔레트**:
+- 주조: #6C5CE7 (퍼플) - 핵심 노드, 연결점
+- 보조: #3D3D6B (인디고) - 구조, 경로
+- 강조: #A29BFE (라벤더) - 하이라이트, 활성 연결
+- 배경: #F8F7FF (라벤더 화이트) - 전체 배경
+
+**스타일 노트**:
+- 부드러운 연결감
+- 관계/네트워크 시각화
+
+---
+
+#### 무드 6: 혁신 (innovation)
+
+**용도**: 변화, 창조, 돌파, 전환, 새로움
+
+**색상 팔레트**:
+- 주조: #E17055 (코랄) - 핵심 요소, 변화점
+- 보조: #6B3A3A (다크 코랄) - 기존 상태
+- 강조: #FDCB6E (골드) - 하이라이트, 혁신 포인트
+- 배경: #FFFAF5 (웜 화이트) - 전체 배경
+
+**스타일 노트**:
+- 에너지 넘치는 느낌
+- 변화/전환 강조
+
+---
+
+#### 무드 7: 지식 (knowledge)
+
+**용도**: 큐레이션, 학습, 정보 관리, 지식 공유, 교육
+
+**색상 팔레트**:
+- 주조: #1E3A5F (딥 블루) - 핵심 요소, 지식 노드
+- 보조: #6B5B95 (퍼플) - 보조 요소, 연결
+- 강조: #E07B39 (오렌지) - 하이라이트, 중요 정보
+- 배경: #FFFFFF (화이트) - 전체 배경
+
+**스타일 노트**:
+- 지적이고 차분한 분위기
+- 정보 큐레이션/관리 주제에 최적
+- 학습/교육 콘텐츠에 적합
+
+---
+
+#### 무드 8: 발표 (presentation)
+
+**용도**: 프레젠테이션, 세미나, 강연, 발표 자료
+
+**색상 팔레트**:
+- 주조: #0D4F4F (다크 틸) - 핵심 요소, 메인 콘텐츠
+- 보조: #5D6D7E (슬레이트) - 보조 요소, 구조
+- 강조: #FF6B6B (코랄) - 하이라이트, 강조점
+- 배경: #F8F9FA (라이트 그레이) - 전체 배경
+
+**스타일 노트**:
+- 전문적이면서 친근한 분위기
+- 세미나/발표 맥락에 최적화
+- 시각적 임팩트와 가독성 균형
+
+---
+
+#### 무드 9: 워크숍 (workshop)
+
+**용도**: 협업, 실습, 팀워크, 워크숍, 공동 작업
+
+**색상 팔레트**:
+- 주조: #2D5A3D (포레스트 그린) - 핵심 요소, 협업 영역
+- 보조: #6B6B6B (웜 그레이) - 보조 요소, 구조
+- 강조: #4ECDC4 (스카이 블루) - 하이라이트, 활동
+- 배경: #FFFEF5 (크림) - 전체 배경
+
+**스타일 노트**:
+- 따뜻하고 협력적인 분위기
+- 워크숍/실습 주제에 적합
+- 팀워크/공동 작업 강조
+
+---
+
+## 렌더링 스타일 (Rendering Style)
+
+이 스타일의 시각적 DNA를 정의합니다. prompt-designer가 INSTRUCTION/CONFIGURATION 블록 생성 시 반드시 참조해야 합니다.
+
+| 차원 | 지시 사항 |
+|------|-----------|
+| **서피스 (3D 아이콘)** | 아이소메트릭 포토리얼리스틱 3D 아이콘. 각 핵심 개념을 **받침대(pedestal/platform) 없이** 독립된 3D 오브젝트로 표현한다. 45도 아이소메트릭 시점. 사실적 재질감(금속, 유리, 플라스틱, 목재, 콘크리트)과 환경 조명(soft studio lighting + ambient occlusion). 오브젝트 하단에 미세한 접촉 그림자(contact shadow)만 허용. 받침대, 플랫폼, 콘크리트 베이스 등 별도 바닥면을 두지 않는다. |
+| **배경** | 깨끗한 단색 배경(팔레트 배경색 또는 연한 라벤더/뉴트럴 그레이). 배경에 미세한 그림자(ambient shadow)만 허용. 도트 그리드, 패턴 장식은 사용하지 않는다. 3D 아이콘이 배경 위에 부유하는 듯한 깨끗한 공간감을 연출한다. |
+| **코너/엣지** | 섹션 구분: 소프트 라운딩(12px radius)의 2D 섹션 영역 안에 3D 아이콘을 배치한다. 섹션 테두리는 1px 보조색 실선 또는 배경색 차이로 구분. 3D 아이콘은 받침대 없이 깨끗한 외형 윤곽을 유지한다. 2D 레이아웃 프레임과 3D 오브젝트의 엣지 대비가 시각적 리듬을 만든다. |
+| **연결선** | 2D 평면 위의 깨끗한 플로우 라인. 2px 실선 + 열린 삼각형 화살표(▷). 보조색 사용. 연결선은 섹션과 섹션을 잇는 2D 요소로, 3D 아이콘과 겹치지 않게 배치한다. 곡선(Bezier) 연결을 허용하여 유기적 흐름을 표현한다. |
+| **시각 장식** | 3D 아이콘 자체가 주요 시각 장식 역할. 아이콘과 텍스트가 **매거진 에디토리얼 스타일**로 어우러지게 배치한다. 텍스트가 3D 아이콘 주변을 감싸거나(text-wrap), 아이콘 위아래로 다이나믹하게 배치된다. 섹션 헤더는 대형 볼드 텍스트로 시각적 앵커 역할. 아이콘 내부에 미니 소품(서류, 모니터, 센서, 도구 등)을 포토리얼리스틱하게 배치하여 개념을 직관적으로 전달한다. 색상 범례 박스, 축 라벨, 데이터 테이블은 포함하지 않는다. |
+| **타이포그래피** | 4단 위계(제목/소제목/본문/캡션). **제목은 대형 볼드**(잡지 헤드라인처럼 시선을 끄는 크기)로 그래픽 요소 역할을 겸한다. 소제목은 세미볼드+보조색, 본문은 레귤러, 캡션/각주는 이탤릭+작은 크기. 텍스트 크기에 강한 대비를 두어 시각적 리듬을 형성한다. 텍스트는 모두 2D 평면에 배치하며, 3D 아이콘 내부에는 텍스트를 렌더링하지 않는다. |
+| **공간 구성** | **매거진 에디토리얼 레이아웃**. 2D 텍스트(55-65%)와 3D 아이소메트릭 아이콘(35-45%)이 잡지 레이아웃처럼 다이나믹하게 배치된다. 텍스트와 아이콘이 기계적으로 좌우 분리되지 않고, 서로 얽히며 시각적 흐름을 만든다: 큰 3D 아이콘 옆에 텍스트가 감싸는 구성, 헤드라인 텍스트 사이에 아이콘이 삽입되는 구성, 아이콘과 텍스트가 대각선 흐름을 이루는 구성. 격자 기반이되 **격자를 의도적으로 깨는 요소**(오버사이즈 아이콘, 블리드 텍스트)를 1-2개 배치하여 생동감을 부여한다. |
+| **시각 메타포** | 에디토리얼 매거진 × 아이소메트릭 3D(Editorial Magazine × Isometric 3D). 고급 과학잡지의 인포그래픽처럼 정보와 시각적 매력을 동시에 전달한다. 추상 개념을 구체적 사물/장비/환경으로 번역하여 받침대 없이 독립된 3D 오브젝트로 배치. 대형 헤드라인 텍스트와 3D 아이콘이 서로 시각적 대화를 이루는 역동적 구성. 학술 발표에 적합하되 그래픽 디자인의 세련미를 겸비한다. 단, 이 테마는 학술 저널에 제출하는 Figure가 아니므로 "Figure N." 캡션, 색상 범례 표, 축 라벨 등 학술 논문 고유 요소는 포함하지 않는다. |
+
+---
+
+### 아이소메트릭 3D + 2D 레이아웃 하이브리드 구분 (CRITICAL)
+
+이 테마는 **아이소메트릭 포토리얼리스틱 3D 아이콘**과 **에디토리얼 매거진 레이아웃**의 하이브리드입니다:
+
+- **3D로 표현하는 것** (아이소메트릭 아이콘): 핵심 개념을 나타내는 독립된 3D 오브젝트(장비, 시설, 환경, 인물 등). **받침대/플랫폼 없이** 포토리얼리스틱하게 렌더링
+- **2D로 표현하는 것** (매거진 레이아웃): 다이나믹한 타이포그래피, 연결선/화살표, 텍스트 라벨, 대형 헤드라인, 전체 정보 구조
+- **포함하지 않는 것** (학술 논문 요소):
+  - "Figure N." 또는 "그림 N." 캡션 번호
+  - 색상 범례 박스 (color legend)
+  - 축 라벨 (axis labels)
+  - 데이터 테이블 (data tables)
+  - 축척 바 (scale bars)
+  - p-value 또는 통계 주석
+
+### 3D 아이콘 디자인 가이드
+
+| 요소 | 지침 |
+|------|------|
+| **시점** | 45도 아이소메트릭 (일관된 시점 유지) |
+| **받침대** | **없음(NO pedestal/platform)**. 3D 오브젝트가 독립적으로 부유한다. 하단에 미세한 접촉 그림자(contact shadow)만 허용. 콘크리트/스톤 베이스, 사각 플랫폼, 지층 단면 등 별도 바닥면 금지 |
+| **재질** | 포토리얼리스틱: 금속(광택/무광), 유리(반투명), 콘크리트, 목재, 플라스틱 |
+| **조명** | 소프트 스튜디오 라이팅 + 앰비언트 오클루전. 강한 직사광 금지 |
+| **스케일** | 미니어처 스케일. 3D 오브젝트 간 일관된 비례 유지 |
+| **디테일** | 소품(서류, 모니터, 센서, 도구, 차량 등)으로 개념을 직관적으로 전달 |
+| **왜곡 방지** | 오브젝트의 기하학적 형태가 정확해야 한다. 늘어남, 찌그러짐, 비대칭 왜곡 금지. 직선은 직선으로, 원은 원으로 렌더링. 복잡한 오브젝트는 형태를 단순화하되 왜곡하지 않는다 |
+| **배치** | 매거진 레이아웃 안에서 텍스트와 다이나믹하게 어우러지도록 배치. 아이콘 내부에 텍스트 렌더링 금지 |
+
+---
+
+## 매거진 에디토리얼 레이아웃 가이드 (Editorial Layout)
+
+이 테마는 학술 발표 슬라이드이되, **고급 과학잡지의 인포그래픽** 수준의 그래픽 완성도를 목표합니다.
+
+### 에디토리얼 레이아웃 원칙
+
+| 원칙 | 설명 |
+|------|------|
+| **텍스트-이미지 통합** | 텍스트와 3D 아이콘이 각자의 영역에 분리되지 않고, 서로 얽히며 하나의 비주얼 스토리를 구성한다. 텍스트가 아이콘 주변을 감싸거나, 아이콘이 텍스트 블록 사이에 삽입되는 형태 |
+| **크기 대비** | 제목은 매우 크게, 본문은 작게 — 크기 차이가 클수록 시각적 임팩트가 강해진다. 잡지 헤드라인처럼 제목 자체가 그래픽 요소 역할을 한다 |
+| **시선 유도** | 가장 큰 요소(대형 3D 아이콘 또는 대형 헤드라인)에서 시작하여 보조 요소로 자연스럽게 시선이 이동하는 흐름을 설계한다 |
+| **의도적 비대칭** | 좌우 대칭 배치보다 의도적인 비대칭이 더 생동감 있다. 한쪽에 큰 요소, 반대쪽에 작은 요소군을 배치하는 구성 |
+| **여백 활용** | 여백은 빈 공간이 아니라 시각적 숨 쉴 틈. 요소를 밀집시키기보다 핵심 요소 주변에 충분한 여백을 확보한다 |
+
+### 텍스트-아이콘 배치 패턴 (권장)
+
+| 패턴 | 설명 |
+|------|------|
+| **감싸기(Wrap)** | 대형 3D 아이콘 옆으로 텍스트가 흐르듯 배치. 아이콘 윤곽을 따라 텍스트 영역이 형성된다 |
+| **삽입(Insert)** | 텍스트 블록 사이에 3D 아이콘이 삽입되어 시각적 포인트 역할. 아이콘이 텍스트 흐름을 끊고 시선을 잡는다 |
+| **앵커(Anchor)** | 대형 3D 아이콘이 슬라이드의 시각적 무게 중심. 헤드라인과 설명 텍스트가 아이콘을 기준으로 배치된다 |
+| **오버레이(Overlay)** | 텍스트가 3D 아이콘 위에 살짝 겹쳐 배치(반투명 배경 텍스트 박스). 깊이감과 레이어 느낌을 부여 |
+
+---
+
+## 권장 레이아웃
+
+seminar 스타일에 특히 적합한 레이아웃 우선순위:
+
+| 우선순위 | 레이아웃 | 이유 |
+|:--------:|----------|------|
+| 1 | Flow (플로우) | 연구 방법론, 데이터 파이프라인 — 학술 발표의 핵심 도식 |
+| 2 | Structure (구조) | 시스템 아키텍처, 모델 구조 — 기술 발표에 빈번 |
+| 3 | Card-Grid (카드 그리드) | 실험 결과, 사례 비교 — 패널 (a)(b)(c) 배치에 최적 |
+| 4 | Strategy Map (전략맵) | 연구 포지셔닝, 기술 비교 매트릭스 — 학술적 분석 도구 |
+
+**비권장**: Single-Hero, Z-Pattern (학술 발표에 비해 정보량 과소)
+
+---
+
+## 콘텐츠 표현 규칙
+
+seminar 스타일의 텍스트는 **개조식 학술체**를 따릅니다:
+
+| 규칙 | 설명 | 예시 |
+|------|------|------|
+| 개조식 | 핵심 키워드 중심의 간결한 명사구 | ✗ "고령 농부가 수동으로 트랙터를 운전한다" → ✓ "고령 농부의 수동 트랙터 운전" |
+| 서술어 최소화 | 종결어미(~다, ~한다) 대신 명사형 종결 | ✗ "작업 효율이 저하된다" → ✓ "작업효율 저하 및 생산성 향상 제한" |
+| 근거-결론 쌍 | 주장과 근거를 쌍으로 배치 (개조식 유지) | "정확도 99.2% → 기존 대비 15%p 향상" |
+| 출처/각주 | 데이터에 각주 번호 사용 권장 | "시장 규모 5조원¹" |
+| 전문용어+풀이 | 전문용어를 쓰되 간단한 풀이 병행 | "CNN(합성곱 신경망) 기반 결함 탐지" |
+| **한글 단독 표기** | 한영 병기 절대 금지. 한글 또는 영문 약어 하나만 사용 | ✗ "연구 (Research)", "분석(Analysis)" → ✓ "연구", "분석" / 약어만 허용: "AI", "IoT" |
+
+---
+
+## 렌더링 금지 요소 (CRITICAL)
+
+프롬프트 생성 시 다음 요소는 **CONTENT BLOCK에 절대 포함 금지**:
+
+| 유형 | 금지 예시 | 설명 |
+|------|-----------|------|
+| **이미지 플레이스홀더** | `[Image 1]`, `[Image 2]`, `[사진]`, `[이미지]`, `[아이콘]` | **대괄호 이미지 참조는 Gemini가 그대로 텍스트로 렌더링함.** 시각 요소는 INSTRUCTION의 Content Placement에서 자연어로 묘사할 것 |
+| 위치 지시자 | `[상단]`, `[하단 결론1]`, `[왼쪽 영역]` | 레이아웃 배치 힌트 |
+| 레이아웃 유형명 | `세미나 프레젠테이션`, `강연 슬라이드` | 메타포/레이아웃 이름 |
+| 색상 코드 | `(#HEXCODE)`, `Primary Color` | CONFIGURATION에서만 사용 |
+| 크기 힌트 | `(대형)`, `(중형)`, `48pt` | INSTRUCTION에서만 사용 |
+| 역할 라벨 | `Main Title`, `Sub-header` | INSTRUCTION에서만 사용 |
+| Figure 캡션 | `Figure 1.`, `그림 1.`, `Fig.` | 학술 논문 Figure 번호 |
+| 색상 범례 | `색상 범례 박스`, `Color Legend` | 학술 차트 범례 |
+| 축 라벨 | `X축`, `Y축`, `axis label` | 학술 차트 축 |
+| 데이터 테이블 | 격자형 수치 테이블 | 학술 데이터 표 |
+| **한영 병기 텍스트** | `연구 (Research)`, `분석(Analysis)`, `목표 / Goal` | 한글과 영어를 괄호·슬래시로 병기하는 모든 형태 금지. 한글 단독 또는 고유 영문 약어(AI, IoT, CNN 등) 단독만 허용 |
+| 받침대/플랫폼 | 콘크리트 베이스, 스톤 플랫폼, 사각 받침대 | 3D 아이콘 아래 별도 바닥면 금지 |
+
+CONTENT에는 **순수한 텍스트 내용만** 포함합니다.
+
+---
+
+## 렌더링 완결성 (Rendering Completeness) — CRITICAL
+
+이 테마의 Gemini 렌더링 결과물에서 다음 품질 기준을 반드시 충족해야 합니다:
+
+| 규칙 | 설명 |
+|------|------|
+| **플레이스홀더 금지** | `[Image 1]`, `[Image 2]`, `[사진]`, `[아이콘]` 등 대괄호 플레이스홀더가 이미지에 렌더링되면 안 된다. 모든 시각 요소는 구체적으로 기술하여 Gemini가 실제로 렌더링하도록 한다 |
+| **깨진 텍스트 금지** | 한글/영문이 깨지거나 알아볼 수 없는 문자열로 렌더링되면 안 된다 |
+| **3D 아이콘 완결성** | 아이소메트릭 3D 오브젝트가 완전한 형태로 렌더링되어야 한다. 오브젝트가 잘리거나, 왜곡되거나, 받침대가 생성되면 안 된다 |
+| **텍스트-아이콘 조화** | 텍스트와 3D 아이콘이 겹치거나 가독성을 해치면 안 된다. 매거진 에디토리얼 레이아웃에서 텍스트와 아이콘이 자연스럽게 어우러져야 한다 |
+| **섹션 구분 명확성** | 섹션 영역 구분(소프트 라운딩 12px)이 명확하게 렌더링되어야 한다. 섹션 경계가 모호하면 안 된다 |
+| **의미적 일관성** | 이미지에 렌더링된 모든 텍스트가 의미적으로 일관되어야 한다. 제목과 본문의 맥락이 맞아야 하며, 관련 없는 텍스트가 섞이면 안 된다 |
+
+### 프롬프트 작성 시 완결성 확보 방법
+
+| 기법 | 설명 |
+|------|------|
+| **구체적 3D 오브젝트 기술** | `[아이콘]` 대신 "45도 아이소메트릭 시점의 금속 재질 서버 랙, 소프트 스튜디오 라이팅" 처럼 구체적으로 기술 |
+| **텍스트 항목 명시** | 렌더링할 텍스트를 CONTENT에 정확히 나열. 모호한 참조(`위 내용 참조`) 금지 |
+| **배치 패턴 명시** | INSTRUCTION에서 텍스트-아이콘 배치 패턴(감싸기/삽입/앵커/오버레이)을 구체적으로 지정 |
+| **왜곡 방지 지시** | 복잡한 3D 오브젝트는 "형태를 단순화하되 왜곡하지 않는다" 명시 |
+
+---
+
+## 구성 지시어 렌더링 방지 (Content Placement 메타라벨 금지) — CRITICAL
+
+INSTRUCTION 블록의 Content Placement에서 CONTENT 텍스트의 배치를 설명할 때, **역할 분류명(메타라벨)**을 사용하면 Gemini가 해당 라벨을 이미지에 텍스트로 렌더링합니다. 반드시 CONTENT에 기재된 **실제 텍스트를 직접 인용**하여 배치를 지시합니다.
+
+| 금지 (메타라벨 — 렌더링 유출) | 올바른 (실제 텍스트 인용) |
+|------|------|
+| `좌측 섹션: 핵심 모듈명 배치` | `좌측 섹션에 '멀티모달 인지 엔진' 텍스트를 소제목으로 배치` |
+| `우측: 기능 설명 나열` | `우측에 '실시간 객체 인식', '3D 공간 매핑' 텍스트를 세로로 나열` |
+| `하단: 주요 성과 라벨` | `하단에 '정확도 99.2%', '처리 속도 15ms' 텍스트를 나란히 배치` |
+
+**금지 메타라벨 목록**: 보조 지표, 보조 텍스트, 핵심 성과, 주요 모듈, 기능 설명, 핵심 비전, 핵심 메시지, KPI 영역, 비전 영역, 결론 영역, 성과 영역, 메인 타이틀, 핵심 모듈명, 입력 라벨, 출력 라벨, 적용 사례, 세부기술, 공통 요소
+
+---
+
+## 출력 구조 매핑 (Output Structure Mapping)
+
+seminar 테마의 프롬프트는 다음과 같이 4-block 구조에 매핑됩니다. 모든 테마가 동일한 4-block 구조를 따릅니다.
+
+### INSTRUCTION 블록 포함 내용
+- `### Image Purpose`: 세미나/학술 발표 슬라이드의 목적 (연구 방법론, 실험 결과 등)
+- `### Target Audience`: 학술 청중, 연구자, 전문가 등
+- `### Key Message`: 전달할 핵심 메시지 한 문장
+- `### Visual Style`: `seminar` 스타일 명시 + 에디토리얼 매거진 × 아이소메트릭 3D 특성
+- `### Rendering Style`: 서피스(아이소메트릭 3D 아이콘), 배경(깨끗한 단색), 코너/엣지(소프트 라운딩 12px), 연결선(2D 플로우 라인), 시각 장식(3D 아이콘+매거진 레이아웃), 공간 구성(매거진 에디토리얼), 시각 메타포(에디토리얼 × 아이소메트릭 3D) 7개 차원
+- `### Content Placement`: CONTENT에 기재된 **실제 텍스트를 직접 인용**(작은따옴표)하여 영역별 배치 위치 설명. 3D 아이콘과 텍스트의 배치 패턴(감싸기/삽입/앵커/오버레이). 시각 요소 배치. **메타라벨(역할 분류명) 사용 금지**
+
+### CONFIGURATION 블록 포함 내용
+- `### Canvas Settings`: 3840 x 2160, 배경색 (테마별)
+- `### Background Treatment`: 깨끗한 단색 + 미세 그림자
+- `### Color Palette`: 주조/보조/강조/배경 4색 (9종 무드별)
+- `### Layout Structure`: Flow/Structure/Card-Grid/Strategy Map 중 선택 + 영역 구분
+- `### Typography`: 4단 위계(제목/소제목/본문/캡션), 대형 볼드 제목
+
+### CONTENT 블록 포함 내용
+- `### Title Area`: 메인 제목 (번호 목록 형태)
+- `### Main Content`: 이미지에 렌더링될 순수 텍스트만 번호 목록으로 나열 (역할 라벨, 영역 구분자, 배치 정보 절대 포함 금지)
+- `### Data Elements`: 연구 수치, 성과 지표
+
+### FORBIDDEN ELEMENTS 블록 포함 내용
+- pt/px 단위, 한영 병기, ASCII 힌트, 렌더링 지시문, 폰트 지정, 좌표, 플레이스홀더, 위치 지시자, 레이아웃 유형명, 색상 코드, 역할 라벨, Figure 캡션, 색상 범례, 축 라벨, 데이터 테이블, 받침대/플랫폼, 테이블 형식 CONTENT 등
