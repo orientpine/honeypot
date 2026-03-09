@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-09T00:00:00+09:00
+**Generated:** 2026-03-09T23:00:00+09:00
 **Version:** 2.7.0
 **Branch:** main
 
@@ -26,7 +26,7 @@ toolbox/
     │   ├── commands/
     │   │   └── isd-generate.md       # Master orchestrator command (Chapter 3→1→2→4→5)
     │   └── skills/                   # 11 skills (chapter guides, core-resources, etc.)
-     ├── visual-generator/             # 시각자료 통합 플러그인 (XML-tag v2.2.0, Agent + Command + Skill)
+     ├── visual-generator/             # 시각자료 통합 플러그인 (4-block v3.0.0, Agent + Command + Skill)
      │   ├── agents/                   # 5 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent, prompt-validator)
      │   ├── commands/
      │   │   └── visual-generate.md    # 시각자료 생성 오케스트레이터 command
@@ -82,7 +82,7 @@ toolbox/
 | Generate full ISD proposal | `plugins/isd-generator/commands/isd-generate.md` | Uses `skills/input-template/` |
 | Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
 | Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
-| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. XML-tag 5개(`<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`) 기반 |
+| Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. 4-block 마크다운(INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) 기반 |
 | Visual generator scene richness spec | `plugins/visual-generator/skills/slide-renderer/references/scene-richness-spec.md` | Scene complexity validation rules |
 | Visual generator validation rules | `plugins/visual-generator/skills/slide-renderer/references/validation-rules-map.md` | Prompt validation checklist |
 | Visual generator Korean typography | `plugins/visual-generator/skills/slide-renderer/references/korean-typography-spec.md` | Korean text rendering guidelines |
