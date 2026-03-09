@@ -106,7 +106,7 @@ footer_right: "하반기 목표: 클라우드 전환율 80% · AI 도입 200개 
 </text_to_render>
 
 <typography>
-Heavy Gothic-style Korean sans-serif at ExtraBold (800+) for titles, Bold (700) for headers. Title at 120pt in #1E3A5F. Roman numeral headers at 64pt bold. Metric figures at 80pt in #4A90A4. Sub-labels at 36pt medium weight. Bottom summary strip at 32pt regular. Crisp anti-aliased Korean typography with professional typesetting. All numerals in the same Gothic family for visual unity.
+Heavy Gothic-style Korean sans-serif at ExtraBold (800+) for titles, Bold (700) for headers. Title at extra-large scale in #1E3A5F. Roman numeral headers at large bold scale. Metric figures at hero scale in #4A90A4. Sub-labels at medium weight scale. Bottom summary strip at small regular scale. Crisp anti-aliased Korean typography with professional typesetting. All numerals in the same Gothic family for visual unity.
 </typography>
 
 <canvas>

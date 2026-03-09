@@ -144,7 +144,7 @@ Establish clear priority levels for visual elements:
 2. **Secondary**: Medium size, supports primary message
 3. **Tertiary**: Small, supporting details, lower contrast
 
-**In scene description**: "Title dominates the upper area (Extra-Bold, 72pt), section headers are secondary (Bold, 36pt), body text is tertiary (Medium, 18pt)."
+**In scene description**: "Title dominates the upper area (Extra-Bold, extra-large scale), section headers are secondary (Bold, medium scale), body text is tertiary (Medium, body scale)."
 
 ### 5.3 Depth Layering (전경/중경/배경 깊이)
 
@@ -294,9 +294,9 @@ badge_2: "Industry 4.0 Ready"
 Bold Modern Korean Sans-serif (Gothic style, Extra-Bold weight for titles, Bold for headers, Medium for body). 
 Font family: Heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) weight for titles and Bold (700) weight for headers and body text. Ensure crisp character formation with no distortion.
 All Korean text must be rendered with crisp, perfectly formed characters with no distortion.
-Text hierarchy: Title (Extra-Bold, 72pt) > Section Header (Bold, 36pt) > Body (Medium, 18pt) > Footer (Regular, 14pt).
+Text hierarchy: Title (Extra-Bold, extra-large scale) > Section Header (Bold, medium scale) > Body (Medium, body scale) > Footer (Regular, small scale).
 Line height: 1.4 for body text, 1.2 for headers.
-Letter spacing: +0.5px for titles, 0px for body.
+Letter spacing: slightly wider for titles, normal for body.
 </typography>
 
 <canvas>
@@ -308,9 +308,9 @@ Texture: Minimal, subtle noise (2% opacity) for depth.
 
 <layout>
 Position "Smart Factory AI Quality Control System" as large hero text in upper-left quadrant (rule of thirds intersection).
-Position "120%" as oversized hero number (120pt, Extra-Bold) directly below title, left-aligned.
-Position "Accuracy Improvement" as hero label (18pt, Medium) below hero number.
-Position "Real-time Defect Detection & Prevention" as subtitle (36pt, Bold) in upper-right quadrant.
+Position "120%" as oversized hero number (extra-large scale, Extra-Bold) directly below title, left-aligned.
+Position "Accuracy Improvement" as hero label (body scale, Medium) below hero number.
+Position "Real-time Defect Detection & Prevention" as subtitle (medium scale, Bold) in upper-right quadrant.
 Create three content cards in the middle region:
   - Left card: "AI Detection Engine" header with 3 items (Computer Vision Analysis, Real-time Processing, 99.8% Accuracy Rate)
   - Center card: "Quality Metrics" header with 3 items (Defect Detection: 2.3ms, False Positive Rate: 0.2%, System Uptime: 99.99%)
@@ -318,7 +318,7 @@ Create three content cards in the middle region:
 Position "Technology Stack" section in lower-left with 3 items (Deep Learning Models, Edge Computing, Cloud Integration).
 Position badges "ISO 9001 Certified" and "Industry 4.0 Ready" in lower-right corner.
 Position footer text: "Smart Factory Initiative" (left) and "Q1 2024 Results" (right) at bottom.
-Maintain 16px gutters between all elements. Use isometric 3D icons to visually separate content regions.
+Maintain consistent gutters between all elements. Use isometric 3D icons to visually separate content regions.
 </layout>
 ```
 
