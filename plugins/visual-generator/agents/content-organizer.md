@@ -296,6 +296,23 @@ whatif/pitch/comparison은 목적형 테마로, **무드 선택 없이 단일 �
 | `theme-pitch` | pitch 목적 테마 (피치덱, 단일 팔레트 + Z-Pattern 가이드) |
 | `theme-comparison` | comparison 목적 테마 (Before/After, 단일 팔레트 + 대비 가이드) |
 
+## 고정 팔레트 규칙 (CRITICAL)
+
+theme_recommendation.md에 슬라이드별 다른 팔레트를 배정하지 않는다.
+세션 전체에 걸쳐 단일 "고정 팔레트" 1개만 출력한다.
+
+형식:
+```
+## 고정 팔레트
+primary: #XXXXXX (무드명)
+secondary: #XXXXXX
+accent: #XXXXXX
+background: #XXXXXX
+```
+
+근거: gov 테마에서 slide01=#1E3A5F, slide02=#2C3E50, slide03=#2E5090으로 각기 다른 팔레트가
+배정되어 슬라이드 간 통일감이 없었음. 이 버그를 방지하기 위해 세션 전체 고정 팔레트를 사용한다.
+
 ## MUST DO
 
 - [ ] 입력 문서 전체 내용 파악 후 핵심 개념 추출
