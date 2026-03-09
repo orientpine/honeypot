@@ -2,18 +2,18 @@
 
 ## Overview
 
-This document defines the minimum quality standards for `<scene>` descriptions in visual slide generation. A rich scene description ensures that Gemini API renders slides with proper depth, composition, and visual hierarchy.
+This document defines the minimum quality standards for Scene Description subsections in visual slide generation. A rich scene description ensures that Gemini API renders slides with proper depth, composition, and visual hierarchy.
 
 ---
 
 ## 1. Minimum Sentence Count Requirements
 
-### `<scene>` Tag (Standard Themes) — 최소 5문장
+### Scene Description (Standard Themes) — 최소 5문장
 - **Minimum: 5 sentences**
 - Each sentence must describe a distinct visual element or spatial characteristic
 - Sentences should cover: surface/textures, lighting, spatial composition, atmosphere, and depth
 
-### `<scene>` Tag (Concept Theme) — 최소 7문장
+### Scene Description (Concept Theme) — 최소 7문장
 - **Minimum: 7 sentences**
 - Concept slides require richer descriptions due to abstract visual metaphors
 - Must include: visual metaphor explanation, spatial composition, color atmosphere, depth layering, focal point, negative space guidance, and rendering constraints
@@ -22,7 +22,7 @@ This document defines the minimum quality standards for `<scene>` descriptions i
 
 ## 2. Scene Guide: 7 Essential Elements Checklist
 
-Every `<scene>` description should incorporate **at least 5 of the following 7 elements**:
+Every Scene Description subsection should incorporate **at least 5 of the following 7 elements**:
 
 | Element | Description | Example |
 |---------|-------------|---------|
@@ -34,13 +34,13 @@ Every `<scene>` description should incorporate **at least 5 of the following 7 e
 | **공간구성 (Spatial Composition)** | Layout structure, element positioning, editorial mixing | "Editorial mix of text and 3D objects", "Balanced composition with clear focal point" |
 | **시각메타포 (Visual Metaphors)** | Conceptual visual representations, symbolic imagery | "Seminar scene as flat infographic (not 3D room)", "Factory floor represented as abstract data visualization" |
 
-**Requirement**: Include **at least 5 of these 7 elements** in every `<scene>` description.
+**Requirement**: Include **at least 5 of these 7 elements** in every Scene Description subsection.
 
 ---
 
 ## 3. Forbidden Phrases (Information-Void Expressions)
 
-The following phrases are **BANNED** from `<scene>` descriptions because they provide no actionable visual guidance:
+The following phrases are **BANNED** from Scene Description subsections because they provide no actionable visual guidance:
 
 - ❌ "clean layout"
 - ❌ "professional design"
@@ -64,7 +64,7 @@ The following phrases are **BANNED** from `<scene>` descriptions because they pr
 
 ## 4. Negative Prompting Guide
 
-Negative prompting prevents unwanted rendering artifacts. Include explicit "No..." statements in `<scene>` or `<canvas>` tags.
+Negative prompting prevents unwanted rendering artifacts. Include explicit "No..." statements in Scene Description or Canvas Settings subsections.
 
 ### Standard Negative Prompts (Always Include)
 
@@ -96,23 +96,21 @@ no overlapping data labels, no rendering glitches
 
 ### Implementation Pattern
 
-Place negative prompts at the end of `<scene>`:
+Place negative prompts at the end of Scene Description:
 
-```xml
-<scene>
+```
 [5+ sentences describing positive visual elements]
 
 Rendering constraints: No watermarks, no blurry text, no artifacts, 
 no placeholder text, no meta-labels. Ensure crisp, clean rendering 
 of all text elements with proper character formation.
-</scene>
 ```
 
 ---
 
 ## 5. Visual Composition Principles
 
-Every `<scene>` should reflect these four composition principles:
+Every Scene Description subsection should reflect these four composition principles:
 
 ### 5.1 Rule of Thirds (삼분할 법칙)
 
@@ -187,7 +185,7 @@ Maintain proper balance between content and empty space.
 
 ### Minimum Text Density Requirements
 
-| Slide Type | Minimum `<text_to_render>` Items |
+| Slide Type | Minimum CONTENT Items |
 |-----------|----------------------------------|
 | Body slides (data, process, comparison, analysis) | ≥ 8 items |
 | Title / Cover slides (metadata: title, subtitle, presenter, event) | ≥ 3 items |
@@ -195,20 +193,17 @@ Maintain proper balance between content and empty space.
 **Note**: Theme-specific upper limits remain unchanged (seminar 25, pitch 18, etc.). Prompts that fall below minimum thresholds must be supplemented with additional data points, KPI breakdowns, or specific metrics before proceeding to the renderer.
 ### Implementation
 
-```xml
-<scene>
-...
+```
 Maintain 30-40% negative space throughout the composition. 
 Text elements should be spaced with minimum 16px gutters. 
 Avoid clustering more than 3 text items in any single region.
-</scene>
 ```
 
 ---
 
 ## 7. Quality Grading Criteria
 
-Use these criteria to evaluate `<scene>` descriptions before rendering:
+Use these criteria to evaluate Scene Description subsections before rendering:
 
 ### EXCELLENT Grade ✅
 
@@ -249,7 +244,7 @@ Use these criteria to evaluate `<scene>` descriptions before rendering:
 
 ---
 
-## 8. Golden XML Examples
+## 8. Golden Examples
 
 ### Example 1: Smart Factory AI Quality Control System (EXCELLENT)
 
@@ -258,12 +253,10 @@ Use these criteria to evaluate `<scene>` descriptions before rendering:
 **Grade**: EXCELLENT  
 **Rationale**: 7 sentences, all 7 scene elements, specific descriptions, negative prompting, composition principles, 25 text items
 
-```xml
-<scene>
+**Scene Description:**
 The composition features isometric 3D icons representing AI quality control systems, rendered with frosted glass card effects and soft shadows. A bright neutral background with a subtle blue-to-white gradient creates atmospheric depth, with the gradient flowing from upper-left to lower-right. Soft-rounded card boundaries (8px radius) define distinct content regions, while thin, organized flow lines connect related elements showing data relationships. Mini props including factory icons, checkmark symbols, and data visualization elements are scattered throughout the midground, creating visual interest without clutter. The spatial composition balances editorial text with 3D objects: hero title in the upper-left quadrant (rule of thirds), supporting visuals in the right third, and data cards in the lower region. Depth layering: foreground contains the bold hero number and title (Extra-Bold, 72pt), midground holds 3D icons and secondary headers (Bold, 36pt), background features the gradient and subtle texture. The visual metaphor represents a smart factory floor as a flat infographic slide, not a 3D room perspective. Maintain 35% negative space with 16px gutters between elements. Rendering constraints: No watermarks, no blurry text, no numbered lists rendered as visual elements, no artifacts, no placeholder text, no meta-labels, no distorted characters.
-</scene>
 
-<text_to_render>
+**CONTENT:**
 title: "Smart Factory AI Quality Control System"
 subtitle: "Real-time Defect Detection & Prevention"
 hero_number: "120%"
@@ -288,25 +281,22 @@ footer_left: "Smart Factory Initiative"
 footer_right: "Q1 2024 Results"
 badge_1: "ISO 9001 Certified"
 badge_2: "Industry 4.0 Ready"
-</text_to_render>
 
-<typography>
+**Typography:**
 Bold Modern Korean Sans-serif (Gothic style, Extra-Bold weight for titles, Bold for headers, Medium for body). 
 Font family: Heavy-weight Gothic-style Korean sans-serif at ExtraBold (800+) weight for titles and Bold (700) weight for headers and body text. Ensure crisp character formation with no distortion.
 All Korean text must be rendered with crisp, perfectly formed characters with no distortion.
 Text hierarchy: Title (Extra-Bold, extra-large scale) > Section Header (Bold, medium scale) > Body (Medium, body scale) > Footer (Regular, small scale).
 Line height: 1.4 for body text, 1.2 for headers.
 Letter spacing: slightly wider for titles, normal for body.
-</typography>
 
-<canvas>
+**Canvas Settings:**
 3840x2160 pixels, 16:9 aspect ratio.
 Color palette: Primary Navy (#1E3A5F), Secondary Teal (#4A90A4), Accent Green (#2E7D5A), Neutral Light (#F5F7FA).
 Background: Bright neutral (#F5F7FA) with subtle blue-to-white gradient (upper-left to lower-right).
 Texture: Minimal, subtle noise (2% opacity) for depth.
-</canvas>
 
-<layout>
+**Content Placement:**
 Position "Smart Factory AI Quality Control System" as large hero text in upper-left quadrant (rule of thirds intersection).
 Position "120%" as oversized hero number (extra-large scale, Extra-Bold) directly below title, left-aligned.
 Position "Accuracy Improvement" as hero label (body scale, Medium) below hero number.
@@ -319,8 +309,6 @@ Position "Technology Stack" section in lower-left with 3 items (Deep Learning Mo
 Position badges "ISO 9001 Certified" and "Industry 4.0 Ready" in lower-right corner.
 Position footer text: "Smart Factory Initiative" (left) and "Q1 2024 Results" (right) at bottom.
 Maintain consistent gutters between all elements. Use isometric 3D icons to visually separate content regions.
-</layout>
-```
 
 ---
 
@@ -331,26 +319,22 @@ Maintain consistent gutters between all elements. Use isometric 3D icons to visu
 **Grade**: EXCELLENT  
 **Rationale**: 8 sentences, all 7 scene elements, concept-specific metaphor, negative prompting, composition principles, 0 text items (concept special rule)
 
-```xml
-<scene>
+**Scene Description:**
 The composition represents a smart factory floor as an abstract data visualization landscape, with flowing geometric shapes and interconnected nodes rather than literal objects or photorealistic elements. A sophisticated color gradient flows from deep navy (#1E3A5F) in the upper-left to teal (#4A90A4) in the center, transitioning to soft green (#2E7D5A) in the lower-right, creating a sense of data flow and energy movement. Isometric 3D geometric forms—cubes, pyramids, and flowing ribbons—represent abstract concepts of production, quality, and efficiency without depicting actual factory equipment. Thin, elegant connecting lines link the geometric elements, suggesting relationships and data pathways between different system components. The spatial composition uses the rule of thirds: primary geometric cluster in the upper-left quadrant, secondary elements in the center, and accent shapes in the lower-right. Depth layering creates visual interest: foreground features bold geometric shapes with high contrast, midground contains connecting lines and smaller accent elements, background shows subtle gradient and atmospheric texture. The visual metaphor transforms a factory floor into an abstract infographic where shapes represent processes, colors represent data states, and connections represent system relationships. Maintain 40% negative space to allow the geometric elements to breathe and create visual impact. Rendering constraints: No literal objects, no photorealism, no text rendered as image, no numbered lists, no bullet points as visual elements, no watermarks, no artifacts, no placeholder text, no meta-labels.
-</scene>
 
-<text_to_render>
-</text_to_render>
+**CONTENT:**
+(Not applicable for concept theme - no text rendering)
 
-<typography>
+**Typography:**
 Not applicable for concept theme (no text rendering).
-</typography>
 
-<canvas>
+**Canvas Settings:**
 3840x2160 pixels, 16:9 aspect ratio.
 Color palette: Primary Navy (#1E3A5F), Secondary Teal (#4A90A4), Accent Green (#2E7D5A), Neutral Light (#F5F7FA).
 Background: Gradient from navy (#1E3A5F) upper-left through teal (#4A90A4) center to green (#2E7D5A) lower-right.
 Texture: Subtle animated-style texture suggesting data flow and movement.
-</canvas>
 
-<layout>
+**Content Placement:**
 Full-bleed composition with no text elements.
 Position primary geometric cluster (large cubes and pyramids) in upper-left quadrant using rule of thirds.
 Position secondary geometric elements (smaller shapes and connecting lines) in the center region.
@@ -358,14 +342,12 @@ Position accent shapes and flowing ribbons in the lower-right quadrant.
 Create visual flow from upper-left to lower-right using connecting lines and gradient direction.
 Maintain 40% negative space throughout, allowing geometric elements to stand out against the gradient background.
 Use isometric perspective consistently across all geometric elements.
-</layout>
-```
 
 ---
 
 ## 9. Implementation Checklist
 
-Before submitting a `<scene>` description for rendering:
+Before submitting a Scene Description subsection for rendering:
 
 - [ ] Sentence count: 5+ (7+ for concept)
 - [ ] Scene elements: 5+ of the 7 elements included
@@ -374,8 +356,8 @@ Before submitting a `<scene>` description for rendering:
 - [ ] Composition principles reflected (rule of thirds, hierarchy, depth, focal point)
 - [ ] Negative space guidance provided (30-40% target)
 - [ ] Specific, concrete descriptions (not vague)
-- [ ] Golden XML example matches theme and layout
-- [ ] All 5 XML tags present: `<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`
+- [ ] Golden example matches theme and layout
+- [ ] All 4 sections present: Scene Description, CONTENT, Typography, Canvas Settings, Content Placement
 
 ---
 
