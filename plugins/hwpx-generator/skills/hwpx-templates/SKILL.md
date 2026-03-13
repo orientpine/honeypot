@@ -21,9 +21,8 @@ description: "HWPX 템플릿 기반 문서 생성 및 ZIP-level 치환 워크플
 1. 양식 복사
 2. ObjectFinder 조사
 3. ZIP 치환
-4. linesegarray 생성 (cell_writer.py)
-5. 네임스페이스 후처리
-6. 결과 검증
+4. 네임스페이스 후처리
+5. 결과 검증
 
 ```text
 [1] 템플릿 파일 복사
@@ -32,12 +31,23 @@ description: "HWPX 템플릿 기반 문서 생성 및 ZIP-level 치환 워크플
     ↓
 [3] 치환 매핑 설계 및 ZIP-level 치환
     ↓
-[4] cell_writer.py --hwpx 실행 (linesegarray 생성 + 셀 높이 조정)
+[4] fix_namespaces.py 실행 (ZIP-level 작업에서만)
     ↓
-[5] fix_namespaces.py 실행 (ZIP-level 작업에서만)
-    ↓
-[6] ObjectFinder로 잔여 플레이스홀더 검증
+[5] ObjectFinder로 잔여 플레이스홀더 검증
 ```
+
+### ⚠️ cell_writer.py 사용 금지 (ZIP-level 편집 시)
+
+ZIP-level 치환 후에는 `cell_writer.py --hwpx`를 **절대 실행하지 않는다.**
+cell_writer는 내부적으로 lxml `tree.write()`를 사용하여:
+- `standalone='no'` 제거
+- 네임스페이스 선언 변경
+- 대량의 개행/들여쓰기 추가
+
+이 세 가지가 동시에 발생하여 파일을 깨뜨린다.
+`<hp:linesegarray>`가 없어도 한글에서 정상적으로 열린다 (한글이 자동 재계산).
+
+상세: `hwpx-core/references/zip-surgery-guide.md` 참조.
 
 ## ObjectFinder 전수 조사
 
@@ -113,9 +123,8 @@ def zip_replace_sequential(src_path, dst_path, old, new_list):
   1) 양식 복사
   2) ObjectFinder 조사
   3) 일괄 치환 + 순차 치환
-  4) `cell_writer.py --hwpx` 실행 (linesegarray 생성)
-  5) `scripts/fix_namespaces.py` 실행
-  6) 재검증
+  4) `scripts/fix_namespaces.py` 실행
+  5) 재검증
 
 예시:
 
@@ -140,10 +149,7 @@ zip_replace_sequential(
     ["항목 1", "항목 2", "항목 3"],
 )
 
-# Step 4: Generate linesegarray (cell heights + line layout)
-subprocess.run(["python", "cell_writer.py", "--hwpx", work_path], check=True)
-
-# Step 5: Fix namespace prefixes
+# Fix namespace prefixes (cell_writer 사용 금지 — 위 경고 참조)
 subprocess.run(["python", "scripts/fix_namespaces.py", work_path], check=True)
 ```
 
@@ -234,7 +240,7 @@ scripts/fix_namespaces.py
 
 3. 치환 값이 `.md` 파일에서 가져온 경우, Markdown 파싱 후 순수 텍스트만 추출하여 치환한다.
 
-## 주의사항 (11개)
+## 주의사항 (13개)
 
 1. 양식 선택은 반드시 사용자 업로드 > 기본 양식 > `new()` 순서
 2. 치환 전 ObjectFinder 조사 생략 금지
@@ -247,3 +253,5 @@ scripts/fix_namespaces.py
 9. XML-first 빌드와 ZIP-level 빌드를 혼동하지 말 것
 10. 스크립트 미탐지 시 임시 대체 코드 작성 대신 즉시 중단/보고
 11. Markdown 서식 기호가 포함된 값을 zip_replace에 직접 전달하지 말 것
+12. **ZIP-level 치환 후 cell_writer.py 실행 금지** — standalone/namespace/newline 파괴 (상세: `hwpx-core/references/zip-surgery-guide.md`)
+13. **ET.tostring() / tree.write()로 section XML을 직렬화하지 말 것** — 문자열 기반 치환만 사용

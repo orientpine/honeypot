@@ -20,34 +20,39 @@ This agent orchestrates two skills:
 - Decide template strategy in strict order: user-uploaded template > default template > XML-first fallback.
 - Run template workflows with `hwpx-templates`, including ObjectFinder-based investigation and replacement.
 - Run XML-first generation/edit flows with `hwpx-core` when no usable template exists.
+- Run ZIP-level surgery for safe editing of existing HWPX files via `hwpx-core` `zip_surgery.py`.
 - Execute mandatory integrity checks using `hwpx-core` `validate.py` before final output.
 
 ## Workflow
 
 1. Analyze user request and classify the document type.
    - Supported types: 공문(gonmun), 보고서(report), 회의록(minutes), 제안서(proposal).
+   - Classify intent: **새 문서 생성** vs **기존 문서 편집**.
 
 2. Select generation mode based on available format resources.
-   - **레퍼런스 우선**: 사용자가 `.hwpx`를 첨부한 경우 반드시 레퍼런스 기반 워크플로우(Workflow 5)를 기본 적용.
+   - **기존 HWPX 편집**: 사용자가 기존 `.hwpx`의 내용 수정을 요청한 경우 → **ZIP-Level Surgery** (`zip_surgery.py`).
+   - **레퍼런스 우선**: 사용자가 `.hwpx`를 첨부하고 동일 스타일로 새 문서를 요청한 경우 → 레퍼런스 기반 워크플로우(Workflow 5).
    - First priority: user-uploaded HWPX reference → `analyze_template.py` + 추출 XML 기반 복원/재작성.
    - Second priority: user-uploaded HWPX template → `hwpx-templates` ZIP replacement.
    - Third priority: project default template.
    - Fallback: XML-first generation via `hwpx-core`.
 
 3. Generate document content using the selected path.
+   - **Existing HWPX edit**: use `zip_surgery.py` — preserves standalone='no', xmlns, byte-level fidelity.
    - Reference present: analyze with `analyze_template.py`, extract header/section, rebuild with structure preserved.
    - Template present: execute `hwpx-templates` ZIP replacement workflow.
    - No template: execute `hwpx-core` XML-first build workflow.
 
 4. Apply post-processing and validation.
-   - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`.
+   - For ZIP-level surgery path, run `validate.py --strict` (standalone, xmlns, newlines checks). **Do NOT run cell_writer.**
+   - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
    - Validate output with `hwpx-core/scripts/validate.py`.
    - **page_guard 필수**: 레퍼런스 기반 작업 시 `hwpx-core/scripts/page_guard.py`로 페이지 드리프트 위험 검사. `page_guard.py` 실패 시 원인 수정 후 재빌드.
    - If validation fails, return to generation/edit step and rebuild.
 
 5. Deliver result and report generation path.
    - Return final `.hwpx` output path.
-   - State which skill path was used (`hwpx-core` or `hwpx-templates`) and validation result.
+   - State which skill path was used (`hwpx-core` / `hwpx-templates` / `zip_surgery`) and validation result.
 
 ## Markdown 입력 처리 (CRITICAL)
 
@@ -121,5 +126,8 @@ HWPX XML 출력 (section0.xml):
 - **쪽수 동일 필수**: 레퍼런스 기반 작업에서 최종 결과의 쪽수는 레퍼런스와 동일해야 한다. 사용자 명시 승인 없이 쪽수 증가 금지.
 - **구조 변경 제한**: 사용자 요청 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집).
 - ZIP replacement path requires namespace repair: run `fix_namespaces.py` after replacement.
+- **ZIP-level surgery/replacement 후 cell_writer.py 실행 절대 금지** — standalone/namespace/newline 파괴로 파일이 열리지 않게 됨.
+- **ZIP-level surgery 결과물은 `validate.py --strict`로 검증** — standalone='no', xmlns, newline count 확인.
+- **표 생성 시 `noAdjust="0"` + `pageBreak="CELL"` 필수** — 행 높이 자동 조절 및 페이지 넘김 허용.
 - Do not hardcode XML blocks in the agent instructions; rely on skill scripts and templates.
 - Use relative path resolution first, then documented Glob fallback rules when locating scripts.
