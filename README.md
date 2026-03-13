@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 3.1.0  
+**Version**: 3.2.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -246,6 +246,7 @@ honeypot/
 
 - **방식**: XML-first 빌드 + ZIP 치환
 - `build_hwpx.py` 기반 생성, `fix_namespaces.py` 필수
+- **v2.4.0**: ZIP-level surgery 도구 추가 (`zip_surgery.py`), `validate.py --strict` 모드, cell_writer 금지 규칙 적용
 - **v2.3.0**: `<hp:linesegarray>` 자동 생성 — 한컴오피스 외 뷰어에서도 정확한 텍스트 레이아웃 보장 (cell_writer.py, 3개 빌드 경로 통합)
 
 | 구성 | 항목 |
@@ -409,6 +410,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.2.0 | 2026-03-13 | hwpx-generator v2.4.0: ZIP-level surgery 도구 추가 (zip_surgery.py, HwpxSurgeon), validate.py --strict 모드, cell_writer 금지 규칙, 표 행 높이 자동 조절, 단계적 디버깅 전략 |
 | 3.1.0 | 2026-03-10 | 6개 테마 예시 프롬프트를 v3.0.0 Golden Reference로 업데이트 + Gemini API로 전체 이미지 재생성. 임시/계획 파일 정리. |
 | 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
 | 2.5.0 | 2026-03-09 | visual-generator v2.2.0: 폰트명 유출 차단, 최소 텍스트 밀도(body≥8) 강제, Style Sheet 기반 슬라이드 일관성, prompt-validator 강화(밀도/폰트/팔레트 검증 추가) |

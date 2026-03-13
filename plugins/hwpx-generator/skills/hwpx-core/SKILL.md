@@ -97,16 +97,17 @@ Glob: **/build_hwpx.py
 절대 금지: 스크립트를 찾지 못했을 때 자체 Python 코드를 작성하지 않습니다.
 즉시 중단 후 경로 확인을 요청합니다.
 
-## 스크립트 요약 (8)
+## 스크립트 요약 (9)
 
 | Script | Purpose |
 |---|---|
 | `scripts/build_hwpx.py` | 템플릿 + XML 오버라이드로 `.hwpx` 조립 |
-| `scripts/cell_writer.py` | linesegarray 생성 + 셀/테이블 높이 자동 조정 (**NEW**) |
+| `scripts/zip_surgery.py` | 기존 HWPX 안전 편집 (ZIP-level surgery, 바이트 레벨 보존) |
+| `scripts/cell_writer.py` | linesegarray 생성 + 셀/테이블 높이 자동 조정 (XML-first/pack 전용) |
 | `scripts/analyze_template.py` | 레퍼런스 HWPX 구조/스타일 분석 |
 | `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | 본문/표 텍스트 추출 |
-| `scripts/validate.py` | ZIP/XML/필수 엔트리 구조 검증 |
+| `scripts/validate.py` | ZIP/XML/필수 엔트리 구조 검증 (`--strict`: surgery 호환성 검증) |
 | `scripts/office/unpack.py` | HWPX를 디렉토리로 풀어 XML 편집 준비 |
 | `scripts/office/pack.py` | 수정 디렉토리를 HWPX로 재패키징 |
 ## 단위 변환 (HWP Units)
@@ -595,6 +596,91 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 
 ---
 
+## Workflow 6. ZIP-Level Surgery (기존 HWPX 안전 편집)
+
+> **핵심**: 기존 HWPX 파일의 바이트 레벨 무결성을 보존하면서 내용을 수정하는 유일하게 안전한 방법.
+> 상세 규칙: `$SKILL_DIR/references/zip-surgery-guide.md` 참조.
+
+### 언제 사용하는가
+
+- 기존 HWPX 파일의 텍스트를 교체할 때
+- 기존 HWPX 파일에 문단/표를 추가/삭제할 때
+- `standalone='no'`, 네임스페이스, 개행 형식을 보존해야 할 때
+
+### 사용법
+
+```python
+from zip_surgery import HwpxSurgeon
+
+surgeon = HwpxSurgeon('document.hwpx')
+
+# 방법 1: 텍스트 치환 (구조 유지)
+surgeon.replace_text({"기존 텍스트": "새 텍스트"})
+
+# 방법 2: 자식 요소 편집 (구조 변경)
+children = surgeon.extract_children()
+children.append(surgeon.make_paragraph('9999', '새 문단'))
+surgeon.replace_children(children)
+
+surgeon.save('output.hwpx')
+
+# 검증 (필수)
+errors = surgeon.validate('output.hwpx')
+assert not errors, errors
+```
+
+### CLI
+
+```bash
+# 추출
+python3 "$SKILL_DIR/scripts/zip_surgery.py" extract document.hwpx -o section0.xml
+
+# 교체
+python3 "$SKILL_DIR/scripts/zip_surgery.py" replace document.hwpx -s new_section0.xml -o result.hwpx
+
+# 검증
+python3 "$SKILL_DIR/scripts/zip_surgery.py" validate document.hwpx result.hwpx
+```
+
+### 절대 금지 (ZIP-level surgery 후)
+
+- `cell_writer.py` 실행 금지 → standalone/namespace/newline 파괴
+- `ET.tostring()` / `tree.write()` 사용 금지 → XML 선언/네임스페이스 변경
+- pretty-print / indent 금지 → 개행이 텍스트 노드로 해석됨
+
+---
+
+## 표 행 높이 자동 조절 규칙 (CRITICAL)
+
+프로그래밍으로 생성한 표는 반드시 다음 속성을 설정해야 한다:
+
+```xml
+<hp:tbl ... noAdjust="0" pageBreak="CELL">
+```
+
+| 속성 | 필수 값 | 효과 |
+|------|---------|------|
+| `noAdjust="0"` | **필수** | 셀 내용에 맞춰 행 높이 자동 확장 |
+| `noAdjust="1"` | **금지** | 고정 높이 — 내용 잘림 |
+| `pageBreak="CELL"` | **권장** | 셀 단위 페이지 넘김 허용 |
+| `pageBreak="NONE"` | **금지** | 큰 표가 한 페이지에 강제 압축 |
+
+---
+
+## 단계적 디버깅 전략
+
+HWPX 파일이 한글에서 열리지 않을 때:
+
+1. **최소 변경 테스트**: 삭제만 하고 삽입 없이 열리는지 확인
+2. **단일 요소 테스트**: 간단한 `<hp:p>` 1개만 추가해서 열리는지 확인
+3. **테이블 테스트**: 간단한 `<hp:tbl>` 1개 추가해서 열리는지 확인
+4. **전체 삽입 테스트**: 모든 내용 삽입
+5. **cell_writer 테스트**: cell_writer 실행 전후 비교
+
+각 단계에서 실패하면, 해당 단계의 변경 내용이 원인이다.
+
+---
+
 ## Critical Rules
 
 1. **HWPX만 지원**: `.hwp`(바이너리) 파일은 지원하지 않는다. 사용자가 `.hwp` 파일을 제공하면 **한글 오피스에서 `.hwpx`로 다시 저장**하도록 안내할 것. (파일 → 다른 이름으로 저장 → 파일 형식: HWPX)
@@ -614,7 +700,10 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
 16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
 17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
-18. **linesegarray 자동 생성**: `<hp:linesegarray>`는 라인 레이아웃 캐시로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고 및 비-한글 뷰어에서 표시 오류를 유발한다. `build_hwpx.py`와 `pack.py`는 패키징 시 `cell_writer.py`를 호출하여 올바른 linesegarray를 자동 생성한다. 생성 실패 시 기존 방식(자동 제거)으로 폴백한다. section0.xml 작성 시 linesegarray를 포함할 필요 없다 — 빌드 파이프라인이 자동 생성한다. ZIP-level 치환 워크플로우(hwpx-templates)에서는 `cell_writer.py --hwpx`를 `fix_namespaces.py` 전에 실행한다.
+18. **linesegarray 자동 생성**: `<hp:linesegarray>`는 라인 레이아웃 캐시로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고 및 비-한글 뷰어에서 표시 오류를 유발한다. `build_hwpx.py`와 `pack.py`는 패키징 시 `cell_writer.py`를 호출하여 올바른 linesegarray를 자동 생성한다. 생성 실패 시 기존 방식(자동 제거)으로 폴백한다. section0.xml 작성 시 linesegarray를 포함할 필요 없다 — 빌드 파이프라인이 자동 생성한다. **단, ZIP-level surgery 편집 후에는 cell_writer를 절대 실행하지 않는다** (한글이 자동 재계산).
+19. **ZIP-level surgery 규칙**: 기존 HWPX 편집 시 `zip_surgery.py`를 사용하고, 상세 규칙은 `$SKILL_DIR/references/zip-surgery-guide.md` 준수. ET.tostring()/tree.write() 사용 금지, 개행 삽입 금지, standalone='no' 보존 필수.
+20. **표 속성 필수**: `noAdjust="0"` (행 높이 자동 조절) + `pageBreak="CELL"` (페이지 넘김 허용)
+21. **validate.py --strict**: ZIP-level surgery 결과물은 `validate.py --strict`로 추가 검증 (standalone, xmlns, newlines, 표 속성)
 
 ## 빠른 실행 예시
 
