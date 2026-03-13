@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 """Validate the structural integrity of an HWPX file.
 
-Checks:
+Checks (standard):
   - Valid ZIP archive
   - Required files present (mimetype, content.hpf, header.xml, section0.xml)
   - mimetype content is correct
   - mimetype is the first ZIP entry and stored without compression
   - All XML files are well-formed
 
+Checks (--strict, for ZIP-level surgery output):
+  - standalone='no' present in section0.xml XML declaration
+  - Sufficient xmlns declarations on root <hs:sec> tag (>=10)
+  - No xmlns declarations in section body (all on root tag)
+  - Only 1 newline in section0.xml (after XML declaration)
+  - Table auto-adjust attributes (noAdjust="0", pageBreak="CELL")
+
 Usage:
     python validate.py document.hwpx
+    python validate.py document.hwpx --strict
 """
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from zipfile import ZIP_STORED, BadZipFile, ZipFile
@@ -29,8 +38,14 @@ REQUIRED_FILES = [
 EXPECTED_MIMETYPE = "application/hwp+zip"
 
 
-def validate(hwpx_path: str) -> list[str]:
-    """Validate HWPX file and return a list of error messages (empty = valid)."""
+def validate(hwpx_path: str, *, strict: bool = False) -> list[str]:
+    """Validate HWPX file and return a list of error messages (empty = valid).
+
+    Args:
+        hwpx_path: Path to the HWPX file.
+        strict: Enable strict checks for ZIP-level surgery compliance
+                (standalone, xmlns, newlines, table attributes).
+    """
 
     errors: list[str] = []
     path = Path(hwpx_path)
@@ -85,6 +100,84 @@ def validate(hwpx_path: str) -> list[str]:
                 except etree.XMLSyntaxError as e:
                     errors.append(f"Malformed XML in {name}: {e}")
 
+        # Strict mode: ZIP-level surgery compliance checks
+        if strict:
+            errors.extend(_strict_checks(zf, names))
+
+    return errors
+
+
+def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:
+    """Additional checks for ZIP-level surgery compliance.
+
+    See references/zip-surgery-guide.md for the full specification.
+    """
+    errors: list[str] = []
+    section_name = "Contents/section0.xml"
+
+    if section_name not in names:
+        return errors
+
+    sec_bytes = zf.read(section_name)
+    sec_text = sec_bytes.decode("utf-8")
+
+    # 1. standalone='no' in XML declaration
+    decl = sec_text[:200]
+    if "standalone='no'" not in decl and 'standalone="no"' not in decl:
+        errors.append(
+            "[strict] standalone='no' missing from section0.xml XML declaration"
+        )
+
+    # 2. xmlns declarations on root <hs:sec> tag
+    hs_sec_pos = sec_text.find("<hs:sec")
+    if hs_sec_pos != -1:
+        root_end = sec_text.find(">", hs_sec_pos) + 1
+        if root_end > 0:
+            root_tag = sec_text[:root_end]
+            xmlns_count = len(re.findall(r"xmlns:", root_tag))
+            if xmlns_count < 10:
+                errors.append(
+                    f"[strict] Only {xmlns_count} xmlns declarations on root tag "
+                    f"(expected >=10, typical HWPX has 15)"
+                )
+
+            # 3. No xmlns declarations in body
+            body_xmlns = len(re.findall(r"xmlns:", sec_text[root_end:]))
+            if body_xmlns > 0:
+                errors.append(
+                    f"[strict] Found {body_xmlns} xmlns declarations in body "
+                    f"(should be 0 — all must be on root tag)"
+                )
+    else:
+        errors.append("[strict] No <hs:sec> root tag found in section0.xml")
+
+    # 4. Newline count (should be exactly 1: after XML declaration)
+    newline_count = sec_text.count("\n")
+    if newline_count != 1:
+        errors.append(
+            f"[strict] section0.xml has {newline_count} newlines "
+            f"(expected exactly 1, after XML declaration)"
+        )
+
+    # 5. Table attributes: noAdjust and pageBreak
+    tbl_pattern = re.compile(r"<hp:tbl\b[^>]*>")
+    for match in tbl_pattern.finditer(sec_text):
+        tbl_tag = match.group(0)
+
+        no_adjust = re.search(r'noAdjust="(\d)"', tbl_tag)
+        if no_adjust and no_adjust.group(1) != "0":
+            errors.append(
+                f'[strict] Table has noAdjust="{no_adjust.group(1)}" '
+                f'(should be "0" for auto row height)'
+            )
+
+        page_break = re.search(r'pageBreak="([^"]*)"', tbl_tag)
+        if page_break and page_break.group(1) == "NONE":
+            errors.append(
+                '[strict] Table has pageBreak="NONE" '
+                '(should be "CELL" for cross-page tables)'
+            )
+
     return errors
 
 
@@ -93,9 +186,15 @@ def main() -> None:
         description="Validate the structural integrity of an HWPX file"
     )
     parser.add_argument("input", help="Path to .hwpx file")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Enable strict checks for ZIP-level surgery compliance "
+        "(standalone, xmlns, newlines, table attributes)",
+    )
     args = parser.parse_args()
 
-    errors = validate(args.input)
+    errors = validate(args.input, strict=args.strict)
 
     if errors:
         print(f"INVALID: {args.input}", file=sys.stderr)
@@ -103,8 +202,9 @@ def main() -> None:
             print(f"  - {err}", file=sys.stderr)
         sys.exit(1)
     else:
-        print(f"VALID: {args.input}")
-        print("  All structural checks passed.")
+        mode = "strict" if args.strict else "standard"
+        print(f"VALID: {args.input} ({mode} mode)")
+        print("  All checks passed.")
 
 
 if __name__ == "__main__":
