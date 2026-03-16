@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 3.3.0  
+**Version**: 3.4.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -325,13 +325,25 @@ L1 Planning ──→ L2 Search ──→ L3 Analysis
 대상 국가는 한국, 미국이고 분석 기간은 2020-2025년이야.
 ```
 
+#### 사전 준비: KIPRIS Open API 키 발급
+
+[KIPRIS Plus 포털](https://plus.kipris.or.kr/portal/main.do)에서 회원 가입 → 서비스 조회 → 구매 신청 → 수수료 결제 → APIKEY 관리에서 인증키 확인 (5단계). 승인까지 1~2 영업일 소요.
+
+#### MCP 서버 자동 설정
+
+```
+/patent-trend-analyzer:patent-mcp-setup {발급받은_API_키} 설정해줘
+```
+
+API 키가 없으면 발급 절차를 안내합니다. venv 생성 + 패키지 설치 + 클라이언트 설정 파일(Claude Code / OpenCode) 등록까지 자동 수행됩니다.
+
 | 구성 | 항목 |
 |------|------|
 | Agents (3) | patent-planner, patent-searcher, patent-analyzer |
 | Command (1) | analyze-patents (오케스트레이터) |
 | Skills (5) | patent-mcp-setup, patent-research-planning, patent-search-collect, patent-analysis-viz, ipc-classification-guide |
 
-> 설치, MCP 설정, 파이프라인 상세, 출력 구조, IPC 코드 가이드 등은 **[patent-trend-analyzer README](./plugins/patent-trend-analyzer/README.md)** 참조
+> 파이프라인 상세, 출력 구조, IPC 코드 가이드, 수동 설정 등은 **[patent-trend-analyzer README](./plugins/patent-trend-analyzer/README.md)** 참조
 
 ---
 
@@ -438,6 +450,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.4.0 | 2026-03-16 | patent-trend-analyzer v1.2.0: MCP 설정 스킬 개선 — API 키 발급 안내, venv 기반 설치, Claude Code/OpenCode 이중 설정(형식 차이 대응), 트러블슈팅 보강 |
 | 3.3.0 | 2026-03-16 | patent-trend-analyzer 플러그인 추가 (KIPRIS API 기반 특허 동향 분석, IPC 분류 가이드, 3 agents + 1 command + 5 skills) |
 | 3.2.0 | 2026-03-13 | hwpx-generator v2.4.0: ZIP-level surgery 도구 추가 (zip_surgery.py, HwpxSurgeon), validate.py --strict 모드, cell_writer 금지 규칙, 표 행 높이 자동 조절, 단계적 디버깅 전략 |
 | 3.1.0 | 2026-03-10 | 6개 테마 예시 프롬프트를 v3.0.0 Golden Reference로 업데이트 + Gemini API로 전체 이미지 재생성. 임시/계획 파일 정리. |
