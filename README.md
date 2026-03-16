@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 3.4.0  
+**Version**: 3.5.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -312,6 +312,8 @@ Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 가이�
 
 ### patent-trend-analyzer
 
+> ⚠️ **해외 특허 서비스 신규 구독 후 1~2일간 서버 전파 지연**이 발생할 수 있습니다 (간헐적 `AccessKey Not Registered` 에러). 한국 특허는 즉시 사용 가능.
+
 **KIPRIS API 기반 특허 동향 분석 및 시각화**
 
 연구 주제를 입력하면 3단계 파이프라인(계획 → 검색 → 분석)을 거쳐 분류, 트렌드 분석, 시각화 대시보드까지 자동 생성합니다. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능합니다.
@@ -450,6 +452,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.5.0 | 2026-03-17 | visual-generator v3.2.0: Must-Render Registry 추가 (4개 테마 필수 렌더링 요소 명시화), marketplace metadata 버전 동기화 (2.4.0→3.5.0) |
 | 3.4.0 | 2026-03-16 | patent-trend-analyzer v1.2.0: MCP 설정 스킬 개선 — API 키 발급 안내, venv 기반 설치, Claude Code/OpenCode 이중 설정(형식 차이 대응), 트러블슈팅 보강 |
 | 3.3.0 | 2026-03-16 | patent-trend-analyzer 플러그인 추가 (KIPRIS API 기반 특허 동향 분석, IPC 분류 가이드, 3 agents + 1 command + 5 skills) |
 | 3.2.0 | 2026-03-13 | hwpx-generator v2.4.0: ZIP-level surgery 도구 추가 (zip_surgery.py, HwpxSurgeon), validate.py --strict 모드, cell_writer 금지 규칙, 표 행 높이 자동 조절, 단계적 디버깅 전략 |
