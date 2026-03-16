@@ -274,6 +274,13 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 - comparison: `before_title`, `after_title`, `before_metric_1`, `after_metric_1` 구조 강제.
 - concept: `scene_element_1`, `scene_element_2` 형태만 사용하고 render_text 계열 key를 금지.
 
+필수 CONTENT key 규칙:
+
+- concept 테마를 제외한 모든 테마에서 **title 역할의 key는 필수**이다.
+- 각 테마의 `## 필수 렌더링 요소 (Must-Render Elements)` 목록에서 "필수" 표시된 요소를 CONTENT에 반드시 포함한다.
+- title key의 이름은 테마별로 다를 수 있다: seminar/whatif는 `title:`, pitch는 `hero_statement:` 또는 `main_number:`, comparison은 `before_title:` + `after_title:`.
+- concept 테마는 텍스트 항목 0개 원칙이므로 이 규칙을 적용하지 않는다.
+
 ### FORBIDDEN ELEMENTS Block Generation
 
 `## FORBIDDEN ELEMENTS`에는 최소 16개 항목을 넣는다.
