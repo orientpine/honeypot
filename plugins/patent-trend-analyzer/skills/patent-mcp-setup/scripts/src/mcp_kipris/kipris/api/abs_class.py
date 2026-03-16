@@ -13,11 +13,6 @@ from stringcase import camelcase
 
 from mcp_kipris.kipris.api.utils import get_nested_key_value, get_response, get_response_async, mask_sensitive_data
 
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-    handlers=[logging.StreamHandler()],
-)
 logger = logging.getLogger("mcp-kipris")
 load_dotenv()
 
@@ -132,8 +127,7 @@ class ABSKiprisAPI:
             NotImplementedError: If subclass hasn't implemented this method.
         """
         raise NotImplementedError(
-            f"{type(self).__name__} must implement _build_params(). "
-            "Return a dict of parameters for the API call."
+            f"{type(self).__name__} must implement _build_params(). Return a dict of parameters for the API call."
         )
 
     def search(self, **kwargs) -> pd.DataFrame:
