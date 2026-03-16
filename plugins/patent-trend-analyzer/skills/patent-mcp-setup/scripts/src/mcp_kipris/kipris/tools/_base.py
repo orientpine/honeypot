@@ -10,6 +10,7 @@ import logging
 import pandas as pd
 
 from mcp_kipris.kipris.abc import ToolHandler
+from mcp_kipris.kipris.api.abs_class import KiprisAPIError
 from mcp_kipris.kipris.tools._formatters import generate_output_path, save_dataframe
 
 logger = logging.getLogger("mcp-kipris")
@@ -64,10 +65,28 @@ class BaseBatchExportTool(ToolHandler):
         max_page = self._get_max_page(page_no)
         consecutive_empty = 0
 
+        last_api_error = None
+
         while total_fetched < max_results:
             logger.info(f"[{self.name}] Fetching page {page_no}, total: {total_fetched}")
 
-            page_df = await self._fetch_page(validated_args, page_no)
+            try:
+                page_df = await self._fetch_page(validated_args, page_no)
+            except KiprisAPIError as e:
+                # [GJ:fix] Handle KIPRIS API errors (e.g., unregistered key) per-page.
+                # If we already have partial results, return them. Otherwise propagate.
+                logger.warning(f"[{self.name}] API 에러 (page {page_no}): {e}")
+                last_api_error = e
+                consecutive_empty += 1
+                if consecutive_empty >= 2:
+                    if results:
+                        logger.info(f"[{self.name}] API 에러 발생, 수집된 {sum(len(r) for r in results)}건 반환")
+                        break
+                    else:
+                        raise  # No results at all — propagate error to user
+                page_no += page_increment
+                continue
+
             await asyncio.sleep(0.5)
 
             if page_df.empty:
@@ -79,6 +98,7 @@ class BaseBatchExportTool(ToolHandler):
                 continue
 
             consecutive_empty = 0
+            last_api_error = None
             results.append(page_df)
             total_fetched += len(page_df)
             page_no += page_increment
@@ -88,6 +108,8 @@ class BaseBatchExportTool(ToolHandler):
                 break
 
         if not results:
+            if last_api_error:
+                raise last_api_error
             return "검색 결과가 없습니다."
 
         final_df = pd.concat(results, ignore_index=True)

@@ -1,8 +1,10 @@
 # patent-trend-analyzer
 
+> ⚠️ **해외 특허 서비스 신규 구독 시 주의**: KIPRIS Plus에서 해외특허 API를 새로 구독하면 서버 전파에 1~2일이 소요됩니다. 전파 완료 전에는 로드밸런서에 따라 간헐적으로 `AccessKey Not Registered` 에러가 발생할 수 있습니다. 한국 특허 API는 즉시 사용 가능합니다.
+
 > KIPRIS API 기반 특허 동향 분석 플러그인 — 키워드 최적화, 검색, 다축 분류, 시각화 대시보드 생성
 
-**Version**: 1.2.0  
+**Version**: 1.2.1  
 **License**: MIT
 
 ---
