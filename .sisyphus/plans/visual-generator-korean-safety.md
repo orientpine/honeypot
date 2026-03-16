@@ -540,7 +540,7 @@ Max Concurrent: 3 (Wave 1)
   - Message: `feat(visual-generator): add Korean hallucination validation to prompt-validator and renderer-agent`
   - Files: `plugins/visual-generator/agents/renderer-agent.md`
 
-- [ ] 6. slide-renderer/SKILL.md에 5차원 품질 평가 문서 추가
+- [x] 6. slide-renderer/SKILL.md에 5차원 품질 평가 문서 추가
 
   **What to do**:
   - 현재 76줄인 SKILL.md를 확장하여 2개 섹션 추가:
@@ -597,7 +597,7 @@ Max Concurrent: 3 (Wave 1)
   - Message: `docs(visual-generator): update SKILL.md quality reference and bump version to 3.1.0`
   - Files: `plugins/visual-generator/skills/slide-renderer/SKILL.md`
 
-- [ ] 7. 버전 범프 3.0.0 → 3.1.0 및 레지스트리 동기화
+- [x] 7. 버전 범프 3.0.0 → 3.1.0 및 레지스트리 동기화
 
   **What to do**:
   - `plugins/visual-generator/.claude-plugin/plugin.json`: `"version": "3.0.0"` → `"version": "3.1.0"`

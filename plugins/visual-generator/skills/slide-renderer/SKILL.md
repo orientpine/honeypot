@@ -53,6 +53,7 @@ Glob: **/generate_slide_images.py
 | `[FAIL] Failed:` | 이미지 생성 실패 | 재시도 대상 추가 |
 | `[SKIP] Already exists:` | 파일 이미 존재 | 스킵 카운트 증가 |
 | `[에러]` | API 오류 또는 시스템 오류 | 로그 기록 |
+| `[품질 평가] 시도 N/M: 평균 X.X (한글:Y, 환각:Y, 정확도:Y, 레이아웃:Y, 색상:Y) → 통과/재시도` | 5차원 품질 평가 결과 | 통과 시 이미지 채택, 재시도 시 피드백 힌트 포함 재생성 |
 
 ## 에러 처리
 
@@ -74,3 +75,49 @@ Glob: **/generate_slide_images.py
     → YES: 5초 대기 → 해당 프롬프트만 재실행 (기존 성공 파일은 자동 스킵)
     → NO: 최종 실패 목록에 추가, 사유 기록
 ```
+
+## Quality Evaluation Criteria
+
+이미지 생성 후 5차원 품질 평가를 실시한다. 각 차원은 0-10점으로 평가된다.
+
+### 5-Dimension Evaluation System
+
+| 차원 | 설명 | 최저 임계값 |
+|------|------|:-----------:|
+| `korean_text_readability` | 한글 텍스트 선명도, 자모 결합 정확성, 가독성 | 5.0 (veto) |
+| `korean_hallucination_detection` | CONTENT에 없는 한글이 이미지에 존재하는지 (10=깨끗) | 5.0 (veto) |
+| `content_reference_accuracy` | CONTENT에 명시된 텍스트가 정확히 렌더링되었는지 | — |
+| `layout_suitability` | 레이아웃 구성, 시각 계층, 공간 균형 | — |
+| `color_palette_compliance` | 지정 팔레트 준수 여부 | — |
+
+### Tiered Evaluation Logic
+
+PASS 조건: 전체 평균 ≥ 7.0 AND korean_text_readability ≥ 5.0 (veto) AND korean_hallucination_detection ≥ 5.0 (veto)
+
+**veto 방식**: 한글 차원 중 하나라도 5.0 미만이면 전체 평균과 무관하게 자동 FAIL.
+
+### concept 테마 면제
+
+concept 테마는 텍스트 항목이 없으므로 한글 평가 차원을 자동으로 10.0으로 설정한다.
+프롬프트에 "concept", "zero text rendering", 또는 "zero-text rendering"이 포함되면 면제 적용.
+
+## Korean Text Safety
+
+generate_slide_images.py는 3중 방어 체계의 inference 계층을 담당한다.
+
+### SYSTEM_INSTRUCTION Anti-Hallucination
+
+스크립트의 SYSTEM_INSTRUCTION에 Korean Text Hallucination Prevention 지시가 포함된다:
+빈 공간에 임의 한글 생성 금지, 모든 한글은 CONTENT 섹션 텍스트에만 대응,
+빈 영역에는 플랫 아이콘/아이소메트릭 일러스트/장식 요소 배치 지시.
+
+### 3-Layer Defense Architecture
+
+| 계층 | 적용 시점 | 구현 위치 |
+|------|-----------|-----------|
+| Upstream | 프롬프트 생성 시 | prompt-designer.md (Korean Safety Rules 6조) |
+| Inference | API 호출 시 | generate_slide_images.py (SYSTEM_INSTRUCTION) |
+| Downstream | 생성 후 | generate_slide_images.py (5D quality + Korean veto) |
+
+자세한 규칙은 `plugins/visual-generator/agents/prompt-designer.md` → `## Korean Text Safety Rules` 참조.
+빈 공간 처리 가이드는 `references/scene-richness-spec.md` → `## 11. Space-Filling Prevention` 참조.
