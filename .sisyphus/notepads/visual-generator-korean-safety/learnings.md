@@ -28,3 +28,5 @@
 - [2026-03-16T23:42:06] Upgraded slide renderer quality gate from 3D average-only to 5D with Korean hallucination/content-accuracy dimensions; kept QUALITY_THRESHOLD=7.0 and added Korean veto floor (5.0).
 
 - [2026-03-16T23:42:15] Upgraded slide renderer quality gate from 3D average-only to 5D with Korean hallucination/content-accuracy dimensions; kept QUALITY_THRESHOLD=7.0 and added Korean veto floor (5.0).
+
+- 2026-03-17: Scope fidelity check passed for last 3 commits; changed files matched exact 8-file allowlist and forbidden-file counts were all zero.
