@@ -12,6 +12,7 @@ __pycache__/
 .venv/
 venv/
 ENV/
+*.egg-info/
 
 # IDE
 .idea/
