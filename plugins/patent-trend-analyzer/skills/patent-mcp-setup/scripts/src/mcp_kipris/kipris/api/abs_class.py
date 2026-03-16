@@ -17,6 +17,19 @@ logger = logging.getLogger("mcp-kipris")
 load_dotenv()
 
 
+class KiprisAPIError(Exception):
+    """KIPRIS API가 에러 코드를 반환했을 때 발생하는 예외.
+
+    KIPRIS API는 HTTP 200과 함께 XML body 안에 에러 코드를 포함시킵니다.
+    예: resultCode=30, resultMsg="AccessKey Is Not Registerd Error"
+    """
+
+    def __init__(self, code: str, message: str):
+        self.code = code
+        self.message = message
+        super().__init__(f"KIPRIS API 오류 (코드 {code}): {message}")
+
+
 class ABSKiprisAPI:
     """Base class for all KIPRIS API implementations.
 
@@ -100,13 +113,25 @@ class ABSKiprisAPI:
 
         Returns:
             pd.DataFrame: Parsed results. Empty DataFrame if no results.
+
+        Raises:
+            KiprisAPIError: If the API returned an error code in response header.
+                Common codes: 30 = Invalid/Unregistered AccessKey.
         """
+        # [GJ:fix] Check response header for API-level errors first.
+        # KIPRIS returns HTTP 200 even on auth failures — the actual error
+        # is buried in <response><header><resultCode>.
+        result_code = get_nested_key_value(response, "response.header.resultCode")
+        result_msg = get_nested_key_value(response, "response.header.resultMsg")
+        if result_code and str(result_code).strip():
+            error_msg = str(result_msg or "알 수 없는 오류").strip()
+            logger.error(f"KIPRIS API 에러 응답: 코드={result_code}, 메시지={error_msg}")
+            raise KiprisAPIError(str(result_code), error_msg)
+
+        # Normal path: extract results from body
         res_dict = get_nested_key_value(response, self.KEY_STRING)
         if res_dict is None:
             logger.info("patents is None")
-            message = get_nested_key_value(response, self.HEADER_KEY_STRING)
-            if message:
-                logger.warning(f"KIPRIS API 응답 메시지: {message}")
             return pd.DataFrame()
         if isinstance(res_dict, t.Dict):
             res_dict = [res_dict]
