@@ -11,11 +11,6 @@ import requests
 import re
 import xmltodict
 
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.INFO,  # INFO 레벨을 출력
-    handlers=[logging.StreamHandler()],
-)
 logger = logging.getLogger("mcp-kipris")
 
 
@@ -25,7 +20,7 @@ def mask_sensitive_data(url: str) -> str:
         return url
     # ServiceKey 또는 accessKey 파라미터 값을 마스킹
     # 예: ServiceKey=abcde12345 -> ServiceKey=****
-    return re.sub(r'(ServiceKey|accessKey)=([^&]+)', r'\1=****', url)
+    return re.sub(r"(ServiceKey|accessKey)=([^&]+)", r"\1=****", url)
 
 
 def get_nested_key_value(dictionary: t.Dict, nested_key: str, sep: str = ".", default_value=None) -> t.Any:
@@ -78,8 +73,9 @@ def get_response(url: str) -> t.Dict:
         try:
             dict_type = xmltodict.parse(response_text)
         except ExpatError:
-            raise Exception("response is not xml check query url [%s] response [%s]", url, response_text[0:100])
-        json_data = json.loads(json.dumps(dict_type))
+            raise Exception(f"[async] response is not xml. check query url [{url}] response [{response_text[:100]}]")
+
+        json_data = dict(dict_type)
         result_header = get_nested_key_value(json_data, "response.header", default_value="")
         logger.info("__kipris__:[%s]:[%s] :result header : [%s]", key_str, mask_sensitive_data(url)[24:], result_header)
         return json_data
@@ -88,7 +84,7 @@ def get_response(url: str) -> t.Dict:
         logger.error(f"타임아웃 발생 (60초 연결 시도, 600초 응답 대기): {str(e)}")
         return {}
     except requests.exceptions.ConnectionError as e:
-        logger.error("connectoin Error:[%s]", e)
+        logger.error("connection Error:[%s]", e)
         return {}
     except requests.exceptions.HTTPError as e:
         logger.error("http Error:[%s]", e)
@@ -126,11 +122,14 @@ async def get_response_async(url: str) -> t.Dict:
         try:
             dict_type = xmltodict.parse(response_text)
         except ExpatError:
-            raise Exception(f"[async] response is not xml. check query url [{url}] response [{response_text[:100]}]")
-
-        json_data = json.loads(json.dumps(dict_type))
+            raise Exception(
+                f"response is not xml. check query url [{mask_sensitive_data(url)}] response [{response_text[:100]}]"
+            )
+        json_data = dict(dict_type)
         result_header = get_nested_key_value(json_data, "response.header", default_value="")
-        logger.info("__kipris__:[async][%s]:[%s] :result header : [%s]", key_str, mask_sensitive_data(url)[24:], result_header)
+        logger.info(
+            "__kipris__:[async][%s]:[%s] :result header : [%s]", key_str, mask_sensitive_data(url)[24:], result_header
+        )
         return json_data
 
     except httpx.TimeoutException as e:
