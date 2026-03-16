@@ -177,6 +177,8 @@ Maintain proper balance between content and empty space.
 - **Below 30%**: Content feels cramped, reduces readability
 - **Above 50%**: Content feels sparse, loses impact
 
+**Visual Enrichment Rule**: When negative space exceeds 50% within a content panel, apply visual enrichment (isometric icons, flat icons, mini illustrations, equipment silhouettes, or decorative shapes matching the theme) rather than additional text. Empty panel space filled with AI-generated Korean text is a hallucination risk — use visual elements instead.
+
 ### Text Density Upper Limit
 
 - **Maximum 8-10 text items per slide** (for seminar theme)
@@ -358,6 +360,7 @@ Before submitting a Scene Description subsection for rendering:
 - [ ] Specific, concrete descriptions (not vague)
 - [ ] Golden example matches theme and layout
 - [ ] All 4 sections present: Scene Description, CONTENT, Typography, Canvas Settings, Content Placement
+- [ ] Space-filling prevention applied (no empty panels >40% without visual elements)
 
 ---
 
@@ -374,3 +377,59 @@ Before submitting a Scene Description subsection for rendering:
 **Document Version**: 1.0  
 **Last Updated**: 2026-03-07  
 **Status**: Active
+
+---
+
+## 11. Space-Filling Prevention (Visual Enrichment)
+
+### Overview
+
+빈 공간을 추가 텍스트로 채우지 않는다. 텍스트가 없는 영역에는 시각 요소를 배치한다.
+
+### Visual Enrichment Strategy
+
+박스/패널 내부에 텍스트 배치 후 빈 공간이 40% 이상이면, 아래 시각 요소 중 하나로 채운다:
+
+- 아이소메트릭 아이콘 (isometric icons)
+- 미니 일러스트 (mini illustrations)
+- 장비 실루엣 (equipment silhouettes)
+- 데이터 시각화 요소 (mini charts, gauges)
+- 테마에 맞는 장식 도형 (decorative shapes)
+
+빈 공간을 추가 한글 텍스트로 채우지 않는다.
+
+### Theme-Specific Visual Elements Guide
+
+| 테마 | 권장 시각 요소 |
+|------|---------------|
+| gov | 단색 플랫 아이콘 (채워진 원+흰색 심볼), 번호 배지, 표 요소 |
+| seminar | 아이소메트릭 3D icons, 프로스티드 글래스 카드, mini props |
+| concept | 추상 기하 도형, 흐르는 리본, 연결 노드 |
+| whatif | 홀로그래픽 HUD 요소, 발광 패널, 데이터 스트림 |
+| pitch | 프로스티드 글래스 카드, 거대 숫자 강조, 미니 차트 |
+| comparison | 대비 분할 아이콘, 상태 변화 시각화, 화살표 요소 |
+
+### Forbidden Space-Filling Patterns
+
+- 빈 공간에 추가 한글 텍스트 삽입 금지
+- CONTENT 값 반복 금지 (이미 배치된 값을 다시 렌더링)
+- meta-label이나 placeholder 텍스트 추가 금지 (예: "내용", "데이터", "설명")
+- AI가 자체 생성한 설명 문장 추가 금지
+
+### Icon Density Guide
+
+- 패널당 1-3개 플랫 아이콘
+- 주요 섹션당 1개 isometric 요소
+- 전체 슬라이드당 최대 8개 시각 요소
+
+### Scene Description Integration Pattern
+
+빈 공간에 시각 요소를 채울 때 Scene Description 작성 예시:
+
+**Before (Risk: hallucination)**:
+"The left panel contains key metrics with supporting information arranged below each value."
+
+**After (Safe: visual enrichment)**:
+"The left panel displays '48%' as the hero metric. Below the number, a flat circular gauge icon visualizes the percentage. The remaining panel space contains no text — only the icon and decorative accent line."
+
+Scene Description에서 이렇게 기술한다: "블록 내부에는 '{라벨}' 텍스트 아래에 {아이콘 설명} 아이콘이 배치된다. 아이콘 외의 빈 공간에는 텍스트를 렌더링하지 않는다."

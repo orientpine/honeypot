@@ -44,9 +44,12 @@ White Space: Maintain 30-40% negative space for visual breathing room and readab
 Text Contrast: All text placed over images must have sufficient contrast for legibility. Use text-shadow, outline, or semi-transparent backing when text overlaps complex or busy backgrounds. Ensure WCAG-level contrast aesthetically.
 
 Zero-Text Rendering: If the prompt specifies a Kurzgesagt-style illustration or explicitly requests zero text rendering, render NO text elements whatsoever in the image. Treat any text-like strings in the prompt as visual element descriptions, not as text to render.
+
+Korean Text Hallucination Prevention: Never generate gibberish or randomly formed Korean characters to fill empty space in the image. If a content area appears empty, fill it with flat icons, isometric illustrations, or decorative visual elements rather than fabricated Korean text. Every Korean character rendered in the final image must correspond to a specific text item from the prompt's CONTENT section. Do not infer, translate, or generate any Korean text beyond what is explicitly provided in the prompt.
 """
 QUALITY_THRESHOLD = 7.0
 MAX_QUALITY_RETRIES = 2
+KOREAN_MIN_THRESHOLD = 5.0
 
 if not GEMINI_API_KEY:
     print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -141,12 +144,18 @@ def generate_image(
         if not _request_image(current_prompt, candidate_output_path):
             return False
 
-        quality_result = evaluate_image_quality(client, candidate_output_path)
+        quality_result = evaluate_image_quality(
+            client, candidate_output_path, prompt_text=current_prompt
+        )
         criteria = quality_result.get("criteria", {})
         score = float(quality_result.get("score", 0.0))
         feedback = quality_result.get("feedback", "")
 
         korean_score = int(round(criteria.get("korean_text_readability", 0)))
+        korean_hallu_score = int(
+            round(criteria.get("korean_hallucination_detection", 0))
+        )
+        content_acc_score = int(round(criteria.get("content_reference_accuracy", 0)))
         layout_score = int(round(criteria.get("layout_suitability", 0)))
         color_score = int(round(criteria.get("color_palette_compliance", 0)))
 
@@ -154,10 +163,18 @@ def generate_image(
             best_score = score
             best_image_path = candidate_output_path
 
-        if score >= QUALITY_THRESHOLD:
+        korean_readability = criteria.get("korean_text_readability", 0)
+        korean_hallu = criteria.get("korean_hallucination_detection", 0)
+        passed = (
+            score >= QUALITY_THRESHOLD
+            and korean_readability >= KOREAN_MIN_THRESHOLD
+            and korean_hallu >= KOREAN_MIN_THRESHOLD
+        )
+
+        if passed:
             print(
                 f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
-                f"평균 {score:.1f} (한글:{korean_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 통과"
+                f"평균 {score:.1f} (한글:{korean_score}, 환각:{korean_hallu_score}, 정확도:{content_acc_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 통과"
             )
             if candidate_output_path != output_path:
                 shutil.copyfile(candidate_output_path, output_path)
@@ -165,7 +182,7 @@ def generate_image(
 
         print(
             f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
-            f"평균 {score:.1f} (한글:{korean_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 재시도"
+            f"평균 {score:.1f} (한글:{korean_score}, 환각:{korean_hallu_score}, 정확도:{content_acc_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 재시도"
         )
 
         if quality_attempt < MAX_QUALITY_RETRIES:
@@ -187,21 +204,31 @@ def generate_image(
     return True
 
 
-def evaluate_image_quality(client, image_path: str) -> dict:
+def evaluate_image_quality(client, image_path: str, prompt_text: str = "") -> dict:
     """
-    Gemini 비전 모델로 생성된 이미지 품질 평가
+    Gemini 비전 모델로 생성된 이미지 품질 평가 (5차원)
     Returns: {"score": float, "feedback": str, "criteria": dict}
     """
+    is_concept = (
+        "concept" in prompt_text.lower()
+        or "zero text rendering" in prompt_text.lower()
+        or "zero-text rendering" in prompt_text.lower()
+    )
+
     evaluation_prompt = """아래 이미지를 엄격하게 평가하세요. 반드시 JSON만 출력하세요.
 
 평가 기준(각 0~10, 소수점 허용):
-1) korean_text_readability: 한글 텍스트 가독성
-2) layout_suitability: 레이아웃 구성 적합성
-3) color_palette_compliance: 지정 팔레트 준수 여부
+1) korean_text_readability: 한글 텍스트의 선명도, 자모 결합 정확성, 가독성 (글자 깨짐/뭉개짐 감점)
+2) korean_hallucination_detection: CONTENT에 없는 한글이 이미지에 존재하는지 여부 (10=깨끗, 0=심각한 hallucination)
+3) content_reference_accuracy: CONTENT에 명시된 텍스트가 이미지에 정확히 렌더링되었는지
+4) layout_suitability: 레이아웃 구성 적합성 (계층, 공간 균형, 시각 흐름)
+5) color_palette_compliance: 지정 팔레트 준수 여부
 
 출력 형식(JSON only):
 {
   "korean_text_readability": 0,
+  "korean_hallucination_detection": 0,
+  "content_reference_accuracy": 0,
   "layout_suitability": 0,
   "color_palette_compliance": 0,
   "feedback": "재생성을 위한 구체적 개선 지침 1~3문장"
@@ -246,25 +273,42 @@ def evaluate_image_quality(client, image_path: str) -> dict:
             "korean_text_readability": _score(
                 payload.get("korean_text_readability", 0)
             ),
+            "korean_hallucination_detection": _score(
+                payload.get("korean_hallucination_detection", 0)
+            ),
+            "content_reference_accuracy": _score(
+                payload.get("content_reference_accuracy", 0)
+            ),
             "layout_suitability": _score(payload.get("layout_suitability", 0)),
             "color_palette_compliance": _score(
                 payload.get("color_palette_compliance", 0)
             ),
         }
-        avg_score = sum(criteria.values()) / 3.0
+
+        if is_concept:
+            criteria["korean_text_readability"] = 10.0
+            criteria["korean_hallucination_detection"] = 10.0
+
+        avg_score = sum(criteria.values()) / 5.0
         feedback = str(payload.get("feedback", ""))
 
         return {"score": avg_score, "feedback": feedback, "criteria": criteria}
 
     except Exception as e:
+        base_criteria = {
+            "korean_text_readability": 0.0,
+            "korean_hallucination_detection": 0.0,
+            "content_reference_accuracy": 0.0,
+            "layout_suitability": 0.0,
+            "color_palette_compliance": 0.0,
+        }
+        if is_concept:
+            base_criteria["korean_text_readability"] = 10.0
+            base_criteria["korean_hallucination_detection"] = 10.0
         return {
             "score": 0.0,
             "feedback": f"품질 평가 실패: {e}",
-            "criteria": {
-                "korean_text_readability": 0.0,
-                "layout_suitability": 0.0,
-                "color_palette_compliance": 0.0,
-            },
+            "criteria": base_criteria,
         }
 
 
