@@ -194,6 +194,8 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 
 테마별 추가 네거티브 문장도 Scene Description 마지막 문장에 붙인다.
 
+- Scene Description must describe ONLY visual composition and spatial arrangement. Never include CONTENT block values or renderable Korean text strings in Scene Description itself.
+
 #### Rendering Style Rules
 
 반드시 아래 7개 항목을 각각 별도 줄로 작성한다.
@@ -274,7 +276,7 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 
 ### FORBIDDEN ELEMENTS Block Generation
 
-`## FORBIDDEN ELEMENTS`에는 최소 15개 항목을 넣는다.
+`## FORBIDDEN ELEMENTS`에는 최소 16개 항목을 넣는다.
 아래 기본 템플릿을 그대로 포함하고, 필요 시 테마별 금지 항목을 추가한다.
 
 필수 포함 15개 템플릿:
@@ -298,6 +300,10 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 concept 전용 추가 항목:
 
 16. 모든 텍스트 렌더링 금지
+
+공통 필수 추가 항목:
+
+17. AI가 자체 생성한 한글 설명문: CONTENT 블록에 명시되지 않은 어떤 한글 텍스트도 이미지 내부에 렌더링하는 것을 절대 금지
 
 ## Theme Branch Rules
 
@@ -427,6 +433,43 @@ Content Placement 추가 규칙:
 1. 밀도가 낮으면 핵심 메시지를 KPI 2-3개로 분해한다.
 2. 밀도가 높으면 유사 항목을 병합하고 반복 문장을 제거한다.
 3. theme 최대치를 초과하면 반드시 항목을 축약한다.
+
+## Korean Text Safety Rules
+
+아래 6개 규칙은 Gemini의 한글 텍스트 hallucination을 방지하기 위한 필수 안전 장치다.
+
+> **concept 테마 면제**: concept 테마는 텍스트 항목 0개이므로 Korean Text Safety Rules를 적용하지 않는다.
+
+### Rule 1: CONTENT-ONLY 원칙
+
+이미지에 렌더링되는 모든 한글 텍스트는 CONTENT 블록에 명시적으로 나열되어야 한다.
+CONTENT에 없는 한글은 이미지에 나타나서는 안 된다.
+
+### Rule 2: 라벨 길이 제한
+
+CONTENT의 각 value는 최대 15자로 제한한다. 8자 이하를 권장하며, 16자 이상은 반드시 분할한다.
+
+### Rule 3: 빈 공간 시각 충전
+
+Scene Description에서 모든 주요 박스/영역의 빈 공간 처리를 명시해야 한다.
+텍스트가 없는 영역은 아이소메트릭 아이콘, 미니 일러스트, 장비 실루엣, 데이터 시각화 요소, 또는 테마에 맞는 장식 도형으로 채운다.
+"정돈되어 배치", "키워드 포함", "설명 텍스트" 등 암시적 텍스트 생성 유도 표현을 사용하지 않는다.
+
+### Rule 4: 분야/카테고리 헤더 명시
+
+이미지에 렌더링될 모든 한글은 CONTENT에 있어야 한다.
+Gemini 추론에 맡기면 유사 자형 혼동(난↔산) 발생 위험이 있다.
+
+### Rule 5: Scene Description anti-hallucination 필수 문구
+
+모든 프롬프트의 Scene Description 마지막에 다음 문구를 반드시 포함한다:
+
+"CRITICAL: Only render the exact text strings listed in the CONTENT block below. Do NOT generate, infer, or add any additional Korean text beyond what is explicitly written in CONTENT. If a box or area has no CONTENT text assigned, fill it with icons or illustrations — never with AI-generated Korean sentences."
+
+### Rule 6: FORBIDDEN ELEMENTS 필수 항목
+
+모든 프롬프트의 FORBIDDEN ELEMENTS에 다음 항목을 반드시 포함한다:
+"AI가 자체 생성한 한글 설명문: CONTENT 블록에 명시되지 않은 어떤 한글 텍스트도 이미지 내부에 렌더링하는 것을 절대 금지"
 
 ## Style Sheet Management
 
