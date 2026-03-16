@@ -16,7 +16,6 @@ from mcp_kipris.kipris._registry import get_all_tools
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp-kipris")
 
 
@@ -37,9 +36,7 @@ def create_mcp_server() -> Server:
         return [tool.get_tool_description() for tool in tools.values()]
 
     @app.call_tool()
-    async def call_tool(
-        tool_name: str, args: dict
-    ) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
+    async def call_tool(tool_name: str, args: dict) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
         """Handle tool calls with async-first, sync-fallback execution."""
         if not isinstance(args, dict):
             raise RuntimeError("arguments must be dictionary")
@@ -54,7 +51,7 @@ def create_mcp_server() -> Server:
         try:
             # [GJ] Async-first with sync fallback
             result = await tool_handler.run_tool_async(args)
-        except (AttributeError, NotImplementedError) as e:
+        except NotImplementedError as e:
             logger.warning(f"[core] Async failed for {tool_name}, using sync: {e}")
             result = tool_handler.run_tool(args)
 
