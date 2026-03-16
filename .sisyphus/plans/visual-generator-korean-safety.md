@@ -422,7 +422,7 @@ Max Concurrent: 3 (Wave 1)
   - Files: `plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py`
   - Pre-commit: `python -c "import ast; ast.parse(open('plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py').read())"`
 
-- [ ] 4. prompt-validator.md에 8번째 검증 차원 (한글 환각 위험 검출) 추가
+- [x] 4. prompt-validator.md에 8번째 검증 차원 (한글 환각 위험 검출) 추가
 
   **What to do**:
   - Dimension 7 (Palette Consistency Check) 뒤 (line 98 이후)에 새로운 차원을 추가:
@@ -483,7 +483,7 @@ Max Concurrent: 3 (Wave 1)
   - Message: `feat(visual-generator): add Korean hallucination validation to prompt-validator and renderer-agent`
   - Files: `plugins/visual-generator/agents/prompt-validator.md`
 
-- [ ] 5. renderer-agent.md에 한글 hallucination 검증 항목 #15, #16 추가
+- [x] 5. renderer-agent.md에 한글 hallucination 검증 항목 #15, #16 추가
 
   **What to do**:
   - Validation Checklist 테이블 (line 153-166)에 2개 항목 추가:
