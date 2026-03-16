@@ -2,7 +2,7 @@
 
 > KIPRIS API 기반 특허 동향 분석 플러그인 — 키워드 최적화, 검색, 다축 분류, 시각화 대시보드 생성
 
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **License**: MIT
 
 ---
@@ -22,16 +22,22 @@ L1 Planning ──→ L2 Search ──→ L3 Analysis
 
 ## 사전 준비
 
-### 1. KIPRIS API 키 발급
+### 1. KIPRIS Open API 키 발급
 
-1. [공공데이터포털(data.go.kr)](https://www.data.go.kr) 회원가입
-2. "KIPRIS 특허정보검색서비스" 검색 → 활용 신청
-3. 승인 후 API 키 발급 (승인까지 1~2일 소요)
+[KIPRIS Plus 포털](https://plus.kipris.or.kr/portal/main.do)에서 아래 5단계를 따릅니다.
+
+| 단계 | 작업 | 상세 |
+|:----:|------|------|
+| **STEP 1** | 회원 가입 | 개인 또는 단체로 가입. 법인계좌/카드 이용 시 단체회원으로 가입 |
+| **STEP 2** | 서비스 조회 | Open API 메뉴 클릭 → 데이터 상품 조회 → 원하는 상품 선택 |
+| **STEP 3** | 구매 신청 | 장바구니에서 서비스 이용 조건·할인 유형 정보 입력. 관리자 승인 후 결제 가능 상태 (마이 페이지 확인) |
+| **STEP 4** | 수수료 결제 | 마이페이지에서 견적서 출력 및 수수료 결제 (계좌이체/신용카드). 결제 오류·환불은 담당자 문의 |
+| **STEP 5** | 서비스 이용 | 마이 페이지 > **APIKEY 관리**에서 인증키 확인 후 서비스 이용 |
 
 ### 2. 시스템 요구사항
 
 - Python 3.11 이상
-- Claude Code (마켓플레이스 등록 필요)
+- Claude Code 또는 OpenCode (마켓플레이스 등록 필요)
 - Python 패키지: `pandas`, `matplotlib`, `seaborn`, `plotly`, `openpyxl`
 
 ---
@@ -41,25 +47,55 @@ L1 Planning ──→ L2 Search ──→ L3 Analysis
 ### Step 1. 마켓플레이스 등록
 
 ```bash
-# Claude Code에서 실행
+# Claude Code / OpenCode에서 실행
 /plugin marketplace add /path/to/honeypot
 ```
 
-### Step 2. MCP 서버 설치
+### Step 2. MCP 서버 설치 및 설정 (자동)
 
-```bash
-pip install -e /path/to/honeypot/plugins/patent-trend-analyzer/skills/patent-mcp-setup/scripts/
+아래 명령 한 줄로 MCP 서버 설치 + 설정 파일 등록이 자동으로 수행됩니다.
+
+```
+/patent-trend-analyzer:patent-mcp-setup {발급받은_API_키} 설정해줘
 ```
 
-### Step 3. Claude Code에 MCP 서버 연결
+자동 설정 스킬이 수행하는 작업:
+1. API 키가 없으면 KIPRIS Plus 발급 절차 안내
+2. Python venv 생성 (`~/.kipris-mcp-venv`) 및 패키지 설치
+3. Claude Code / OpenCode 설정 파일에 MCP 서버 등록 (각 클라이언트별 올바른 형식으로)
+4. 18개 도구 등록 확인
 
-`~/.claude/settings.json`의 `mcpServers` 섹션에 추가:
+완료 후 클라이언트를 재시작하면 MCP 서버가 연결됩니다.
+
+<details>
+<summary>수동 설정 (참고)</summary>
+
+#### 패키지 설치
+
+시스템 Python에 직접 설치하면 `externally-managed-environment` 오류가 발생할 수 있습니다. venv를 사용하세요.
+
+```bash
+# uv가 있는 경우 (권장)
+uv venv ~/.kipris-mcp-venv --python 3.12
+uv pip install -e /path/to/honeypot/plugins/patent-trend-analyzer/skills/patent-mcp-setup/scripts/ \
+  --python ~/.kipris-mcp-venv/bin/python3
+
+# uv가 없는 경우
+python3 -m venv ~/.kipris-mcp-venv
+~/.kipris-mcp-venv/bin/pip install -e /path/to/honeypot/plugins/patent-trend-analyzer/skills/patent-mcp-setup/scripts/
+```
+
+#### Claude Code 설정
+
+설정 파일: `~/.claude/settings.json`
+
+`mcpServers` 섹션에 아래 항목을 추가합니다.
 
 ```json
 {
   "mcpServers": {
     "kipris": {
-      "command": "python",
+      "command": "/home/user/.kipris-mcp-venv/bin/python3",
       "args": ["-m", "mcp_kipris.server"],
       "env": {
         "KIPRIS_API_KEY": "발급받은_API_키"
@@ -69,12 +105,35 @@ pip install -e /path/to/honeypot/plugins/patent-trend-analyzer/skills/patent-mcp
 }
 ```
 
-설정 후 Claude Code를 재시작합니다.
+#### OpenCode 설정
 
-### Step 4. 설치 확인
+설정 파일: `~/.config/opencode/opencode.json`
+
+> **주의**: OpenCode는 Claude Code와 설정 형식이 다릅니다 (`"mcp"` 키, `"command"` 배열, `"environment"` 키).
+
+`mcp` 섹션에 아래 항목을 추가합니다.
+
+```json
+{
+  "mcp": {
+    "kipris": {
+      "type": "local",
+      "command": ["/home/user/.kipris-mcp-venv/bin/python3", "-m", "mcp_kipris.server"],
+      "enabled": true,
+      "environment": {
+        "KIPRIS_API_KEY": "발급받은_API_키"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### Step 3. 설치 확인
 
 ```bash
-KIPRIS_API_KEY=your_key python -c "
+KIPRIS_API_KEY=your_key ~/.kipris-mcp-venv/bin/python3 -c "
 from mcp_kipris.kipris._registry import get_all_tools
 tools = get_all_tools()
 print(f'{len(tools)} tools registered')
@@ -333,10 +392,11 @@ output/
 
 ### MCP 서버가 연결되지 않을 때
 
-1. Python 버전 확인: `python --version` (3.11 이상)
-2. 패키지 설치 확인: `pip show mcp-kipris`
-3. API 키 확인: `echo $KIPRIS_API_KEY`
-4. 직접 실행 테스트: `KIPRIS_API_KEY=your_key python -m mcp_kipris.server`
+1. Python 버전 확인: `python3 --version` (3.11 이상)
+2. venv 확인: `ls ~/.kipris-mcp-venv/bin/python3`
+3. 패키지 설치 확인: `~/.kipris-mcp-venv/bin/pip show mcp-kipris`
+4. API 키 확인: 설정 파일에서 `KIPRIS_API_KEY` 값 확인
+5. 직접 실행 테스트: `KIPRIS_API_KEY=your_key ~/.kipris-mcp-venv/bin/python3 -m mcp_kipris.server`
 
 ### API 인증 오류 (401/403)
 
@@ -346,10 +406,15 @@ output/
 ### 도구 수가 18개 미만일 때
 
 ```bash
-pip install -e /path/to/skills/patent-mcp-setup/scripts/ --force-reinstall
+# uv가 있는 경우
+uv pip install -e /path/to/skills/patent-mcp-setup/scripts/ \
+  --python ~/.kipris-mcp-venv/bin/python3 --force-reinstall
+
+# uv가 없는 경우
+~/.kipris-mcp-venv/bin/pip install -e /path/to/skills/patent-mcp-setup/scripts/ --force-reinstall
 ```
 
-이후 Claude Code 재시작.
+이후 클라이언트 재시작.
 
 ### 한글 폰트 깨짐 (차트)
 
