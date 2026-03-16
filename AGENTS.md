@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-13T00:00:00+09:00
+**Generated:** 2026-03-16T00:00:00+09:00
 **Version:** 2.8.0
 **Branch:** main
 
@@ -13,7 +13,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (12 plugins)
+│   └── marketplace.json              # Single marketplace registry (13 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
     │   ├── agents/                   # 6 agents
