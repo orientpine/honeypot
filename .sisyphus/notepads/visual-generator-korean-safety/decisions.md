@@ -41,3 +41,5 @@
 - [2026-03-16T23:42:06] Applied concept/zero-text exemption by forcing Korean-related dimensions to 10.0 in quality evaluation (normal + exception path) to avoid penalizing no-text themes.
 
 - [2026-03-16T23:42:15] Applied concept/zero-text exemption by forcing Korean-related dimensions to 10.0 in quality evaluation (normal + exception path) to avoid penalizing no-text themes.
+
+- 2026-03-17: Verdict policy confirmed: APPROVE only when scope allowlist, forbidden-file checks, version sync (3.1.0), and content coverage (6/6) all pass.

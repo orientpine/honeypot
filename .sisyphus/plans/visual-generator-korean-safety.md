@@ -652,7 +652,7 @@ Max Concurrent: 3 (Wave 1)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Rejection → fix → re-run.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
 
   **What to verify**: Every "Must Have" is implemented, every "Must NOT Have" is absent.
 
@@ -682,7 +682,7 @@ Max Concurrent: 3 (Wave 1)
 
   Output: `Must Have [7/7] | Must NOT Have [2/2] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
 
   **What to verify**: Python syntax valid, markdown structure intact, YAML frontmatter parseable.
 
@@ -715,7 +715,7 @@ Max Concurrent: 3 (Wave 1)
 
   Output: `Syntax [PASS/FAIL] | Markdown [PASS/FAIL] | Frontmatter [PASS/FAIL] | VERDICT`
 
-- [ ] F3. **Cross-Reference Consistency QA** — `unspecified-high`
+- [x] F3. **Cross-Reference Consistency QA** — `unspecified-high`
 
   **What to verify**: Rules, dimensions, and exemptions are consistent across all modified files.
 
@@ -749,7 +749,7 @@ Max Concurrent: 3 (Wave 1)
 
   Output: `Rules [3/3 consistent] | Dimensions [2/2] | Exemptions [3/3] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
 
   **What to verify**: Only specified files were changed, no scope creep.
 
