@@ -95,6 +95,15 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
     +-- Step 2-6. 검증 결과 기록
         +-- PASS: 렌더링 대기열에 추가
         +-- FAIL: 실패 사유 기록, 해당 프롬프트 스킵
+    |
+    +-- Step 2-7. Anti-hallucination directive 검증 (concept 테마 SKIP)
+    |   +-- Grep: "Only render.*exact.*CONTENT\|CONTENT block.*Do NOT\|gibberish Korean" prompt.md
+    |   +-- 패턴 미발견 시 FAIL (anti-hallucination 지시문 없음)
+    |
+    +-- Step 2-8. Cross-contamination 검증 (concept 테마 SKIP)
+        +-- CONTENT 블록에서 value 목록 추출
+        +-- 추출된 value가 Scene Description 내에 직접 포함되어 있는지 확인
+        +-- CONTENT value가 Scene Description에서 발견되면 FAIL (cross-contamination)
 
 [Phase 3: 이미지 렌더링]
     |
@@ -163,6 +172,10 @@ renderer-agent 에이전트를 사용해서 이미지를 생성해줘.
 | 12 | Scene Description 최소 문장 | `### Scene Description` 문장 수 ≥ 5 (concept ≥ 7) | 최소 문장 수 미달 |
 | 13 | CONTENT ↔ Content Placement 일관성 | `## CONTENT`의 모든 value가 `### Content Placement`에 인용, 역방향도 확인 (orphan/ghost 없음) | orphan 또는 ghost 존재 |
 | 14 | CONTENT 빈 값 | `## CONTENT` key에 빈 value(`""`) 존재 여부 확인 | 빈 value 존재 |
+| 15 | Anti-hallucination Negative Prompt | Scene Description에 "Only render the exact text strings listed in the CONTENT block" 또는 동등한 anti-hallucination negative prompt 포함 확인 | 미포함 |
+| 16 | CONTENT-Scene Cross-contamination | Scene Description에 CONTENT value 문자열이 직접 포함되어 있는지 확인 (cross-contamination 검출) | CONTENT value 발견 |
+
+**concept 테마 면제**: 검증 항목 #15, #16은 concept 테마에서 SKIP한다 (텍스트 없는 테마).
 
 ### 테마별 CONTENT 항목 상한
 
@@ -204,6 +217,15 @@ grep -A 100 "## CONTENT" prompt.md | grep -E '^[A-Za-z_]+: ""$' && echo "FAIL" |
 
 # 환각 URL 확인 (없어야 PASS)
 grep -E "www\.[a-z-]+\.(com|net|org)" prompt.md || echo "PASS"
+
+# Anti-hallucination directive 확인 (#15, concept 테마 SKIP)
+grep -i "only render.*exact\|CONTENT block.*Do NOT\|gibberish Korean" prompt.md || echo "FAIL: anti-hallucination directive missing"
+
+# CONTENT-Scene cross-contamination 확인 (#16, concept 테마 SKIP)
+# CONTENT value를 추출 후 Scene Description에서 검색 (없어야 PASS)
+grep -A 100 "## CONTENT" prompt.md | grep -oE '"[^"]{2,}"' | while read val; do
+  grep -q "Scene Description" prompt.md && grep -A 20 "### Scene Description" prompt.md | grep -qF "$(echo $val | tr -d '"')" && echo "FAIL: cross-contamination detected: $val"
+done || echo "PASS"
 ```
 
 ## Script & Error Handling

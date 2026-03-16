@@ -29,7 +29,7 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
 ## Output
 
 - `{prompts_path}/validation_result.md`
-- 형식: 슬라이드별 7개 차원 점수 + overall PASS/REJECT + REJECT 시 구체적 수정 지시
+- 형식: 슬라이드별 8개 차원 점수 + overall PASS/REJECT + REJECT 시 구체적 수정 지시
 
 ## Validation Dimensions
 
@@ -97,6 +97,16 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
   - style_sheet.md 없으면 SKIP (첫 번째 슬라이드)
   - style_sheet.md 있는데 `### Color Palette`가 불일치 시 REJECT
 
+### 8) Korean Hallucination Risk Detection (한글 환각 위험 검출)
+- 검증 대상: `## CONTENT` values + `### Scene Description`
+- 검증 항목 4가지:
+  1. Scene Description에 CONTENT value 문자열이 직접 포함되어 있는지 (cross-contamination 검출)
+  2. CONTENT value가 15자를 초과하는 한글 텍스트인지 (hallucination 위험 증가)
+  3. Scene Description에 anti-hallucination negative prompting이 포함되어 있는지 ("Only render the exact text strings" 또는 동등 표현)
+  4. Content Placement에 빈 공간 시각 충전 지시가 있는지 (아이콘/일러스트 참조 존재)
+- REJECT 기준: 4가지 중 하나라도 실패
+- **concept 테마 면제**: concept theme은 이 차원을 SKIP한다 (텍스트 항목 0개 테마).
+
 ## Workflow
 
 ```
@@ -109,7 +119,7 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
   +-- Glob: {prompts_path}/*.md (exclude prompt_index.md)
   +-- Read each prompt file
 
-[Phase 2: 슬라이드별 7개 차원 검증]
+[Phase 2: 슬라이드별 8개 차원 검증]
   +-- For each slide:
       +-- Dimension 1: 장면 풍부함 검증
       +-- Dimension 2: 콘텐츠 완성도 검증
@@ -118,7 +128,8 @@ content-organizer -> content-reviewer -> prompt-designer -> prompt-validator -> 
       +-- Dimension 5: 폰트명 유출 검출
       +-- Dimension 6: 텍스트 밀도 검증
       +-- Dimension 7: 팔레트 일관성 검증
-      +-- Overall: PASS if all 7 pass; REJECT if any fails
+      +-- Dimension 8: 한글 환각 위험 검출
+      +-- Overall: PASS if all 8 pass; REJECT if any fails
       +-- On REJECT: produce specific line-level correction instructions
 
 [Phase 3: 결과 저장]
