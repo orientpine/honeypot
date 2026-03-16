@@ -314,15 +314,24 @@ Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 가이�
 
 **KIPRIS API 기반 특허 동향 분석 및 시각화**
 
-- **범용성**: 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능
-- **파이프라인**: 연구 영역 클러스터링 → 키워드 최적화 → IPC 매핑 → 특허 검색 → 다축 분류 → 시각화
-- **출력**: PNG/HTML 차트, Excel 보고서, 트렌드 분석 결과
+연구 주제를 입력하면 3단계 파이프라인(계획 → 검색 → 분석)을 거쳐 분류, 트렌드 분석, 시각화 대시보드까지 자동 생성합니다. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능합니다.
+
+```
+L1 Planning ──→ L2 Search ──→ L3 Analysis
+```
+
+```
+@patent-trend-analyzer "자율주행 라이다 센서" 주제로 특허 동향 분석을 해줘.
+대상 국가는 한국, 미국이고 분석 기간은 2020-2025년이야.
+```
 
 | 구성 | 항목 |
 |------|------|
 | Agents (3) | patent-planner, patent-searcher, patent-analyzer |
 | Command (1) | analyze-patents (오케스트레이터) |
 | Skills (5) | patent-mcp-setup, patent-research-planning, patent-search-collect, patent-analysis-viz, ipc-classification-guide |
+
+> 설치, MCP 설정, 파이프라인 상세, 출력 구조, IPC 코드 가이드 등은 **[patent-trend-analyzer README](./plugins/patent-trend-analyzer/README.md)** 참조
 
 ---
 
