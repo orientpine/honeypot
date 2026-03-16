@@ -4,6 +4,7 @@ Extracts common pagination, deduplication, and file output logic
 from Korean and Foreign batch export tools.
 """
 
+import asyncio
 import logging
 
 import pandas as pd
@@ -49,6 +50,10 @@ class BaseBatchExportTool(ToolHandler):
         """Build success message. May be overridden for custom messages."""
         return f"성공적으로 {len(df)}건의 특허 정보를 저장했습니다.\n저장 위치: {filepath}"
 
+    def _post_process(self, df: pd.DataFrame, validated_args) -> pd.DataFrame:
+        """Override for post-processing (e.g., IPC filter). Default: no-op."""
+        return df
+
     async def _execute_async(self, validated_args) -> str:
         """[GJ] Common pagination + dedup + save logic."""
         results = []
@@ -63,6 +68,7 @@ class BaseBatchExportTool(ToolHandler):
             logger.info(f"[{self.name}] Fetching page {page_no}, total: {total_fetched}")
 
             page_df = await self._fetch_page(validated_args, page_no)
+            await asyncio.sleep(0.5)
 
             if page_df.empty:
                 consecutive_empty += 1
@@ -94,6 +100,9 @@ class BaseBatchExportTool(ToolHandler):
             after = len(final_df)
             if before != after:
                 logger.info(f"[{self.name}] Deduplicated: {before} -> {after}")
+
+        # Post-process hook (e.g., IPC filter)
+        final_df = self._post_process(final_df, validated_args)
 
         # Trim to max_results
         if len(final_df) > max_results:
