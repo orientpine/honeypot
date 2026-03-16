@@ -153,11 +153,20 @@ class ResultDeduplicatorTool(ToolHandler):
                     df = pd.read_excel(filepath)
                 else:
                     # Try reading markdown table
-                    df = pd.read_csv(filepath, sep="|", skipinitialspace=True)
-                    # Clean markdown table artifacts
-                    df = df.dropna(how="all", axis=1)
-                    if len(df) > 0 and df.iloc[0].astype(str).str.contains("---").any():
-                        df = df.iloc[1:]
+                    with open(filepath, "r", encoding="utf-8") as f:
+                        lines = f.readlines()
+                    # Markdown 테이블 행만 추출 (| 시작, --- 구분선 제외)
+                    table_lines = [
+                        l.strip()
+                        for l in lines
+                        if l.strip().startswith("|") and not set(l.strip().strip("|").strip()).issubset({"-", " ", "|"})
+                    ]
+                    if len(table_lines) >= 2:
+                        headers = [h.strip() for h in table_lines[0].split("|")[1:-1]]
+                        rows = [[c.strip() for c in row.split("|")[1:-1]] for row in table_lines[1:]]
+                        df = pd.DataFrame(rows, columns=headers)
+                    else:
+                        df = pd.DataFrame()
 
                 df["_source_file"] = filename
                 file_stats.append({"file": filename, "count": len(df)})
@@ -209,20 +218,14 @@ class ResultDeduplicatorTool(ToolHandler):
                 # Normalize: match with and without spaces
                 prefix_nospace = ipc_prefix.replace(" ", "")
                 merged_df = merged_df[
-                    merged_df[ipc_col].fillna("").str.replace(" ", "").str.contains(
-                        prefix_nospace, regex=False
-                    )
-                    | merged_df[ipc_col].fillna("").str.contains(
-                        ipc_prefix, regex=False
-                    )
+                    merged_df[ipc_col].fillna("").str.replace(" ", "").str.contains(prefix_nospace, regex=False)
+                    | merged_df[ipc_col].fillna("").str.contains(ipc_prefix, regex=False)
                 ]
                 ipc_filtered = before_ipc - len(merged_df)
 
         # Step 6: Domain exclusion filter (configurable keywords)
         domain_excluded = {}
-        exclusion_terms = [
-            t.strip() for t in validated_args.exclusion_keywords.split(",") if t.strip()
-        ]
+        exclusion_terms = [t.strip() for t in validated_args.exclusion_keywords.split(",") if t.strip()]
 
         if validated_args.apply_domain_filter and exclusion_terms:
             title_col = None
@@ -271,7 +274,7 @@ class ResultDeduplicatorTool(ToolHandler):
         lines.append("| File | Records |")
         lines.append("|------|---------|")
         for fs in file_stats:
-            error = f" (ERROR: {fs.get('error', '')})" if fs.get('error') else ""
+            error = f" (ERROR: {fs.get('error', '')})" if fs.get("error") else ""
             lines.append(f"| {fs['file']} | {fs['count']:,}{error} |")
 
         lines.append(f"\n## Processing Pipeline")
@@ -291,9 +294,7 @@ class ResultDeduplicatorTool(ToolHandler):
             stage_input -= ipc_filtered
 
         if validated_args.apply_domain_filter and total_domain_excluded > 0:
-            lines.append(
-                f"| Domain Exclusion | {stage_input:,} | {total_domain_excluded:,} | {final_count:,} |"
-            )
+            lines.append(f"| Domain Exclusion | {stage_input:,} | {total_domain_excluded:,} | {final_count:,} |")
 
         lines.append(f"\n## Results")
         lines.append(f"- **Final unique records: {final_count:,}**")
