@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-16T00:00:00+09:00
+**Generated:** 2026-03-17T00:00:00+09:00
 **Version:** 2.8.0
 **Branch:** main
 
@@ -691,15 +691,22 @@ Step 5. 캐시 클리어 후 재등록
 | 워크플로우 순서/구조 변경 | MAJOR | `X+1.0.0` |
 | plugin.json 의 name 변경 | MAJOR | `X+1.0.0` |
 
-#### marketplace.json 메타데이터 버전
+#### marketplace.json 메타데이터 버전 + README.md Version 동기화 (CRITICAL)
 
-루트 `marketplace.json`의 `metadata.version`은 **마켓플레이스 전체**의 버전입니다.
+루트 `marketplace.json`의 `metadata.version`과 `README.md`의 `**Version**` 필드는 **동일한 프로젝트 버전**을 추적한다.
+두 값은 **항상 일치**해야 한다.
 
 | 변경 | 업데이트 |
 |------|----------|
-| 기존 플러그인 수정 (PATCH/MINOR) | 마켓플레이스 버전 변경 불필요 |
-| 새 플러그인 추가 | 마켓플레이스 MINOR 버전 올림 |
-| 플러그인 삭제 또는 마켓플레이스 구조 변경 | 마켓플레이스 MAJOR 버전 올림 |
+| 기존 플러그인 수정 (PATCH/MINOR) | marketplace `metadata.version` + README `Version` 동시 MINOR 올림 |
+| 새 플러그인 추가 | marketplace `metadata.version` + README `Version` 동시 MINOR 올림 |
+| 플러그인 삭제 또는 마켓플레이스 구조 변경 | marketplace `metadata.version` + README `Version` 동시 MAJOR 올림 |
+
+**동기화 규칙**:
+- `marketplace.json` → `metadata.version` 필드
+- `README.md` → 상단 `**Version**: X.Y.Z` 필드
+- `README.md` → `변경 이력` 테이블에 새 행 추가
+- 세 곳이 **동일한 버전**을 표시해야 한다
 
 #### 금지 패턴
 
