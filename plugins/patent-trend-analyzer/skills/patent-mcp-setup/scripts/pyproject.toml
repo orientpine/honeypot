@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=65.5.1", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-kipris"
+version = "1.0.0"
+description = "KIPRIS Patent Search MCP Server - Korean & Foreign patent search via KIPRIS API"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=1.6.0",
+    "requests>=2.32.3",
+    "pandas>=2.2.3",
+    "openpyxl>=3.1.2",
+    "python-dotenv>=1.1.0",
+    "xmltodict>=0.14.2",
+    "tabulate>=0.9.0",
+    "stringcase>=1.2.0",
+]
+
+[project.scripts]
+mcp-kipris = "mcp_kipris.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
