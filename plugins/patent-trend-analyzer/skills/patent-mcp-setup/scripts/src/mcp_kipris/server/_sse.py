@@ -78,13 +78,14 @@ def create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlett
     tools = get_all_tools()
 
     async def well_known_mcp(request):
+        base = str(request.base_url).rstrip("/")
         body = json.dumps(
             {
                 "mcpVersion": "2024-01-01",
                 "capabilities": ["sse"],
                 "sse": {
-                    "url": "https://psm.greennuri.info/sse",
-                    "message_url": "https://psm.greennuri.info/messages",
+                    "url": f"{base}/sse",
+                    "message_url": f"{base}/messages",
                 },
             }
         )
@@ -97,10 +98,11 @@ def create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlett
             },
         )
 
-    async def handle_sse(request: Request) -> Response:
+    async def handle_sse(scope, receive, send):
+        """Raw ASGI SSE handler — avoids private request._send attribute."""
         try:
             logger.info("[SSE] New connection request received")
-            async with sse.connect_sse(request.scope, request.receive, request._send) as (
+            async with sse.connect_sse(scope, receive, send) as (
                 read_stream,
                 write_stream,
             ):
@@ -112,10 +114,8 @@ def create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlett
                 )
                 logger.info("[SSE] MCP server run() completed")
             logger.info("[SSE] Disconnected cleanly")
-            return Response(status_code=204)
         except Exception as e:
             logger.error(f"[SSE] Connection error: {e}")
-            return Response(status_code=500)
 
     async def list_tools_endpoint(request: Request) -> JSONResponse:
         """Return tool list as JSON (REST API endpoint)."""
@@ -159,8 +159,7 @@ def create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlett
         debug=debug,
         routes=[
             Route("/.well-known/mcp", endpoint=well_known_mcp),
-            Route("/sse", endpoint=handle_sse),
-            Route("/sse/", endpoint=handle_sse),
+            Mount("/sse", app=handle_sse),
             Route("/tools", endpoint=list_tools_endpoint),
             Mount("/messages/", app=sse.handle_post_message),
         ],
@@ -172,6 +171,7 @@ def create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlett
 
 async def main():
     """Start MCP KIPRIS server (HTTP or stdio based on args)."""
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     parser = argparse.ArgumentParser()
     parser.add_argument("--http", action="store_true", help="Run in HTTP mode")
     parser.add_argument("--port", type=int, default=6274, help="Port to listen on (default: 6274)")
