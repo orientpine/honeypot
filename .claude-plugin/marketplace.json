@@ -169,7 +169,7 @@
       "name": "patent-trend-analyzer",
       "source": "./plugins/patent-trend-analyzer",
       "description": "KIPRIS API 기반 특허 동향 분석 - 키워드 클러스터링, 검색 최적화, 다축 분류, 시각화 대시보드 생성",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "strict": true,
       "agents": [
         "./agents/patent-planner.md",
