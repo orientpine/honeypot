@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 3.2.0  
+**Version**: 3.3.0  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -24,6 +24,7 @@
 | **equity-research** | 기관급 주식 분석 리포트 생성 | Agent |
 | **worktree-workflow** | Git worktree를 활용한 Claude Code 병렬 실행 워크플로우 | Agent |
 | **plugin-dev** | 플러그인 개발 종합 툴킷 (Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발) [^1] | Agent+Command+Skill |
+| **patent-trend-analyzer** | KIPRIS API 기반 특허 동향 분석 (키워드 최적화, 검색, 다축 분류, 시각화) | Agent+Command+Skill |
 
 ---
 
@@ -56,7 +57,7 @@
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (12개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (13개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents (chapter1-5, figure)
@@ -98,6 +99,10 @@ honeypot/
 │       ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
 │       ├── commands/                 # create-plugin (워크플로우)
 │       └── skills/                   # 7 skills (hook, mcp, structure, settings, command, agent, skill)
+│   └── patent-trend-analyzer/        # 특허 동향 분석
+│       ├── agents/                   # 3 agents (patent-planner, patent-searcher, patent-analyzer)
+│       ├── commands/                 # analyze-patents (오케스트레이터)
+│       └── skills/                   # 5 skills (mcp-setup, research-planning, search-collect, analysis-viz, ipc-classification-guide)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -305,6 +310,20 @@ Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 가이�
 | Command (1) | create-plugin (플러그인 생성 워크플로) |
 | Skills (7) | hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development |
 
+### patent-trend-analyzer
+
+**KIPRIS API 기반 특허 동향 분석 및 시각화**
+
+- **범용성**: 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능
+- **파이프라인**: 연구 영역 클러스터링 → 키워드 최적화 → IPC 매핑 → 특허 검색 → 다축 분류 → 시각화
+- **출력**: PNG/HTML 차트, Excel 보고서, 트렌드 분석 결과
+
+| 구성 | 항목 |
+|------|------|
+| Agents (3) | patent-planner, patent-searcher, patent-analyzer |
+| Command (1) | analyze-patents (오케스트레이터) |
+| Skills (5) | patent-mcp-setup, patent-research-planning, patent-search-collect, patent-analysis-viz, ipc-classification-guide |
+
 ---
 
 ## Submodule 사용법
@@ -410,6 +429,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.3.0 | 2026-03-16 | patent-trend-analyzer 플러그인 추가 (KIPRIS API 기반 특허 동향 분석, IPC 분류 가이드, 3 agents + 1 command + 5 skills) |
 | 3.2.0 | 2026-03-13 | hwpx-generator v2.4.0: ZIP-level surgery 도구 추가 (zip_surgery.py, HwpxSurgeon), validate.py --strict 모드, cell_writer 금지 규칙, 표 행 높이 자동 조절, 단계적 디버깅 전략 |
 | 3.1.0 | 2026-03-10 | 6개 테마 예시 프롬프트를 v3.0.0 Golden Reference로 업데이트 + Gemini API로 전체 이미지 재생성. 임시/계획 파일 정리. |
 | 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
