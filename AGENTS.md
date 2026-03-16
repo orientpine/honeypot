@@ -1,6 +1,6 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-13T00:00:00+09:00
+**Generated:** 2026-03-16T00:00:00+09:00
 **Version:** 2.8.0
 **Branch:** main
 
@@ -13,7 +13,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ```
 toolbox/
 ├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (12 plugins)
+│   └── marketplace.json              # Single marketplace registry (13 plugins)
 └── plugins/
     ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
     │   ├── agents/                   # 6 agents
@@ -66,14 +66,42 @@ toolbox/
      │   └── skills/                   # 2 skills (hwpx-core, hwpx-templates)
      ├── worktree-workflow/            # Git worktree 워크플로우
      │   └── agents/                   # 1 agent
-     └── plugin-dev/                   # 플러그인 개발 종합 툴킷 (Agent + Command + Skill) [1]
-         ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
+     ├── plugin-dev/                   # 플러그인 개발 종합 툴킷 (Agent + Command + Skill) [1]
+     │   ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
+     │   ├── commands/
+     │   │   └── create-plugin.md      # 플러그인 생성 워크플로우 command
+     │   └── skills/                   # 7 skills (hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development)
+     └── patent-trend-analyzer/        # 특허 동향 분석
+         ├── agents/                   # 3 agents: patent-planner, patent-searcher, patent-analyzer
          ├── commands/
-         │   └── create-plugin.md      # 플러그인 생성 워크플로우 command
-         └── skills/                   # 7 skills (hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development)
+         │   └── analyze-patents.md    # 전체 파이프라인 오케스트레이터 command
+         └── skills/                   # 5 skills (mcp-setup, research-planning, search-collect, analysis-viz, ipc-classification-guide)
 ```
 
 [1] https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev 의 내용을 참조하여 포팅함.
+
+### patent-trend-analyzer (특허 동향 분석)
+KIPRIS API 기반 범용 특허 키워드 최적화, 검색, 사용자 정의 다축 분류 및 시각화 파이프라인. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능.
+
+**Agents:**
+- `patent-planner.md` - 연구 영역 클러스터링, 키워드 최적화, IPC 매핑, 검색 전략 수립
+- `patent-searcher.md` - KIPRIS API 특허 검색 실행, 배치 내보내기, 중복 제거
+- `patent-analyzer.md` - 사용자 정의 분류 체계 적용, 트렌드 분석, 시각화 (PNG/HTML), 보고서 생성
+
+**Skills:**
+- `patent-mcp-setup/` - KIPRIS MCP 서버 설치 및 설정
+- `patent-research-planning/` - 키워드 최적화, IPC 코드 매핑, 검색 전략
+- `patent-search-collect/` - API 검색 실행, 배치 내보내기, 결과 중복 제거
+- `patent-analysis-viz/` - 사용자 정의 다축 분류, 8종 차트, HTML 대시보드, Excel 보고서
+- `ipc-classification-guide/` - IPC/CPC 국제특허분류 체계 가이드 (현재 G06N 상세 지원, 확장 가능)
+
+**Commands:**
+- `analyze-patents.md` - 전체 파이프라인 오케스트레이션 (계획 → 검색 → 분석)
+
+**MCP Tools (18):**
+- 한국 특허 검색 (8): patent_free_search, patent_applicant_search 등
+- 해외 특허 검색 (7): foreign_patent_free_search 등
+- 전처리 (3): patent_search_planner, patent_keyword_optimizer, patent_result_deduplicator
 
 ## WHERE TO LOOK
 
@@ -93,6 +121,7 @@ toolbox/
 | General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
+<<<<<<< HEAD
 | HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py + cell_writer.py 기반, 레퍼런스 복원 우선 |
 | HWPX ZIP-level surgery | `plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` | 안전한 ZIP-level 편집 (stdlib only, lxml 불필요), HwpxSurgeon 클래스 |
 | HWPX surgery 가이드 | `plugins/hwpx-generator/skills/hwpx-core/references/zip-surgery-guide.md` | 10가지 안전 규칙 명세 |
@@ -100,7 +129,8 @@ toolbox/
 | HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수, ZIP surgery 후 cell_writer 금지 |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 12 plugins listed |
+| Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 13 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
