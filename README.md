@@ -225,7 +225,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 텍스트 없이 장면과 시각적 메타포만으로 개념을 전달
 
-<img src="./assets/theme-examples/images/01_theme_concept.png" width="100%" alt="Concept Theme">
+<img src="./assets/theme-examples/images/01_theme_concept.png?v=3.6.2" width="100%" alt="Concept Theme">
 
 </td>
 <td width="50%">
@@ -234,7 +234,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 굵은 테두리 박스에 번호가 매겨진 체계적 격자
 
-<img src="./assets/theme-examples/images/02_theme_gov.png" width="100%" alt="Gov Theme">
+<img src="./assets/theme-examples/images/02_theme_gov.png?v=3.6.2" width="100%" alt="Gov Theme">
 
 </td>
 </tr>
@@ -245,7 +245,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 에디토리얼 매거진 × 아이소메트릭 3D
 
-<img src="./assets/theme-examples/images/03_theme_seminar.png" width="100%" alt="Seminar Theme">
+<img src="./assets/theme-examples/images/03_theme_seminar.png?v=3.6.2" width="100%" alt="Seminar Theme">
 
 </td>
 <td>
@@ -254,7 +254,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 공상과학 영화 UI처럼 빛나는 HUD
 
-<img src="./assets/theme-examples/images/04_theme_whatif.png" width="100%" alt="What-If Theme">
+<img src="./assets/theme-examples/images/04_theme_whatif.png?v=3.6.2" width="100%" alt="What-If Theme">
 
 </td>
 </tr>
@@ -265,7 +265,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자
 
-<img src="./assets/theme-examples/images/05_theme_pitch.png" width="100%" alt="Pitch Theme">
+<img src="./assets/theme-examples/images/05_theme_pitch.png?v=3.6.2" width="100%" alt="Pitch Theme">
 
 </td>
 <td>
@@ -274,7 +274,7 @@ Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자
 
 IMAX 분할 화면처럼 좌우 풀블리드 이미지
 
-<img src="./assets/theme-examples/images/06_theme_comparison.png" width="100%" alt="Comparison Theme">
+<img src="./assets/theme-examples/images/06_theme_comparison.png?v=3.6.2" width="100%" alt="Comparison Theme">
 
 </td>
 </tr>
