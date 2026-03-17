@@ -17,6 +17,8 @@ import tempfile
 import shutil
 import zipfile
 import argparse
+import json
+from collections import Counter, defaultdict
 from lxml import etree
 
 NS = {
@@ -387,6 +389,238 @@ def analyze_section(section_root):
     return "\n".join(lines)
 
 
+def extract_style_map(header_root, section_root):
+    """Extract style configuration JSON for use with xml_writer.py.
+
+    Heuristically estimates body, heading, bullet, bold, table styles
+    by analyzing charPr/paraPr definitions in header.xml and their usage
+    frequency in section0.xml paragraphs.
+    """
+    # --- Step 1: Parse charPr definitions from header.xml ---
+    charpr_map = {}  # id -> {"fontSize_hu": int, "bold": bool}
+    for cp in header_root.findall(".//hh:charPr", NS):
+        cid = cp.get("id")
+        height = int(cp.get("height", "0"))
+        is_bold = cp.find("hh:bold", NS) is not None
+        if not is_bold and cp.get("bold", "0") == "1":
+            is_bold = True
+        charpr_map[cid] = {"fontSize_hu": height, "bold": is_bold}
+
+    # --- Step 2: Parse paraPr definitions from header.xml ---
+    parapr_map = {}  # id -> {"left_margin": int, "indent": int}
+    for pp in header_root.findall(".//hh:paraPr", NS):
+        pid = pp.get("id")
+        left_margin = 0
+        indent = 0
+        # Method 1: hc:left and hc:intent elements (existing pattern)
+        left_el = pp.find(".//hc:left", NS)
+        if left_el is not None:
+            left_margin = int(left_el.get("value", "0"))
+        intent_el = pp.find(".//hc:intent", NS)
+        if intent_el is not None:
+            indent = int(intent_el.get("value", "0"))
+        # Method 2: hh:paraMargin element (alternative format)
+        para_margin = pp.find(".//hh:paraMargin", NS)
+        if para_margin is not None:
+            pm_left = para_margin.get("left")
+            if pm_left is not None:
+                left_margin = int(pm_left)
+            pm_indent = para_margin.get("indent")
+            if pm_indent is not None:
+                indent = int(pm_indent)
+        parapr_map[pid] = {"left_margin": left_margin, "indent": indent}
+
+    # --- Step 3: Scan section0.xml paragraphs ---
+    sec = section_root.find(".//hs:sec", NS)
+    if sec is None:
+        sec = section_root
+
+    body_pairs = []  # [(charPrIDRef, paraPrIDRef), ...]
+    bullet_pairs = []  # [(charPrIDRef, paraPrIDRef), ...]
+    heading_entries = []  # [{"fontSize_hu", "charPrIDRef", "paraPrIDRef"}, ...]
+    tbl_header_entries = []
+    tbl_cell_entries = []
+    BULLET_CHARS = {"◦", "–", "□", "▪"}
+
+    def _scan_table(tbl):
+        """Recursively scan table rows/cells for style info."""
+        for ri, tr in enumerate(tbl.findall("hp:tr", NS)):
+            is_header = ri == 0
+            for tc in tr.findall("hp:tc", NS):
+                cell_bf = tc.get("borderFillIDRef", "0")
+                sublist = tc.find("hp:subList", NS)
+                if sublist is None:
+                    continue
+                for p in sublist.findall("hp:p", NS):
+                    ppr = p.get("paraPrIDRef", "0")
+                    for run in p.findall("hp:run", NS):
+                        cpr = run.get("charPrIDRef", "0")
+                        nested = run.find("hp:tbl", NS)
+                        if nested is not None:
+                            _scan_table(nested)
+                            continue
+                        entry = {
+                            "charPrIDRef": cpr,
+                            "paraPrIDRef": ppr,
+                            "borderFillIDRef": cell_bf,
+                        }
+                        if is_header:
+                            tbl_header_entries.append(entry)
+                        else:
+                            tbl_cell_entries.append(entry)
+
+    for p in sec.findall("hp:p", NS):
+        ppr = p.get("paraPrIDRef", "0")
+        for run in p.findall("hp:run", NS):
+            cpr = run.get("charPrIDRef", "0")
+            if run.find("hp:secPr", NS) is not None:
+                continue
+            if run.find("hp:ctrl", NS) is not None:
+                continue
+            tbl = run.find("hp:tbl", NS)
+            if tbl is not None:
+                _scan_table(tbl)
+                continue
+            txt = get_text(run)
+            body_pairs.append((cpr, ppr))
+            if txt and any(c in txt for c in BULLET_CHARS):
+                bullet_pairs.append((cpr, ppr))
+            if cpr in charpr_map and charpr_map[cpr]["fontSize_hu"] > 1200:
+                heading_entries.append(
+                    {
+                        "fontSize_hu": charpr_map[cpr]["fontSize_hu"],
+                        "charPrIDRef": cpr,
+                        "paraPrIDRef": ppr,
+                    }
+                )
+
+    # --- Step 4: Aggregate results (ordered as spec) ---
+    result = {}
+
+    # Headings: group by fontSize level, largest = heading_1
+    if heading_entries:
+        heading_by_size = defaultdict(list)
+        for h in heading_entries:
+            heading_by_size[h["fontSize_hu"]].append(
+                (h["charPrIDRef"], h["paraPrIDRef"])
+            )
+        sorted_sizes = sorted(heading_by_size.keys(), reverse=True)
+        for i, size in enumerate(sorted_sizes[:2]):
+            pairs = heading_by_size[size]
+            most_common = Counter(pairs).most_common(1)[0][0]
+            result[f"heading_{i + 1}"] = {
+                "charPrIDRef": most_common[0],
+                "paraPrIDRef": most_common[1],
+            }
+    if "heading_1" not in result:
+        result["heading_1"] = {
+            "charPrIDRef": "0",
+            "paraPrIDRef": "0",
+            "_comment": "no heading detected",
+        }
+    if "heading_2" not in result:
+        result["heading_2"] = {
+            "charPrIDRef": "0",
+            "paraPrIDRef": "0",
+            "_comment": "no heading detected",
+        }
+
+    # Body: most frequent (charPrIDRef, paraPrIDRef) in non-table paragraphs
+    if body_pairs:
+        bc = Counter(body_pairs).most_common(1)[0][0]
+        result["body"] = {"charPrIDRef": bc[0], "paraPrIDRef": bc[1]}
+    else:
+        result["body"] = {"charPrIDRef": "0", "paraPrIDRef": "0"}
+
+    # Bullet: paragraphs containing ◦, –, □, ▪ + paraPr margins
+    if bullet_pairs:
+        bp = Counter(bullet_pairs).most_common(1)[0][0]
+        bullet_entry = {"charPrIDRef": bp[0], "paraPrIDRef": bp[1]}
+        if bp[1] in parapr_map:
+            pi = parapr_map[bp[1]]
+            bullet_entry["left_margin"] = pi["left_margin"]
+            bullet_entry["indent"] = pi["indent"]
+        else:
+            bullet_entry["left_margin"] = 0
+            bullet_entry["indent"] = 0
+        result["bullet"] = bullet_entry
+    else:
+        result["bullet"] = {
+            "charPrIDRef": "0",
+            "paraPrIDRef": "0",
+            "left_margin": 0,
+            "indent": 0,
+            "_comment": "no bullet detected",
+        }
+
+    # Bold: charPrIDRef with <hh:bold/> or bold="1"; prefer most used
+    bold_ids = [cid for cid, info in charpr_map.items() if info["bold"]]
+    if bold_ids:
+        body_cpr_count = Counter(cpr for cpr, _ in body_pairs)
+        best_bold = max(bold_ids, key=lambda x: body_cpr_count.get(x, 0))
+        result["bold"] = {"charPrIDRef": best_bold}
+    else:
+        result["bold"] = {
+            "charPrIDRef": "0",
+            "_comment": "no bold charPr detected",
+        }
+
+    # Table header: first row of tables
+    if tbl_header_entries:
+        thc = Counter(
+            (e["charPrIDRef"], e["paraPrIDRef"], e["borderFillIDRef"])
+            for e in tbl_header_entries
+        )
+        th = thc.most_common(1)[0][0]
+        result["table_header"] = {
+            "charPrIDRef": th[0],
+            "paraPrIDRef": th[1],
+            "borderFillIDRef": th[2],
+        }
+    else:
+        result["table_header"] = {
+            "charPrIDRef": "0",
+            "paraPrIDRef": "0",
+            "borderFillIDRef": "0",
+            "_comment": "no table header detected",
+        }
+
+    # Table cell: non-header rows
+    if tbl_cell_entries:
+        tcc = Counter(
+            (e["charPrIDRef"], e["paraPrIDRef"], e["borderFillIDRef"])
+            for e in tbl_cell_entries
+        )
+        tc_most = tcc.most_common(1)[0][0]
+        result["table_cell"] = {
+            "charPrIDRef": tc_most[0],
+            "paraPrIDRef": tc_most[1],
+            "borderFillIDRef": tc_most[2],
+        }
+    else:
+        result["table_cell"] = {
+            "charPrIDRef": "0",
+            "paraPrIDRef": "0",
+            "borderFillIDRef": "0",
+            "_comment": "no table cell detected",
+        }
+
+    # Constants
+    result["table_width"] = 42520
+    result["image_placeholder"] = {"paraPrIDRef": "0", "charPrIDRef": "0"}
+
+    # Font sizes map: charPrIDRef -> "Npt"
+    font_sizes = {}
+    for cid, info in charpr_map.items():
+        if info["fontSize_hu"] > 0:
+            pt = info["fontSize_hu"] / 100
+            font_sizes[cid] = f"{int(pt)}pt" if pt == int(pt) else f"{pt}pt"
+    result["font_sizes"] = font_sizes
+
+    result["confidence"] = "estimated"
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description="HWPX 문서 구조 심층 분석")
     parser.add_argument("input", help="분석할 HWPX 파일")
@@ -395,6 +629,11 @@ def main():
     )
     parser.add_argument(
         "--extract-section", metavar="PATH", help="section0.xml을 지정 경로로 추출"
+    )
+    parser.add_argument(
+        "--style-map",
+        metavar="PATH",
+        help="스타일 설정 JSON 추출 (xml_writer.py용)",
     )
     args = parser.parse_args()
 
@@ -425,6 +664,16 @@ def main():
         if args.extract_section:
             shutil.copy2(section_path, args.extract_section)
             print(f"section0.xml → {args.extract_section}")
+
+        # Style map extraction
+        if args.style_map:
+            style_map = extract_style_map(header_root, section_root)
+            out_dir = os.path.dirname(args.style_map)
+            if out_dir:
+                os.makedirs(out_dir, exist_ok=True)
+            with open(args.style_map, "w", encoding="utf-8") as f:
+                json.dump(style_map, f, ensure_ascii=False, indent=2)
+            print(f"style-map → {args.style_map}")
 
         # Analysis output
         print("=" * 64)
