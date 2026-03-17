@@ -5,6 +5,8 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - `ARGUMENTS`: 사용자 요청 원문. 문서 유형, 목적, 포함할 내용, 산출 경로를 포함한다.
 - `reference_hwpx` (optional): 스타일/레이아웃 분석용 레퍼런스 `.hwpx` 경로.
 - `template_hwpx` (optional): 사용자 업로드 템플릿 `.hwpx` 경로.
+- `content_md` (optional): 마크다운 콘텐츠 파일 경로. 단일 파일 또는 여러 파일 경로 리스트. 제공 시 "마크다운 → 템플릿 채우기" 모드로 진행.
+- `images_dir` (optional): 이미지 파일 디렉토리 경로. `content_md` 기반 생성 시 이미지 임베딩에 사용.
 - `output_dir` (optional): 결과 폴더. 기본값은 `./output/hwpx/`.
 - `auto_mode` (optional): 기본값 `true`.
 
@@ -14,6 +16,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - 문서 유형 분류: 공문/보고서/회의록/제안서.
    - 핵심 내용 추출: 제목, 섹션 구조, 필수 문구, 표/수식 포함 여부.
    - 양식 요구 추출: 사용자 템플릿 사용 여부, 레퍼런스 문서 동일 스타일 여부.
+   - **MD 채우기 모드 감지**: `content_md`가 제공되면 "마크다운 → 템플릿 채우기" 모드로 분류.
 2. Build execution context.
    - 입력 파라미터를 JSON 형태로 정리하여 다음 Phase에 전달.
    - 필수 입력 누락 시 누락 항목만 명확히 요청한다.
@@ -24,6 +27,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - 1순위: `template_hwpx`가 있으면 사용자 업로드 템플릿 기반.
    - 2순위: 프로젝트 기본 템플릿이 있으면 기본 양식 기반.
    - 3순위: 템플릿이 없으면 XML-first 생성 경로.
+   - **MD 채우기 분기**: `content_md` + `template_hwpx` 조합 시 Workflow 7 경로 선택 (md_parser → mapping → xml_writer → zip_surgery → image_embedder).
 2. When `reference_hwpx` is provided, analyze before build.
    - Use Task tool with subagent_type="hwpx-generator::hwpx-analyzer"
    - Prompt: "Analyze `{reference_hwpx}` and produce reusable style/table/layout guidance for this request: `$ARGUMENTS`. Output a concise build-ready analysis report."
@@ -34,6 +38,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 
 1. Use Task tool with subagent_type="hwpx-generator::hwpx-builder"
    - Prompt: "Generate a production-ready `.hwpx` using this request `$ARGUMENTS`, selected format strategy (user template > default template > XML-first), and analyzer report if present. Return output path and generation path used."
+   - **MD 채우기 모드 시**: hwpx-builder에게 md_parser, xml_writer, image_embedder 사용을 명시적으로 위임. `content_md`와 `images_dir` 파라미터를 전달하여 Workflow 7 실행.
    - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
@@ -80,6 +85,8 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 
 ## Usage Example
 
+### 기본 사용법 (템플릿 + 레퍼런스)
+
 ```
 @hwpx-generator 다음 ARGUMENTS로 HWPX 문서를 생성해줘.
 
@@ -90,5 +97,20 @@ ARGUMENTS:
 - 양식: 사용자 템플릿 우선
 - template_hwpx: ./templates/weekly_report_template.hwpx
 - reference_hwpx: ./references/style_reference.hwpx
+- output_dir: ./output/hwpx/
+```
+
+### 마크다운 채우기 모드 (Workflow 7)
+
+```
+@hwpx-generator 다음 ARGUMENTS로 마크다운 콘텐츠를 템플릿에 채워 HWPX 문서를 생성해줘.
+
+ARGUMENTS:
+- 문서 유형: 연구계획서
+- 목적: 정부 과제 제출용 연구계획서
+- 양식: 사용자 템플릿 기반 마크다운 채우기
+- template_hwpx: ./양식.hwpx
+- content_md: ./3_비전_및_목표.md, ./4_핵심_연구내용.md
+- images_dir: ./images/
 - output_dir: ./output/hwpx/
 ```
