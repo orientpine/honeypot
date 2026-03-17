@@ -171,11 +171,23 @@ Guide viewer attention to the most important element:
 
 Maintain proper balance between content and empty space.
 
-### Recommended Density
+### Recommended Density (Theme-Conditional)
 
-- **30-40% negative space**: Optimal for readability and visual breathing room
-- **Below 30%**: Content feels cramped, reduces readability
-- **Above 50%**: Content feels sparse, loses impact
+테마별 조건부 네거티브 스페이스 타겟:
+
+| 테마 그룹 | 테마 | 네거티브 스페이스 타겟 | 근거 |
+|-----------|------|----------------------|------|
+| Full-bleed | concept, whatif | **≤20%** | 배경이 edge-to-edge. 시각 요소 스케일 확대로 채움 |
+| Full-bleed (image-dominant) | comparison | **≤10%** | 이미 95% fill. 미세 수치 명시화만 적용 |
+| Structured | gov, seminar | **≤15%** | 격자/에디토리얼에서 그리드 확장, 요소 크기 증가 |
+| Intentional-margin | pitch | **30%+ 유지** | 어두운 여백이 hero metric 부각 = Apple Keynote DNA |
+
+**캔버스 채우기 원칙**: 의미적으로 중요한 시각 요소(핵심 숫자, 주요 아이콘, 타이틀)의 크기를 확대하여 캔버스를 채운다. 새로운 텍스트나 디자인 요소를 추가하는 방식은 지양한다.
+
+**Title/Cover 슬라이드 예외**: Title/Cover 슬라이드는 body 슬라이드 대비 네거티브 스페이스 허용 범위를 10%p 상향한다.
+
+- **Above 50%**: Content feels sparse, loses impact (모든 테마에 해당)
+- **Below theme target**: Check if elements are undersized, not if count is insufficient
 
 **Visual Enrichment Rule**: When negative space exceeds 50% within a content panel, apply visual enrichment (isometric icons, flat icons, mini illustrations, equipment silhouettes, or decorative shapes matching the theme) rather than additional text. Empty panel space filled with AI-generated Korean text is a hallucination risk — use visual elements instead.
 
@@ -196,7 +208,10 @@ Maintain proper balance between content and empty space.
 ### Implementation
 
 ```
-Maintain 30-40% negative space throughout the composition. 
+Maintain theme-appropriate negative space (see table above). 
+For concept/whatif: scale up visual elements to fill canvas (≤20% negative space target).
+For gov/seminar: expand grid layout, increase element sizes (≤15% negative space target).
+For pitch: preserve intentional dark margins (30%+ target), maximize element size within content area.
 Text elements should be spaced with minimum 16px gutters. 
 Avoid clustering more than 3 text items in any single region.
 ```
@@ -356,7 +371,8 @@ Before submitting a Scene Description subsection for rendering:
 - [ ] No forbidden phrases (clean layout, professional design, modern style, etc.)
 - [ ] Negative prompting included (No watermarks, no artifacts, etc.)
 - [ ] Composition principles reflected (rule of thirds, hierarchy, depth, focal point)
-- [ ] Negative space guidance provided (30-40% target)
+- [ ] Negative space guidance provided (theme-conditional target: ≤20% concept/whatif, ≤10% comparison, ≤15% gov/seminar, 30%+ pitch)
+- [ ] Canvas filling: key visual elements scaled to maximize canvas coverage (새 텍스트/요소 추가 없이)
 - [ ] Specific, concrete descriptions (not vague)
 - [ ] Golden example matches theme and layout
 - [ ] All 4 sections present: Scene Description, CONTENT, Typography, Canvas Settings, Content Placement
