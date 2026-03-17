@@ -18,13 +18,15 @@
 
 ```bash
 # 시각자료 생성
-@visual-generator 발표 자료를 만들어줘. 입력 문서: ./proposal.md 테마: seminar
+/visual-generator:visual-generate 발표 자료를 만들어줘
+입력 문서: ./proposal.md
+테마: seminar
 
 # 특허 동향 분석
-@patent-trend-analyzer "자율주행 라이다" 주제로 특허 동향 분석을 해줘
+/patent-trend-analyzer:analyze-patents "자율주행 라이다" 주제로 특허 동향 분석을 해줘
 
 # 연구계획서 생성
-@isd-generator 오케스트레이터를 사용해서 연구계획서를 생성해줘
+/isd-generator:isd-generate 연구계획서를 생성해줘
 ```
 
 ---
@@ -62,7 +64,7 @@
 ### 사용법
 
 ```
-@isd-generator 오케스트레이터를 사용해서 연구계획서를 생성해줘
+/isd-generator:isd-generate 연구계획서를 생성해줘
 ```
 
 ### 사전 준비
@@ -96,7 +98,7 @@
 ### 사용법
 
 ```
-@report-generator 연구 보고서를 생성해줘.
+/report-generator:report-generate 연구 보고서를 생성해줘
 입력 경로: ./research_notes/
 프로젝트명: HR35_자율굴착기
 ```
@@ -137,14 +139,14 @@
 
 ```
 # 기본 생성
-@hwpx-generator 연구 보고서 HWPX 문서를 만들어줘
+/hwpx-generator:hwpx-generate 연구 보고서 HWPX 문서를 만들어줘
 
 # 레퍼런스 문서 스타일 참조
-@hwpx-generator 이 양식과 동일한 스타일로 문서를 만들어줘
+/hwpx-generator:hwpx-generate 이 양식과 동일한 스타일로 문서를 만들어줘
 reference_hwpx: ./template.hwpx
 
 # 템플릿 기반 생성
-@hwpx-generator 이 템플릿에 내용을 채워줘
+/hwpx-generator:hwpx-generate 이 템플릿에 내용을 채워줘
 template_hwpx: ./form.hwpx
 ```
 
@@ -188,7 +190,7 @@ template_hwpx: ./form.hwpx
 ### 사용법
 
 ```
-@visual-generator 시각자료를 생성해줘.
+/visual-generator:visual-generate 시각자료를 생성해줘
 입력 문서: ./research_proposal.md
 무드: tech-focus
 테마: gov
@@ -300,7 +302,7 @@ IMAX 분할 화면처럼 좌우 풀블리드 이미지
 ### 사용법
 
 ```
-@paper-style-generator PDF 논문 폴더를 분석하여 논문 작성 스킬 세트를 생성해줘.
+/paper-style-generator:paper-style-generate PDF 논문 폴더를 분석하여 논문 작성 스킬 세트를 생성해줘
 PDF 폴더: ./papers/
 플러그인 이름: mylab
 ```
@@ -367,10 +369,10 @@ PDF 수집 → MinerU 변환 → 스타일 분석 → 플러그인 생성
 ### 사용법
 
 ```
-@investments-portfolio 포트폴리오 분석을 시작해줘
+/investments-portfolio:portfolio-analyze 포트폴리오 분석을 시작해줘
 
 # 투자 프로파일 지정
-@investments-portfolio 안정형 프로파일로 포트폴리오 분석을 해줘
+/investments-portfolio:portfolio-analyze 안정형 프로파일로 포트폴리오 분석을 해줘
 ```
 
 ### 워크플로우
@@ -415,13 +417,13 @@ PDF 수집 → MinerU 변환 → 스타일 분석 → 플러그인 생성
 
 ```
 # 종목 상담
-@stock-consultation AAPL 투자 상담을 해줘
+/stock-consultation:stock-consult AAPL 투자 상담을 해줘
 
 # 주제별 상담
-@stock-consultation 반도체 섹터 ETF 추천해줘
+/stock-consultation:stock-consult 반도체 섹터 ETF 추천해줘
 
 # 자료 제공 시
-@stock-consultation TSLA 분석해줘
+/stock-consultation:stock-consult TSLA 분석해줘
 materials_path: ./research_data/
 ```
 
@@ -513,7 +515,7 @@ materials_path: ./research_data/
 
 ```
 # 전체 파이프라인 실행 (권장)
-@patent-trend-analyzer "자율주행 라이다 센서" 주제로 특허 동향 분석을 해줘.
+/patent-trend-analyzer:analyze-patents "자율주행 라이다 센서" 주제로 특허 동향 분석을 해줘
 대상 국가는 한국, 미국이고 분석 기간은 2020-2025년이야.
 ```
 
