@@ -196,6 +196,14 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 
 - Scene Description must describe ONLY visual composition and spatial arrangement. Never include CONTENT block values or renderable Korean text strings in Scene Description itself.
 
+#### Canvas Filling & Element Scaling Rules (캔버스 채우기 및 요소 스케일링)
+
+- 모든 Scene Description에는 캔버스 전체를 시각 요소로 빈틈없이 채우는 구도 지시를 반드시 포함한다. 핵심 시각 요소(배경 환경, 인물, 주요 오브젝트, 데이터 패널)가 캔버스 면적을 최대한 채우도록 스케일과 배치를 설정한다.
+- 의미적으로 중요한 요소(핵심 숫자, 제목, 주요 아이콘)는 할당 영역보다 상대적으로 크게 묘사하여 캔버스 내 빈 공간을 최소화한다.
+- 캔버스 채우기는 기존 요소의 스케일 확대와 시각 요소 보강으로 달성한다. 새로운 텍스트 항목이나 기존에 없는 디자인 패턴을 추가하지 않는다.
+- **예외 — pitch 테마**: pitch 테마의 의도적 어두운 여백(30% 이상)은 이 규칙에서 예외다. pitch에서는 콘텐츠 영역 내부의 요소 크기를 키우되, 배경의 어두운 여백을 줄이지 않는다.
+- **예외 — title/cover 슬라이드**: title/cover 슬라이드는 body 슬라이드 대비 여백 허용 범위를 10%p 상향 적용한다.
+
 #### Rendering Style Rules
 
 반드시 아래 7개 항목을 각각 별도 줄로 작성한다.
@@ -211,6 +219,8 @@ concept 슬라이드에서는 텍스트 오브젝트를 장면의 일부로 설�
 각 항목은 1문장 이상 작성한다.
 각 항목은 theme skill의 Golden Reference 표현과 충돌하지 않아야 한다.
 각 항목은 layout-types의 시각화 원칙과 모순되면 안 된다.
+
+**공간구성 차원 강화 원칙**: 공간구성 항목에서는 핵심 시각 요소가 캔버스의 최대 면적을 차지하도록 스케일을 설정한다. 불필요한 여백보다 요소의 크기와 밀도를 우선한다. 테마별 조건부 네거티브 스페이스 타겟(scene-richness-spec §6)을 준수한다.
 
 #### Content Placement Rules
 
