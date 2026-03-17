@@ -29,3 +29,6 @@ output/
 
 # Claude Code
 .claude/
+
+# dev tools
+dev/
