@@ -36,18 +36,21 @@ This agent orchestrates two skills:
    - Second priority: user-uploaded HWPX template → `hwpx-templates` ZIP replacement.
    - Third priority: project default template.
    - Fallback: XML-first generation via `hwpx-core`.
+   - **마크다운 콘텐츠 + HWPX 양식**: 사용자가 마크다운 콘텐츠와 HWPX 양식을 함께 제공한 경우 → **Workflow 7** (`analyze_template.py --style-map` → `md_parser.py` → 매핑 → `xml_writer.py` → `zip_surgery.py` → `image_embedder.py` → `validate.py` + `page_guard.py`).
 
 3. Generate document content using the selected path.
    - **Existing HWPX edit**: use `zip_surgery.py` — preserves standalone='no', xmlns, byte-level fidelity.
    - Reference present: analyze with `analyze_template.py`, extract header/section, rebuild with structure preserved.
    - Template present: execute `hwpx-templates` ZIP replacement workflow.
    - No template: execute `hwpx-core` XML-first build workflow.
+   - Workflow 7 (마크다운+양식): `analyze_template.py --style-map`으로 스타일 추출 → `md_parser.py`로 마크다운 파싱 → 섹션-스타일 매핑 → `xml_writer.py`로 XML 생성 → `zip_surgery.py`로 양식에 삽입 → `image_embedder.py`로 이미지 임베딩.
 
 4. Apply post-processing and validation.
    - For ZIP-level surgery path, run `validate.py --strict` (standalone, xmlns, newlines checks). **Do NOT run cell_writer.**
    - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
    - Validate output with `hwpx-core/scripts/validate.py`.
    - **page_guard 필수**: 레퍼런스 기반 작업 시 `hwpx-core/scripts/page_guard.py`로 페이지 드리프트 위험 검사. `page_guard.py` 실패 시 원인 수정 후 재빌드.
+   - For Workflow 7 path, run `validate.py` + `page_guard.py`. 스타일 ID 불일치 시 `analyze_template.py --style-map` 결과와 대조하여 수정.
    - If validation fails, return to generation/edit step and rebuild.
 
 5. Deliver result and report generation path.
@@ -118,6 +121,36 @@ HWPX XML 출력 (section0.xml):
 3. 예약 charPr ID (30-34)는 **모든 템플릿에 공통 정의**되어 있으므로, 템플릿 종류에 관계없이 사용 가능하다.
 4. 입력 텍스트가 순수 텍스트(Markdown 아님)인 경우에도 안전하다 — 변환 대상이 없으면 단일 run으로 출력한다.
 
+## 스타일 보존 규칙 (템플릿 채우기)
+
+Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙.
+
+1. **style-map 기반 ID만 사용**: `analyze_template.py --style-map`으로 추출한 스타일 ID만 사용한다. 양식에 정의되지 않은 임의 ID를 생성하지 않는다.
+2. **빌트인 예약 ID 사용 금지**: charPr 예약 ID (30-34)는 XML-first 전용이다. 템플릿 채우기 모드에서는 사용하지 않는다.
+3. **폰트 크기 불변**: 양식의 폰트 크기를 변경하지 않는다. style-map에서 추출된 크기를 그대로 유지한다.
+
+## 불릿 포인트 처리 규칙
+
+1. **마커 원본 준수**: ◦, –, □ 등 불릿 마커는 양식 원본의 마커를 따른다. 에이전트가 임의로 마커를 변경하거나 추가하지 않는다.
+2. **들여쓰기 구현**: hanging indent는 `paraPr`의 left margin + indent 속성으로 구현한다. 공백 문자(스페이스, 탭)를 사용한 들여쓰기는 금지한다.
+3. **중첩 수준**: 양식에 정의된 불릿 중첩 수준을 초과하지 않는다.
+
+## 표 생성 규칙
+
+1. **데이터 직접 삽입**: MD 테이블 데이터를 그대로 셀에 삽입한다. 불필요한 마커(■, ●, ▶ 등)를 추가하지 않는다.
+2. **양식 표 구조 유지**: 양식에 이미 정의된 표의 행/열 구조를 변경하지 않는다. 데이터가 부족하면 빈 셀로 남긴다.
+
+## 이미지 삽입
+
+마크다운 콘텐츠의 `<그림 N-N:>` 캡션과 이미지 파일을 매칭하여 HWPX에 임베딩한다.
+
+1. **image_embedder.py 사용**: ZIP-level에서 PNG 이미지를 HWPX에 삽입한다.
+2. **CLI 예시**:
+   ```bash
+   python3 image_embedder.py --hwpx output.hwpx --images-dir ./images/ --mapping caption_map.json --output final.hwpx
+   ```
+3. **캡션-파일 매핑**: `md_parser.py`가 생성한 캡션 목록과 `--images-dir`의 파일명을 매칭한다. 매칭 실패 시 경고를 출력하고 해당 이미지를 건너뛴다.
+
 ## Constraints
 
 - HWPX only: do not claim or provide direct `.hwp` support.
@@ -131,3 +164,5 @@ HWPX XML 출력 (section0.xml):
 - **표 생성 시 `noAdjust="0"` + `pageBreak="CELL"` 필수** — 행 높이 자동 조절 및 페이지 넘김 허용.
 - Do not hardcode XML blocks in the agent instructions; rely on skill scripts and templates.
 - Use relative path resolution first, then documented Glob fallback rules when locating scripts.
+- **템플릿 채우기 시 style-map 선행 필수**: Workflow 7 실행 시 반드시 `analyze_template.py --style-map`을 먼저 실행하여 스타일 설정을 추출한 후 후속 단계를 진행한다.
+- **xml_writer.py로 XML 생성**: 에이전트가 직접 XML을 작성하지 않고 `xml_writer.py`를 사용하여 XML fragment를 생성한다. 직접 XML 작성은 최소화한다.

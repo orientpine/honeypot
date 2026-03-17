@@ -97,7 +97,7 @@ Glob: **/build_hwpx.py
 절대 금지: 스크립트를 찾지 못했을 때 자체 Python 코드를 작성하지 않습니다.
 즉시 중단 후 경로 확인을 요청합니다.
 
-## 스크립트 요약 (9)
+## 스크립트 요약 (12)
 
 | Script | Purpose |
 |---|---|
@@ -110,6 +110,10 @@ Glob: **/build_hwpx.py
 | `scripts/validate.py` | ZIP/XML/필수 엔트리 구조 검증 (`--strict`: surgery 호환성 검증) |
 | `scripts/office/unpack.py` | HWPX를 디렉토리로 풀어 XML 편집 준비 |
 | `scripts/office/pack.py` | 수정 디렉토리를 HWPX로 재패키징 |
+| `scripts/md_parser.py` | 마크다운 → 구조화 JSON 파싱 (`python3 md_parser.py <input.md> --output <output.json>`) |
+| `scripts/xml_writer.py` | JSON → HWPX XML 프래그먼트 생성 (`python3 xml_writer.py --input <parsed.json> --style-config <styles.json> --output <fragment.xml>`) |
+| `scripts/image_embedder.py` | HWPX에 이미지 ZIP-level 임베딩 (`python3 image_embedder.py --hwpx <.hwpx> --images-dir <dir> --mapping <map.json> --output <out.hwpx>`) |
+
 ## 단위 변환 (HWP Units)
 
 | Item | Value | Note |
@@ -391,6 +395,22 @@ section0.xml의 첫 문단(`<hp:p>`)의 첫 런(`<hp:run>`)에 반드시 `<hp:se
 </hp:p>
 ```
 
+### 불릿/항목 문단 (hanging indent)
+
+hanging indent = paraPr의 `left` margin + 음수 `indent` (첫 줄이 왼쪽으로 돌출).
+불릿 마커 (◦, –, □)는 첫 번째 `<hp:run>`에, 본문 텍스트는 후속 `<hp:run>`에 배치.
+
+**올바른 예시:**
+
+```xml
+<hp:p paraPrIDRef="24"> <!-- left="600" indent="-300" → hanging indent -->
+  <hp:run charPrIDRef="0"><hp:t>□ </hp:t></hp:run>
+  <hp:run charPrIDRef="0"><hp:t>항목 텍스트 내용</hp:t></hp:run>
+</hp:p>
+```
+
+**금지 패턴:** 공백 문자로 들여쓰기하지 않는다. 반드시 paraPr의 `left`/`indent` 속성 사용.
+
 ### 표 작성법
 
 ```xml
@@ -434,6 +454,13 @@ section0.xml의 첫 문단(`<hp:p>`)의 첫 런(`<hp:run>`)에 반드시 `<hp:se
 - 예: 3열 균등 → 14173 + 14173 + 14174 = 42520
 - 예: 2열 (라벨:내용 = 1:4) → 8504 + 34016 = 42520
 - **행 높이**: 셀당 보통 2400~3600 HWPUNIT
+
+### 표 변환 원칙 (MD→HWPX)
+
+- **MD 원본 데이터 그대로**: 마크다운 표의 셀 내용을 변환 없이 옮긴다
+- **금지**: 셀에 ■, ▶, □ 등 장식 마커를 임의 추가하지 않는다
+- **열 너비 공식**: `table_width / col_count` 균등 분배 (레퍼런스가 있으면 레퍼런스 따름)
+- **예**: 3열 균등 → `42520 / 3` ≈ 14173 + 14173 + 14174
 
 ### ID 규칙
 
@@ -647,6 +674,84 @@ python3 "$SKILL_DIR/scripts/zip_surgery.py" validate document.hwpx result.hwpx
 - `cell_writer.py` 실행 금지 → standalone/namespace/newline 파괴
 - `ET.tostring()` / `tree.write()` 사용 금지 → XML 선언/네임스페이스 변경
 - pretty-print / indent 금지 → 개행이 텍스트 노드로 해석됨
+
+---
+
+## Workflow 7. 마크다운→HWPX 템플릿 채우기
+
+사용자가 마크다운 문서와 HWPX 템플릿을 제공했을 때, 템플릿 스타일을 유지하면서 내용을 채워 넣는 워크플로우.
+
+### 흐름
+
+1. **스타일 추출** — `analyze_template.py <template.hwpx> --style-map styles.json`
+2. **마크다운 파싱** — `md_parser.py input.md --output parsed.json`
+3. **매핑 결정** — 에이전트가 MD 섹션 ↔ 템플릿 영역 매핑 결정
+4. **XML 생성** — `xml_writer.py --input parsed.json --style-config styles.json --output fragment.xml`
+5. **삽입** — `zip_surgery.py replace template.hwpx -s fragment.xml -o result.hwpx`
+6. **이미지 임베딩** — `image_embedder.py --hwpx result.hwpx --images-dir <dir> --mapping map.json --output final.hwpx`
+7. **검증** — `validate.py final.hwpx` + `page_guard.py --reference template.hwpx --output final.hwpx`
+
+### CLI 예시
+
+```bash
+# 1) 스타일 추출
+python3 "$SKILL_DIR/scripts/analyze_template.py" template.hwpx --style-map /tmp/styles.json
+
+# 2) 마크다운 파싱
+python3 "$SKILL_DIR/scripts/md_parser.py" input.md --output /tmp/parsed.json
+
+# 3) XML 프래그먼트 생성
+python3 "$SKILL_DIR/scripts/xml_writer.py" \
+  --input /tmp/parsed.json --style-config /tmp/styles.json --output /tmp/fragment.xml
+
+# 4) 템플릿에 삽입
+python3 "$SKILL_DIR/scripts/zip_surgery.py" replace template.hwpx \
+  -s /tmp/fragment.xml -o /tmp/result.hwpx
+
+# 5) 이미지 임베딩 (이미지가 있을 경우)
+python3 "$SKILL_DIR/scripts/image_embedder.py" \
+  --hwpx /tmp/result.hwpx --images-dir ./images/ --mapping map.json --output final.hwpx
+
+# 6) 검증
+python3 "$SKILL_DIR/scripts/validate.py" final.hwpx
+python3 "$SKILL_DIR/scripts/page_guard.py" --reference template.hwpx --output final.hwpx
+```
+
+### 템플릿 스타일 ID 원칙
+
+- **반드시 `analyze_template.py --style-map` 출력의 ID를 사용**한다. 템플릿마다 charPr/paraPr/borderFill ID 체계가 다르므로 하드코딩 금지.
+- **빌트인 예약 ID (30-34)는 XML-first 전용**이다. 템플릿 채우기에 사용 금지 — 템플릿 header.xml에 해당 ID가 정의되어 있지 않을 수 있다.
+- **XML 이스케이프 필수**: `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`
+- **문단 ID**: `9000000001`부터 순차 증가 (기존 템플릿 ID와 충돌 방지)
+
+### 이미지 임베딩 가이드
+
+HWPX 이미지 구조: `BinData/` 폴더에 이미지 파일 저장 + `content.hpf`에 바이너리 참조 등록 + `section0.xml`에 `<hp:pic>` 요소 삽입.
+
+**CLI:**
+
+```bash
+python3 "$SKILL_DIR/scripts/image_embedder.py" \
+  --hwpx input.hwpx \
+  --images-dir ./images/ \
+  --mapping map.json \
+  --output output.hwpx
+```
+
+`--mapping` JSON 형식: `{"placeholder_id": "image_filename.png", ...}`
+`--auto-map` 옵션으로 플레이스홀더-이미지 자동 매칭 가능.
+
+**`<hp:pic>` XML 예시:**
+
+```xml
+<hp:pic>
+  <hp:sz width="42520" height="28000" widthRelTo="ABSOLUTE" heightRelTo="ABSOLUTE"/>
+  <hp:pos treatAsChar="1" vertRelTo="PARA" horzRelTo="COLUMN"
+          vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
+  <hp:img binaryItemIDRef="image1" bright="0" contrast="0"
+          effect="REAL_PIC" binaryPageNo="0"/>
+</hp:pic>
+```
 
 ---
 

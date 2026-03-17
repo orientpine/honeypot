@@ -544,7 +544,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
   - Message: `enhance(hwpx): add --style-map to analyze_template.py`
   - Files: `plugins/hwpx-generator/skills/hwpx-core/scripts/analyze_template.py`
 
-- [ ] 5. hwpx-core/SKILL.md 업데이트 — Workflow 7 + 이미지/불릿/표 가이드 추가
+- [x] 5. hwpx-core/SKILL.md 업데이트 — Workflow 7 + 이미지/불릿/표 가이드 추가
 
   **What to do**:
   - `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` 수정
@@ -614,7 +614,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
   - Message: `docs(hwpx): add Workflow 7 and update agent guides`
   - Files: `SKILL.md`, `hwpx-builder.md`, `hwpx-generate.md`
 
-- [ ] 6. hwpx-builder.md 업데이트 — 템플릿 채우기 워크플로우 및 스타일 보존 규칙
+- [x] 6. hwpx-builder.md 업데이트 — 템플릿 채우기 워크플로우 및 스타일 보존 규칙
 
   **What to do**:
   - `plugins/hwpx-generator/agents/hwpx-builder.md` 수정
@@ -673,7 +673,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
 
   **Commit**: YES (group with T5, T7)
 
-- [ ] 7. hwpx-generate.md 업데이트 — MD 입력 + 이미지 경로 파라미터 추가
+- [x] 7. hwpx-generate.md 업데이트 — MD 입력 + 이미지 경로 파라미터 추가
 
   **What to do**:
   - `plugins/hwpx-generator/commands/hwpx-generate.md` 수정
