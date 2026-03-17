@@ -1,107 +1,12 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-17T02:30:00+09:00
-**Version:** 2.9.0
+**Generated:** 2026-03-17T18:00:00+09:00
+**Version:** 3.6.1
 **Branch:** main
 
 ## OVERVIEW
 
 AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-generation, presentation figure creation, academic paper writing style extraction, and **meta-plugin for auto-generating paper writing skill sets**. Claude plugin ecosystem with orchestrated multi-agent workflows.
-
-## STRUCTURE
-
-```
-toolbox/
-├── .claude-plugin/
-│   └── marketplace.json              # Single marketplace registry (13 plugins)
-└── plugins/
-    ├── isd-generator/                # ISD 연구계획서 통합 플러그인 (Agent + Command + Skill)
-    │   ├── agents/                   # 6 agents
-    │   │   ├── chapter1.md           # Chapter 1 generator
-    │   │   ├── chapter2.md           # Chapter 2 generator
-    │   │   ├── chapter3.md           # Chapter 3 generator
-    │   │   ├── chapter4.md           # Chapter 4 generator
-    │   │   ├── chapter5.md           # Chapter 5 generator
-    │   │   └── figure.md             # Caption extraction + Gemini API image gen
-    │   ├── commands/
-    │   │   └── isd-generate.md       # Master orchestrator command (Chapter 3→1→2→4→5)
-    │   └── skills/                   # 11 skills (chapter guides, core-resources, etc.)
-     ├── visual-generator/             # 시각자료 통합 플러그인 (4-block v3.0.0, Agent + Command + Skill)
-     │   ├── agents/                   # 5 agents (content-organizer, content-reviewer, prompt-designer, renderer-agent, prompt-validator)
-     │   ├── commands/
-     │   │   └── visual-generate.md    # 시각자료 생성 오케스트레이터 command
-     │   └── skills/                   # 8 skills (layout-types, theme-*, slide-renderer)
-    ├── paper-style-generator/        # Meta-plugin: PDF → Paper Writing Skills (Agent + Command + Skill)
-    │   ├── agents/                   # 3 agents
-    │   │   ├── pdf-converter.md      # MinerU PDF→MD conversion
-    │   │   ├── style-analyzer.md     # Deep style pattern extraction
-    │   │   └── skill-generator.md    # Hybrid plugin generation (1 command + 8 agents + 1 skill)
-    │   ├── commands/
-    │   │   └── paper-style-generate.md  # Main workflow orchestrator command
-    │   └── skills/
-    │       └── paper-style-toolkit/  # Scripts, templates, references (Jinja2 templates, MinerU wrapper)
-     ├── investments-portfolio/        # Portfolio analysis multi-agent system
-     │   ├── agents/                   # 4 agents: fund-portfolio, compliance-checker, output-critic, material-organizer
-     │   ├── commands/
-     │   │   └── portfolio-analyze.md  # Portfolio orchestrator command
-     │   └── skills/                   # 11 skills (analyst-common, bogle-principles, dc-pension-rules, etc.)
-     ├── general-agents/               # General-purpose agents
-     │   └── agents/                   # 1 agent
-     ├── report-generator/             # Research report generation
-     │   ├── agents/                   # 4 agents: input-analyzer, content-mapper, chapter-writer, quality-checker
-     │   ├── commands/
-     │   │   └── report-generate.md    # Report orchestrator command
-     │   └── skills/                   # 3 skills (field-keywords, chapter-structure, four-step-pattern)
-     ├── stock-consultation/           # 주식/ETF 투자 상담
-     │   ├── agents/                   # 5 agents
-     │   ├── commands/
-     │   │   └── stock-consult.md      # Stock consultation orchestrator command
-     │   └── skills/                   # 3 skills
-     ├── equity-research/              # 기관급 주식 분석
-     │   └── agents/                   # 1 agent
-     ├── hwpx-generator/               # HWPX 문서 생성/편집/분석 통합 플러그인
-     │   ├── agents/                   # 2 agents (hwpx-builder, hwpx-analyzer)
-     │   ├── commands/
-     │   │   └── hwpx-generate.md      # HWPX 문서 생성 오케스트레이터 command
-     │   └── skills/                   # 2 skills (hwpx-core, hwpx-templates)
-     ├── worktree-workflow/            # Git worktree 워크플로우
-     │   └── agents/                   # 1 agent
-     ├── plugin-dev/                   # 플러그인 개발 종합 툴킷 (Agent + Command + Skill) [1]
-     │   ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
-     │   ├── commands/
-     │   │   └── create-plugin.md      # 플러그인 생성 워크플로우 command
-     │   └── skills/                   # 7 skills (hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development)
-     └── patent-trend-analyzer/        # 특허 동향 분석
-         ├── agents/                   # 3 agents: patent-planner, patent-searcher, patent-analyzer
-         ├── commands/
-         │   └── analyze-patents.md    # 전체 파이프라인 오케스트레이터 command
-         └── skills/                   # 5 skills (mcp-setup, research-planning, search-collect, analysis-viz, ipc-classification-guide)
-```
-
-[1] https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev 의 내용을 참조하여 포팅함.
-
-### patent-trend-analyzer (특허 동향 분석)
-KIPRIS API 기반 범용 특허 키워드 최적화, 검색, 사용자 정의 다축 분류 및 시각화 파이프라인. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능.
-
-**Agents:**
-- `patent-planner.md` - 연구 영역 클러스터링, 키워드 최적화, IPC 매핑, 검색 전략 수립
-- `patent-searcher.md` - KIPRIS API 특허 검색 실행, 배치 내보내기, 중복 제거
-- `patent-analyzer.md` - 사용자 정의 분류 체계 적용, 트렌드 분석, 시각화 (PNG/HTML), 보고서 생성
-
-**Skills:**
-- `patent-mcp-setup/` - KIPRIS MCP 서버 설치 및 설정
-- `patent-research-planning/` - 키워드 최적화, IPC 코드 매핑, 검색 전략
-- `patent-search-collect/` - API 검색 실행, 배치 내보내기, 결과 중복 제거
-- `patent-analysis-viz/` - 사용자 정의 다축 분류, 8종 차트, HTML 대시보드, Excel 보고서
-- `ipc-classification-guide/` - IPC/CPC 국제특허분류 체계 가이드 (현재 G06N 상세 지원, 확장 가능)
-
-**Commands:**
-- `analyze-patents.md` - 전체 파이프라인 오케스트레이션 (계획 → 검색 → 분석)
-
-**MCP Tools (18):**
-- 한국 특허 검색 (8): patent_free_search, patent_applicant_search 등
-- 해외 특허 검색 (7): foreign_patent_free_search 등
-- 전처리 (3): patent_search_planner, patent_keyword_optimizer, patent_result_deduplicator
 
 ## WHERE TO LOOK
 
@@ -542,39 +447,7 @@ SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 �
 
 ### Root Marketplace.json Format
 
-```json
-{
-  "name": "marketplace-name",
-  "owner": {
-    "name": "Author Name",
-    "url": "https://github.com/username"
-  },
-  "metadata": {
-    "description": "마켓플레이스 설명",
-    "version": "2.0.0"
-  },
-  "plugins": [
-    {
-      "name": "plugin-name",
-      "source": "./plugins/plugin-name",
-      "description": "플러그인 설명",
-      "version": "1.0.0",
-      "author": { "name": "Author" },
-      "license": "MIT",
-      "category": "development",
-      "strict": true,
-      "agents": [
-        "./agents/agent-1.md",
-        "./agents/agent-2.md"
-      ],
-      "skills": ["./skills"],
-      "homepage": "https://github.com/..."
-    }
-  ]
-}
-```
-
-**marketplace.json plugin 항목 필드:**
+`marketplace.json` plugin 항목 필드:
 
 | Field | Required | Description |
 |-------|----------|-------------|
@@ -589,6 +462,8 @@ SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 �
 | `license` | No | 라이선스 |
 | `category` | No | 카테고리 |
 | `homepage` | No | 홈페이지 URL |
+
+실제 형식은 `.claude-plugin/marketplace.json`을 참조하세요.
 
 ### Forbidden Patterns
 
@@ -635,305 +510,6 @@ This is the #1 source of plugin registration issues:
 
 Created 6 new agents but forgot to update marketplace.json → Agents invisible in Claude. marketplace.json is NOT auto-synced with filesystem. **ALWAYS update manually.**
 
-### MANDATORY: Version Management & Registry Updates
-
-> **배경**: 플러그인 수정 후 `plugin.json`/`marketplace.json` 버전을 업데이트하지 않으면, 사용자가 변경사항을 감지할 수 없고 캐시 무효화가 작동하지 않음.
-
-#### Semantic Versioning (SemVer) 규칙
-
-모든 플러그인은 `MAJOR.MINOR.PATCH` 형식의 시맨틱 버전을 사용합니다.
-
-| 버전 구성 | 변경 시점 | 예시 |
-|-----------|-----------|------|
-| **PATCH** (`x.y.Z`) | 버그 수정, 오탈자, 프롬프트 미세 조정, description 수정 | `1.0.0` → `1.0.1` |
-| **MINOR** (`x.Y.0`) | 새 agent/skill/command 추가, 기존 기능 개선, 새 레이아웃/스타일 추가 | `1.0.1` → `1.1.0` |
-| **MAJOR** (`X.0.0`) | 호환성 깨지는 변경, 워크플로우 구조 변경, agent/skill 삭제 또는 이름 변경 | `1.1.0` → `2.0.0` |
-
-#### 업데이트 대상 파일 (2곳 필수)
-
-| 파일 | 위치 | 업데이트 내용 |
-|------|------|--------------|
-| **plugin.json** | `plugins/{plugin}/.claude-plugin/plugin.json` | `"version"` 필드 |
-| **marketplace.json** | `.claude-plugin/marketplace.json` | 해당 플러그인 항목의 `"version"` 필드 |
-
-**두 파일의 버전은 반드시 동일해야 합니다.**
-
-#### 업데이트 절차 (모든 플러그인 수정 시 적용)
-
-```
-Step 1. 플러그인 코드 수정 (agents/, skills/, commands/ 내 파일)
-Step 2. 변경 유형 판단 (PATCH / MINOR / MAJOR)
-Step 3. plugin.json 버전 업데이트
-        → plugins/{plugin}/.claude-plugin/plugin.json의 "version" 필드
-Step 4. marketplace.json 버전 동기화
-        → .claude-plugin/marketplace.json에서 해당 플러그인의 "version" 필드를 동일하게 업데이트
-Step 5. 캐시 클리어 후 재등록
-```
-
-#### 자동 판단 기준 (AI 에이전트용)
-
-플러그인 파일 수정 시, 아래 기준으로 버전 변경 유형을 **자동 판단**합니다:
-
-| 변경 내용 | 판단 | 버전 변경 |
-|-----------|------|-----------|
-| SKILL.md 내 문구 수정, 오탈자 | PATCH | `x.y.Z+1` |
-| Agent .md 내 프롬프트 개선 | PATCH | `x.y.Z+1` |
-| description, frontmatter 수정 | PATCH | `x.y.Z+1` |
-| scripts/ 내 버그 수정 | PATCH | `x.y.Z+1` |
-| 새 agent .md 추가 | MINOR | `x.Y+1.0` |
-| 새 skill 폴더 추가 | MINOR | `x.Y+1.0` |
-| 새 command .md 추가 | MINOR | `x.Y+1.0` |
-| 기존 스킬에 새 섹션/기능 추가 | MINOR | `x.Y+1.0` |
-| references/, assets/ 추가 | MINOR | `x.Y+1.0` |
-| agent/skill/command 삭제 | MAJOR | `X+1.0.0` |
-| agent/skill 이름 변경 | MAJOR | `X+1.0.0` |
-| 워크플로우 순서/구조 변경 | MAJOR | `X+1.0.0` |
-| plugin.json 의 name 변경 | MAJOR | `X+1.0.0` |
-
-#### marketplace.json 메타데이터 버전 + README.md Version 동기화 (CRITICAL)
-
-루트 `marketplace.json`의 `metadata.version`과 `README.md`의 `**Version**` 필드는 **동일한 프로젝트 버전**을 추적한다.
-두 값은 **항상 일치**해야 한다.
-
-| 변경 | 업데이트 |
-|------|----------|
-| 기존 플러그인 수정 (PATCH/MINOR) | marketplace `metadata.version` + README `Version` 동시 MINOR 올림 |
-| 새 플러그인 추가 | marketplace `metadata.version` + README `Version` 동시 MINOR 올림 |
-| 플러그인 삭제 또는 마켓플레이스 구조 변경 | marketplace `metadata.version` + README `Version` 동시 MAJOR 올림 |
-
-**동기화 규칙**:
-- `marketplace.json` → `metadata.version` 필드
-- `README.md` → 상단 `**Version**: X.Y.Z` 필드
-- `README.md` → `변경 이력` 테이블에 새 행 추가
-- 세 곳이 **동일한 버전**을 표시해야 한다
-
-#### 금지 패턴
-
-| 금지 | 문제 | 올바른 방법 |
-|------|------|------------|
-| 플러그인 수정 후 버전 미변경 | 변경사항 추적 불가, 캐시 문제 | 반드시 PATCH 이상 올림 |
-| plugin.json과 marketplace.json 버전 불일치 | 혼란, 디버깅 어려움 | 두 파일 동시 업데이트 |
-| 버전만 올리고 marketplace.json 미반영 | 레지스트리에서 구버전으로 표시 | 항상 두 파일 함께 수정 |
-| MAJOR 변경인데 PATCH만 올림 | 호환성 문제 미감지 | 변경 유형 정확히 판단 |
-
-### Model Selection Guide
-
-| Model | Use Case | 예시 |
-|-------|----------|------|
-| `opus` | 아키텍처 설계, 보안 감사, 코드 리뷰 | backend-architect, security-auditor |
-| `sonnet` | 복잡한 추론, 기술 선택, 다단계 분석 | python-pro, typescript-pro |
-| `haiku` | 빠른 실행, 정형화된 작업, 코드 생성 | test-automator, scaffold-generator |
-| `inherit` | 부모 모델 상속 (기본값) | 대부분의 범용 에이전트 |
-
----
-
-## NEW SKILL/PLUGIN ADDITION GUIDE
-
-새로운 스킬 또는 플러그인을 본 프로젝트에 추가할 때의 가이드입니다.
-
-### Plugin Types
-
-| 유형 | 포함 폴더 | 용도 | 예시 |
-|------|-----------|------|------|
-| **Agent only** | `agents/` | 전문 에이전트 모음 | general-agents, macro-analysis |
-| **Skill only** | `skills/` | 전문 지식/절차 제공 | hwpx-generator |
-| **Agent + Skill** | `agents/` + `skills/` | 에이전트 + 전문 지식 | stock-consultation, investments-portfolio |
-| **Agent + Command** | `agents/` + `commands/` | 에이전트 + 워크플로우 오케스트레이션 | backend-development |
-| **Full** | `agents/` + `commands/` + `skills/` | 완전한 플러그인 | agent-teams |
-
-### Category System
-
-| Category | 설명 | 적합한 플러그인 |
-|----------|------|----------------|
-| `documentation` | 문서 생성/처리 | ISD chapter generators, report-generator |
-| `development` | 소프트웨어 개발 | backend, frontend, full-stack |
-| `finance` | 금융/투자 분석 | investments-portfolio, stock-consultation |
-| `utilities` | 범용 도구 | general-agents |
-| `research` | 연구/조사 도구 | paper-style-generator |
-| `workflows` | 워크플로우 오케스트레이션 | orchestrators |
-| `quality` | 코드 품질/리뷰 | code-review |
-| `infrastructure` | 인프라/배포 | CI/CD, cloud |
-| `security` | 보안 | scanning, compliance |
-
-### Step-by-Step Guide
-
-#### Level 1: Agent-Only Plugin (기본)
-
-```
-plugins/{plugin-name}/
-├── .claude-plugin/
-│   └── plugin.json
-└── agents/
-    ├── agent-1.md
-    └── agent-2.md
-```
-
-#### Level 2: Agent + Skill Plugin (표준)
-
-```
-plugins/{plugin-name}/
-├── .claude-plugin/
-│   └── plugin.json
-├── agents/
-│   ├── main-agent.md
-│   └── support-agent.md
-└── skills/
-    ├── domain-knowledge/
-    │   ├── SKILL.md
-    │   └── references/
-    │       └── guide.md
-    └── workflow-patterns/
-        ├── SKILL.md
-        └── assets/
-            └── template.md
-```
-
-#### Level 3: Full Plugin with Commands (고급)
-
-```
-plugins/{plugin-name}/
-├── .claude-plugin/
-│   └── plugin.json
-├── agents/
-│   ├── architect.md
-│   ├── implementer.md
-│   └── reviewer.md
-├── commands/
-│   └── full-workflow.md
-└── skills/
-    ├── design-patterns/
-    │   ├── SKILL.md
-    │   ├── references/
-    │   │   ├── pattern-catalog.md
-    │   │   └── anti-patterns.md
-    │   ├── assets/
-    │   │   ├── template.py
-    │   │   └── checklist.md
-    │   └── scripts/
-    │       └── generator.py
-    └── testing-patterns/
-        └── SKILL.md
-```
-
-#### Level 4: Skill with Scripts (외부 API 연동)
-
-스크립트가 필요한 경우, **스킬 폴더 내부**에 `scripts/` 배치:
-
-```
-plugins/{plugin-name}/
-├── .claude-plugin/
-│   └── plugin.json
-├── agents/
-│   └── main-agent.md
-└── skills/
-    └── image-generation/
-        ├── SKILL.md
-        ├── scripts/
-        │   └── generate_images.py
-        └── references/
-            └── api-guide.md
-```
-
-**스크립트 작성 규칙:**
-```python
-# skills/{skill-name}/scripts/main_script.py
-import os
-import argparse
-from dotenv import load_dotenv
-
-load_dotenv()
-API_KEY = os.environ.get("GEMINI_API_KEY")  # 환경변수에서 로드 (하드코딩 금지)
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input-dir", required=True)
-    parser.add_argument("--output-dir", required=True)
-    args = parser.parse_args()
-    # 구현...
-
-if __name__ == "__main__":
-    main()
-```
-
-### File Templates
-
-**plugin.json:**
-```json
-{
-  "name": "{plugin-name}",
-  "version": "1.0.0",
-  "description": "{플러그인 설명}",
-  "author": { "name": "Author Name" },
-  "license": "MIT"
-}
-```
-
-**Agent .md:**
-```yaml
----
-name: {agent-name}
-description: "{역할 설명}. Use when {사용 시점}."
-model: sonnet
----
-
-You are a {역할} specializing in {전문 분야}.
-
-## Purpose
-{에이전트의 목적}
-
-## Capabilities
-{할 수 있는 것들}
-
-## Workflow
-{작업 흐름}
-
-## Constraints
-{제약 조건}
-```
-
-**SKILL.md:**
-```yaml
----
-name: {skill-name}
-description: "{스킬 설명}. Use when {사용 시점}."
----
-
-# {스킬 제목}
-
-## When to Use This Skill
-- {사용 시점 1}
-- {사용 시점 2}
-
-## Core Concepts
-{핵심 개념}
-
-## Step-by-Step Instructions
-{단계별 지침}
-
-## Best Practices
-{모범 사례}
-
-## Resources
-- **references/guide.md**: 상세 가이드
-- **assets/template.md**: 출력 템플릿
-```
-
-**Command .md:**
-```markdown
-Orchestrate {workflow description}:
-
-## Configuration Options
-{설정 옵션}
-
-## Phase 1: {Phase Name}
-1. Use Task tool with subagent_type="{plugin}::{agent}"
-   - Prompt: "{작업 지시}"
-   - Expected output: {기대 출력}
-
-## Phase 2: {Phase Name}
-...
-```
-
 ### Marketplace Registration Checklist
 
 새 플러그인 추가 후 반드시 확인:
@@ -949,37 +525,56 @@ Orchestrate {workflow description}:
 - [ ] 모든 .md 파일이 LF 줄바꿈 사용 (CRLF 금지)
 - [ ] 플러그인 캐시 클리어 후 재등록
 
-### Common Mistakes to Avoid
+### MANDATORY: Version Management & Registry Updates
 
-| 실수 | 문제 | 해결 |
-|------|------|------|
-| 플러그인 루트에 `scripts/` 배치 | 비표준 구조 | `skills/{skill}/scripts/`로 이동 |
-| 플러그인 루트에 `references/` 배치 | 비표준 구조 | `skills/{skill}/references/`로 이동 |
-| `"skills": ["./skills/"]` | trailing slash | `"./skills"` 사용 |
-| `"skills": ["./skills/SKILL.md"]` | 파일 직접 지정 | 디렉토리만 지정 |
-| description에 `'` 포함 | YAML 파싱 실패 | 전체를 `"..."` 로 감싸기 |
-| CRLF 줄바꿈 | YAML 파싱 실패 | LF로 변환 |
-| 스킬 name에 대문자 사용 | Spec 위반 | 소문자만 사용 |
-| plugin.json 미생성 | 플러그인 메타데이터 누락 | 각 플러그인에 생성 |
+> **배경**: 플러그인 수정 후 `plugin.json`/`marketplace.json` 버전을 업데이트하지 않으면, 사용자가 변경사항을 감지할 수 없고 캐시 무효화가 작동하지 않음.
 
-### Template Files Location (Reference Implementations)
+#### Versioning 규칙
 
-| 복잡도 | 참조 저장소 | 위치 |
-|--------|------------|------|
-| Agent only | wshobson/agents | `plugins/arm-cortex-microcontrollers/` |
-| Agent + Command | wshobson/agents | `plugins/backend-development/` |
-| Agent + Skill | wshobson/agents | `plugins/blockchain-web3/` |
-| Full (Agent + Command + Skill) | wshobson/agents | `plugins/agent-teams/` |
+모든 플러그인과 마켓플레이스는 `MAJOR.MINOR.PATCH` 형식을 사용합니다.
 
-### Current Codebase Migration Notes
+**플러그인 버전 (`plugin.json`):**
 
-> **Status (2026-02-06)**: 루트 비표준 폴더 마이그레이션이 완료되었습니다.
+| 버전 구성 | 변경 시점 | 예시 |
+|-----------|-----------|------|
+| **PATCH** (`x.y.Z`) | 버그 수정, 문서 업데이트, 프롬프트 미세 조정 | 동작 변화 없음 |
+| **MINOR** (`x.Y.0`) | 기능 추가/수정/개선 (agent, skill, command, assets 등) | 기존 참조 유지됨 |
+| **MAJOR** (`X.0.0`) | agent/skill/command 삭제 또는 이름 변경, plugin.json name 변경 | 기존 참조 깨짐 |
 
-현재 마켓플레이스의 플러그인들은 `agents/`, `commands/`, `skills/`, `.claude-plugin/` 표준 구조를 따릅니다.
+**마켓플레이스 버전 (`marketplace.json` `metadata.version` + `README.md` `Version` + `AGENTS.md` `Version`):**
 
-추가 원칙:
-- 오케스트레이터 워크플로우는 `commands/`에 배치합니다.
-- `scripts/`, `references/`, `assets/`, `templates/`는 플러그인 루트가 아닌 `skills/{skill-name}/` 내부에 배치합니다.
+| 버전 구성 | 변경 시점 | 예시 |
+|-----------|-----------|------|
+| **PATCH** (`x.y.Z`) | 개별 플러그인 PATCH 수준 변경 (버그 수정, 문서 업데이트), AGENTS.md/README.md 구조 변경 | `3.6.0` → `3.6.1` |
+| **MINOR** (`x.Y.0`) | 새 플러그인 추가, 개별 플러그인 MINOR 수준 이상 변경 (기능 추가/수정) | `3.6.0` → `3.7.0` |
+| **MAJOR** (`X.0.0`) | 플러그인 삭제/이름 변경, 마켓플레이스 구조 변경 | `3.7.0` → `4.0.0` |
+
+#### 업데이트 대상 파일
+
+| 변경 범위 | 업데이트 대상 |
+|-----------|-------------|
+| 플러그인 내부 변경 | `plugins/{plugin}/.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` 해당 항목 |
+| 마켓플레이스 수준 변경 | 위 + `marketplace.json` `metadata.version` + `README.md` `Version` + `AGENTS.md` `Version` + `README.md` 변경 이력 |
+
+**모든 업데이트 대상의 버전은 각각 동기화되어야 합니다.**
+
+#### 금지 패턴
+
+| 금지 | 문제 | 올바른 방법 |
+|------|------|------------|
+| 플러그인 수정 후 버전 미변경 | 변경사항 추적 불가, 캐시 문제 | 반드시 PATCH 이상 올림 |
+| plugin.json과 marketplace.json 버전 불일치 | 혼란, 디버깅 어려움 | 두 파일 동시 업데이트 |
+| marketplace metadata.version과 README/AGENTS Version 불일치 | 추적 불가 | 항상 동기화 |
+| MAJOR 변경인데 PATCH만 올림 | 호환성 문제 미감지 | 변경 유형 정확히 판단 |
+
+### Model Selection Guide
+
+| Model | Use Case | 예시 |
+|-------|----------|------|
+| `opus` | 아키텍처 설계, 보안 감사, 코드 리뷰 | backend-architect, security-auditor |
+| `sonnet` | 복잡한 추론, 기술 선택, 다단계 분석 | python-pro, typescript-pro |
+| `haiku` | 빠른 실행, 정형화된 작업, 코드 생성 | test-automator, scaffold-generator |
+| `inherit` | 부모 모델 상속 (기본값) | 대부분의 범용 에이전트 |
 
 ---
 
@@ -991,8 +586,8 @@ Orchestrate {workflow description}:
 
 | 변경 유형 | 업데이트 대상 섹션 | 예시 |
 |-----------|-------------------|------|
-| 플러그인 추가/삭제 | `STRUCTURE`, `WHERE TO LOOK`, `UNIQUE STYLES` | 새 플러그인 폴더 추가 |
-| Agent/Skill/Command 추가/삭제/이름 변경 | `STRUCTURE`, `WHERE TO LOOK` | 에이전트 .md 파일 추가 |
+| 플러그인 추가/삭제 | `WHERE TO LOOK`, `UNIQUE STYLES` | 새 플러그인 폴더 추가 |
+| Agent/Skill/Command 추가/삭제/이름 변경 | `WHERE TO LOOK` | 에이전트 .md 파일 추가 |
 | 워크플로우 순서/구조 변경 | `CONVENTIONS`, `UNIQUE STYLES` | ISD 챕터 순서 변경 |
 | 새로운 스크립트/명령어 추가 | `COMMANDS` | 새 Python 스크립트 |
 | 새로운 금지 패턴 발견 | `ANTI-PATTERNS` | 새로운 실수 패턴 발견 |
@@ -1016,13 +611,13 @@ Step 5. 커밋 시 AGENTS.md 변경분을 함께 포함
 | **정확성 우선** | 추측이 아닌 실제 파일 시스템 상태를 반영할 것 |
 | **최소 변경** | 변경된 부분만 수정, 불필요한 리포맷 금지 |
 | **일관성 유지** | 기존 문서 스타일(표, 코드블록, 한/영 혼용)을 따를 것 |
-| **교차 참조** | 하나의 섹션 변경 시 관련 섹션도 함께 확인 (예: `STRUCTURE` 변경 → `WHERE TO LOOK`도 확인) |
+| **교차 참조** | 하나의 섹션 변경 시 관련 섹션도 함께 확인 |
 
 ### 금지 패턴
 
 | 금지 | 문제 | 올바른 방법 |
 |------|------|------------|
-| 플러그인 추가 후 AGENTS.md 미업데이트 | 다음 세션에서 새 플러그인 인식 불가 | 반드시 `STRUCTURE`, `WHERE TO LOOK` 업데이트 |
+| 플러그인 추가 후 AGENTS.md 미업데이트 | 다음 세션에서 새 플러그인 인식 불가 | 반드시 `WHERE TO LOOK` 업데이트 |
 | 워크플로우 변경 후 AGENTS.md 미업데이트 | 에이전트가 구버전 워크플로우로 작업 | 즉시 해당 섹션 업데이트 |
 | AGENTS.md만 업데이트하고 실제 코드 미반영 | 문서와 코드 불일치 | 코드 변경 → AGENTS.md 순서로 진행 |
 | Generated 날짜 미업데이트 | 최종 업데이트 시점 추적 불가 | 항상 현재 날짜로 갱신 |

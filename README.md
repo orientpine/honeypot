@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
 
-**Version**: 3.6.0  
+**Version**: 3.6.1  
 **Author**: [Baekdong Cha](https://github.com/orientpine)  
 **License**: MIT
 
@@ -452,6 +452,7 @@ plugins/{plugin-name}/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.6.1 | 2026-03-17 | AGENTS.md 구조 개선: 코드베이스에서 추론 가능한 섹션 삭제 (STRUCTURE 트리, 파일 템플릿, 플러그인 추가 가이드 등 405줄 제거), 버전 체계를 breaking-aware SemVer로 재정의 (MAJOR=삭제/breaking, MINOR=추가/기능변경, PATCH=버그수정/문서), Registration Checklist를 MARKETPLACE RULES로 이동 |
 | 3.6.0 | 2026-03-17 | visual-generator v3.3.0: 여백 최소화 — Scene Description 캔버스 채우기 지시 추가, Rendering Style 공간구성 강화, 테마별 조건부 네거티브 스페이스 타겟 (gov/seminar ≤15%, concept/whatif ≤20%, comparison ≤10%, pitch 30%+ 유지) |
 | 3.5.0 | 2026-03-17 | visual-generator v3.2.0: Must-Render Registry 추가 (4개 테마 필수 렌더링 요소 명시화), marketplace metadata 버전 동기화 (2.4.0→3.5.0) |
 | 3.4.0 | 2026-03-16 | patent-trend-analyzer v1.2.0: MCP 설정 스킬 개선 — API 키 발급 안내, venv 기반 설치, Claude Code/OpenCode 이중 설정(형식 차이 대응), 트러블슈팅 보강 |
