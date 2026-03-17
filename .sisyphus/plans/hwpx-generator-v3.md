@@ -732,7 +732,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
 
   **Commit**: YES (group with T5, T6)
 
-- [ ] 8. End-to-end 통합 테스트 — dev/ 파일로 전체 워크플로우 실행
+- [x] 8. End-to-end 통합 테스트 — dev/ 파일로 전체 워크플로우 실행
 
   **What to do**:
   - dev/ 폴더의 실제 파일로 Workflow 7 전체를 end-to-end 실행:
