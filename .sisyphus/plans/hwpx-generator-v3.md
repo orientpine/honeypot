@@ -906,7 +906,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
 
   **What to do**: Read the plan end-to-end. Verify every "Must Have" and "Must NOT Have".
 
@@ -933,7 +933,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
   ```
   Output: `Must Have [N/N] | Must NOT Have [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
 
   **What to do**: 새 Python 스크립트 3개의 코드 품질, 에러 처리, XML 이스케이핑 검증.
 
@@ -951,7 +951,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
   ```
   Output: `Scripts [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high`
+- [x] F3. **Real Manual QA** — `unspecified-high`
 
   **What to do**: 클린 상태에서 전체 워크플로우 재실행, 결과 HWPX 검증.
 
@@ -969,7 +969,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
   ```
   Output: `Scenarios [N/N pass] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
 
   **What to do**: 각 태스크의 "What to do" vs 실제 구현 1:1 대응 확인, 범위 초과 변경 탐지.
 
