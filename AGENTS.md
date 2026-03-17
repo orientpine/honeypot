@@ -121,7 +121,6 @@ KIPRIS API 기반 범용 특허 키워드 최적화, 검색, 사용자 정의 �
 | General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
-<<<<<<< HEAD
 | HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py + cell_writer.py 기반, 레퍼런스 복원 우선 |
 | HWPX ZIP-level surgery | `plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` | 안전한 ZIP-level 편집 (stdlib only, lxml 불필요), HwpxSurgeon 클래스 |
 | HWPX surgery 가이드 | `plugins/hwpx-generator/skills/hwpx-core/references/zip-surgery-guide.md` | 10가지 안전 규칙 명세 |
