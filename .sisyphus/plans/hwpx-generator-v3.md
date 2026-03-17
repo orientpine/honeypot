@@ -848,7 +848,7 @@ Wave FINAL (After ALL tasks — 4 parallel reviews, then user okay):
 
   **Commit**: NO (테스트만, 코드 변경은 해당 스크립트 태스크에서)
 
-- [ ] 9. 버전 및 레지스트리 업데이트
+- [x] 9. 버전 및 레지스트리 업데이트
 
   **What to do**:
   - `plugins/hwpx-generator/.claude-plugin/plugin.json` — version을 3.0.0으로 업데이트
