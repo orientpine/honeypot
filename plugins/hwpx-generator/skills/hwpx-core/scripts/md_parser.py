@@ -58,6 +58,13 @@ def clean_text_to_segments(text: str) -> tuple[str, list[dict[str, str]]]:
     return joined, segments
 
 
+def strip_inline_markdown(text: str) -> str:
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    text = re.sub(r"\*([^*\n]+)\*", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    return text
+
+
 def is_table_line(line: str) -> bool:
     stripped = line.strip()
     return stripped.startswith("|") and stripped.endswith("|") and "|" in stripped[1:-1]
@@ -66,7 +73,7 @@ def is_table_line(line: str) -> bool:
 def split_table_row(line: str) -> list[str]:
     stripped = line.strip()
     parts = stripped.split("|")[1:-1]
-    return [xml_escape(cell.strip()) for cell in parts]
+    return [xml_escape(strip_inline_markdown(cell.strip())) for cell in parts]
 
 
 def is_table_delimiter(row: list[str]) -> bool:
