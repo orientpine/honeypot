@@ -1,389 +1,727 @@
 # Honeypot
 
-> Claude Code 플러그인 마켓플레이스 — ISD 연구계획서, 시각자료, 논문 스타일, 연금 포트폴리오 분석, 주식 상담, HWPX 문서 생성
+> Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.6.1  
-**Author**: [Baekdong Cha](https://github.com/orientpine)  
-**License**: MIT
-
----
-
-## 주요 기능
-
-| 플러그인 | 설명 | 유형 |
-|----------|------|:----:|
-| **isd-generator** | ISD 연구계획서 전체 생성 (5개 Chapter + 이미지) | Agent+Command+Skill |
-| **visual-generator** | Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison 테마 시각자료 생성 + Gemini 렌더링 | Agent+Command+Skill |
-| **paper-style-generator** | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 (메타-플러그인) | Agent+Command+Skill |
-| **report-generator** | 연구 노트 → 국가기관 제출용 연구 보고서 자동 생성 | Agent+Command+Skill |
-| **investments-portfolio** | DC 연금 포트폴리오 분석 멀티 에이전트 시스템 | Agent+Command+Skill |
-| **stock-consultation** | 주식/ETF 투자 상담 Multi-Agent. Bogle/Vanguard 철학 기반. | Agent+Command+Skill |
-| **hwpx-generator** | HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환. | Agent+Command+Skill |
-| **macro-analysis** | 거시경제 분석 공용 에이전트 (지수/금리/섹터/리스크/리더십/종합/검증) | Agent |
-| **general-agents** | 범용 에이전트 (인터뷰 등) | Agent |
-| **equity-research** | 기관급 주식 분석 리포트 생성 | Agent |
-| **worktree-workflow** | Git worktree를 활용한 Claude Code 병렬 실행 워크플로우 | Agent |
-| **plugin-dev** | 플러그인 개발 종합 툴킷 (Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발) [^1] | Agent+Command+Skill |
-| **patent-trend-analyzer** | KIPRIS API 기반 특허 동향 분석 (키워드 최적화, 검색, 다축 분류, 시각화) | Agent+Command+Skill |
+**Version**: 3.6.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
 ## 빠른 시작
 
-### 1. 마켓플레이스 등록
+**Step 1.** 마켓플레이스 등록
 
 ```bash
-# Claude Code에서 실행
 /plugin marketplace add /path/to/honeypot
 ```
 
-### 2. 플러그인 사용
+**Step 2.** 플러그인 호출
 
 ```bash
-# 예: ISD 연구계획서 생성
+# 시각자료 생성
+@visual-generator 발표 자료를 만들어줘. 입력 문서: ./proposal.md 테마: seminar
+
+# 특허 동향 분석
+@patent-trend-analyzer "자율주행 라이다" 주제로 특허 동향 분석을 해줘
+
+# 연구계획서 생성
 @isd-generator 오케스트레이터를 사용해서 연구계획서를 생성해줘
-
-# 예: DC 연금 포트폴리오 분석
-@investments-portfolio 포트폴리오 분석을 시작해줘
-
-# 예: 시각자료 생성
-@visual-generator 발표 자료를 만들어줘
 ```
 
 ---
 
-## 프로젝트 구조
+## 플러그인 한눈에 보기
 
-```
-honeypot/
-├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (13개 플러그인)
-├── plugins/
-│   ├── isd-generator/                # ISD 연구계획서 생성
-│   │   ├── agents/                   # 6 agents (chapter1-5, figure)
-│   │   ├── commands/                 # isd-generate (오케스트레이터)
-│   │   └── skills/                   # 11 skills (chapter guides, core-resources 등)
-│   ├── visual-generator/             # 시각자료 생성
-│   │   ├── agents/                   # 5 agents (content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent)
-│   │   ├── commands/                 # visual-generate (오케스트레이터)
-│   │   └── skills/                   # 8 skills (layout-types, theme-*, slide-renderer)
-│   ├── paper-style-generator/        # 논문 스타일 스킬 생성
-│   │   ├── agents/                   # 3 agents (pdf-converter, style-analyzer, skill-generator)
-│   │   ├── commands/                 # paper-style-generate (오케스트레이터)
-│   │   └── skills/                   # 1 skill (paper-style-toolkit)
-│   ├── report-generator/             # 연구 보고서 생성
-│   │   ├── agents/                   # 4 agents (input-analyzer, content-mapper, chapter-writer, quality-checker)
-│   │   ├── commands/                 # report-generate (오케스트레이터)
-│   │   └── skills/                   # 3 skills (chapter-structure, field-keywords, four-step-pattern)
-│   ├── investments-portfolio/        # DC 연금 포트폴리오
-│   │   ├── agents/                   # 4 agents (fund-portfolio, compliance-checker, output-critic, material-organizer)
-│   │   ├── commands/                 # portfolio-analyze (오케스트레이터)
-│   │   └── skills/                   # 11 skills (bogle-principles, dc-pension-rules 등)
-│   ├── stock-consultation/           # 주식/ETF 투자 상담
-│   │   ├── agents/                   # 5 agents (materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic)
-│   │   ├── commands/                 # stock-consult (오케스트레이터)
-│   │   └── skills/                   # 3 skills (analyst-common-stock, file-save-protocol-stock, stock-data-verifier)
-│   ├── hwpx-generator/               # HWPX 문서 생성/편집/분석
-│   │   ├── agents/                   # 2 agents (hwpx-builder, hwpx-analyzer)
-│   │   ├── commands/                 # hwpx-generate (오케스트레이터)
-│   │   └── skills/                   # 2 skills (hwpx-core, hwpx-templates)
-│   ├── macro-analysis/               # 거시경제 분석 공용 에이전트
-│   │   └── agents/                   # 7 agents (index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst, macro-synthesizer, macro-critic)
-│   ├── general-agents/               # 범용 에이전트
-│   │   └── agents/                   # 1 agent (interview)
-│   ├── equity-research/              # 기관급 주식 분석
-│   │   └── agents/                   # 1 agent (equity-research-analyst)
-│   ├── worktree-workflow/            # Git worktree 워크플로우
-│   │   └── agents/                   # 1 agent (worktree)
-│   └── plugin-dev/                   # 플러그인 개발 종합 툴킷 [^1]
-│       ├── agents/                   # 3 agents (agent-creator, plugin-validator, skill-reviewer)
-│       ├── commands/                 # create-plugin (워크플로우)
-│       └── skills/                   # 7 skills (hook, mcp, structure, settings, command, agent, skill)
-│   └── patent-trend-analyzer/        # 특허 동향 분석
-│       ├── agents/                   # 3 agents (patent-planner, patent-searcher, patent-analyzer)
-│       ├── commands/                 # analyze-patents (오케스트레이터)
-│       └── skills/                   # 5 skills (mcp-setup, research-planning, search-collect, analysis-viz, ipc-classification-guide)
-├── AGENTS.md                         # 프로젝트 상세 지식 베이스
-└── README.md                         # 이 문서
-```
+| 카테고리 | 플러그인 | 설명 |
+|:--------:|----------|------|
+| 문서 | [**isd-generator**](#isd-generator) | ISD 연구계획서 5개 Chapter 자동 생성 |
+| 문서 | [**report-generator**](#report-generator) | 연구 노트 → 국가기관 제출용 보고서 |
+| 문서 | [**hwpx-generator**](#hwpx-generator) | HWPX 한글 문서 생성/편집/분석 |
+| 시각 | [**visual-generator**](#visual-generator) | 6개 테마 시각자료 프롬프트 생성 + Gemini 렌더링 |
+| 논문 | [**paper-style-generator**](#paper-style-generator) | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 |
+| 투자 | [**investments-portfolio**](#investments-portfolio) | DC형 퇴직연금 포트폴리오 멀티 에이전트 분석 |
+| 투자 | [**stock-consultation**](#stock-consultation) | 주식/ETF 투자 상담 (Bogle/Vanguard 철학) |
+| 투자 | [**equity-research**](#equity-research) | 기관급 주식 분석 리포트 생성 |
+| 투자 | [**macro-analysis**](#macro-analysis) | 거시경제 분석 공용 에이전트 7종 |
+| 분석 | [**patent-trend-analyzer**](#patent-trend-analyzer) | KIPRIS API 기반 특허 동향 분석 + 시각화 |
+| 도구 | [**plugin-dev**](#plugin-dev) | Claude Code 플러그인 개발 종합 툴킷 [^1] |
+| 도구 | [**worktree-workflow**](#worktree-workflow) | Git worktree 기반 병렬 실행 |
+| 도구 | [**general-agents**](#general-agents) | 범용 에이전트 (심층 인터뷰 등) |
 
 ---
 
-## 플러그인 상세
+<br>
 
-### isd-generator
+# 문서 생성
 
-**ISD (기업부설연구소) 연구계획서 자동 생성**
+---
 
-- **워크플로우**: Chapter 3 → 1 → 2 → 4 → 5 순서로 생성
-- **오케스트레이터**: `commands/isd-generate.md`
-- **출력**: `output/[프로젝트명]/chapter_{1-5}/`
-- **이미지 생성**: Gemini API로 캡션 기반 이미지 자동 생성
+## isd-generator
 
-| 구성 | 항목 |
+> ISD(기업부설연구소) 국책과제 연구계획서 5개 Chapter를 자동 생성합니다.
+
+### 사용법
+
+```
+@isd-generator 오케스트레이터를 사용해서 연구계획서를 생성해줘
+```
+
+### 사전 준비
+
+`input-template` 스킬 양식에 맞춰 **통합 입력 파일**을 작성해야 합니다. 입력 파일에는 프로젝트 개요, 연구 목표, 기술 내용 등의 섹션이 포함됩니다.
+
+### 주요 특징
+
+- **생성 순서**: Chapter 3 → 1 → 2 → 4 → 5 (의존성 기반)
+- **검증문서 필수**: 각 Chapter 본문 작성 전 검증문서가 자동 생성됨
+- **이미지 자동 생성**: Gemini API로 캡션 기반 이미지 생성
+- **출력 경로**: `output/[프로젝트명]/chapter_{1-5}/`
+
+<details>
+<summary>구성 요소 (6 Agents · 1 Command · 11 Skills)</summary>
+
+| 유형 | 항목 |
 |------|------|
-| Agents (6) | chapter1, chapter2, chapter3, chapter4, chapter5, figure |
-| Command (1) | isd-generate (오케스트레이터) |
-| Skills (11) | chapter1~5-guide, core-resources, data-collection-guide, figure-guide, image-reference-guide, input-template, verification-rules |
+| Agents | chapter1, chapter2, chapter3, chapter4, chapter5, figure |
+| Command | `isd-generate` (오케스트레이터) |
+| Skills | chapter1~5-guide, core-resources, data-collection-guide, figure-guide, image-reference-guide, input-template, verification-rules |
 
-### visual-generator
+</details>
 
-**시각자료 프롬프트 생성 및 렌더링 (6개 테마 + 레이아웃)**
+---
+
+## report-generator
+
+> 연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성합니다.
+
+### 사용법
+
+```
+@report-generator 연구 보고서를 생성해줘.
+입력 경로: ./research_notes/
+프로젝트명: HR35_자율굴착기
+```
+
+### 주요 특징
+
+- **다양한 입력 지원**: 폴더, 단일 파일, 코드 + 노트
+- **도메인 자동 감지**: ROS2, AI/ML, 범용
+- **최대 9개 챕터**: 자료 부족 챕터는 자동 생략 (최소 3개 보장)
+- **4단계 문장 패턴**: What → Why → How → Impact
+
+| 파라미터 | 필수 | 설명 | 예시 |
+|----------|:----:|------|------|
+| `input_path` | O | 연구 노트 경로 | `./research_notes/` |
+| `project_name` | O | 프로젝트명 | `HR35_자율굴착기` |
+| `code_path` | - | 코드베이스 경로 | `/home/user/ros2_ws/src/` |
+| `output_dir` | - | 출력 디렉토리 | `./output/` (기본값) |
+| `auto_mode` | - | 자동 진행 여부 | `true` / `false` (기본값) |
+
+<details>
+<summary>구성 요소 (4 Agents · 1 Command · 3 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | input-analyzer, content-mapper, chapter-writer, quality-checker |
+| Command | `report-generate` (오케스트레이터) |
+| Skills | chapter-structure, field-keywords, four-step-pattern |
+
+</details>
+
+---
+
+## hwpx-generator
+
+> HWPX(한글) 문서를 XML-first 방식으로 생성, 편집, 분석합니다.
+
+### 사용법
+
+```
+# 기본 생성
+@hwpx-generator 연구 보고서 HWPX 문서를 만들어줘
+
+# 레퍼런스 문서 스타일 참조
+@hwpx-generator 이 양식과 동일한 스타일로 문서를 만들어줘
+reference_hwpx: ./template.hwpx
+
+# 템플릿 기반 생성
+@hwpx-generator 이 템플릿에 내용을 채워줘
+template_hwpx: ./form.hwpx
+```
+
+### 주요 특징
+
+- **3가지 생성 경로**: 사용자 템플릿 > 기본 양식 > XML-first 자동 선택
+- **ZIP-level surgery**: `zip_surgery.py`로 안전한 ZIP 내부 편집
+- **네임스페이스 자동 수정**: `fix_namespaces.py` 필수 적용
+- **뷰어 호환성**: `<hp:linesegarray>` 자동 생성으로 한컴오피스 외 뷰어 지원
+
+| 파라미터 | 필수 | 설명 |
+|----------|:----:|------|
+| `ARGUMENTS` | O | 문서 유형, 목적, 포함할 내용 |
+| `reference_hwpx` | - | 스타일 분석용 레퍼런스 `.hwpx` |
+| `template_hwpx` | - | 사용자 업로드 템플릿 `.hwpx` |
+| `output_dir` | - | 결과 폴더 (기본값: `./output/hwpx/`) |
+
+<details>
+<summary>구성 요소 (2 Agents · 1 Command · 2 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | hwpx-builder, hwpx-analyzer |
+| Command | `hwpx-generate` (오케스트레이터) |
+| Skills | hwpx-core, hwpx-templates |
+
+</details>
+
+---
+
+<br>
+
+# 시각자료 & 논문
+
+---
+
+## visual-generator
+
+> 입력 문서를 분석하여 6개 테마 시각자료 프롬프트를 생성하고 Gemini API로 렌더링합니다.
+
+### 사용법
+
+```
+@visual-generator 시각자료를 생성해줘.
+입력 문서: ./research_proposal.md
+무드: tech-focus
+테마: gov
+출력 폴더: ./output/visuals/
+```
+
+| 파라미터 | 필수 | 설명 | 기본값 |
+|----------|:----:|------|--------|
+| `input_document` | O | 입력 문서 경로 (연구계획서, 사업계획서, 기술문서 등) | - |
+| `theme` | - | 테마 유형 | `gov` |
+| `mood` | - | 무드 선택 (9종) | `clarity` |
+| `layout` | - | 레이아웃 유형 (24종) | 자동 선택 |
+| `output_folder` | O | 출력 폴더 경로 | - |
+
+> **테마**: `concept` · `gov` · `seminar` · `whatif` · `pitch` · `comparison`
+>
+> **무드**: `technical-report` · `clarity` · `tech-focus` · `growth` · `connection` · `innovation` · `knowledge` · `presentation` · `workshop`
+
+### 에이전트 파이프라인
+
+```
+content-organizer → content-reviewer → prompt-designer → prompt-validator → renderer-agent
+```
+
+### 테마 갤러리
 
 동일한 주제(스마트 팩토리)를 6개 테마로 시각화한 예시:
 
-#### theme-concept — Kurzgesagt 풍 시각 스토리텔링
+<table>
+<tr>
+<td width="50%">
 
-> 텍스트 없이 장면과 시각적 메타포만으로 개념을 전달하는 교육용 일러스트레이션
+**concept** — Kurzgesagt 풍 시각 스토리텔링
 
-<p align="center">
-  <img src="./assets/theme-examples/images/01_theme_concept.png" width="720" alt="Concept Theme Example">
-</p>
+텍스트 없이 장면과 시각적 메타포만으로 개념을 전달
 
-#### theme-gov — 정부/공공기관 PPT
+<img src="./assets/theme-examples/images/01_theme_concept.png" width="100%" alt="Concept Theme">
 
-> 굵은 테두리 박스에 번호가 매겨진 체계적 격자. 공식 문서 톤.
+</td>
+<td width="50%">
 
-<p align="center">
-  <img src="./assets/theme-examples/images/02_theme_gov.png" width="720" alt="Gov Theme Example">
-</p>
+**gov** — 정부/공공기관 PPT
 
-#### theme-seminar — 세미나/학술 발표
+굵은 테두리 박스에 번호가 매겨진 체계적 격자
 
-> 에디토리얼 매거진 × 아이소메트릭 3D. 포토리얼리스틱 3D 아이콘과 다이나믹 타이포그래피.
+<img src="./assets/theme-examples/images/02_theme_gov.png" width="100%" alt="Gov Theme">
 
-<p align="center">
-  <img src="./assets/theme-examples/images/03_theme_seminar.png" width="720" alt="Seminar Theme Example">
-</p>
+</td>
+</tr>
+<tr>
+<td>
 
-#### theme-whatif — 미래 비전 스냅샷
+**seminar** — 세미나/학술 발표
 
-> 공상과학 영화 UI처럼 빛나는 HUD. 이미 성공한 미래 안에 서 있는 느낌.
+에디토리얼 매거진 × 아이소메트릭 3D
 
-<p align="center">
-  <img src="./assets/theme-examples/images/04_theme_whatif.png" width="720" alt="What-If Theme Example">
-</p>
+<img src="./assets/theme-examples/images/03_theme_seminar.png" width="100%" alt="Seminar Theme">
 
-#### theme-pitch — 피치덱
+</td>
+<td>
 
-> Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자와 프로스티드 글래스 카드.
+**whatif** — 미래 비전 스냅샷
 
-<p align="center">
-  <img src="./assets/theme-examples/images/05_theme_pitch.png" width="720" alt="Pitch Theme Example">
-</p>
+공상과학 영화 UI처럼 빛나는 HUD
 
-#### theme-comparison — Before/After 비교
+<img src="./assets/theme-examples/images/04_theme_whatif.png" width="100%" alt="What-If Theme">
 
-> IMAX 분할 화면처럼 좌우 풀블리드 이미지 위에 핵심 수치가 떠 있다.
+</td>
+</tr>
+<tr>
+<td>
 
-<p align="center">
-  <img src="./assets/theme-examples/images/06_theme_comparison.png" width="720" alt="Comparison Theme Example">
-</p>
+**pitch** — 피치덱
+
+Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자
+
+<img src="./assets/theme-examples/images/05_theme_pitch.png" width="100%" alt="Pitch Theme">
+
+</td>
+<td>
+
+**comparison** — Before/After 비교
+
+IMAX 분할 화면처럼 좌우 풀블리드 이미지
+
+<img src="./assets/theme-examples/images/06_theme_comparison.png" width="100%" alt="Comparison Theme">
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary>구성 요소 (5 Agents · 1 Command · 8 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent |
+| Command | `visual-generate` (오케스트레이터) |
+| Skills | layout-types, theme-concept, theme-gov, theme-seminar, theme-whatif, theme-pitch, theme-comparison, slide-renderer |
+
+</details>
+
+---
+
+## paper-style-generator
+
+> PDF 논문 컬렉션을 분석하여 저자/연구그룹의 논문 작성 스타일을 추출하고, Claude Code 스킬 세트를 자동 생성하는 메타-플러그인입니다.
+
+### 사용법
+
+```
+@paper-style-generator PDF 논문 폴더를 분석하여 논문 작성 스킬 세트를 생성해줘.
+PDF 폴더: ./papers/
+플러그인 이름: mylab
+```
+
+### 사전 준비
+
+- **PDF 논문 10편 이상** (동일 저자 또는 동일 분야)
+- **MinerU** 설치 필요 (PDF → Markdown 변환용)
+
+### 워크플로우
+
+```
+PDF 수집 → MinerU 변환 → 스타일 분석 → 플러그인 생성
+```
+
+### 생성되는 플러그인 구조
+
+`{CWD}/my-marketplace/plugins/{name}-paper-skills/` 에 아래 구성이 자동 생성됩니다:
+
+| 유형 | 이름 | 역할 |
+|------|------|------|
+| Command | `{name}-paper-generate` | 논문 전체 생성 오케스트레이터 |
+| Agent | `{name}-title-writer` | 논문 제목 생성 |
+| Agent | `{name}-abstract-writer` | Abstract 작성 |
+| Agent | `{name}-introduction-writer` | Introduction 작성 |
+| Agent | `{name}-methodology-writer` | Methods 작성 |
+| Agent | `{name}-results-writer` | Results 작성 |
+| Agent | `{name}-discussion-writer` | Discussion 작성 |
+| Agent | `{name}-caption-writer` | Figure/Table 캡션 작성 |
+| Agent | `{name}-verify` | 일관성 검증 (읽기 전용) |
+| Skill | `{name}-style-guide` | 공통 스타일 가이드 + 11개 참조 문서 |
+
+### 추출되는 스타일 패턴
+
+- Voice ratio (능동/수동) 섹션별 비율
+- Tense 패턴 (과거/현재)
+- "We" 사용 비율 (Results에서 ≤30% 타겟)
+- 고빈도 학술 동사, 전환어
+- 측정 포맷팅, 인용 스타일, 분야 특성
+
+<details>
+<summary>구성 요소 (3 Agents · 1 Command · 1 Skill)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | pdf-converter, style-analyzer, skill-generator |
+| Command | `paper-style-generate` (오케스트레이터) |
+| Skills | paper-style-toolkit (스크립트, 템플릿, 참조자료) |
+
+</details>
+
+---
+
+<br>
+
+# 투자·금융
+
+---
+
+## investments-portfolio
+
+> DC형 퇴직연금 포트폴리오를 멀티 에이전트 시스템으로 분석합니다.
+
+### 사용법
+
+```
+@investments-portfolio 포트폴리오 분석을 시작해줘
+
+# 투자 프로파일 지정
+@investments-portfolio 안정형 프로파일로 포트폴리오 분석을 해줘
+```
+
+### 워크플로우
+
+```
+거시경제 분석 (macro-analysis 5종)
+        ↓
+    분석 종합 + 검증
+        ↓
+  펀드 추천 + 규제 검증 (DC 70% 한도)
+        ↓
+    출력 검증 + 자료 정리
+```
+
+### 주요 특징
+
+- **거시경제 분석 통합**: 지수, 금리, 섹터, 리스크, 리더십 5개 에이전트 병렬 분석
+- **Bogle/Vanguard 철학**: 저비용 인덱스 펀드 중심 추천
+- **DC 규제 자동 검증**: 위험자산 70% 한도 등 규제 준수 확인
+- **출력**: `portfolios/YYYY-MM-DD-{profile}-{session}/` 폴더에 5개 보고서
+
+<details>
+<summary>구성 요소 (4 Agents · 1 Command · 11 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | fund-portfolio, compliance-checker, output-critic, material-organizer |
+| Command | `portfolio-analyze` (오케스트레이터) |
+| Skills | analyst-common, bogle-principles, data-updater, dc-pension-rules, devil-advocate, file-save-protocol, fund-output-template, fund-selection-criteria, macro-output-template, perspective-balance, web-search-verifier |
+
+**참고**: 거시경제 분석은 [macro-analysis](#macro-analysis) 플러그인의 7개 에이전트를 공유합니다.
+
+</details>
+
+---
+
+## stock-consultation
+
+> 주식/ETF 투자 상담을 Bogle/Vanguard 철학 기반 멀티 에이전트 시스템으로 수행합니다.
+
+### 사용법
+
+```
+# 종목 상담
+@stock-consultation AAPL 투자 상담을 해줘
+
+# 주제별 상담
+@stock-consultation 반도체 섹터 ETF 추천해줘
+
+# 자료 제공 시
+@stock-consultation TSLA 분석해줘
+materials_path: ./research_data/
+```
+
+### 워크플로우
+
+```
+거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증
+```
+
+### 주요 특징
+
+- **5단계 파이프라인**: 거시 분석부터 Bear Case까지 체계적 검증
+- **Devil's Advocate**: 반대 논거 에이전트가 투자 위험을 적극 검증
+- **데이터 검증**: 실시간 웹 검색 기반 수치 정확성 확인
+
+<details>
+<summary>구성 요소 (5 Agents · 1 Command · 3 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic |
+| Command | `stock-consult` (오케스트레이터) |
+| Skills | analyst-common-stock, file-save-protocol-stock, stock-data-verifier |
+
+**참고**: 거시경제 분석은 [macro-analysis](#macro-analysis) 플러그인의 7개 에이전트를 공유합니다.
+
+</details>
+
+---
+
+## equity-research
+
+> 티커와 함께 호출하면 기관급(institutional-grade) 주식 분석 리포트를 생성합니다.
+
+### 사용법
+
+```
+# 기본 분석
+@equity-research AAPL
+
+# 상세 분석
+@equity-research NVDA --detailed
+```
+
+### 주요 특징
+
+- **Opus 모델** 기반 고품질 분석
+- **3축 병렬 리서치**: 재무 성과, 시장 포지셔닝, 고급 인텔리전스
+- **기관급 포맷**: 구체적 수치, 애널리스트 목표가, 기간별 메트릭 포함
 
 | 구성 | 항목 |
 |------|------|
-| Agents (5) | content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent |
-| Command (1) | visual-generate (오케스트레이터) |
-| Skills (8) | layout-types, theme-concept, theme-gov, theme-seminar, theme-whatif, theme-pitch, theme-comparison, slide-renderer |
+| Agent | equity-research-analyst (단일 에이전트) |
 
-### paper-style-generator
+---
 
-**PDF 논문 → 논문 작성 스킬 세트 생성 (메타-플러그인)**
+## macro-analysis
 
-1. MinerU로 PDF → Markdown 변환
-2. 스타일 패턴 추출 (Voice, Tense, 전환어 등)
-3. 하이브리드 플러그인 생성 (9 agents + 1 skill):
-   - Agents: `{name}-paper-orchestrator`, `{name}-title-writer`, `{name}-abstract-writer`, `{name}-introduction-writer`, `{name}-methodology-writer`, `{name}-results-writer`, `{name}-discussion-writer`, `{name}-caption-writer`, `{name}-verify`
-   - Skill: `{name}-style-guide` (스타일 가이드 + 11개 참조 문서)
+> investments-portfolio, stock-consultation 등에서 공유하는 거시경제 분석 에이전트 7종입니다.
 
-| 구성 | 항목 |
-|------|------|
-| Agents (3) | pdf-converter, style-analyzer, skill-generator |
-| Command (1) | paper-style-generate (오케스트레이터) |
-| Skills (1) | paper-style-toolkit (스크립트, 템플릿, 참조자료) |
-
-### report-generator
-
-**연구 노트 → 국가기관 제출용 연구 보고서 생성**
-
-- **입력**: 폴더, 파일, 코드베이스
-- **출력**: 최대 9개 챕터 전문 보고서
-- **문장 패턴**: 4단계 패턴 적용 (What → Why → How → Impact)
-
-| 구성 | 항목 |
-|------|------|
-| Agents (4) | input-analyzer, content-mapper, chapter-writer, quality-checker |
-| Command (1) | report-generate (오케스트레이터) |
-| Skills (3) | chapter-structure, field-keywords, four-step-pattern |
-
-### investments-portfolio
-
-**DC형 퇴직연금 포트폴리오 분석 멀티 에이전트 시스템**
-
-| Agent Group | Agents | 역할 |
-|-------------|--------|------|
-| Macro Analysis (macro-analysis) | index-fetcher, rate-analyst, sector-analyst, risk-analyst, leadership-analyst | 거시경제 분석 |
-| Synthesizers (macro-analysis) | macro-synthesizer, macro-critic | 분석 종합 및 검증 |
-| Portfolio (investments-portfolio) | fund-portfolio, compliance-checker | 펀드 추천 및 규제 검증 |
-| Verification | output-critic, material-organizer | 출력 검증 및 자료 정리 |
-
-| 구성 | 항목 |
-|------|------|
-| Agents (4) | fund-portfolio, compliance-checker, output-critic, material-organizer |
-| Command (1) | portfolio-analyze (오케스트레이터) |
-| Skills (11) | analyst-common, bogle-principles, data-updater, dc-pension-rules, devil-advocate, file-save-protocol, fund-output-template, fund-selection-criteria, macro-output-template, perspective-balance, web-search-verifier |
-
-### stock-consultation
-
-**주식/ETF 투자 상담 Multi-Agent 시스템 (Bogle/Vanguard 철학 기반)**
-
-- **워크플로우**: 거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증
-
-| 구성 | 항목 |
-|------|------|
-| Agents (5) | materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic |
-| Command (1) | stock-consult (오케스트레이터) |
-| Skills (3) | analyst-common-stock, file-save-protocol-stock, stock-data-verifier |
-
-### hwpx-generator
-
-**HWPX 문서 생성/편집/분석 통합 플러그인**
-
-- **방식**: XML-first 빌드 + ZIP 치환
-- `build_hwpx.py` 기반 생성, `fix_namespaces.py` 필수
-- **v2.4.0**: ZIP-level surgery 도구 추가 (`zip_surgery.py`), `validate.py --strict` 모드, cell_writer 금지 규칙 적용
-- **v2.3.0**: `<hp:linesegarray>` 자동 생성 — 한컴오피스 외 뷰어에서도 정확한 텍스트 레이아웃 보장 (cell_writer.py, 3개 빌드 경로 통합)
-
-| 구성 | 항목 |
-|------|------|
-| Agents (2) | hwpx-builder, hwpx-analyzer |
-| Command (1) | hwpx-generate (오케스트레이터) |
-| Skills (2) | hwpx-core, hwpx-templates |
-
-### macro-analysis
-
-**거시경제 분석 공용 에이전트 모음**
-
-investments-portfolio, stock-consultation 등에서 공유하는 거시경제 분석 에이전트 7종.
+이 플러그인은 단독으로 호출하기보다 다른 투자 플러그인의 **내부 인프라**로 사용됩니다.
 
 | Agent | 역할 |
 |-------|------|
-| index-fetcher | 주요 지수 데이터 수집 |
-| rate-analyst | 금리 분석 |
-| sector-analyst | 섹터 분석 |
-| risk-analyst | 리스크 분석 |
-| leadership-analyst | 리더십/정책 분석 |
-| macro-synthesizer | 분석 종합 |
-| macro-critic | 분석 검증 |
+| `index-fetcher` | 주요 지수 데이터 수집 |
+| `rate-analyst` | 금리 환경 분석 |
+| `sector-analyst` | 섹터별 동향 분석 |
+| `risk-analyst` | 시장 리스크 분석 |
+| `leadership-analyst` | 리더십/정책 영향 분석 |
+| `macro-synthesizer` | 5개 분석 결과 종합 |
+| `macro-critic` | 종합 분석 검증 |
 
-### equity-research
+---
 
-**기관급 주식 분석 리포트 생성**
+<br>
 
-티커와 함께 호출하면 기관급(institutional-grade) 주식 분석 리포트를 생성합니다.
+# 특허 분석
 
-### general-agents
+---
 
-**범용 에이전트 모음**
+## patent-trend-analyzer
 
-- interview: 심층 인터뷰 + 실행 에이전트
+> KIPRIS API 기반 특허 동향 분석 — 연구 주제를 입력하면 계획 → 검색 → 분석 3단계 파이프라인을 거쳐 시각화 대시보드까지 자동 생성합니다.
 
-### worktree-workflow
+> [!WARNING]
+> 해외 특허 서비스 신규 구독 후 1~2일간 서버 전파 지연이 발생할 수 있습니다 (간헐적 `AccessKey Not Registered` 에러). 한국 특허는 즉시 사용 가능.
 
-**Git worktree 기반 병렬 실행 워크플로우**
-
-Git worktree를 활용하여 Claude Code 인스턴스를 병렬로 실행하는 워크플로우.
-
-### plugin-dev
-
-**플러그인 개발 종합 툴킷** [^1]
-
-Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 가이드와 검증 도구.
-
-- **에이전트 생성**: 프론트매터/본문/워크플로 템플릿 기반 자동 생성
-- **플러그인 검증**: marketplace.json, plugin.json, 구조 규칙 준수 검사
-- **스킬 리뷰**: SKILL.md 스펙 준수, 프로그레시브 로딩, 리소스 구조 검토
-
-| 구성 | 항목 |
-|------|------|
-| Agents (3) | agent-creator, plugin-validator, skill-reviewer |
-| Command (1) | create-plugin (플러그인 생성 워크플로) |
-| Skills (7) | hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development |
-
-### patent-trend-analyzer
-
-> ⚠️ **해외 특허 서비스 신규 구독 후 1~2일간 서버 전파 지연**이 발생할 수 있습니다 (간헐적 `AccessKey Not Registered` 에러). 한국 특허는 즉시 사용 가능.
-
-**KIPRIS API 기반 특허 동향 분석 및 시각화**
-
-연구 주제를 입력하면 3단계 파이프라인(계획 → 검색 → 분석)을 거쳐 분류, 트렌드 분석, 시각화 대시보드까지 자동 생성합니다. 특정 기술 도메인에 종속되지 않으며 모든 연구 분야에 적용 가능합니다.
+### 사용법
 
 ```
-L1 Planning ──→ L2 Search ──→ L3 Analysis
-```
-
-```
+# 전체 파이프라인 실행 (권장)
 @patent-trend-analyzer "자율주행 라이다 센서" 주제로 특허 동향 분석을 해줘.
 대상 국가는 한국, 미국이고 분석 기간은 2020-2025년이야.
 ```
 
-#### 사전 준비: KIPRIS Open API 키 발급
+```
+# L1. 검색 계획만 수립
+@patent-trend-analyzer 의 patent-planner를 사용해서 "전고체 배터리" 관련 특허 검색 전략을 세워줘.
+IPC 코드 H01M 중심으로, 한국/미국/유럽 대상, 2019-2024년.
 
-[KIPRIS Plus 포털](https://plus.kipris.or.kr/portal/main.do)에서 회원 가입 → 서비스 조회 → 구매 신청 → 수수료 결제 → APIKEY 관리에서 인증키 확인 (5단계). 승인까지 1~2 영업일 소요.
+# L2. 검색 실행만 (L1 결과 필요)
+@patent-trend-analyzer 의 patent-searcher를 사용해서 위에서 만든 검색 계획대로 특허 검색을 실행해줘.
 
-#### MCP 서버 자동 설정
+# L3. 분석/시각화만 (L2 결과 필요)
+@patent-trend-analyzer 의 patent-analyzer를 사용해서 output/deduplicated_patents.xlsx 파일을 분석해줘.
+```
+
+| 파라미터 | 필수 | 설명 | 예시 |
+|----------|:----:|------|------|
+| 연구 주제 | O | 분석할 기술 분야 | "CRISPR 유전자 편집" |
+| 대상 국가 | - | 검색 대상 국가 | 한국, 미국, 유럽 (기본값) |
+| 분석 기간 | - | 출원일 기준 기간 | 2020-2025 |
+| IPC 코드 | - | 특정 IPC 코드 지정 | G06N, H01M 10/ |
+
+### 사전 준비: KIPRIS API 키 발급 + MCP 설정
+
+1. [KIPRIS Plus 포털](https://plus.kipris.or.kr/portal/main.do)에서 API 키 발급 (회원 가입 → 서비스 조회 → 구매 신청 → 수수료 결제 → 인증키 확인, 승인까지 1~2 영업일)
+2. MCP 서버 자동 설정:
+   ```
+   /patent-trend-analyzer:patent-mcp-setup {발급받은_API_키} 설정해줘
+   ```
+   venv 생성 + 패키지 설치 + 클라이언트 설정 파일 등록까지 자동 수행됩니다.
+
+### 파이프라인
 
 ```
-/patent-trend-analyzer:patent-mcp-setup {발급받은_API_키} 설정해줘
+L1 Planning ──→ L2 Search ──→ L3 Analysis
+ 키워드 최적화     KIPRIS 검색     분류 + 시각화
+ IPC 매핑          배치 내보내기   차트 + 대시보드
+ 검색 전략          중복 제거       Excel + 보고서
 ```
 
-API 키가 없으면 발급 절차를 안내합니다. venv 생성 + 패키지 설치 + 클라이언트 설정 파일(Claude Code / OpenCode) 등록까지 자동 수행됩니다.
+### 출력물
 
-| 구성 | 항목 |
-|------|------|
-| Agents (3) | patent-planner, patent-searcher, patent-analyzer |
-| Command (1) | analyze-patents (오케스트레이터) |
-| Skills (5) | patent-mcp-setup, patent-research-planning, patent-search-collect, patent-analysis-viz, ipc-classification-guide |
+| 단계 | 주요 산출물 |
+|------|-------------|
+| L1 Planning | 최적화된 키워드, IPC 매핑 테이블, 검색 전략, API 호출 예산 |
+| L2 Search | `deduplicated_patents.xlsx`, 국가별 Excel, 수집 통계 |
+| L3 Analysis | 8개 PNG 차트, 통합 대시보드, 인터랙티브 HTML, Excel 보고서, Markdown 요약 |
 
 > 파이프라인 상세, 출력 구조, IPC 코드 가이드, 수동 설정 등은 **[patent-trend-analyzer README](./plugins/patent-trend-analyzer/README.md)** 참조
 
+<details>
+<summary>구성 요소 (3 Agents · 1 Command · 5 Skills · 18 MCP Tools)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | patent-planner, patent-searcher, patent-analyzer |
+| Command | `analyze-patents` (오케스트레이터) |
+| Skills | patent-mcp-setup, patent-research-planning, patent-search-collect, patent-analysis-viz, ipc-classification-guide |
+| MCP Tools | 한국 특허 검색 8종 + 해외 특허 검색 7종 + 전처리 3종 |
+
+</details>
+
 ---
 
-## Submodule 사용법
+<br>
+
+# 개발 도구
+
+---
+
+## plugin-dev
+
+> Claude Code 플러그인(에이전트/커맨드/스킬) 개발을 위한 종합 툴킷입니다. [^1]
+
+### 사용법
+
+```
+# 가이드 기반 플러그인 생성 (8단계 워크플로우)
+/plugin-dev:create-plugin 데이터베이스 마이그레이션 관리 플러그인
+
+# 개별 스킬 질의
+@plugin-dev 플러그인에 MCP 서버를 추가하려면 어떻게 해야 해?
+@plugin-dev PreToolUse hook을 만들어줘
+@plugin-dev 에이전트 프론트매터 작성법을 알려줘
+```
+
+### 7개 전문 스킬
+
+| 스킬 | 역할 |
+|------|------|
+| hook-development | Hook API, 이벤트 드리븐 자동화, 보안 검증 |
+| mcp-integration | MCP 서버 설정, stdio/SSE/HTTP, OAuth |
+| plugin-structure | 디렉토리 구조, plugin.json 매니페스트 |
+| plugin-settings | `.claude/plugin-name.local.md` 설정 패턴 |
+| command-development | 슬래시 커맨드 생성, 프론트매터, 인수 처리 |
+| agent-development | 에이전트 생성, AI 보조 생성, 검증 |
+| skill-development | 스킬 생성, Progressive Disclosure, 트리거 |
+
+### 주요 특징
+
+- **8단계 워크플로우**: Discovery → Component Planning → Design → Structure → Implementation → Validation → Testing → Documentation
+- **AI 보조 에이전트 생성**: Claude Code의 검증된 프롬프트 기반
+- **검증 유틸리티**: `validate-agent.sh`, `validate-hook-schema.sh`, `test-hook.sh`
+
+<details>
+<summary>구성 요소 (3 Agents · 1 Command · 7 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | agent-creator, plugin-validator, skill-reviewer |
+| Command | `create-plugin` (플러그인 생성 워크플로) |
+| Skills | hook-development, mcp-integration, plugin-structure, plugin-settings, command-development, agent-development, skill-development |
+
+</details>
+
+---
+
+## worktree-workflow
+
+> Git worktree를 활용하여 Claude Code 인스턴스를 병렬로 실행하는 워크플로우입니다.
+
+### 사용법
+
+```
+# worktree 생성
+@worktree-workflow worktree 만들어줘
+
+# 특정 브랜치로 생성
+@worktree-workflow feature/new-feature 브랜치로 worktree 만들어
+
+# 목록 조회
+@worktree-workflow worktree 목록 보여줘
+
+# 삭제
+@worktree-workflow worktree 삭제해줘
+```
+
+### 주요 특징
+
+- **브랜치명 자동 정규화**: 사용자 입력을 안전한 브랜치명으로 변환
+- **tmux 세션 자동 생성**: 생성된 worktree에서 바로 작업 가능
+- **한글 에러 메시지**: 직관적인 한글 안내
+
+| 구성 | 항목 |
+|------|------|
+| Agent | worktree (단일 에이전트) |
+
+---
+
+## general-agents
+
+> 범용 에이전트 모음입니다.
+
+### 사용법
+
+```
+# 심층 인터뷰
+@general-agents 의 interview 에이전트를 사용해서 프로젝트 요구사항을 인터뷰해줘
+```
+
+### interview 에이전트
+
+사용자의 요청에 대해 심층 인터뷰를 진행하여 숨겨진 요구사항을 발굴한 후, 계획을 수립하고 직접 실행합니다.
+
+- **4개 축 인터뷰**: 기술 구현, UI/UX, 우려사항, 트레이드오프
+- **계획 → 실행**: 인터뷰 결과를 바탕으로 계획 문서 작성 후 직접 구현
+
+| 구성 | 항목 |
+|------|------|
+| Agent | interview (단일 에이전트) |
+
+---
+
+<br>
+
+# 설치 & 설정
+
+---
+
+## 마켓플레이스 직접 등록
+
+```bash
+/plugin marketplace add /path/to/honeypot
+```
+
+## Submodule로 추가
 
 이 저장소를 다른 프로젝트의 하위 디렉토리로 추가하여 사용할 수 있습니다.
 
-### Submodule 추가
-
 ```bash
+# 추가
 cd your-project
 git submodule add https://github.com/orientpine/honeypot.git honeypot
 git commit -m "Add honeypot as submodule"
-```
 
-### Submodule 클론
-
-```bash
-# 방법 A: 처음부터 submodule과 함께
+# 클론 (처음부터 submodule과 함께)
 git clone --recurse-submodules https://github.com/username/your-project.git
 
-# 방법 B: 이미 클론 후 초기화
+# 이미 클론 후 초기화
 git submodule update --init --recursive
-```
 
-### Submodule 업데이트
-
-```bash
 # 최신 버전으로 업데이트
 git submodule update --remote --merge
-
-# 메인 프로젝트에 반영 (필수!)
-git add honeypot
-git commit -m "Update honeypot submodule"
-git push
+git add honeypot && git commit -m "Update honeypot submodule" && git push
 ```
 
-### 자주 사용하는 명령어
+<details>
+<summary>자주 사용하는 명령어</summary>
 
 | 명령어 | 설명 |
 |--------|------|
@@ -392,18 +730,22 @@ git push
 | `git submodule update --remote --merge` | 최신화 |
 | `git diff --submodule` | 변경사항 확인 |
 
-### 전역 설정 (권장)
-
 ```bash
-# 앞으로 git 작업 시 submodule 자동 업데이트
+# 전역 설정 (권장) — 앞으로 git 작업 시 submodule 자동 업데이트
 git config --global submodule.recurse true
 ```
 
+</details>
+
 ---
 
-## 개발 가이드
+<br>
 
-### 플러그인 표준 구조
+# 개발 가이드
+
+---
+
+## 플러그인 표준 구조
 
 ```
 plugins/{plugin-name}/
@@ -421,7 +763,7 @@ plugins/{plugin-name}/
 
 > `scripts/`, `references/`, `assets/`는 반드시 **스킬 폴더 내부**에 위치해야 합니다 (플러그인 루트 금지).
 
-### 새 플러그인 추가 시
+## 새 플러그인 추가 시
 
 1. `plugins/{plugin-name}/` 디렉토리 생성
 2. `.claude-plugin/plugin.json` 생성
@@ -429,7 +771,7 @@ plugins/{plugin-name}/
 4. `.claude-plugin/marketplace.json`에 플러그인 등록
 5. 캐시 클리어 후 재등록
 
-### 주의사항
+## 주의사항
 
 - marketplace.json은 **루트에 하나만** 유지
 - 모든 `.md` 파일은 **LF 줄바꿈** 사용
@@ -438,6 +780,68 @@ plugins/{plugin-name}/
 - 플러그인 수정 시 **plugin.json + marketplace.json 버전 동시 업데이트**
 
 상세 개발 가이드는 [AGENTS.md](./AGENTS.md) 참조
+
+---
+
+## 프로젝트 구조
+
+<details>
+<summary>전체 디렉토리 트리 (클릭하여 펼치기)</summary>
+
+```
+honeypot/
+├── .claude-plugin/
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (13개 플러그인)
+├── plugins/
+│   ├── isd-generator/                # ISD 연구계획서 생성
+│   │   ├── agents/                   # 6 agents
+│   │   ├── commands/                 # isd-generate
+│   │   └── skills/                   # 11 skills
+│   ├── visual-generator/             # 시각자료 생성
+│   │   ├── agents/                   # 5 agents
+│   │   ├── commands/                 # visual-generate
+│   │   └── skills/                   # 8 skills
+│   ├── paper-style-generator/        # 논문 스타일 스킬 생성
+│   │   ├── agents/                   # 3 agents
+│   │   ├── commands/                 # paper-style-generate
+│   │   └── skills/                   # 1 skill
+│   ├── report-generator/             # 연구 보고서 생성
+│   │   ├── agents/                   # 4 agents
+│   │   ├── commands/                 # report-generate
+│   │   └── skills/                   # 3 skills
+│   ├── investments-portfolio/        # DC 연금 포트폴리오
+│   │   ├── agents/                   # 4 agents
+│   │   ├── commands/                 # portfolio-analyze
+│   │   └── skills/                   # 11 skills
+│   ├── stock-consultation/           # 주식/ETF 투자 상담
+│   │   ├── agents/                   # 5 agents
+│   │   ├── commands/                 # stock-consult
+│   │   └── skills/                   # 3 skills
+│   ├── hwpx-generator/              # HWPX 문서 생성/편집/분석
+│   │   ├── agents/                   # 2 agents
+│   │   ├── commands/                 # hwpx-generate
+│   │   └── skills/                   # 2 skills
+│   ├── macro-analysis/              # 거시경제 분석 공용 에이전트
+│   │   └── agents/                   # 7 agents
+│   ├── general-agents/              # 범용 에이전트
+│   │   └── agents/                   # 1 agent
+│   ├── equity-research/             # 기관급 주식 분석
+│   │   └── agents/                   # 1 agent
+│   ├── worktree-workflow/           # Git worktree 워크플로우
+│   │   └── agents/                   # 1 agent
+│   ├── plugin-dev/                  # 플러그인 개발 종합 툴킷
+│   │   ├── agents/                   # 3 agents
+│   │   ├── commands/                 # create-plugin
+│   │   └── skills/                   # 7 skills
+│   └── patent-trend-analyzer/       # 특허 동향 분석
+│       ├── agents/                   # 3 agents
+│       ├── commands/                 # analyze-patents
+│       └── skills/                   # 5 skills
+├── AGENTS.md                         # 프로젝트 상세 지식 베이스
+└── README.md                         # 이 문서
+```
+
+</details>
 
 ---
 
@@ -460,6 +864,12 @@ plugins/{plugin-name}/
 | 3.2.0 | 2026-03-13 | hwpx-generator v2.4.0: ZIP-level surgery 도구 추가 (zip_surgery.py, HwpxSurgeon), validate.py --strict 모드, cell_writer 금지 규칙, 표 행 높이 자동 조절, 단계적 디버깅 전략 |
 | 3.1.0 | 2026-03-10 | 6개 테마 예시 프롬프트를 v3.0.0 Golden Reference로 업데이트 + Gemini API로 전체 이미지 재생성. 임시/계획 파일 정리. |
 | 3.0.0 | 2026-03-09 | visual-generator v3.0.0: 4-block 마크다운 프롬프트 형식 복원 (INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) + v2.x 품질 보호 통합 (Style Sheet, Golden Reference, prompt-validator 7차원, 팔레트 세션 고정) |
+
+<details>
+<summary>이전 버전 이력</summary>
+
+| 버전 | 날짜 | 변경 내용 |
+|:----:|:----:|----------|
 | 2.5.0 | 2026-03-09 | visual-generator v2.2.0: 폰트명 유출 차단, 최소 텍스트 밀도(body≥8) 강제, Style Sheet 기반 슬라이드 일관성, prompt-validator 강화(밀도/폰트/팔레트 검증 추가) |
 | 2.4.1 | 2026-03-08 | visual-generator v2.1.1: Golden Reference `<text_to_render>` key:value 형식 통일(4개 테마), 파이프라인 다이어그램 prompt-validator 반영, layout-types Progressive Disclosure 분리(938→82줄 + references/layout-catalog.md), scene-richness-spec 테마명 교정, README agent 수 5개 반영 |
 | 2.4.0 | 2026-03-07 | visual-generator v2.0.0: XML-tag 프롬프트 시스템 전면 개편 — 4-block 마크다운(INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) → 5-tag XML(`<scene>`, `<text_to_render>`, `<typography>`, `<canvas>`, `<layout>`) 전환. render_text/scene_context 분류 체계, 한국어 타이포그래피 가이드 추가 |
@@ -473,5 +883,7 @@ plugins/{plugin-name}/
 | 2.1.0 | 2026-02-27 | README 전면 최신화: 표준 구조 반영, 11개 플러그인 문서화, visual-generator 6테마 체계 반영 |
 | 2.0.0 | 2026-01-11 | README 완전 재작성, 6개 플러그인 문서화 |
 | 1.0.0 | 2026-01-08 | 최초 작성 |
+
+</details>
 
 [^1]: [anthropics/claude-code `plugins/plugin-dev`](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev)의 내용을 참조하여 포팅하였습니다. 원본 저자: Daisy Hollman (daisy@anthropic.com), 라이선스: MIT.
