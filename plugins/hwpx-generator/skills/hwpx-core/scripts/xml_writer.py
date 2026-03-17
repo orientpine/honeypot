@@ -68,6 +68,11 @@ def load_json(path: str) -> dict:
 
 
 def require_styles(styles: dict) -> None:
+    # heading_3 and heading_4 are optional — fall back to heading_2 if absent
+    if "heading_2" in styles:
+        for k in ("heading_3", "heading_4"):
+            if k not in styles:
+                styles[k] = styles["heading_2"]
     required = [
         "heading_1",
         "heading_2",
