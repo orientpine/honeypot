@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.6.2 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.7.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -133,7 +133,7 @@
 
 ## hwpx-generator
 
-> HWPX(한글) 문서를 XML-first 방식으로 생성, 편집, 분석합니다.
+> HWPX(한글) 문서를 XML-first 방식으로 생성, 편집, 분석합니다. Workflow 7: 마크다운 → HWPX 템플릿 채우기 + 이미지 임베딩.
 
 ### 사용법
 
@@ -148,6 +148,12 @@ reference_hwpx: ./template.hwpx
 # 템플릿 기반 생성
 /hwpx-generator:hwpx-generate 이 템플릿에 내용을 채워줘
 template_hwpx: ./form.hwpx
+
+# Workflow 7: 마크다운 → HWPX 템플릿 채우기 + 이미지 임베딩
+/hwpx-generator:hwpx-generate 마크다운 파일을 HWPX 템플릿에 채우고 이미지를 임베딩해줘
+markdown_file: ./content.md
+template_hwpx: ./form.hwpx
+images_dir: ./images/
 ```
 
 ### 주요 특징
@@ -156,6 +162,7 @@ template_hwpx: ./form.hwpx
 - **ZIP-level surgery**: `zip_surgery.py`로 안전한 ZIP 내부 편집
 - **네임스페이스 자동 수정**: `fix_namespaces.py` 필수 적용
 - **뷰어 호환성**: `<hp:linesegarray>` 자동 생성으로 한컴오피스 외 뷰어 지원
+- **Workflow 7**: 마크다운 → JSON 블록 파싱 → HWPX XML 작성 → 이미지 임베딩 (md_parser.py, xml_writer.py, image_embedder.py)
 
 | 파라미터 | 필수 | 설명 |
 |----------|:----:|------|
@@ -858,6 +865,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.7.0 | 2026-03-18 | hwpx-generator v3.0.0: 마크다운→HWPX 채우기(Workflow 7), 이미지 임베딩(image_embedder.py), md_parser.py, xml_writer.py 추가 |
 | 3.6.2 | 2026-03-17 | 6개 테마 예시 프롬프트를 v3.3.0 Golden Reference로 업데이트 (여백 최소화, 네거티브 스페이스 타겟, 캔버스 채우기 지시 반영) + Gemini API로 전체 이미지 재생성 |
 | 3.6.1 | 2026-03-17 | AGENTS.md 구조 개선: 코드베이스에서 추론 가능한 섹션 삭제 (STRUCTURE 트리, 파일 템플릿, 플러그인 추가 가이드 등 405줄 제거), 버전 체계를 breaking-aware SemVer로 재정의 (MAJOR=삭제/breaking, MINOR=추가/기능변경, PATCH=버그수정/문서), Registration Checklist를 MARKETPLACE RULES로 이동 |
 | 3.6.0 | 2026-03-17 | visual-generator v3.3.0: 여백 최소화 — Scene Description 캔버스 채우기 지시 추가, Rendering Style 공간구성 강화, 테마별 조건부 네거티브 스페이스 타겟 (gov/seminar ≤15%, concept/whatif ≤20%, comparison ≤10%, pitch 30%+ 유지) |

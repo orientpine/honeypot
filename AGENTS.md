@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-17T18:10:00+09:00
-**Version:** 3.6.2
+**Generated:** 2026-03-18T00:00:00+09:00
+**Version:** 3.7.0
 **Branch:** main
 
 ## OVERVIEW
@@ -32,6 +32,9 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX linesegarray 생성 | `plugins/hwpx-generator/skills/hwpx-core/scripts/cell_writer.py` | build_hwpx/pack 파이프라인 통합, 실패 시 strip 폴백 |
 | HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수, ZIP surgery 후 cell_writer 금지 |
+| HWPX 마크다운 파싱 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py` | Markdown → JSON blocks (Workflow 7) |
+| HWPX XML 작성 | `plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py` | JSON + style config → HWPX XML fragment |
+| HWPX 이미지 임베딩 | `plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py` | PNG embedding into HWPX (Workflow 7) |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 13 plugins listed |
@@ -274,6 +277,23 @@ python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/md_postp
 python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/style_extractor.py \
   --input-dir [tagged_md_folder] \
   --output-file [analysis.json]
+
+# HWPX Workflow 7: Parse Markdown to JSON blocks
+python plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py \
+  --input [markdown_file] \
+  --output [json_blocks_file]
+
+# HWPX Workflow 7: Write JSON blocks to HWPX XML fragment
+python plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py \
+  --blocks [json_blocks_file] \
+  --style-config [style_config.json] \
+  --output [hwpx_fragment.xml]
+
+# HWPX Workflow 7: Embed PNG images into HWPX
+python plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py \
+  --hwpx [document.hwpx] \
+  --images [image_folder] \
+  --output [document_with_images.hwpx]
 ```
 
 ## CLAUDE CODE MARKETPLACE RULES
