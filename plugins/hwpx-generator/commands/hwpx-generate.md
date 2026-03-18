@@ -47,12 +47,12 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 ## Phase 3.5: 교정 (Proofreading)
 
 1. Run final proofreading script to fix common formatting issues.
-   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py --input "{generated_hwpx_path}"`
+   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py "{generated_hwpx_path}"`
    - 이 단계에서는 이중 불릿, 잘못된 줄바꿈, 스타일 미적용 문단 등을 자동으로 교정한다.
 ## Phase 4: 검증 (validate.py + page_guard.py)
 
 1. Run mandatory structural validation on the generated output.
-   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py --input "{generated_hwpx_path}"`
+   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py "{generated_hwpx_path}"`
 2. When `reference_hwpx` was provided, run page drift guard (필수).
    - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py --reference "{reference_hwpx}" --output "{generated_hwpx_path}"`
    - `page_guard.py`는 문단 수, 표 구조, 텍스트 길이 편차를 검사하여 쪽수 변동 위험을 사전 차단한다.
