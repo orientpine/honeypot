@@ -1,0 +1,590 @@
+{
+  "input": "dev\\(양식) '27년도 전략연구사업 제안서_작성.hwpx",
+  "double_bullets": {
+    "pass": true,
+    "count": 0,
+    "details": []
+  },
+  "font_consistency": {
+    "pass": false,
+    "score": 0.7313,
+    "groups": [
+      {
+        "paraPrIDRef": 4,
+        "dominant_charPrIDRef": 1,
+        "dominant_share": 0.6667,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 15,
+        "dominant_charPrIDRef": 9,
+        "dominant_share": 0.6667,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 17,
+        "dominant_charPrIDRef": 79,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 18,
+        "dominant_charPrIDRef": 122,
+        "dominant_share": 0.3636,
+        "unique_charPr_count": 6,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 19,
+        "dominant_charPrIDRef": 101,
+        "dominant_share": 0.5517,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 20,
+        "dominant_charPrIDRef": 101,
+        "dominant_share": 0.75,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 21,
+        "dominant_charPrIDRef": 35,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 23,
+        "dominant_charPrIDRef": 91,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 26,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 4,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 27,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 0.9412,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 28,
+        "dominant_charPrIDRef": 59,
+        "dominant_share": 0.375,
+        "unique_charPr_count": 5,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 29,
+        "dominant_charPrIDRef": 38,
+        "dominant_share": 0.5294,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 34,
+        "dominant_charPrIDRef": 41,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 35,
+        "dominant_charPrIDRef": 49,
+        "dominant_share": 0.6667,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 36,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 37,
+        "dominant_charPrIDRef": 48,
+        "dominant_share": 0.7273,
+        "unique_charPr_count": 6,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 38,
+        "dominant_charPrIDRef": 48,
+        "dominant_share": 0.7377,
+        "unique_charPr_count": 5,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 39,
+        "dominant_charPrIDRef": 49,
+        "dominant_share": 0.3721,
+        "unique_charPr_count": 10,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 40,
+        "dominant_charPrIDRef": 51,
+        "dominant_share": 0.8125,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 41,
+        "dominant_charPrIDRef": 39,
+        "dominant_share": 0.6129,
+        "unique_charPr_count": 5,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 42,
+        "dominant_charPrIDRef": 53,
+        "dominant_share": 0.2105,
+        "unique_charPr_count": 9,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 43,
+        "dominant_charPrIDRef": 85,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 6,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 44,
+        "dominant_charPrIDRef": 55,
+        "dominant_share": 0.3913,
+        "unique_charPr_count": 6,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 45,
+        "dominant_charPrIDRef": 85,
+        "dominant_share": 0.5714,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 46,
+        "dominant_charPrIDRef": 53,
+        "dominant_share": 0.8,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 47,
+        "dominant_charPrIDRef": 56,
+        "dominant_share": 0.2857,
+        "unique_charPr_count": 6,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 48,
+        "dominant_charPrIDRef": 10,
+        "dominant_share": 0.4286,
+        "unique_charPr_count": 5,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 49,
+        "dominant_charPrIDRef": 70,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 50,
+        "dominant_charPrIDRef": 73,
+        "dominant_share": 0.8,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 51,
+        "dominant_charPrIDRef": 43,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 52,
+        "dominant_charPrIDRef": 69,
+        "dominant_share": 0.6364,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 56,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 0.6,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 57,
+        "dominant_charPrIDRef": 82,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 58,
+        "dominant_charPrIDRef": 100,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 60,
+        "dominant_charPrIDRef": 100,
+        "dominant_share": 0.4,
+        "unique_charPr_count": 4,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 61,
+        "dominant_charPrIDRef": 103,
+        "dominant_share": 0.3333,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 62,
+        "dominant_charPrIDRef": 93,
+        "dominant_share": 0.6471,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 63,
+        "dominant_charPrIDRef": 87,
+        "dominant_share": 0.3333,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 64,
+        "dominant_charPrIDRef": 83,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 65,
+        "dominant_charPrIDRef": 96,
+        "dominant_share": 0.75,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 66,
+        "dominant_charPrIDRef": 107,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 67,
+        "dominant_charPrIDRef": 108,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 68,
+        "dominant_charPrIDRef": 86,
+        "dominant_share": 0.3333,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 69,
+        "dominant_charPrIDRef": 91,
+        "dominant_share": 0.5833,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 70,
+        "dominant_charPrIDRef": 86,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 71,
+        "dominant_charPrIDRef": 86,
+        "dominant_share": 0.3333,
+        "unique_charPr_count": 3,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 72,
+        "dominant_charPrIDRef": 86,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 73,
+        "dominant_charPrIDRef": 86,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 74,
+        "dominant_charPrIDRef": 100,
+        "dominant_share": 0.25,
+        "unique_charPr_count": 4,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 75,
+        "dominant_charPrIDRef": 112,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 76,
+        "dominant_charPrIDRef": 107,
+        "dominant_share": 0.6667,
+        "unique_charPr_count": 3,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 77,
+        "dominant_charPrIDRef": 108,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 78,
+        "dominant_charPrIDRef": 98,
+        "dominant_share": 0.2857,
+        "unique_charPr_count": 6,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 81,
+        "dominant_charPrIDRef": 85,
+        "dominant_share": 0.6667,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 86,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 87,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 88,
+        "dominant_charPrIDRef": 48,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 89,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 90,
+        "dominant_charPrIDRef": 120,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 91,
+        "dominant_charPrIDRef": 119,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 95,
+        "dominant_charPrIDRef": 130,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 96,
+        "dominant_charPrIDRef": 131,
+        "dominant_share": 0.8571,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 99,
+        "dominant_charPrIDRef": 40,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 100,
+        "dominant_charPrIDRef": 66,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 103,
+        "dominant_charPrIDRef": 142,
+        "dominant_share": 0.8571,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 104,
+        "dominant_charPrIDRef": 141,
+        "dominant_share": 0.7097,
+        "unique_charPr_count": 2,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 105,
+        "dominant_charPrIDRef": 48,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 106,
+        "dominant_charPrIDRef": 119,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 107,
+        "dominant_charPrIDRef": 36,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 108,
+        "dominant_charPrIDRef": 68,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 109,
+        "dominant_charPrIDRef": 68,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 110,
+        "dominant_charPrIDRef": 68,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 111,
+        "dominant_charPrIDRef": 68,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 112,
+        "dominant_charPrIDRef": 68,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 113,
+        "dominant_charPrIDRef": 54,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 114,
+        "dominant_charPrIDRef": 154,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 115,
+        "dominant_charPrIDRef": 156,
+        "dominant_share": 0.5,
+        "unique_charPr_count": 2,
+        "pass": false
+      },
+      {
+        "paraPrIDRef": 116,
+        "dominant_charPrIDRef": 155,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 117,
+        "dominant_charPrIDRef": 158,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      },
+      {
+        "paraPrIDRef": 118,
+        "dominant_charPrIDRef": 121,
+        "dominant_share": 1.0,
+        "unique_charPr_count": 1,
+        "pass": true
+      }
+    ],
+    "failed_groups": 29,
+    "total_groups": 80
+  },
+  "empty_paragraphs": {
+    "pass": true,
+    "count": 0
+  },
+  "orphaned_placeholders": {
+    "pass": true,
+    "count": 0,
+    "found": []
+  },
+  "table_borders": {
+    "pass": true,
+    "missing_count": 0,
+    "table_cell_count": 348
+  }
+}
