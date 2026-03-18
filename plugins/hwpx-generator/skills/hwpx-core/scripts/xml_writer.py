@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -38,6 +39,10 @@ DEFAULT_SECTION_SETTINGS = {
     "margin_footer": 2834,
     "margin_gutter": 0,
 }
+
+BULLET_PREFIX_RE = re.compile(
+    r"^[\u25a0-\u25ff\u2022\u2023\u2192\u203b\u25b6\u25ba\u203a◦–□\-]+\s*"
+)
 
 
 def xml_escape(text: str) -> str:
@@ -128,6 +133,36 @@ def normalize_segments(block: dict) -> list[dict]:
     return [{"type": "plain", "text": text}]
 
 
+def strip_bullet_prefix(text: str) -> str:
+    return BULLET_PREFIX_RE.sub("", text)
+
+
+def cell_text_and_span(cell: object) -> tuple[str, int, int]:
+    if isinstance(cell, dict):
+        merge = cell.get("merge")
+        merge_colspan = None
+        merge_rowspan = None
+        if isinstance(merge, dict):
+            merge_colspan = merge.get("colspan", merge.get("colSpan"))
+            merge_rowspan = merge.get("rowspan", merge.get("rowSpan"))
+
+        colspan_raw = cell.get("colspan", cell.get("colSpan", merge_colspan or 1))
+        rowspan_raw = cell.get("rowspan", cell.get("rowSpan", merge_rowspan or 1))
+
+        try:
+            colspan = int(colspan_raw)
+        except (TypeError, ValueError):
+            colspan = 1
+        try:
+            rowspan = int(rowspan_raw)
+        except (TypeError, ValueError):
+            rowspan = 1
+
+        return str(cell.get("text", "")), max(colspan, 1), max(rowspan, 1)
+
+    return str(cell), 1, 1
+
+
 def paragraph_from_segments(
     pid: str,
     para_pr_id: str,
@@ -198,16 +233,41 @@ def build_paragraph(block: dict, ids: IdGenerator, styles: dict) -> str:
 
 
 def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
-    bullet_style = styles["bullet"]
+    style_key = str(block.get("style_key", "bullet"))
+    selected_style = styles.get(style_key)
+    if not isinstance(selected_style, dict):
+        selected_style = styles["bullet"]
+
+    bullet_style = dict(selected_style)
+    for key in ("paraPrIDRef", "charPrIDRef", "left_margin", "indent"):
+        if key in block and block[key] is not None:
+            bullet_style[key] = block[key]
+
     marker = str(block.get("marker", "◦"))
     marker_text = marker if marker else "◦"
     content_segments = normalize_segments(block)
+    para_pr_id = int(bullet_style["paraPrIDRef"])
+    bullet_auto = {
+        int(x)
+        for x in styles.get("bullet_auto", [])
+        if isinstance(x, (int, str)) and str(x).strip() != ""
+    }
+    if para_pr_id in bullet_auto:
+        stripped_segments = [dict(seg) for seg in content_segments]
+        for seg in stripped_segments:
+            seg_text = str(seg.get("text", ""))
+            if seg_text.strip() == "":
+                continue
+            seg["text"] = strip_bullet_prefix(seg_text)
+            break
+        content_segments = stripped_segments
+
     full_segments: list[dict] = [
         {"type": "plain", "text": marker_text}
     ] + content_segments
     return paragraph_from_segments(
         pid=ids.next_paragraph_id(),
-        para_pr_id=str(bullet_style["paraPrIDRef"]),
+        para_pr_id=str(para_pr_id),
         default_char_pr_id=str(bullet_style["charPrIDRef"]),
         bold_char_pr_id=str(styles["bold"]["charPrIDRef"]),
         segments=full_segments,
@@ -242,6 +302,8 @@ def table_cell_xml(
     row_index: int,
     col_index: int,
     width: int,
+    colspan: int = 1,
+    rowspan: int = 1,
     is_header: bool,
     ids: IdGenerator,
     styles: dict,
@@ -249,10 +311,15 @@ def table_cell_xml(
     style = styles["table_header"] if is_header else styles["table_cell"]
     pid = ids.next_paragraph_id()
     safe_text = xml_escape(text)
+    span_attrs = ""
+    if colspan > 1:
+        span_attrs += f' colSpan="{colspan}"'
+    if rowspan > 1:
+        span_attrs += f' rowSpan="{rowspan}"'
     return (
-        f'<hp:tc borderFillIDRef="{style["borderFillIDRef"]}">'
+        f'<hp:tc borderFillIDRef="{style["borderFillIDRef"]}"{span_attrs}>'
         f'<hp:cellAddr colAddr="{col_index}" rowAddr="{row_index}"/>'
-        '<hp:cellSpan colSpan="1" rowSpan="1"/>'
+        f'<hp:cellSpan colSpan="{colspan}" rowSpan="{rowspan}"/>'
         f'<hp:cellSz width="{width}" height="2400"/>'
         '<hp:cellMargin left="283" right="283" top="141" bottom="141"/>'
         '<hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" '
@@ -269,20 +336,20 @@ def table_cell_xml(
 
 def build_table(block: dict, ids: IdGenerator, styles: dict) -> str:
     headers = [str(x) for x in block.get("headers", [])]
-    rows = [[str(c) for c in row] for row in block.get("rows", [])]
+    rows = [list(row) for row in block.get("rows", []) if isinstance(row, list)]
     requested_col_count = int(block.get("col_count", 0) or 0)
     col_count = infer_col_count(headers, rows, requested_col_count)
 
     normalized_headers = headers[:col_count] + [
         "" for _ in range(max(0, col_count - len(headers)))
     ]
-    normalized_rows: list[list[str]] = []
+    normalized_rows = []
     for row in rows:
         normalized_rows.append(
             row[:col_count] + ["" for _ in range(max(0, col_count - len(row)))]
         )
 
-    table_rows: list[list[str]] = []
+    table_rows = []
     if normalized_headers:
         table_rows.append(normalized_headers)
     table_rows.extend(normalized_rows)
@@ -295,7 +362,8 @@ def build_table(block: dict, ids: IdGenerator, styles: dict) -> str:
     for r_idx, row in enumerate(table_rows):
         is_header = r_idx == 0 and bool(normalized_headers)
         cells: list[str] = []
-        for c_idx, cell_text in enumerate(row):
+        for c_idx, raw_cell in enumerate(row):
+            cell_text, colspan, rowspan = cell_text_and_span(raw_cell)
             cleaned = cell_text.replace("■", "").replace("▶", "")
             cells.append(
                 table_cell_xml(
@@ -303,6 +371,8 @@ def build_table(block: dict, ids: IdGenerator, styles: dict) -> str:
                     row_index=r_idx,
                     col_index=c_idx,
                     width=widths[c_idx],
+                    colspan=colspan,
+                    rowspan=rowspan,
                     is_header=is_header,
                     ids=ids,
                     styles=styles,
