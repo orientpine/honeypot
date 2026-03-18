@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.10.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.11.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -954,6 +954,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.11.0 | 2026-03-18 | hwpx-generator v3.1.0: Template-Aware Markdown Insertion — 템플릿 sub-header와 MD heading 매칭으로 헤더 이중 출현 방지, placeholder 문단 자동 정리, 적용 조건 분기 추가 |
 | 3.10.0 | 2026-03-18 | patent-trend-analyzer v1.3.0: 표준 분석 스크립트(`analyze_patents.py`) 추가 — JSON config 기반 분류, 고정 출력 구조(11개 필수 파일), multi-topic 병합 규칙, 출력물 검증 체크리스트로 대시보드 일관성 보장 |
 | 3.9.0 | 2026-03-18 | obsidian-skills 플러그인 추가 (kepano/obsidian-skills 포팅, Obsidian Markdown/Bases/Canvas/CLI/Defuddle 5개 스킬) |
 | 3.8.0 | 2026-03-18 | pptx-design-styles 플러그인 추가 (corazzon/pptx-design-styles 포팅, 30가지 모던 PPTX 디자인 스타일 가이드 — HEX 색상, 폰트 조합, 레이아웃 규칙, 시그니처 요소) |

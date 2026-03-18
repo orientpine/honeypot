@@ -39,6 +39,8 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 1. Use Task tool with subagent_type="hwpx-generator::hwpx-builder"
    - Prompt: "Generate a production-ready `.hwpx` using this request `$ARGUMENTS`, selected format strategy (user template > default template > XML-first), and analyzer report if present. Return output path and generation path used."
    - **MD 채우기 모드 시**: hwpx-builder에게 md_parser, xml_writer, image_embedder 사용을 명시적으로 위임. `content_md`와 `images_dir` 파라미터를 전달하여 Workflow 7 실행.
+   - 입력 콘텐츠가 Markdown이고 템플릿에 이미 섹션 헤더가 존재하는 경우, Template-Aware Markdown Insertion 절차를 적용하여 헤더 중복을 방지할 것.
+   - 마크다운 heading(`#`, `##`, `###`)을 템플릿 sub-header와 매칭하고, 매칭된 heading은 skip하며 body만 해당 위치에 삽입할 것.
    - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
