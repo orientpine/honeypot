@@ -11,245 +11,177 @@ description: "특허 데이터 다축 분류, 트렌드 분석, 시각화 대시
 
 ---
 
+## CRITICAL: Standard Analysis Script
+
+이 스킬은 `scripts/analyze_patents.py` 표준 분석 스크립트를 포함합니다. patent-analyzer 에이전트는 반드시 이 스크립트를 사용하여 분석을 수행해야 합니다.
+
+### 스크립트 참조 및 실행
+
+스크립트는 이 스킬의 상대경로에 위치합니다:
+
+```
+scripts/analyze_patents.py
+```
+
+**실행 방법:**
+```bash
+python scripts/analyze_patents.py --config output/classification_config.json
+```
+
+**Step 1. 상대경로로 실행** (최우선)
+스킬이 로드된 컨텍스트에서 상대경로 `scripts/analyze_patents.py`를 직접 참조하여 실행합니다.
+
+**Step 2. 상대경로 실패 시 Glob 폴백**
+Glob: `**/patent-analysis-viz/scripts/analyze_patents.py`
+
+**Step 3. Glob도 실패 시 확장 탐색**
+Glob: `**/analyze_patents.py`
+
+**절대 금지**: 스크립트를 찾지 못했을 때 자체적으로 Python 코드를 작성하지 마세요.
+반드시 에러를 보고하고 사용자에게 경로 확인을 요청하세요.
+
+---
+
 ## Pipeline
 
 ```
-Load
-  ↓  Excel / JSON 특허 데이터 읽기
-Classify (IPC + keyword)
+Config Generation
+  ↓  classification_config.json 생성 (에이전트의 역할)
+Load Data
+  ↓  Excel 특허 데이터 읽기 (단일/병합)
+Classify (IPC → keyword → Other)
   ↓  분류 축 레이블 부여
-Filter (domain / institution)
-  ↓  도메인 제외, 기관 필터
 Analyze (5 types)
   ↓  분포, 교차표, 연도별 트렌드, 화이트스페이스, 기관 랭킹
 Visualize
-  ↓  Matplotlib 정적 차트 + Plotly 인터랙티브 대시보드
+  ↓  Matplotlib 8 PNG + Plotly HTML 대시보드
 Export
-  ↓  Excel, Markdown, PNG, HTML
+  ↓  Excel 6시트 + Markdown 보고서
+Verify
+  ↓  11개 필수 출력물 검증
 ```
 
 ---
 
-## Classification Framework
+## Classification Config Schema
 
-L1 (patent-research-planning) 에서 정의한 분류 체계를 적용합니다. 분류 축과 카테고리는 연구 주제에 따라 결정됩니다.
+에이전트는 연구 계획(L1)에서 도출한 분류 체계를 JSON 형식으로 작성합니다.
 
-### 분류 축 구성
-
-연구 주제에 맞게 2개 이상의 분류 축을 정의합니다.
-
+```json
+{
+  "metadata": {
+    "title": "연구 주제 특허 분석",
+    "dashboard_title": "연구 주제 특허 분석 대시보드",
+    "period": "2020-2026",
+    "analysis_date": "2026년 3월"
+  },
+  "input": {
+    "file": "output/deduplicated_patents.xlsx"
+  },
+  "output": {
+    "dir": "output",
+    "viz_dir": "output/visualizations"
+  },
+  "year_range": [2020, 2027],
+  "classification": {
+    "axis1": {
+      "name": "기술 유형",
+      "other_label": "기타",
+      "order": ["Category A", "Category B", "기타"],
+      "colors": {"Category A": "#1E88E5", "기타": "#95A5A6"},
+      "ipc_map": {"Category A": ["G06N", "G06F"]},
+      "keywords": {"Category A": ["keyword1", "keyword2"]}
+    },
+    "axis2": {
+      "name": "적용 분야",
+      "other_label": "기타",
+      "order": ["Domain X", "Domain Y", "기타"],
+      "colors": {"Domain X": "#1565C0", "기타": "#95A5A6"},
+      "ipc_map": {},
+      "keywords": {"Domain X": ["keyword3"]}
+    }
+  }
+}
 ```
-Axis 1: [연구 주제의 처리 방식, 적용 계층, 구현 환경 등]
-  - Category A: [설명 및 관련 IPC/키워드]
-  - Category B: [설명 및 관련 IPC/키워드]
-  - Other: [미분류]
 
-Axis 2: [연구 주제의 기능, 목적, 응용 분야 등]
-  - Category X: [설명 및 관련 키워드]
-  - Category Y: [설명 및 관련 키워드]
-  - Other: [미분류]
-```
+### Config 필드 설명
+
+| 필드 | 필수 | 설명 |
+|------|:----:|------|
+| `metadata.title` | O | 보고서 제목 |
+| `metadata.dashboard_title` | O | 대시보드 제목 |
+| `metadata.period` | - | 분석 기간 텍스트 |
+| `metadata.analysis_date` | - | 분석 일자 |
+| `input.file` | O | 입력 Excel 파일 경로 |
+| `output.dir` | - | 출력 디렉토리 (기본값: `output`) |
+| `output.viz_dir` | - | 시각화 디렉토리 (기본값: `output/visualizations`) |
+| `year_range` | - | [시작연도, 끝연도+1] (기본값: [2020, 2027]) |
+| `classification.axis1` | O | 분류 축 1 설정 |
+| `classification.axis2` | O | 분류 축 2 설정 |
+
+### 축(axis) 설정 필드
+
+| 필드 | 필수 | 설명 |
+|------|:----:|------|
+| `name` | O | 축 이름 (예: "기술 유형") |
+| `other_label` | - | 미분류 레이블 (기본값: "기타") |
+| `order` | O | 카테고리 정렬 순서 배열 |
+| `colors` | O | 카테고리별 HEX 색상 맵 |
+| `ipc_map` | - | 카테고리별 IPC 코드 접두사 배열 |
+| `keywords` | - | 카테고리별 키워드 배열 |
 
 ---
 
 ## Classification Logic
 
-분류는 IPC 우선 → 키워드 폴백 → "Other" 순서로 적용됩니다.
+분류는 IPC 우선 → 키워드 폴백 → "Other" 순서로 양 축 모두 동일하게 적용됩니다.
 
-```python
-def classify_patent(row, axis1_rules, axis2_rules):
-    # 1. IPC 코드 매핑 (최우선)
-    ipc = row.get("ipc_code", "")
-    label_axis1 = None
-    for category, ipc_list in axis1_rules["ipc"].items():
-        if any(code in ipc for code in ipc_list):
-            label_axis1 = category
-            break
-
-    if label_axis1 is None:
-        # 2. 키워드 폴백
-        text = f"{row.get('title', '')} {row.get('abstract', '')}"
-        for category, keywords in axis1_rules["keywords"].items():
-            if any(kw in text for kw in keywords):
-                label_axis1 = category
-                break
-        else:
-            # 3. 미분류
-            label_axis1 = "Other"
-
-    # Axis 2: 키워드 기반 분류
-    label_axis2 = "Other"
-    text = f"{row.get('title', '')} {row.get('abstract', '')}"
-    for category, keywords in axis2_rules["keywords"].items():
-        if any(kw in text for kw in keywords):
-            label_axis2 = category
-            break
-
-    return label_axis1, label_axis2
+```
+for each patent:
+    for each axis:
+        category = match_ipc(ipcNumber, axis.ipc_map)
+                   or match_keywords(title + abstract, axis.keywords)
+                   or axis.other_label
 ```
 
-`axis1_rules` 및 `axis2_rules` 는 L1에서 정의한 분류 체계를 딕셔너리 형태로 전달합니다.
-
----
-
-## Domain Exclusion
-
-연구 범위 외 특허를 필터링합니다. 제외 키워드는 연구 주제에 따라 정의합니다.
-
-| 카테고리 | 제외 기준 |
-|----------|-----------|
-| [제외 도메인 1] | [해당 도메인 대표 키워드] |
-| [제외 도메인 2] | [해당 도메인 대표 키워드] |
-| ... | ... |
-
-필요 시 분석 대상 외 도메인 키워드를 제외 목록으로 정의합니다. 제외 목록이 필요하지 않은 연구 주제의 경우 이 단계를 생략합니다.
-
----
-
-## Institution Filter
-
-개인 발명가를 제외하고 기업/학술 기관만 유지합니다.
-
-```python
-def is_institution(applicant: str) -> bool:
-    institutional_suffixes = [
-        "주식회사", "㈜", "Inc.", "Corp.", "Ltd.", "GmbH",
-        "대학교", "연구원", "연구소", "institute", "university"
-    ]
-    return any(s in applicant for s in institutional_suffixes)
-```
-
-특정 기업명 필터는 연구 목적에 따라 추가할 수 있습니다.
+키워드 매칭은 점수 기반 — 가장 많은 키워드가 매칭된 카테고리가 선택됩니다.
 
 ---
 
 ## 5 Analysis Types
 
-### 1. Distribution Analysis (분포 분석)
-- 분류 축 1별 비율 (파이차트 + 바차트)
-- 분류 축 2별 비율
-- 국가별 비율
-
-### 2. Cross-tabulation (교차 분석)
-- 분류 축 1 × 분류 축 2 교차표 (히트맵)
-- 각 셀: 특허 수 + 전체 대비 비율
-
-### 3. Yearly Trends (연도별 트렌드)
-- 연도별 출원 건수 추이 (라인차트)
-- 분류 축 1 × 연도 스택 바차트
-- 분류 축 2 × 연도 스택 바차트
-
-### 4. White Space Analysis (화이트 스페이스)
-- 특허 밀도가 낮은 (축 1, 축 2) 조합 식별
-- 임계값 이하 셀 = 기회 영역으로 표시
-- 출원 건수가 적은 카테고리 조합이 화이트 스페이스 후보
-
-### 5. Institutional Ranking (기관 랭킹)
-- 출원 건수 Top 20 기관
-- 기관 × 분류 축 1 분포
-- 최근 3년 vs 전체 기간 성장률 비교
+1. **Distribution** — 각 분류 축별 카테고리 건수 비율
+2. **Cross-tabulation** — 축 1 × 축 2 교차표 히트맵
+3. **Yearly Trends** — 연도별 카테고리별 출원 추이
+4. **White Space** — 저밀도 (축1, 축2) 조합 식별 (임계값: 25% 분위수)
+5. **Institutional Ranking** — Top 20 출원인 × 주력 기술축 분포
 
 ---
 
-## Visualization
-
-### Static Charts (Matplotlib, 150 DPI)
-
-| 파일명 | 내용 |
-|--------|------|
-| `axis1_distribution.png` | 분류 축 1 파이차트 |
-| `axis2_distribution.png` | 분류 축 2 바차트 |
-| `axis1_axis2_heatmap.png` | 축 1 × 축 2 히트맵 |
-| `yearly_trend.png` | 연도별 출원 추이 |
-| `axis1_yearly_stacked.png` | 축 1 × 연도 스택 바 |
-| `axis2_yearly_stacked.png` | 축 2 × 연도 스택 바 |
-| `white_space_map.png` | 화이트 스페이스 시각화 |
-| `top_institutions.png` | 기관 랭킹 수평 바 |
-
-설정:
-
-```python
-plt.rcParams["font.family"] = "NanumGothic"  # 한글 폰트
-plt.rcParams["figure.dpi"] = 150
-plt.rcParams["savefig.bbox"] = "tight"
-```
-
-### Color Palettes
-
-분류 카테고리별 색상은 연구 주제에 따라 정의합니다. 아래는 예시 구조입니다.
-
-```python
-AXIS1_COLORS = {
-    "Category A": "#FF6B6B",
-    "Category B": "#4ECDC4",
-    "Other":      "#95A5A6"
-}
-
-AXIS2_COLORS = {
-    "Category X": "#3498DB",
-    "Category Y": "#2ECC71",
-    "Category Z": "#F39C12",
-    "Other":      "#9B59B6"
-}
-```
-
-### Interactive HTML Dashboard (Plotly)
-
-`patent_dashboard.html` 에 포함되는 인터랙티브 요소:
-
-- 드롭다운 필터 (국가, 연도 범위, 분류 축 1, 분류 축 2)
-- 클릭 가능한 히트맵 (셀 클릭 시 해당 특허 목록 표시)
-- 줌/패닝 지원 라인차트
-- 툴팁에 특허 번호, 출원인, 출원일 표시
-
----
-
-## Export
-
-### Output Structure
+## Mandatory Output (FIXED — 파일명 변경 금지)
 
 ```
 output/
-├── patent_analysis_report.xlsx          # 메인 분석 결과
-│   ├── Sheet: Raw (원본 + 분류 레이블)
-│   ├── Sheet: Distribution (분포 집계)
-│   ├── Sheet: CrossTab (교차표)
-│   ├── Sheet: YearlyTrend (연도별 추이)
-│   ├── Sheet: WhiteSpace (화이트스페이스)
-│   └── Sheet: TopInstitutions (기관 랭킹)
-├── patent_classification_summary.md     # Markdown 요약 보고서
-├── visualizations/
-│   ├── axis1_distribution.png
-│   ├── axis2_distribution.png
-│   ├── axis1_axis2_heatmap.png
-│   ├── yearly_trend.png
-│   ├── axis1_yearly_stacked.png
-│   ├── axis2_yearly_stacked.png
-│   ├── white_space_map.png
-│   └── top_institutions.png
-└── patent_dashboard.html                # 인터랙티브 대시보드
+├── classification_config.json          # 분류 설정 (에이전트 생성)
+├── deduplicated_patents.xlsx           # 입력 데이터 (병합 시)
+├── patent_analysis_report.xlsx         # Excel 보고서 (6 시트)
+│   ├── Sheet: All_Patents
+│   ├── Sheet: Distribution
+│   ├── Sheet: Cross_Tabulation
+│   ├── Sheet: Yearly_Trends
+│   ├── Sheet: White_Space
+│   └── Sheet: Top_Institutions
+├── patent_classification_summary.md    # Markdown 요약 (7 섹션)
+└── visualizations/
+    ├── axis1_distribution.png          # 축 1 파이차트
+    ├── axis2_distribution.png          # 축 2 수평 바차트
+    ├── cross_tabulation_heatmap.png    # 축 1 × 축 2 히트맵
+    ├── yearly_trend.png               # 연도별 카테고리 추이
+    ├── white_space_analysis.png        # 화이트스페이스 (★ 표시)
+    ├── top_institutions.png            # 상위 20 누적 바차트
+    ├── institution_by_category.png     # 상위 10 그룹 바차트
+    ├── combined_dashboard.png          # 3×3 종합 대시보드
+    └── patent_dashboard.html           # 인터랙티브 대시보드
 ```
 
-### Markdown Summary 구조
-
-```markdown
-# 특허 분석 보고서
-
-## 1. 개요
-- 분석 기간: YYYY-YYYY
-- 총 특허 수: N건 (중복 제거 후)
-- 분석 국가: KR, US, EP, JP, CN
-
-## 2. 분류 축 1 분포
-| 카테고리 | 건수 | 비율 |
-...
-
-## 3. 분류 축 2 분포
-...
-
-## 4. 화이트 스페이스 요약
-...
-
-## 5. 주요 출원인 Top 10
-...
-```
+**11개 파일이 모두 생성되어야 분석 완료로 간주합니다.**
