@@ -1,0 +1,16 @@
+{
+  "name": "obsidian-skills",
+  "version": "1.0.0",
+  "description": "Obsidian vault 파일 작성/편집을 위한 Agent Skills. Markdown(wikilinks, embeds, callouts), Bases(.base), JSON Canvas(.canvas), CLI, Defuddle 지원. 원본: kepano/obsidian-skills (MIT)",
+  "author": {
+    "name": "Baekdong Cha",
+    "email": "orientpine@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Steph Ango",
+      "url": "https://github.com/kepano/obsidian-skills"
+    }
+  ],
+  "license": "MIT"
+}

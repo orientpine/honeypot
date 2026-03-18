@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-03-18T00:00:00+09:00
-**Version:** 3.8.0
+**Version:** 3.9.0
 **Branch:** main
 
 ## OVERVIEW
@@ -38,6 +38,11 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
 | PPTX design styles (30 styles) | `plugins/pptx-design-styles/skills/pptx-design-styles/SKILL.md` | Glassmorphism, Neo-Brutalism 등 30가지 디자인 스타일 가이드 |
+| Obsidian Markdown 작성 | `plugins/obsidian-skills/skills/obsidian-markdown/SKILL.md` | Wikilinks, embeds, callouts, properties |
+| Obsidian Bases 작성 | `plugins/obsidian-skills/skills/obsidian-bases/SKILL.md` | .base 파일 뷰/필터/수식 |
+| JSON Canvas 작성 | `plugins/obsidian-skills/skills/json-canvas/SKILL.md` | .canvas 노드/엣지/그룹 |
+| Obsidian CLI | `plugins/obsidian-skills/skills/obsidian-cli/SKILL.md` | vault 조작, 플러그인 개발 |
+| 웹 페이지 클린 추출 | `plugins/obsidian-skills/skills/defuddle/SKILL.md` | Defuddle CLI 마크다운 추출 |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 14 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).

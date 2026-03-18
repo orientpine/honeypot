@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.8.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.9.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -49,6 +49,7 @@
 | 도구 | [**plugin-dev**](#plugin-dev) | Claude Code 플러그인 개발 종합 툴킷 [^1] |
 | 도구 | [**worktree-workflow**](#worktree-workflow) | Git worktree 기반 병렬 실행 |
 | 도구 | [**general-agents**](#general-agents) | 범용 에이전트 (심층 인터뷰 등) |
+| 도구 | [**obsidian-skills**](#obsidian-skills) | Obsidian vault 파일 작성 — Markdown, Bases, Canvas, CLI, Defuddle |
 
 ---
 
@@ -745,6 +746,43 @@ PPTX 슬라이드 생성 시 자동 활성화됩니다. "sleek", "modern", "tren
 
 ---
 
+## obsidian-skills
+
+> Obsidian vault 파일(.md, .base, .canvas) 작성/편집을 위한 Agent Skills입니다. [^2]
+
+### 사용 예시
+
+Obsidian vault에서 작업할 때 자동 활성화됩니다. wikilinks, callouts, frontmatter, Bases, Canvas 관련 키워드에 반응합니다.
+
+```
+# Obsidian 마크다운 작성
+@obsidian-skills 새 노트를 만들어줘. wikilinks와 callouts를 포함해서.
+
+# Bases 파일 생성
+@obsidian-skills 프로젝트 태스크 트래커 .base 파일을 만들어줘
+
+# Canvas 생성
+@obsidian-skills 리서치 마인드맵을 .canvas 파일로 만들어줘
+
+# CLI로 vault 조작
+@obsidian-skills Obsidian CLI로 오늘 일일 노트에 태스크를 추가해줘
+```
+
+### 5개 스킬
+
+| 스킬 | 설명 |
+|------|------|
+| obsidian-markdown | Obsidian Flavored Markdown — wikilinks, embeds, callouts, properties |
+| obsidian-bases | Obsidian Bases (.base) — 뷰, 필터, 수식, 요약 |
+| json-canvas | JSON Canvas (.canvas) — 노드, 엣지, 그룹, 연결 |
+| obsidian-cli | Obsidian CLI — vault 읽기/쓰기/검색, 플러그인 개발 |
+| defuddle | Defuddle CLI — 웹 페이지에서 클린 마크다운 추출 |
+
+| 구성 | 항목 |
+|------|------|
+| Skills | obsidian-markdown, obsidian-bases, json-canvas, obsidian-cli, defuddle (5개 스킬) |
+---
+
 # 설치 & 설정
 
 ---
@@ -847,7 +885,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (14개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (15개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -879,6 +917,8 @@ honeypot/
 │   │   └── skills/                   # 2 skills
 │   ├── macro-analysis/              # 거시경제 분석 공용 에이전트
 │   │   └── agents/                   # 7 agents
+│   ├── obsidian-skills/              # Obsidian vault 스킬
+│   │   └── skills/                   # 5 skills
 │   ├── general-agents/              # 범용 에이전트
 │   │   └── agents/                   # 1 agent
 │   ├── equity-research/             # 기관급 주식 분석
@@ -914,6 +954,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.9.0 | 2026-03-18 | obsidian-skills 플러그인 추가 (kepano/obsidian-skills 포팅, Obsidian Markdown/Bases/Canvas/CLI/Defuddle 5개 스킬) |
 | 3.8.0 | 2026-03-18 | pptx-design-styles 플러그인 추가 (corazzon/pptx-design-styles 포팅, 30가지 모던 PPTX 디자인 스타일 가이드 — HEX 색상, 폰트 조합, 레이아웃 규칙, 시그니처 요소) |
 | 3.7.0 | 2026-03-18 | hwpx-generator v3.0.0: 마크다운→HWPX 채우기(Workflow 7), 이미지 임베딩(image_embedder.py), md_parser.py, xml_writer.py 추가 |
 | 3.6.2 | 2026-03-17 | 6개 테마 예시 프롬프트를 v3.3.0 Golden Reference로 업데이트 (여백 최소화, 네거티브 스페이스 타겟, 캔버스 채우기 지시 반영) + Gemini API로 전체 이미지 재생성 |
@@ -948,3 +989,4 @@ honeypot/
 </details>
 
 [^1]: [anthropics/claude-code `plugins/plugin-dev`](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev)의 내용을 참조하여 포팅하였습니다. 원본 저자: Daisy Hollman (daisy@anthropic.com), 라이선스: MIT.
+[^2]: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)의 내용을 포팅하였습니다. 원본 저자: Steph Ango (stephango.com), 라이선스: MIT.
