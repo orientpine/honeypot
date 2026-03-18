@@ -353,3 +353,9 @@ def test_hwpx_full_e2e_pipeline(dev_dir, scripts_dir):
     assert len(bindata_images) == 15, (
         f"expected 15 images in BinData/, found {len(bindata_images)}: {bindata_images}"
     )
+
+    # Verify 15 caption paragraphs contain "그림" text
+    with zipfile.ZipFile(with_images_hwpx) as _z:
+        _section = _z.read("Contents/section0.xml").decode("utf-8", errors="replace")
+    caption_count = len(re.findall(r'그림\s+\d+-\d+', _section))
+    assert caption_count >= 15, f"Expected 15+ caption paragraphs with '그림 N-M', found {caption_count}"
