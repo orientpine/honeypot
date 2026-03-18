@@ -9,47 +9,102 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 Classify collected patent data using a user-defined classification framework, run trend analysis, generate static and interactive visualizations, and export a final report.
 
+## CRITICAL: Standard Analysis Script (MANDATORY)
+
+You MUST use the standard analysis script `scripts/analyze_patents.py` from this skill's directory. DO NOT write your own analysis Python script from scratch.
+
+**Your job is to:**
+1. Prepare the input data (merge if multi-topic)
+2. Generate a `classification_config.json` with axes, categories, IPC mappings, keywords, and colors
+3. Find and run the standard script: `python scripts/analyze_patents.py --config classification_config.json`
+4. Verify all required outputs were generated
+
+**Script path resolution:**
+- Step 1: Try relative path `scripts/analyze_patents.py` from this skill root
+- Step 2: Glob fallback `**/patent-analysis-viz/scripts/analyze_patents.py`
+- Step 3: Glob `**/analyze_patents.py`
+- NEVER write your own analysis script if the standard script is not found. Report the error and ask the user for the path.
+
+## Multi-Topic Handling (MANDATORY)
+
+When the research plan contains **multiple topics** (e.g., VLA + Foundation Models):
+
+1. **Merge all topic files** into a single `output/deduplicated_patents.xlsx`
+   - Load each topic's deduplicated Excel file
+   - Add a `topic` column with the topic name
+   - Concatenate and save as unified file
+2. **Design a unified 2-axis classification** that spans all topics
+   - Axis 1: Technology type (categories should cover ALL topics)
+   - Axis 2: Application domain / use case
+   - The `topic` column is preserved as metadata for filtering, NOT as a classification axis
+3. **Run the standard analysis on the merged file** — same output structure as single-topic
+
+This ensures the output structure is IDENTICAL regardless of the number of topics.
+
 ## Workflow
 
-### Step 1: Load Patent Data
+### Step 1: Load & Prepare Patent Data
 
 ```python
 import pandas as pd
 
+# Single topic: load directly
 df = pd.read_excel("output/deduplicated_patents.xlsx")
 
-# Expected columns:
-# applicationNumber, applicationDate, inventionTitle,
-# applicantName, ipcNumber, abstractContent
+# Multi-topic: merge first
+# dfs = []
+# for topic_name, file_path in topic_files.items():
+#     topic_df = pd.read_excel(file_path)
+#     topic_df["topic"] = topic_name
+#     dfs.append(topic_df)
+# df = pd.concat(dfs, ignore_index=True)
+# df.to_excel("output/deduplicated_patents.xlsx", index=False)
 ```
 
-Validate that required columns exist. If `abstractContent` is missing, classification falls back to IPC + title only.
+**Required columns**: `applicationNumber`, `applicationDate`, `inventionTitle`, `applicantName`, `ipcNumber`
+**Optional columns**: `astrtCont` (abstract), `source_query`, `topic`
 
-### Step 2: Classification Framework
+If `astrtCont` is missing, classification falls back to IPC + title only.
 
-Build the classification framework from the research plan produced by patent-planner. Do not hardcode any taxonomy — derive axes, categories, IPC mappings, and keywords from the plan.
+### Step 2: Generate Classification Config
 
-**General structure:**
-```python
-# Example structure — populate from the research plan
-AXIS1_IPC = {
-    "[Category A]": ["[IPC code 1]", "[IPC code 2]"],
-    "[Category B]": ["[IPC code 3]"],
-    # ...
-}
-AXIS1_KEYWORDS = {
-    "[Category A]": ["[keyword 1]", "[keyword 2]"],
-    "[Category B]": ["[keyword 3]", "[keyword 4]"],
-    # ...
-}
+Build a `classification_config.json` from the research plan produced by patent-planner. Do not hardcode any taxonomy — derive axes, categories, IPC mappings, and keywords from the plan.
 
-AXIS2_IPC = {
-    "[Category X]": ["[IPC code]"],
-    # ...
-}
-AXIS2_KEYWORDS = {
-    "[Category X]": ["[keyword]"],
-    # ...
+**Config JSON schema:**
+```json
+{
+  "metadata": {
+    "title": "연구 주제 특허 분석",
+    "dashboard_title": "연구 주제 특허 분석 대시보드",
+    "period": "2020-2026",
+    "analysis_date": "2026년 3월"
+  },
+  "input": {
+    "file": "output/deduplicated_patents.xlsx"
+  },
+  "output": {
+    "dir": "output",
+    "viz_dir": "output/visualizations"
+  },
+  "year_range": [2020, 2027],
+  "classification": {
+    "axis1": {
+      "name": "기술 유형",
+      "other_label": "기타",
+      "order": ["Category A", "Category B", "기타"],
+      "colors": {"Category A": "#1E88E5", "Category B": "#43A047", "기타": "#95A5A6"},
+      "ipc_map": {"Category A": ["G06N", "G06F"], "Category B": ["B25J"]},
+      "keywords": {"Category A": ["keyword1", "keyword2"], "Category B": ["keyword3"]}
+    },
+    "axis2": {
+      "name": "적용 분야",
+      "other_label": "기타",
+      "order": ["Domain X", "Domain Y", "기타"],
+      "colors": {"Domain X": "#1565C0", "Domain Y": "#2E7D32", "기타": "#95A5A6"},
+      "ipc_map": {"Domain X": ["E02"]},
+      "keywords": {"Domain X": ["keyword4"], "Domain Y": ["keyword5"]}
+    }
+  }
 }
 ```
 
@@ -60,19 +115,15 @@ AXIS2_KEYWORDS = {
 - Processing Approach (e.g., hardware / software / hybrid)
 - Any other domain-relevant dimension from the plan
 
-**Classification logic (pseudo-code):**
-```
-for each patent:
-    for each axis:
-        category = match_ipc(ipcNumber, AXIS_IPC)
-                   or match_keywords(title + abstract, AXIS_KEYWORDS)
-                   or "Other"
-        assign category to patent
-```
+**Classification priority**: IPC code match first → keyword fallback → "Other"
 
-Priority order: IPC code match first, then keyword fallback, then "Other".
+**Guidelines for axis design:**
+- Each axis should have 5–8 categories (including "Other")
+- Keywords should include both Korean and English terms
+- IPC codes should be at the subclass level (e.g., "G06N") or more specific
+- Color palette: use visually distinguishable colors; "Other" always `#95A5A6`
 
-### Step 3: Filtering
+### Step 3: Filtering (Optional)
 
 Apply filters as appropriate for the research domain:
 
@@ -80,34 +131,26 @@ Apply filters as appropriate for the research domain:
 
 **Institution Filter** — retain patents from relevant institution types (corporate R&D, academic, government research institutes) as specified in the research scope. Exclude records that do not match the target institution profile.
 
-### Step 4: Analysis (5 Types)
+These filters should be applied to the input data BEFORE running the standard script.
 
+### Step 4: Run Standard Analysis Script
+
+```bash
+# Find and run the standard script
+python scripts/analyze_patents.py --config output/classification_config.json
+```
+
+The standard script performs ALL of the following automatically:
+
+**5 Analysis Types:**
 1. **Distribution** — count by each classification axis and category
 2. **Cross-tabulation** — Axis 1 × Axis 2 pivot table (heatmap-ready)
 3. **Yearly Trends** — application count per year per category
 4. **White Space Analysis** — identify category combinations with low patent density
 5. **Institutional Ranking** — top 20 applicants by total count, broken down by primary classification axis
 
-### Step 5: Visualizations
+**8 Static Charts (Matplotlib, 150 DPI, NanumGothic font):**
 
-**Color Palettes**
-```python
-# Assign distinct colors to each category; derive palette size from framework
-# Use visually distinguishable colors. "Other" category conventionally uses a neutral gray.
-# Example (replace with actual category names from the plan):
-AXIS1_COLORS = {
-    "[Category A]": "#<hex>",
-    "[Category B]": "#<hex>",
-    "Other":        "#95A5A6",
-}
-AXIS2_COLORS = {
-    "[Category X]": "#<hex>",
-    "[Category Y]": "#<hex>",
-    "Other":        "#95A5A6",
-}
-```
-
-**Static Charts (Matplotlib, 150 DPI, NanumGothic font)**
 | File | Chart Type | Data |
 |------|-----------|------|
 | `axis1_distribution.png` | Pie chart | Axis 1 category counts |
@@ -117,18 +160,13 @@ AXIS2_COLORS = {
 | `yearly_trend.png` | Multi-line | Year × category count |
 | `white_space_analysis.png` | Color-coded grid | Low-density cells highlighted |
 | `institution_by_category.png` | Grouped bar | Axis 1 category × top institutions |
-| `combined_dashboard.png` | 3×3 subplot grid (20"×16") | All 8 charts combined |
+| `combined_dashboard.png` | 3×3 subplot grid (20"×16") | All charts combined |
 
-**Interactive HTML Dashboard (Plotly)**
-File: `patent_dashboard.html`
-- 4 stat cards: Total Patents, [Category 1] %, [Category 2] %, Top Institution
-- 6 interactive charts: pie, bar, heatmap, trend lines, white space, ranking
-- Filterable data table with all classified patents
-- Self-contained single HTML file (no external dependencies)
+**Interactive HTML Dashboard (Plotly):**
+- `patent_dashboard.html` — 4 stat cards, 6 interactive charts, filterable data table, self-contained
 
-### Step 6: Export
+**Multi-sheet Excel** — `patent_analysis_report.xlsx`:
 
-**Multi-sheet Excel** — `patent_analysis_report.xlsx`
 | Sheet | Contents |
 |-------|----------|
 | All_Patents | Full classified dataset |
@@ -138,29 +176,55 @@ File: `patent_dashboard.html`
 | White_Space | Low-density analysis |
 | Top_Institutions | Ranked applicant table |
 
-**Markdown Summary** — `patent_classification_summary.md`
-- Executive summary paragraph
-- Key statistics table
-- Top 5 findings
-- White space opportunities
+**Markdown Summary** — `patent_classification_summary.md`:
+- Executive summary, key statistics, top findings, white space opportunities, institutional analysis
+
+### Step 5: Output Verification (MANDATORY)
+
+After the script completes, verify ALL required outputs exist:
+
+```python
+required_outputs = [
+    "output/patent_analysis_report.xlsx",
+    "output/patent_classification_summary.md",
+    "output/visualizations/axis1_distribution.png",
+    "output/visualizations/axis2_distribution.png",
+    "output/visualizations/cross_tabulation_heatmap.png",
+    "output/visualizations/yearly_trend.png",
+    "output/visualizations/white_space_analysis.png",
+    "output/visualizations/top_institutions.png",
+    "output/visualizations/institution_by_category.png",
+    "output/visualizations/combined_dashboard.png",
+    "output/visualizations/patent_dashboard.html",
+]
+missing = [p for p in required_outputs if not os.path.exists(p)]
+if missing:
+    raise RuntimeError(f"Missing outputs: {missing}")
+```
+
+If any outputs are missing, check the script log for errors and re-run. Do NOT declare success without all 11 files present.
 
 ## Output Structure
 
 ```
 output/
-├── patent_analysis_report.xlsx
-├── patent_classification_summary.md
+├── classification_config.json          # Classification configuration
+├── deduplicated_patents.xlsx           # Input data (merged if multi-topic)
+├── patent_analysis_report.xlsx         # Multi-sheet Excel report
+├── patent_classification_summary.md    # Markdown summary
 └── visualizations/
-    ├── axis1_distribution.png
-    ├── axis2_distribution.png
-    ├── cross_tabulation_heatmap.png
-    ├── top_institutions.png
-    ├── yearly_trend.png
-    ├── white_space_analysis.png
-    ├── institution_by_category.png
-    ├── combined_dashboard.png
-    └── patent_dashboard.html
+    ├── axis1_distribution.png          # MANDATORY: Axis 1 pie chart
+    ├── axis2_distribution.png          # MANDATORY: Axis 2 horizontal bar
+    ├── cross_tabulation_heatmap.png    # MANDATORY: Axis 1 × Axis 2 heatmap
+    ├── yearly_trend.png               # MANDATORY: Year × category trend
+    ├── white_space_analysis.png        # MANDATORY: Low-density highlight
+    ├── top_institutions.png            # MANDATORY: Top 20 stacked bar
+    ├── institution_by_category.png     # MANDATORY: Grouped bar comparison
+    ├── combined_dashboard.png          # MANDATORY: 3×3 summary grid
+    └── patent_dashboard.html           # MANDATORY: Interactive dashboard
 ```
+
+**File names are FIXED. Do NOT use alternative naming conventions (e.g., chart_01_*, chart_02_*).**
 
 ## Output Format
 
@@ -169,8 +233,8 @@ End with a brief summary message:
 ```
 Analysis complete.
 - Total classified: X,XXX patents
-- [Category 1]: XX% | [Category 2]: XX% | Other: XX%
-- Dominant category: [Category] (XX%)
+- [Axis 1 name]: [Category] XX% | [Category] XX% | Other: XX%
+- [Axis 2 name]: [Category] XX% | [Category] XX%
 - White space identified: [Axis 1 category] × [Axis 2 category] (only N patents)
 - Top institution: [Name] (N patents)
 
