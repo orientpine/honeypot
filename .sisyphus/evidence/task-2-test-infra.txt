@@ -1,0 +1,27 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 17 items
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestDevDirectoryExists::test_dev_dir_exists PASSED [  5%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_작성_exists PASSED [ 11%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_초안_exists PASSED [ 17%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestMarkdownFiles::test_3장_md_exists PASSED [ 23%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestMarkdownFiles::test_4장_md_exists PASSED [ 29%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestImagesDirectory::test_images_dir_exists PASSED [ 35%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestImagesDirectory::test_15_png_files_exist PASSED [ 41%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_are_readable PASSED [ 47%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_naming_convention PASSED [ 52%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_golden_dir_exists PASSED [ 58%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_style_map_초안_json_exists PASSED [ 64%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_style_map_초안_json_valid PASSED [ 70%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_image_structures_json_exists PASSED [ 76%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_image_structures_json_valid PASSED [ 82%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_bullet_styles_json_exists PASSED [ 88%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestGoldenDirectory::test_bullet_styles_json_valid PASSED [ 94%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_dev_data_exists.py::TestScriptsDirectory::test_scripts_dir_exists PASSED [100%]
+
+============================= 17 passed in 0.06s ==============================
