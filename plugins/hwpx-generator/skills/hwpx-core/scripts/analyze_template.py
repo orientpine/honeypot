@@ -19,7 +19,7 @@ import zipfile
 import argparse
 import json
 from collections import Counter, defaultdict
-from lxml import etree
+import lxml.etree as etree
 
 NS = {
     "hp": "http://www.hancom.co.kr/hwpml/2011/paragraph",
@@ -396,39 +396,92 @@ def extract_style_map(header_root, section_root):
     by analyzing charPr/paraPr definitions in header.xml and their usage
     frequency in section0.xml paragraphs.
     """
+
+    def _safe_int(raw, default=0):
+        try:
+            return int(raw)
+        except (TypeError, ValueError):
+            return default
+
     # --- Step 1: Parse charPr definitions from header.xml ---
     charpr_map = {}  # id -> {"fontSize_hu": int, "bold": bool}
     for cp in header_root.findall(".//hh:charPr", NS):
         cid = cp.get("id")
-        height = int(cp.get("height", "0"))
+        if cid is None:
+            continue
+        height = _safe_int(cp.get("height", "0"), 0)
         is_bold = cp.find("hh:bold", NS) is not None
         if not is_bold and cp.get("bold", "0") == "1":
             is_bold = True
         charpr_map[cid] = {"fontSize_hu": height, "bold": is_bold}
 
-    # --- Step 2: Parse paraPr definitions from header.xml ---
+    # --- Step 2: Parse paraPr/style definitions from header.xml ---
     parapr_map = {}  # id -> {"left_margin": int, "indent": int}
+    bullet_auto_ids = []
     for pp in header_root.findall(".//hh:paraPr", NS):
         pid = pp.get("id")
+        if pid is None:
+            continue
         left_margin = 0
         indent = 0
-        # Method 1: hc:left and hc:intent elements (existing pattern)
+
         left_el = pp.find(".//hc:left", NS)
         if left_el is not None:
-            left_margin = int(left_el.get("value", "0"))
+            left_margin = _safe_int(left_el.get("value", "0"), 0)
         intent_el = pp.find(".//hc:intent", NS)
         if intent_el is not None:
-            indent = int(intent_el.get("value", "0"))
-        # Method 2: hh:paraMargin element (alternative format)
+            indent = _safe_int(intent_el.get("value", "0"), 0)
+
         para_margin = pp.find(".//hh:paraMargin", NS)
         if para_margin is not None:
             pm_left = para_margin.get("left")
             if pm_left is not None:
-                left_margin = int(pm_left)
+                left_margin = _safe_int(pm_left, left_margin)
             pm_indent = para_margin.get("indent")
             if pm_indent is not None:
-                indent = int(pm_indent)
+                indent = _safe_int(pm_indent, indent)
+
+        heading_el = pp.find("hh:heading", NS)
+        if heading_el is not None and heading_el.get("type") == "BULLET":
+            bullet_auto_ids.append(_safe_int(pid, -1))
+
         parapr_map[pid] = {"left_margin": left_margin, "indent": indent}
+
+    bullet_auto_ids = sorted(pid for pid in set(bullet_auto_ids) if pid >= 0)
+
+    style_defs = []
+    for st in header_root.findall(".//hh:style", NS):
+        name = st.get("name", "")
+        eng_name = st.get("engName", "")
+        combined = f"{name} {eng_name}".strip().lower()
+        style_defs.append(
+            {
+                "name": name,
+                "eng_name": eng_name,
+                "combined": combined,
+                "type": st.get("type", ""),
+                "paraPrIDRef": st.get("paraPrIDRef", "0"),
+                "charPrIDRef": st.get("charPrIDRef", "0"),
+            }
+        )
+
+    def _pick_named_style(keyword_groups, para_only=False):
+        best = None
+        best_score = -1
+        for st in style_defs:
+            if para_only and st["type"] != "PARA":
+                continue
+            text = st["combined"]
+            score = 0
+            for group in keyword_groups:
+                if any(k in text for k in group):
+                    score += 1
+            if score > best_score:
+                best = st
+                best_score = score
+        if best_score <= 0:
+            return None
+        return best
 
     # --- Step 3: Scan section0.xml paragraphs ---
     sec = section_root.find(".//hs:sec", NS)
@@ -440,7 +493,8 @@ def extract_style_map(header_root, section_root):
     heading_entries = []  # [{"fontSize_hu", "charPrIDRef", "paraPrIDRef"}, ...]
     tbl_header_entries = []
     tbl_cell_entries = []
-    BULLET_CHARS = {"◦", "–", "□", "▪"}
+    image_caption_pairs = []  # [(paraPrIDRef, charPrIDRef), ...]
+    BULLET_CHARS = {"◦", "–", "□", "▪", "•", "●", "○"}
 
     def _scan_table(tbl):
         """Recursively scan table rows/cells for style info."""
@@ -469,8 +523,21 @@ def extract_style_map(header_root, section_root):
                         else:
                             tbl_cell_entries.append(entry)
 
-    for p in sec.findall("hp:p", NS):
+    paragraphs = list(sec.findall("hp:p", NS))
+    for i, p in enumerate(paragraphs):
         ppr = p.get("paraPrIDRef", "0")
+
+        has_pic = p.find(".//hp:pic", NS) is not None
+        if has_pic:
+            next_para = paragraphs[i + 1] if i + 1 < len(paragraphs) else None
+            if next_para is not None and next_para.find(".//hp:pic", NS) is None:
+                next_ppr = next_para.get("paraPrIDRef", "0")
+                next_cpr = "0"
+                next_run = next_para.find("hp:run", NS)
+                if next_run is not None:
+                    next_cpr = next_run.get("charPrIDRef", "0")
+                image_caption_pairs.append((next_ppr, next_cpr))
+
         for run in p.findall("hp:run", NS):
             cpr = run.get("charPrIDRef", "0")
             if run.find("hp:secPr", NS) is not None:
@@ -480,6 +547,8 @@ def extract_style_map(header_root, section_root):
             tbl = run.find("hp:tbl", NS)
             if tbl is not None:
                 _scan_table(tbl)
+                continue
+            if run.find(".//hp:pic", NS) is not None:
                 continue
             txt = get_text(run)
             body_pairs.append((cpr, ppr))
@@ -496,8 +565,16 @@ def extract_style_map(header_root, section_root):
 
     # --- Step 4: Aggregate results (ordered as spec) ---
     result = {}
+    confidence_marks = []
+
+    def _set_entry(key, entry, confidence):
+        if isinstance(entry, dict):
+            entry["confidence"] = confidence
+        result[key] = entry
+        confidence_marks.append(confidence)
 
     # Headings: group by fontSize level, largest = heading_1
+    heading_by_rank = {}
     if heading_entries:
         heading_by_size = defaultdict(list)
         for h in heading_entries:
@@ -508,62 +585,156 @@ def extract_style_map(header_root, section_root):
         for i, size in enumerate(sorted_sizes[:2]):
             pairs = heading_by_size[size]
             most_common = Counter(pairs).most_common(1)[0][0]
-            result[f"heading_{i + 1}"] = {
+            heading_by_rank[f"heading_{i + 1}"] = {
                 "charPrIDRef": most_common[0],
                 "paraPrIDRef": most_common[1],
             }
-    if "heading_1" not in result:
-        result["heading_1"] = {
-            "charPrIDRef": "0",
-            "paraPrIDRef": "0",
-            "_comment": "no heading detected",
-        }
-    if "heading_2" not in result:
-        result["heading_2"] = {
-            "charPrIDRef": "0",
-            "paraPrIDRef": "0",
-            "_comment": "no heading detected",
-        }
+
+    heading_1 = heading_by_rank.get("heading_1")
+    if heading_1 is not None:
+        _set_entry("heading_1", heading_1, "confirmed")
+    else:
+        named = _pick_named_style(
+            [
+                ["개요 1", "outline 1", "heading 1", "제목 1"],
+                ["개요", "outline", "heading"],
+            ],
+            para_only=True,
+        )
+        if named is not None:
+            _set_entry(
+                "heading_1",
+                {
+                    "charPrIDRef": named["charPrIDRef"],
+                    "paraPrIDRef": named["paraPrIDRef"],
+                },
+                "estimated",
+            )
+        else:
+            _set_entry(
+                "heading_1",
+                {
+                    "charPrIDRef": "0",
+                    "paraPrIDRef": "0",
+                    "_comment": "no heading detected",
+                },
+                "fallback",
+            )
+
+    heading_2 = heading_by_rank.get("heading_2")
+    if heading_2 is not None:
+        _set_entry("heading_2", heading_2, "confirmed")
+    else:
+        named = _pick_named_style(
+            [
+                ["개요 2", "outline 2", "heading 2", "제목 2"],
+                ["개요", "outline", "heading"],
+            ],
+            para_only=True,
+        )
+        if named is not None:
+            _set_entry(
+                "heading_2",
+                {
+                    "charPrIDRef": named["charPrIDRef"],
+                    "paraPrIDRef": named["paraPrIDRef"],
+                },
+                "estimated",
+            )
+        else:
+            _set_entry(
+                "heading_2",
+                {
+                    "charPrIDRef": "0",
+                    "paraPrIDRef": "0",
+                    "_comment": "no heading detected",
+                },
+                "fallback",
+            )
 
     # Body: most frequent (charPrIDRef, paraPrIDRef) in non-table paragraphs
     if body_pairs:
         bc = Counter(body_pairs).most_common(1)[0][0]
-        result["body"] = {"charPrIDRef": bc[0], "paraPrIDRef": bc[1]}
+        _set_entry("body", {"charPrIDRef": bc[0], "paraPrIDRef": bc[1]}, "confirmed")
     else:
-        result["body"] = {"charPrIDRef": "0", "paraPrIDRef": "0"}
+        named = _pick_named_style(
+            [["본문", "body", "normal", "바탕글"], ["text", "paragraph"]],
+            para_only=True,
+        )
+        if named is not None:
+            _set_entry(
+                "body",
+                {
+                    "charPrIDRef": named["charPrIDRef"],
+                    "paraPrIDRef": named["paraPrIDRef"],
+                },
+                "estimated",
+            )
+        else:
+            _set_entry("body", {"charPrIDRef": "0", "paraPrIDRef": "0"}, "fallback")
 
-    # Bullet: paragraphs containing ◦, –, □, ▪ + paraPr margins
+    # Bullet: paragraphs containing bullet chars, fallback to heading type BULLET
     if bullet_pairs:
         bp = Counter(bullet_pairs).most_common(1)[0][0]
         bullet_entry = {"charPrIDRef": bp[0], "paraPrIDRef": bp[1]}
-        if bp[1] in parapr_map:
-            pi = parapr_map[bp[1]]
-            bullet_entry["left_margin"] = pi["left_margin"]
-            bullet_entry["indent"] = pi["indent"]
-        else:
-            bullet_entry["left_margin"] = 0
-            bullet_entry["indent"] = 0
-        result["bullet"] = bullet_entry
+        pi = parapr_map.get(bp[1], {"left_margin": 0, "indent": 0})
+        bullet_entry["left_margin"] = pi["left_margin"]
+        bullet_entry["indent"] = pi["indent"]
+        _set_entry("bullet", bullet_entry, "confirmed")
+    elif bullet_auto_ids:
+        first_bullet_pid = str(bullet_auto_ids[0])
+        body_cpr = result.get("body", {}).get("charPrIDRef", "0")
+        bullet_entry = {"charPrIDRef": body_cpr, "paraPrIDRef": first_bullet_pid}
+        pi = parapr_map.get(first_bullet_pid, {"left_margin": 0, "indent": 0})
+        bullet_entry["left_margin"] = pi["left_margin"]
+        bullet_entry["indent"] = pi["indent"]
+        _set_entry("bullet", bullet_entry, "estimated")
     else:
-        result["bullet"] = {
-            "charPrIDRef": "0",
-            "paraPrIDRef": "0",
-            "left_margin": 0,
-            "indent": 0,
-            "_comment": "no bullet detected",
-        }
+        named = _pick_named_style(
+            [["bullet", "글머리", "동그라미", "목록", "list"], ["outline"]],
+            para_only=True,
+        )
+        if named is not None:
+            bullet_pid = named["paraPrIDRef"]
+            pi = parapr_map.get(bullet_pid, {"left_margin": 0, "indent": 0})
+            _set_entry(
+                "bullet",
+                {
+                    "charPrIDRef": named["charPrIDRef"],
+                    "paraPrIDRef": bullet_pid,
+                    "left_margin": pi["left_margin"],
+                    "indent": pi["indent"],
+                },
+                "estimated",
+            )
+        else:
+            _set_entry(
+                "bullet",
+                {
+                    "charPrIDRef": "0",
+                    "paraPrIDRef": "0",
+                    "left_margin": 0,
+                    "indent": 0,
+                    "_comment": "no bullet detected",
+                },
+                "fallback",
+            )
 
     # Bold: charPrIDRef with <hh:bold/> or bold="1"; prefer most used
     bold_ids = [cid for cid, info in charpr_map.items() if info["bold"]]
     if bold_ids:
         body_cpr_count = Counter(cpr for cpr, _ in body_pairs)
         best_bold = max(bold_ids, key=lambda x: body_cpr_count.get(x, 0))
-        result["bold"] = {"charPrIDRef": best_bold}
+        _set_entry("bold", {"charPrIDRef": best_bold}, "confirmed")
     else:
-        result["bold"] = {
-            "charPrIDRef": "0",
-            "_comment": "no bold charPr detected",
-        }
+        _set_entry(
+            "bold",
+            {
+                "charPrIDRef": "0",
+                "_comment": "no bold charPr detected",
+            },
+            "fallback",
+        )
 
     # Table header: first row of tables
     if tbl_header_entries:
@@ -572,18 +743,26 @@ def extract_style_map(header_root, section_root):
             for e in tbl_header_entries
         )
         th = thc.most_common(1)[0][0]
-        result["table_header"] = {
-            "charPrIDRef": th[0],
-            "paraPrIDRef": th[1],
-            "borderFillIDRef": th[2],
-        }
+        _set_entry(
+            "table_header",
+            {
+                "charPrIDRef": th[0],
+                "paraPrIDRef": th[1],
+                "borderFillIDRef": th[2],
+            },
+            "confirmed",
+        )
     else:
-        result["table_header"] = {
-            "charPrIDRef": "0",
-            "paraPrIDRef": "0",
-            "borderFillIDRef": "0",
-            "_comment": "no table header detected",
-        }
+        _set_entry(
+            "table_header",
+            {
+                "charPrIDRef": "0",
+                "paraPrIDRef": "0",
+                "borderFillIDRef": "0",
+                "_comment": "no table header detected",
+            },
+            "fallback",
+        )
 
     # Table cell: non-header rows
     if tbl_cell_entries:
@@ -592,22 +771,77 @@ def extract_style_map(header_root, section_root):
             for e in tbl_cell_entries
         )
         tc_most = tcc.most_common(1)[0][0]
-        result["table_cell"] = {
-            "charPrIDRef": tc_most[0],
-            "paraPrIDRef": tc_most[1],
-            "borderFillIDRef": tc_most[2],
-        }
+        _set_entry(
+            "table_cell",
+            {
+                "charPrIDRef": tc_most[0],
+                "paraPrIDRef": tc_most[1],
+                "borderFillIDRef": tc_most[2],
+            },
+            "confirmed",
+        )
     else:
-        result["table_cell"] = {
-            "charPrIDRef": "0",
-            "paraPrIDRef": "0",
-            "borderFillIDRef": "0",
-            "_comment": "no table cell detected",
-        }
+        _set_entry(
+            "table_cell",
+            {
+                "charPrIDRef": "0",
+                "paraPrIDRef": "0",
+                "borderFillIDRef": "0",
+                "_comment": "no table cell detected",
+            },
+            "fallback",
+        )
+
+    # Image caption detection: paragraph right after image paragraph
+    if image_caption_pairs:
+        cp = Counter(image_caption_pairs).most_common(1)[0][0]
+        _set_entry(
+            "image_caption",
+            {"paraPrIDRef": cp[0], "charPrIDRef": cp[1]},
+            "confirmed",
+        )
+    else:
+        named = _pick_named_style(
+            [["caption", "캡션"], ["그림", "figure", "table", "표"]], para_only=True
+        )
+        if named is not None:
+            _set_entry(
+                "image_caption",
+                {
+                    "paraPrIDRef": named["paraPrIDRef"],
+                    "charPrIDRef": named["charPrIDRef"],
+                },
+                "estimated",
+            )
+        else:
+            _set_entry(
+                "image_caption",
+                {"paraPrIDRef": "0", "charPrIDRef": "0"},
+                "fallback",
+            )
+
+    # Blockquote style (optional): detect by name heuristics if available
+    quote_style = _pick_named_style(
+        [["blockquote", "인용", "quote", "인용문"], ["quotation"]], para_only=True
+    )
+    if quote_style is not None:
+        _set_entry(
+            "blockquote",
+            {
+                "paraPrIDRef": quote_style["paraPrIDRef"],
+                "charPrIDRef": quote_style["charPrIDRef"],
+            },
+            "estimated",
+        )
 
     # Constants
     result["table_width"] = 42520
-    result["image_placeholder"] = {"paraPrIDRef": "0", "charPrIDRef": "0"}
+    result["image_placeholder"] = {
+        "paraPrIDRef": "0",
+        "charPrIDRef": "0",
+        "confidence": "estimated",
+    }
+    result["bullet_auto"] = bullet_auto_ids
 
     # Font sizes map: charPrIDRef -> "Npt"
     font_sizes = {}
@@ -617,7 +851,18 @@ def extract_style_map(header_root, section_root):
             font_sizes[cid] = f"{int(pt)}pt" if pt == int(pt) else f"{pt}pt"
     result["font_sizes"] = font_sizes
 
-    result["confidence"] = "estimated"
+    if (
+        result.get("image_caption", {}).get("confidence") == "confirmed"
+        and bullet_auto_ids
+    ):
+        result["confidence"] = "confirmed"
+    elif any(c == "estimated" for c in confidence_marks):
+        result["confidence"] = "estimated"
+    elif all(c == "confirmed" for c in confidence_marks) and confidence_marks:
+        result["confidence"] = "confirmed"
+    else:
+        result["confidence"] = "fallback"
+
     return result
 
 
