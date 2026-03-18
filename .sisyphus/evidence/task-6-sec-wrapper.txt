@@ -1,0 +1,30 @@
+Task 6 Evidence - xml_writer --wrap-section
+Date: 2026-03-19
+
+1) Unit tests
+Command:
+pytest "plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py"
+
+Result:
+- collected 4 items
+- 4 passed in 0.06s
+
+2) CLI verification for --wrap-section
+Command:
+python plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py \
+  --input .sisyphus/evidence/task6_input_blocks.json \
+  --style-config .sisyphus/evidence/task6_style_config.json \
+  --output .sisyphus/evidence/task6_wrap_output.xml \
+  --wrap-section
+
+Checks:
+- returncode = 0
+- starts_with_hs_sec = True
+- has_secpr = True
+- has_pageSize = True
+- has_pageMargin = True
+- has_namespaces = True
+
+3) LSP diagnostics
+- plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py: clean
+- plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py: clean
