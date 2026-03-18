@@ -12,6 +12,7 @@ HEADING_RE = re.compile(r"^\s{0,3}(#{1,4})\s+(.*)$")
 BULLET_RE = re.compile(r"^\s*([◦–□\-*])\s+(.*)$")
 BLOCKQUOTE_RE = re.compile(r"^\s*>\s?(.*)$")
 SEPARATOR_RE = re.compile(r"^\s*---+\s*$")
+BOLD_LABEL_RE = re.compile(r"^\s*\*\*\s*(\[[^\]\n]*\])\s*\*\*\s*$")
 IMAGE_REF_RE = re.compile(r"^\s*<그림\s+([0-9]+-[0-9]+)\s*:\s*(.*?)>\s*$")
 IMAGE_MD_RE = re.compile(r"^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$")
 CAPTION_ITALIC_RE = re.compile(r"^\s*\*그림\s+([0-9]+-[0-9]+)\s*:\s*(.*?)\*\s*$")
@@ -188,6 +189,20 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
             idx += 1
             continue
 
+        bold_label_match = BOLD_LABEL_RE.match(line)
+        if bold_label_match:
+            content = bold_label_match.group(1).strip()
+            escaped = xml_escape(content)
+            blocks.append(
+                {
+                    "type": "bold_label",
+                    "text": escaped,
+                    "segments": [{"type": "bold", "text": escaped}],
+                }
+            )
+            idx += 1
+            continue
+
         bullet_match = BULLET_RE.match(line)
         if bullet_match:
             marker = bullet_match.group(1)
@@ -218,6 +233,7 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                 or IMAGE_REF_RE.match(next_line)
                 or IMAGE_MD_RE.match(next_line)
                 or HEADING_RE.match(next_line)
+                or BOLD_LABEL_RE.match(next_line)
                 or BULLET_RE.match(next_line)
                 or BLOCKQUOTE_RE.match(next_line)
             ):
