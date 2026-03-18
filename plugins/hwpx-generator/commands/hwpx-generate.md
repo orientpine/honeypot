@@ -44,6 +44,11 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
+## Phase 3.5: 교정 (Proofreading)
+
+1. Run final proofreading script to fix common formatting issues.
+   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py --input "{generated_hwpx_path}"`
+   - 이 단계에서는 이중 불릿, 잘못된 줄바꿈, 스타일 미적용 문단 등을 자동으로 교정한다.
 ## Phase 4: 검증 (validate.py + page_guard.py)
 
 1. Run mandatory structural validation on the generated output.

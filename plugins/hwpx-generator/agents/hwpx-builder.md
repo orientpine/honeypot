@@ -36,21 +36,25 @@ This agent orchestrates two skills:
    - Second priority: user-uploaded HWPX template → `hwpx-templates` ZIP replacement.
    - Third priority: project default template.
    - Fallback: XML-first generation via `hwpx-core`.
-   - **마크다운 콘텐츠 + HWPX 양식**: 사용자가 마크다운 콘텐츠와 HWPX 양식을 함께 제공한 경우 → **Workflow 7** (`analyze_template.py --style-map` → `md_parser.py` → 매핑 → `xml_writer.py` → `zip_surgery.py` → `image_embedder.py` → `validate.py` + `page_guard.py`).
+   - **마크다운 콘텐츠 + HWPX 양식**: 사용자가 마크다운 콘텐츠와 HWPX 양식을 함께 제공한 경우 → **Workflow 7** (`analyze_template.py --style-map` → `md_parser.py` → 매핑 → `xml_writer.py --wrap-section` → `zip_surgery.py` → `fix_namespaces.py` → `image_embedder.py --from-parsed` → `proofread.py` → `validate.py` + `page_guard.py`).
 
 3. Generate document content using the selected path.
    - **Existing HWPX edit**: use `zip_surgery.py` — preserves standalone='no', xmlns, byte-level fidelity.
    - Reference present: analyze with `analyze_template.py`, extract header/section, rebuild with structure preserved.
    - Template present: execute `hwpx-templates` ZIP replacement workflow.
    - No template: execute `hwpx-core` XML-first build workflow.
-   - Workflow 7 (마크다운+양식): `analyze_template.py --style-map`으로 스타일 추출 → `md_parser.py`로 마크다운 파싱 → 섹션-스타일 매핑 → `xml_writer.py`로 XML 생성 → `zip_surgery.py`로 양식에 삽입 → `image_embedder.py`로 이미지 임베딩.
+   - Workflow 7 (마크다운+양식): `analyze_template.py --style-map`으로 스타일 추출 → `md_parser.py`로 마크다운 파싱(이미지+캡션 지원) → 섹션-스타일 매핑 → `xml_writer.py`로 XML 생성(`--wrap-section` 필수) → `zip_surgery.py`로 양식에 삽입 → `fix_namespaces.py`로 네임스페이스 수정 → `image_embedder.py`로 이미지 임베딩(`--from-parsed` 모드) → `proofread.py`로 최종 교정.
 
 4. Apply post-processing and validation.
    - For ZIP-level surgery path, run `validate.py --strict` (standalone, xmlns, newlines checks). **Do NOT run cell_writer.**
    - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
    - Validate output with `hwpx-core/scripts/validate.py`.
    - **page_guard 필수**: 레퍼런스 기반 작업 시 `hwpx-core/scripts/page_guard.py`로 페이지 드리프트 위험 검사. `page_guard.py` 실패 시 원인 수정 후 재빌드.
-   - For Workflow 7 path, run `validate.py` + `page_guard.py`. 스타일 ID 불일치 시 `analyze_template.py --style-map` 결과와 대조하여 수정.
+   - For Workflow 7 path:
+     1. `xml_writer.py` 실행 시 `--wrap-section` 플래그를 사용하여 `zip_surgery.py` 호환성을 확보한다.
+     2. `zip_surgery.py` 실행 직후 `plugins/hwpx-generator/skills/hwpx-templates/scripts/fix_namespaces.py`를 호출하여 네임스페이스를 복구한다.
+     3. 모든 작업 완료 후 `hwpx-core/scripts/proofread.py`를 실행하여 최종 문서 품질(이중 불릿, 오타, 서식 누락 등)을 교정한다.
+     4. `validate.py` + `page_guard.py`로 최종 검증한다. 스타일 ID 불일치 시 `analyze_template.py --style-map` 결과와 대조하여 수정.
    - If validation fails, return to generation/edit step and rebuild.
 
 5. Deliver result and report generation path.
@@ -212,6 +216,7 @@ Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙
 1. **마커 원본 준수**: ◦, –, □ 등 불릿 마커는 양식 원본의 마커를 따른다. 에이전트가 임의로 마커를 변경하거나 추가하지 않는다.
 2. **들여쓰기 구현**: hanging indent는 `paraPr`의 left margin + indent 속성으로 구현한다. 공백 문자(스페이스, 탭)를 사용한 들여쓰기는 금지한다.
 3. **중첩 수준**: 양식에 정의된 불릿 중첩 수준을 초과하지 않는다.
+4. **이중 불릿 방지**: 마크다운의 `-` 또는 `*` 기호가 HWPX의 불릿 스타일과 중복되어 `◦ - 항목` 처럼 보이지 않도록, `md_parser.py` 처리 시 마커를 제거했는지 반드시 확인한다.
 
 ## 표 생성 규칙
 
@@ -220,14 +225,15 @@ Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙
 
 ## 이미지 삽입
 
-마크다운 콘텐츠의 `<그림 N-N:>` 캡션과 이미지 파일을 매칭하여 HWPX에 임베딩한다.
+마크다운 콘텐츠의 표준 이미지 구문 `![alt](path)`와 바로 아래의 *기울임 캡션* 쌍을 매칭하여 HWPX에 임베딩한다.
 
 1. **image_embedder.py 사용**: ZIP-level에서 PNG 이미지를 HWPX에 삽입한다.
-2. **CLI 예시**:
+2. **--from-parsed 모드 (권장)**: `md_parser.py`가 생성한 `parsed_blocks.json`을 직접 사용하여 이미지와 캡션을 정확히 매칭한다.
+3. **CLI 예시**:
    ```bash
-   python3 image_embedder.py --hwpx output.hwpx --images-dir ./images/ --mapping caption_map.json --output final.hwpx
+   python3 image_embedder.py --hwpx output.hwpx --from-parsed parsed_blocks.json --base-dir ./images/ --output final.hwpx
    ```
-3. **캡션-파일 매핑**: `md_parser.py`가 생성한 캡션 목록과 `--images-dir`의 파일명을 매칭한다. 매칭 실패 시 경고를 출력하고 해당 이미지를 건너뛴다.
+4. **캡션-파일 매핑**: `md_parser.py`가 추출한 이미지 경로와 캡션 텍스트를 기반으로 삽입 위치를 결정한다.
 
 ## Constraints
 
