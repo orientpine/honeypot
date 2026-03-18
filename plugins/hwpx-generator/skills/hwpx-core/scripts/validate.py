@@ -21,7 +21,9 @@ Usage:
 """
 
 import argparse
+import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from zipfile import ZIP_STORED, BadZipFile, ZipFile
@@ -180,6 +182,54 @@ def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:
 
     return errors
 
+def _run_proofread(hwpx_path: str) -> dict:
+    """Run proofread.py as a subprocess and return structured result."""
+    proofread_script = Path(__file__).parent / "proofread.py"
+    if not proofread_script.is_file():
+        return {
+            "pass": False,
+            "summary": "proofread.py not found",
+            "details": {"error": f"Script not found: {proofread_script}"},
+        }
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(proofread_script), hwpx_path],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        # proofread.py outputs JSON to stdout
+        if proc.stdout.strip():
+            data = json.loads(proc.stdout)
+            # Determine overall pass from individual checks
+            checks = ["double_bullets", "font_consistency", "empty_paragraphs",
+                      "orphaned_placeholders", "table_borders"]
+            all_pass = all(
+                isinstance(data.get(c), dict) and data[c].get("pass", False)
+                for c in checks
+            )
+            failed = [c for c in checks
+                      if isinstance(data.get(c), dict) and not data[c].get("pass", True)]
+            summary = "PASS" if all_pass else f"FAIL ({', '.join(failed)})"
+            return {"pass": all_pass, "summary": summary, "details": data}
+        else:
+            return {
+                "pass": False,
+                "summary": f"proofread.py returned no output (exit={proc.returncode})",
+                "details": {"stderr": proc.stderr.strip()},
+            }
+    except subprocess.TimeoutExpired:
+        return {"pass": False, "summary": "proofread.py timed out", "details": {}}
+    except json.JSONDecodeError as exc:
+        return {
+            "pass": False,
+            "summary": f"proofread.py returned invalid JSON: {exc}",
+            "details": {},
+        }
+    except Exception as exc:
+        return {"pass": False, "summary": f"proofread.py error: {exc}", "details": {}}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -192,20 +242,37 @@ def main() -> None:
         help="Enable strict checks for ZIP-level surgery compliance "
         "(standalone, xmlns, newlines, table attributes)",
     )
+    parser.add_argument(
+        "--proofread",
+        action="store_true",
+        help="Run proofread.py after validation and include results",
+    )
     args = parser.parse_args()
 
     errors = validate(args.input, strict=args.strict)
+
+    proofread_result = None
+    if args.proofread:
+        proofread_result = _run_proofread(args.input)
 
     if errors:
         print(f"INVALID: {args.input}", file=sys.stderr)
         for err in errors:
             print(f"  - {err}", file=sys.stderr)
+        if proofread_result is not None:
+            print(f"\nProofread: {proofread_result['summary']}", file=sys.stderr)
         sys.exit(1)
     else:
         mode = "strict" if args.strict else "standard"
-        print(f"VALID: {args.input} ({mode} mode)")
+        suffix = "+proofread" if args.proofread else ""
+        print(f"VALID: {args.input} ({mode}{suffix} mode)")
         print("  All checks passed.")
-
+        if proofread_result is not None:
+            print(f"  Proofread: {proofread_result['summary']}")
+            if not proofread_result["pass"]:
+                print("  WARNING: proofread found issues (see details below)")
+                print(json.dumps(proofread_result["details"], ensure_ascii=False, indent=4))
+                sys.exit(1)
 
 if __name__ == "__main__":
     main()

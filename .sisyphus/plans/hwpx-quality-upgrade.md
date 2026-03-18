@@ -238,7 +238,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 2. pytest 테스트 인프라 구축
+- [x] 2. pytest 테스트 인프라 구축
 
   **What to do**:
   - `plugins/hwpx-generator/skills/hwpx-core/tests/` 디렉토리 생성
@@ -276,7 +276,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 3. md_parser.py: 표준 마크다운 이미지 + 캡션 페어링
+- [x] 3. md_parser.py: 표준 마크다운 이미지 + 캡션 페어링
 
   **What to do**:
   - 기존 커스텀 이미지 포맷 유지하면서 `![alt](path)` 문법 파싱하는 IMAGE_MD_RE 정규식 추가
@@ -322,7 +322,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 4. md_parser.py: 블록인용 + circle-numbered + bold 라벨
+- [x] 4. md_parser.py: 블록인용 + circle-numbered + bold 라벨
 
   **What to do**:
   - 블록인용 개선: `> **목표**: text` 형식에서 인라인 서식을 segments로 분리 (bold segment 생성)
@@ -368,7 +368,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 5. analyze_template.py: 스타일맵 정확도 향상
+- [x] 5. analyze_template.py: 스타일맵 정확도 향상
 
   **What to do**:
   - 추출된 스타일 ID에 confidence 점수 추가 ("confirmed"/"estimated"/"fallback")
@@ -413,7 +413,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 6. xml_writer.py: hs:sec 래퍼 + fragment 통합
+- [x] 6. xml_writer.py: hs:sec 래퍼 + fragment 통합
 
   **What to do**:
   - build_fragment() 출력을 hs:sec 요소로 래핑: secPr(page size, margins) 포함
@@ -458,7 +458,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 7. xml_writer.py: 이중 불릿 제거 + 표 colSpan
+- [x] 7. xml_writer.py: 이중 불릿 제거 + 표 colSpan
 
   **What to do**:
   - **이중 불릿 제거**: build_bullet() 함수에서, paraPr이 heading type=BULLET인 경우 hp:t 텍스트의 선행 불릿 문자 strip. 대상 문자: 모든 common 한글 문서 불릿 (원형, 사각, 삼각, 화살표 등)
@@ -501,7 +501,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 8. xml_writer.py: 이미지+캡션 전문가 XML 생성
+- [x] 8. xml_writer.py: 이미지+캡션 전문가 XML 생성
 
   **What to do**:
   - **NEW**: image_ref 블록을 받아 hp:pic 요소 + 캡션 단락을 생성하는 `build_image_with_caption()` 함수 추가
@@ -545,7 +545,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 9. image_embedder.py: 표준 이미지 경로 + JPEG 지원
+- [x] 9. image_embedder.py: 표준 이미지 경로 + JPEG 지원
 
   **What to do**:
   - md_parser의 image_ref 블록에서 path 필드를 읽어 자동 매핑 (기존 수동 --mapping 외에 --from-parsed JSON 모드 추가)
@@ -588,7 +588,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 10. proofread.py: 신규 품질 검증 스크립트
+- [x] 10. proofread.py: 신규 품질 검증 스크립트
 
   **What to do**:
   - `plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py` 신규 생성

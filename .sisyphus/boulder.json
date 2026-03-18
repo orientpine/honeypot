@@ -3,7 +3,17 @@
   "started_at": "2026-03-18T14:52:15.869Z",
   "session_ids": [
     "ses_2fe912396ffe807TulBPjjeTCz",
-    "ses_2fe8f016effernPD82tAQOd90q"
+    "ses_2fe8f016effernPD82tAQOd90q",
+    "ses_2fe83a091ffeovc6OapMOTSsVT",
+    "ses_2fe7e7381ffepCPjxbzpu5wgvj",
+    "ses_2fe759b96ffeMyiUcgAtQlrcRf",
+    "ses_2fe71283affeSUUH6l8JiZqiDs",
+    "ses_2fe685489ffeFSb187lS6nHIRO",
+    "ses_2fe6318f5ffetanRzXZCVjf0s2",
+    "ses_2fe5cf7d9ffeGLcjIinOCtC8ES",
+    "ses_2fe57b5eeffeLPtAFo0KNRa9xw",
+    "ses_2fe5177e1ffebv8TFArsDVE4By",
+    "ses_2fe4c1fdbffeQZ03Y6oKkalIwq"
   ],
   "plan_name": "hwpx-quality-upgrade",
   "agent": "atlas"
