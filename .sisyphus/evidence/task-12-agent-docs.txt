@@ -1,0 +1,10 @@
+plugins/hwpx-generator/agents/hwpx-builder.md:   - **마크다운 콘텐츠 + HWPX 양식**: 사용자가 마크다운 콘텐츠와 HWPX 양식을 함께 제공한 경우 → **Workflow 7** (`analyze_template.py --style-map` → `md_parser.py` → 매핑 → `xml_writer.py --wrap-section` → `zip_surgery.py` → `fix_namespaces.py` → `image_embedder.py --from-parsed` → `proofread.py` → `validate.py` + `page_guard.py`).
+plugins/hwpx-generator/agents/hwpx-builder.md:   - Workflow 7 (마크다운+양식): `analyze_template.py --style-map`으로 스타일 추출 → `md_parser.py`로 마크다운 파싱(이미지+캡션 지원) → 섹션-스타일 매핑 → `xml_writer.py`로 XML 생성(`--wrap-section` 필수) → `zip_surgery.py`로 양식에 삽입 → `fix_namespaces.py`로 네임스페이스 수정 → `image_embedder.py`로 이미지 임베딩(`--from-parsed` 모드) → `proofread.py`로 최종 교정.
+plugins/hwpx-generator/agents/hwpx-builder.md:   - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
+plugins/hwpx-generator/agents/hwpx-builder.md:     2. `zip_surgery.py` 실행 직후 `plugins/hwpx-generator/skills/hwpx-templates/scripts/fix_namespaces.py`를 호출하여 네임스페이스를 복구한다.
+plugins/hwpx-generator/agents/hwpx-builder.md:     3. 모든 작업 완료 후 `hwpx-core/scripts/proofread.py`를 실행하여 최종 문서 품질(이중 불릿, 오타, 서식 누락 등)을 교정한다.
+plugins/hwpx-generator/agents/hwpx-builder.md:- ZIP replacement path requires namespace repair: run `fix_namespaces.py` after replacement.
+plugins/hwpx-generator/commands/hwpx-generate.md:## Phase 3.5: 교정 (Proofreading)
+plugins/hwpx-generator/commands/hwpx-generate.md:1. Run final proofreading script to fix common formatting issues.
+plugins/hwpx-generator/commands/hwpx-generate.md:   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py --input "{generated_hwpx_path}"`
+plugins/hwpx-generator/commands/hwpx-generate.md:   - 이 단계에서는 이중 불릿, 잘못된 줄바꿈, 스타일 미적용 문단 등을 자동으로 교정한다.

@@ -637,7 +637,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 11. page_guard.py 템플릿 채우기 임계값 + validate.py 확장
+- [x] 11. page_guard.py 템플릿 채우기 임계값 + validate.py 확장
 
   **What to do**:
   - page_guard.py에 `--mode=template-fill` 플래그 추가: 빈 템플릿을 레퍼런스로 사용할 때 완화된 임계값. 출력: PASS/FAIL (warnings 없음, 빈->채움 시 false-positive 방지용). 그 외 기본 모드는 기존과 동일 (PASS/FAIL + warning count)
@@ -676,7 +676,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 12. hwpx-builder.md + hwpx-generate.md 에이전트 지침 업데이트
+- [x] 12. hwpx-builder.md + hwpx-generate.md 에이전트 지침 업데이트
 
   **What to do**:
   - hwpx-builder.md Workflow 7 단계에 다음 추가/수정:
@@ -725,7 +725,7 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 ---
 
-- [ ] 13. E2E 통합 테스트: 초안 -> 3장+4장+images -> 완성 HWPX
+- [x] 13. E2E 통합 테스트: 초안 -> 3장+4장+images -> 완성 HWPX
 
   **What to do**:
   - 전체 파이프라인 테스트 스크립트 작성: `tests/test_e2e_pipeline.py`
@@ -800,19 +800,19 @@ Wave FINAL (4 parallel reviews, then user okay):
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
-- [ ] F1. **Plan Compliance Audit** -- `oracle`
+- [x] F1. **Plan Compliance Audit** -- `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists. For each "Must NOT Have": search codebase for forbidden patterns. Check evidence files exist. Compare deliverables against plan.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** -- `unspecified-high`
+- [x] F2. **Code Quality Review** -- `unspecified-high`
   Run `python -m pytest plugins/hwpx-generator/skills/hwpx-core/tests/ -v` + `python validate.py --strict`. Review all changed scripts for: empty catches, print in prod, commented-out code, AI slop.
   Output: `Tests [N pass/N fail] | Scripts [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** -- `unspecified-high`
+- [x] F3. **Real Manual QA** -- `unspecified-high`
   Start from clean state. Execute full pipeline: 초안.hwpx + 3장+4장 + images -> output.hwpx. Run validate --strict, proofread, page_guard. Verify all 15 images with captions. Check cross-task integration.
   Output: `Scenarios [N/N pass] | Integration [N/N] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** -- `deep`
+- [x] F4. **Scope Fidelity Check** -- `deep`
   For each task: read "What to do", read actual diff. Verify 1:1. Check "Must NOT do" compliance. Detect cross-task contamination. Flag unaccounted changes.
   Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | VERDICT`
 
