@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Embed PNG images into HWPX files via ZIP-level edits.
+"""Embed image files into HWPX files via ZIP-level edits.
 
-This script adds PNG files to BinData/, updates Contents/content.hpf,
+This script adds image files to BinData/, updates Contents/content.hpf,
 and replaces <!--IMAGE:imageN--> placeholders in Contents/section0.xml
 with <hp:pic> elements.
 """
@@ -16,6 +16,7 @@ import zipfile
 
 
 PLACEHOLDER_RE = re.compile(r"<!--IMAGE:(image\d+)-->")
+SUPPORTED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 
 def png_dimensions(path: str) -> tuple[int, int]:
@@ -25,6 +26,124 @@ def png_dimensions(path: str) -> tuple[int, int]:
     width = int(width_raw)
     height = int(height_raw)
     return width, height
+
+
+def jpeg_dimensions(path: str) -> tuple[int, int]:
+    with open(path, "rb") as f:
+        data = f.read()
+
+    if len(data) < 4 or data[0:2] != b"\xff\xd8":
+        raise ValueError(f"Invalid JPEG file: {path}")
+
+    index = 2
+    while index + 1 < len(data):
+        if data[index] != 0xFF:
+            index += 1
+            continue
+
+        while index < len(data) and data[index] == 0xFF:
+            index += 1
+        if index >= len(data):
+            break
+
+        marker = data[index]
+        index += 1
+
+        if marker in (0xD8, 0xD9):
+            continue
+
+        if marker == 0xDA:
+            break
+
+        if index + 1 >= len(data):
+            break
+
+        segment_length = (data[index] << 8) + data[index + 1]
+        if segment_length < 2:
+            raise ValueError(f"Invalid JPEG segment length in: {path}")
+
+        segment_start = index + 2
+        segment_end = segment_start + segment_length - 2
+        if segment_end > len(data):
+            raise ValueError(f"Invalid JPEG segment bounds in: {path}")
+
+        if marker in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB):
+            if segment_start + 4 >= segment_end:
+                raise ValueError(f"Invalid JPEG SOF segment in: {path}")
+            height = (data[segment_start + 1] << 8) + data[segment_start + 2]
+            width = (data[segment_start + 3] << 8) + data[segment_start + 4]
+            return int(width), int(height)
+
+        index = segment_end
+
+    raise ValueError(f"JPEG dimensions not found: {path}")
+
+
+def normalize_image_extension(path: str) -> str:
+    ext = os.path.splitext(path)[1].lower()
+    if ext not in SUPPORTED_IMAGE_EXTENSIONS:
+        raise ValueError(f"Unsupported image extension: {ext}")
+    return ext
+
+
+def image_media_type(path: str) -> str:
+    ext = normalize_image_extension(path)
+    if ext == ".png":
+        return "image/png"
+    return "image/jpeg"
+
+
+def image_dimensions(path: str) -> tuple[int, int]:
+    ext = normalize_image_extension(path)
+    if ext == ".png":
+        return png_dimensions(path)
+    return jpeg_dimensions(path)
+
+
+def is_supported_image_file(name: str) -> bool:
+    return name.lower().endswith(SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def load_mapping_from_parsed(
+    parsed_path: str, base_dir: str
+) -> dict[str, dict[str, str]]:
+    with open(parsed_path, "r", encoding="utf-8") as f:
+        data: object = json.load(f)
+
+    if not isinstance(data, dict):
+        raise ValueError("Parsed JSON must be an object")
+
+    blocks = data.get("blocks")
+    if not isinstance(blocks, list):
+        raise ValueError("Parsed JSON must contain a 'blocks' list")
+
+    result: dict[str, dict[str, str]] = {}
+    for block_obj in blocks:
+        if not isinstance(block_obj, dict):
+            continue
+        if block_obj.get("type") != "image_ref":
+            continue
+
+        path_value = block_obj.get("path")
+        if not isinstance(path_value, str) or not path_value.strip():
+            continue
+
+        resolved_path = os.path.abspath(os.path.join(base_dir, path_value.strip()))
+        file_name = os.path.basename(resolved_path)
+        if not file_name:
+            continue
+
+        number = extract_image_number(file_name)
+        if number is None:
+            continue
+
+        image_key = f"image{number}"
+        if image_key in result:
+            continue
+
+        result[image_key] = {"file": file_name, "caption": "", "path": resolved_path}
+
+    return result
 
 
 def calc_hwpx_height(width: int, height: int) -> int:
@@ -82,7 +201,7 @@ def auto_map_images(
     mapping: dict[str, dict[str, str]] = dict(existing or {})
     image_files: list[str] = []
     for name in os.listdir(images_dir):
-        if name.lower().endswith(".png"):
+        if is_supported_image_file(name):
             image_files.append(name)
     image_files.sort()
 
@@ -136,17 +255,19 @@ def make_pic_xml(image_key: str, height: int, pic_id: int) -> str:
     )
 
 
-def update_content_hpf(content_hpf: str, image_keys: list[str]) -> str:
+def update_content_hpf(content_hpf: str, image_entries: dict[str, str]) -> str:
     insert_pos = content_hpf.find("</opf:manifest>")
     if insert_pos == -1:
         raise ValueError("</opf:manifest> not found in Contents/content.hpf")
 
     add_lines: list[str] = []
-    for key in image_keys:
+    for key in sorted(image_entries.keys(), key=image_sort_key):
         if f'id="{key}"' in content_hpf:
             continue
+        href = image_entries[key]
+        media_type = image_media_type(href)
         add_lines.append(
-            f'<opf:item id="{key}" href="BinData/{key}.png" media-type="image/png" isEmbeded="1"/>'
+            f'<opf:item id="{key}" href="{href}" media-type="{media_type}" isEmbeded="1"/>'
         )
 
     if not add_lines:
@@ -156,14 +277,23 @@ def update_content_hpf(content_hpf: str, image_keys: list[str]) -> str:
     return content_hpf[:insert_pos] + chunk + "\n  " + content_hpf[insert_pos:]
 
 
-def parse_args() -> tuple[str, str, str | None, bool, str]:
-    parser = argparse.ArgumentParser(description="Embed PNG images into HWPX")
+def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str]:
+    parser = argparse.ArgumentParser(description="Embed image files into HWPX")
     _ = parser.add_argument("--hwpx", required=True, help="Input .hwpx path")
     _ = parser.add_argument(
         "--images-dir", required=True, help="Directory of PNG images"
     )
     _ = parser.add_argument(
         "--mapping", help="JSON mapping file for imageN -> file/caption"
+    )
+    _ = parser.add_argument(
+        "--from-parsed",
+        help="Parsed JSON from md_parser.py (collects type=='image_ref' paths)",
+    )
+    _ = parser.add_argument(
+        "--base-dir",
+        default=".",
+        help="Base directory for resolving relative paths in --from-parsed (default: current directory)",
     )
     _ = parser.add_argument(
         "--auto-map",
@@ -176,26 +306,39 @@ def parse_args() -> tuple[str, str, str | None, bool, str]:
         str(args.hwpx),
         str(args.images_dir),
         str(args.mapping) if args.mapping else None,
+        str(args.from_parsed) if args.from_parsed else None,
+        str(args.base_dir),
         bool(args.auto_map),
         str(args.output),
     )
 
 
 def validate_inputs(
-    hwpx: str, images_dir: str, mapping_path: str | None, auto_map: bool
+    hwpx: str,
+    images_dir: str,
+    mapping_path: str | None,
+    from_parsed: str | None,
+    auto_map: bool,
+    base_dir: str,
 ) -> None:
     if not os.path.isfile(hwpx):
         raise SystemExit(f"Error: HWPX file not found: {hwpx}")
     if not os.path.isdir(images_dir):
         raise SystemExit(f"Error: images directory not found: {images_dir}")
-    if not mapping_path and not auto_map:
-        raise SystemExit("Error: provide --mapping or --auto-map")
+    if not mapping_path and not from_parsed and not auto_map:
+        raise SystemExit("Error: provide --mapping, --from-parsed, or --auto-map")
     if mapping_path and not os.path.isfile(mapping_path):
         raise SystemExit(f"Error: mapping file not found: {mapping_path}")
+    if from_parsed and not os.path.isfile(from_parsed):
+        raise SystemExit(f"Error: parsed JSON not found: {from_parsed}")
+    if not os.path.isdir(base_dir):
+        raise SystemExit(f"Error: base directory not found: {base_dir}")
 
 
 def build_mapping(
     mapping_path: str | None,
+    from_parsed: str | None,
+    base_dir: str,
     auto_map: bool,
     images_dir: str,
     placeholders: set[str],
@@ -203,6 +346,12 @@ def build_mapping(
     mapping: dict[str, dict[str, str]] = {}
     if mapping_path:
         mapping = load_mapping(mapping_path)
+
+    if from_parsed:
+        parsed_mapping = load_mapping_from_parsed(from_parsed, base_dir)
+        for key, value in parsed_mapping.items():
+            if key not in mapping:
+                mapping[key] = value
 
     if auto_map:
         mapping = auto_map_images(placeholders, images_dir, existing=mapping)
@@ -234,6 +383,8 @@ def embed_images(
     hwpx: str,
     images_dir: str,
     mapping_path: str | None,
+    from_parsed: str | None,
+    base_dir: str,
     auto_map: bool,
     output: str,
 ) -> None:
@@ -257,18 +408,29 @@ def embed_images(
             "Error: no <!--IMAGE:imageN--> placeholders found in section0.xml"
         )
 
-    mapping = build_mapping(mapping_path, auto_map, images_dir, placeholders)
+    mapping = build_mapping(
+        mapping_path, from_parsed, base_dir, auto_map, images_dir, placeholders
+    )
 
     image_paths: dict[str, str] = {}
+    image_entries: dict[str, str] = {}
     image_heights: dict[str, int] = {}
     for key in sorted(mapping.keys(), key=image_sort_key):
-        file_name = mapping[key]["file"]
-        image_path = os.path.join(images_dir, file_name)
+        map_item = mapping[key]
+        file_name = map_item["file"]
+        path_value = map_item.get("path", "")
+        if path_value:
+            image_path = path_value
+        elif os.path.isabs(file_name):
+            image_path = file_name
+        else:
+            image_path = os.path.join(images_dir, file_name)
         if not os.path.isfile(image_path):
             raise SystemExit(f"Error: image file not found for {key}: {image_path}")
 
-        width, height = png_dimensions(image_path)
+        width, height = image_dimensions(image_path)
         image_paths[key] = image_path
+        image_entries[key] = f"BinData/{key}{normalize_image_extension(image_path)}"
         image_heights[key] = calc_hwpx_height(width, height)
 
     for index, key in enumerate(sorted(mapping.keys(), key=image_sort_key)):
@@ -276,9 +438,7 @@ def embed_images(
         pic_xml = make_pic_xml(key, image_heights[key], pic_id)
         section_text = section_text.replace(f"<!--IMAGE:{key}-->", pic_xml)
 
-    content_hpf = update_content_hpf(
-        content_hpf, sorted(mapping.keys(), key=image_sort_key)
-    )
+    content_hpf = update_content_hpf(content_hpf, image_entries)
 
     output_dir = os.path.dirname(output)
     if output_dir:
@@ -304,7 +464,7 @@ def embed_images(
             zout.writestr(info_out, data)
 
         for key in sorted(mapping.keys(), key=image_sort_key):
-            image_entry = f"BinData/{key}.png"
+            image_entry = image_entries[key]
             info_out = zipfile.ZipInfo(image_entry)
             info_out.compress_type = zipfile.ZIP_DEFLATED
             with open(image_paths[key], "rb") as f:
@@ -317,9 +477,13 @@ def embed_images(
 
 
 def main() -> None:
-    hwpx, images_dir, mapping_path, auto_map, output = parse_args()
-    validate_inputs(hwpx, images_dir, mapping_path, auto_map)
-    embed_images(hwpx, images_dir, mapping_path, auto_map, output)
+    hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output = (
+        parse_args()
+    )
+    validate_inputs(hwpx, images_dir, mapping_path, from_parsed, auto_map, base_dir)
+    embed_images(
+        hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output
+    )
 
 
 if __name__ == "__main__":
