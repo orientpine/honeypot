@@ -1,0 +1,13 @@
+Task 7 Evidence: xml_writer bullet/table upgrade
+Date: 2026-03-19
+
+Changes validated:
+- bullet_auto paraPrIDRef check strips leading explicit bullet characters from bullet content
+- table_cell_xml supports colspan/rowspan parameters and emits span attributes
+- build_table reflects merge info from dict cells
+
+Test command:
+python -m pytest "plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_bullets.py" "plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_tables.py" "plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py"
+
+Result:
+8 passed in 0.08s
