@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.7.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.8.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -39,6 +39,7 @@
 | 문서 | [**report-generator**](#report-generator) | 연구 노트 → 국가기관 제출용 보고서 |
 | 문서 | [**hwpx-generator**](#hwpx-generator) | HWPX 한글 문서 생성/편집/분석 |
 | 시각 | [**visual-generator**](#visual-generator) | 6개 테마 시각자료 프롬프트 생성 + Gemini 렌더링 |
+| 시각 | [**pptx-design-styles**](#pptx-design-styles) | 30가지 모던 PPTX 디자인 스타일 가이드 (HEX, 폰트, 레이아웃) |
 | 논문 | [**paper-style-generator**](#paper-style-generator) | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 |
 | 투자 | [**investments-portfolio**](#investments-portfolio) | DC형 퇴직연금 포트폴리오 멀티 에이전트 분석 |
 | 투자 | [**stock-consultation**](#stock-consultation) | 주식/ETF 투자 상담 (Bogle/Vanguard 철학) |
@@ -698,6 +699,52 @@ L1 Planning ──→ L2 Search ──→ L3 Analysis
 
 <br>
 
+## pptx-design-styles
+
+> 30가지 모던 PPTX 디자인 스타일의 HEX 색상, 폰트 조합, 레이아웃 규칙, 시그니처 요소를 제공하는 디자인 가이드 스킬입니다.
+>
+> 원본: [corazzon/pptx-design-styles](https://github.com/corazzon/pptx-design-styles) by TodayCode (오늘코드) — MIT License
+
+### 사용 예시
+
+PPTX 슬라이드 생성 시 자동 활성화됩니다. "sleek", "modern", "trendy", "stylish" 등의 키워드에도 반응합니다.
+
+```
+# 스타일 지정
+@pptx-design-styles Glassmorphism 스타일로 AI 제품 발표 자료를 구성해줘
+
+# 자동 추천
+@pptx-design-styles 스타트업 피치덱에 어울리는 스타일을 추천해줘
+```
+
+### 30가지 디자인 스타일
+
+| # | 스타일 | 무드 | 추천 용도 |
+|---|-------|------|----------|
+| 01 | Glassmorphism | 프리미엄 · 테크 | SaaS, AI |
+| 02 | Neo-Brutalism | 강렬함 · 스타트업 | 피치 덱 |
+| 03 | Bento Grid | 모듈형 · 구조적 | 제품 기능 |
+| 04 | Dark Academia | 학술적 · 세련됨 | 교육, 연구 |
+| 05 | Gradient Mesh | 예술적 · 생동감 | 브랜드 런칭 |
+| 06 | Claymorphism | 친근함 · 3D | 앱, 교육 |
+| 07 | Swiss International | 기능적 · 기업용 | 컨설팅, 금융 |
+| 08~30 | ... 23가지 추가 | 다양한 무드 | 전체 목록: SKILL.md |
+
+### 스타일 선택 가이드
+
+| 목적 | 추천 스타일 |
+|------|-------------|
+| 테크 / AI / 스타트업 | Glassmorphism, Aurora Neon, Cyberpunk, SciFi Holographic |
+| 기업 / 금융 | Swiss International, Monochrome, Editorial Magazine |
+| 브랜드 / 마케팅 | Gradient Mesh, Typographic Bold, Duotone Split |
+| 럭셔리 / 프리미엄 | Art Deco Luxe, Monochrome Minimal, Dark Academia |
+
+| 구성 | 항목 |
+|------|------|
+| Skill | pptx-design-styles (30가지 스타일 가이드 + references/styles.md) |
+
+---
+
 # 설치 & 설정
 
 ---
@@ -800,7 +847,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (13개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (14개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -842,10 +889,12 @@ honeypot/
 │   │   ├── agents/                   # 3 agents
 │   │   ├── commands/                 # create-plugin
 │   │   └── skills/                   # 7 skills
-│   └── patent-trend-analyzer/       # 특허 동향 분석
-│       ├── agents/                   # 3 agents
-│       ├── commands/                 # analyze-patents
-│       └── skills/                   # 5 skills
+│   ├── patent-trend-analyzer/       # 특허 동향 분석
+│   │   ├── agents/                   # 3 agents
+│   │   ├── commands/                 # analyze-patents
+│   │   └── skills/                   # 5 skills
+│   └── pptx-design-styles/          # PPTX 디자인 스타일 가이드
+│       └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -865,6 +914,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.8.0 | 2026-03-18 | pptx-design-styles 플러그인 추가 (corazzon/pptx-design-styles 포팅, 30가지 모던 PPTX 디자인 스타일 가이드 — HEX 색상, 폰트 조합, 레이아웃 규칙, 시그니처 요소) |
 | 3.7.0 | 2026-03-18 | hwpx-generator v3.0.0: 마크다운→HWPX 채우기(Workflow 7), 이미지 임베딩(image_embedder.py), md_parser.py, xml_writer.py 추가 |
 | 3.6.2 | 2026-03-17 | 6개 테마 예시 프롬프트를 v3.3.0 Golden Reference로 업데이트 (여백 최소화, 네거티브 스페이스 타겟, 캔버스 채우기 지시 반영) + Gemini API로 전체 이미지 재생성 |
 | 3.6.1 | 2026-03-17 | AGENTS.md 구조 개선: 코드베이스에서 추론 가능한 섹션 삭제 (STRUCTURE 트리, 파일 템플릿, 플러그인 추가 가이드 등 405줄 제거), 버전 체계를 breaking-aware SemVer로 재정의 (MAJOR=삭제/breaking, MINOR=추가/기능변경, PATCH=버그수정/문서), Registration Checklist를 MARKETPLACE RULES로 이동 |

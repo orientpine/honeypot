@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-03-18T00:00:00+09:00
-**Version:** 3.7.0
+**Version:** 3.8.0
 **Branch:** main
 
 ## OVERVIEW
@@ -37,7 +37,8 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX 이미지 임베딩 | `plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py` | PNG embedding into HWPX (Workflow 7) |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 13 plugins listed |
+| PPTX design styles (30 styles) | `plugins/pptx-design-styles/skills/pptx-design-styles/SKILL.md` | Glassmorphism, Neo-Brutalism 등 30가지 디자인 스타일 가이드 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 14 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
