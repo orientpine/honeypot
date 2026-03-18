@@ -1,0 +1,68 @@
+=== Task 11: template-fill mode + validate proofread gate ===
+
+--- page_guard.py --help ---
+usage: page_guard.py [-h] --reference REFERENCE --output OUTPUT
+                     [--max-text-delta-ratio MAX_TEXT_DELTA_RATIO]
+                     [--max-paragraph-delta-ratio MAX_PARAGRAPH_DELTA_RATIO]
+                     [--json] [--mode {default,template-fill}]
+
+HWPX 레퍼런스 대비 페이지 드리프트 위험 검사
+
+options:
+  -h, --help            show this help message and exit
+  --reference, -r REFERENCE
+                        기준 HWPX 경로
+  --output, -o OUTPUT   결과 HWPX 경로
+  --max-text-delta-ratio MAX_TEXT_DELTA_RATIO
+                        전체 텍스트 길이 허용 편차 비율 (기본: 0.15)
+  --max-paragraph-delta-ratio MAX_PARAGRAPH_DELTA_RATIO
+                        문단별 텍스트 길이 허용 편차 비율 (기본: 0.25)
+  --json                metrics를 JSON으로 출력
+  --mode {default,template-fill}
+                        검사 모드: default(전체 검사), template-fill(빈 템플릿→채워진 문서 비교,
+                        텍스트/문단 수 변경 허용)
+
+--- validate.py --help ---
+usage: validate.py [-h] [--strict] [--proofread] input
+
+Validate the structural integrity of an HWPX file
+
+positional arguments:
+  input        Path to .hwpx file
+
+options:
+  -h, --help   show this help message and exit
+  --strict     Enable strict checks for ZIP-level surgery compliance
+               (standalone, xmlns, newlines, table attributes)
+  --proofread  Run proofread.py after validation and include results
+
+--- pytest tests/test_page_guard.py -v ---
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 17 items
+
+tests/test_page_guard.py::test_mode_argument_exists PASSED               [  5%]
+tests/test_page_guard.py::test_mode_default_value PASSED                 [ 11%]
+tests/test_page_guard.py::test_mode_invalid_choice PASSED                [ 17%]
+tests/test_page_guard.py::test_default_mode_detects_paragraph_count_mismatch PASSED [ 23%]
+tests/test_page_guard.py::test_default_mode_detects_text_length_delta PASSED [ 29%]
+tests/test_page_guard.py::test_default_mode_detects_paragraph_text_delta PASSED [ 35%]
+tests/test_page_guard.py::test_default_mode_passes_identical PASSED      [ 41%]
+tests/test_page_guard.py::test_default_mode_detects_table_count_mismatch PASSED [ 47%]
+tests/test_page_guard.py::test_default_mode_detects_page_break_mismatch PASSED [ 52%]
+tests/test_page_guard.py::test_template_fill_suppresses_paragraph_count PASSED [ 58%]
+tests/test_page_guard.py::test_template_fill_suppresses_text_length_delta PASSED [ 64%]
+tests/test_page_guard.py::test_template_fill_suppresses_paragraph_text_delta PASSED [ 70%]
+tests/test_page_guard.py::test_template_fill_still_detects_table_count PASSED [ 76%]
+tests/test_page_guard.py::test_template_fill_still_detects_table_shape PASSED [ 82%]
+tests/test_page_guard.py::test_template_fill_still_detects_page_break PASSED [ 88%]
+tests/test_page_guard.py::test_template_fill_still_detects_column_break PASSED [ 94%]
+tests/test_page_guard.py::test_template_fill_passes_when_structure_identical PASSED [100%]
+
+============================= 17 passed in 0.06s ==============================
+
+=== EVIDENCE COMPLETE ===

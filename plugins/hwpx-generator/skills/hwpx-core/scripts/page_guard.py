@@ -118,10 +118,12 @@ def compare_metrics(
     out: Metrics,
     max_text_delta_ratio: float,
     max_paragraph_delta_ratio: float,
+    mode: str = "default",
 ) -> List[str]:
     errors: List[str] = []
 
-    if ref.paragraph_count != out.paragraph_count:
+    # In template-fill mode, paragraph count changes are expected
+    if mode != "template-fill" and ref.paragraph_count != out.paragraph_count:
         errors.append(
             f"문단 수 불일치: ref={ref.paragraph_count}, out={out.paragraph_count}"
         )
@@ -139,14 +141,16 @@ def compare_metrics(
         errors.append("표 구조(rowCnt/colCnt/width/height/pageBreak) 불일치")
 
     td = _ratio_delta(ref.text_char_total_nospace, out.text_char_total_nospace)
-    if td > max_text_delta_ratio:
+    # In template-fill mode, text length growth is expected (filling empty fields)
+    if mode != "template-fill" and td > max_text_delta_ratio:
         errors.append(
             "전체 텍스트 길이 편차 초과: "
             f"ref={ref.text_char_total_nospace}, out={out.text_char_total_nospace}, "
             f"delta={td:.2%}, limit={max_text_delta_ratio:.2%}"
         )
 
-    if len(ref.paragraph_text_lengths) == len(out.paragraph_text_lengths):
+    # In template-fill mode, per-paragraph text changes are expected
+    if mode != "template-fill" and len(ref.paragraph_text_lengths) == len(out.paragraph_text_lengths):
         for idx, (a, b) in enumerate(
             zip(ref.paragraph_text_lengths, out.paragraph_text_lengths), start=1
         ):
@@ -185,6 +189,12 @@ def main() -> int:
         action="store_true",
         help="metrics를 JSON으로 출력",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["default", "template-fill"],
+        default="default",
+        help="검사 모드: default(전체 검사), template-fill(빈 템플릿→채워진 문서 비교, 텍스트/문단 수 변경 허용)",
+    )
     args = parser.parse_args()
 
     ref_path = Path(args.reference)
@@ -214,6 +224,7 @@ def main() -> int:
         out,
         max_text_delta_ratio=args.max_text_delta_ratio,
         max_paragraph_delta_ratio=args.max_paragraph_delta_ratio,
+        mode=args.mode,
     )
     if errors:
         print("FAIL: page-guard")
@@ -221,7 +232,8 @@ def main() -> int:
             print(f" - {e}")
         return 1
 
-    print("PASS: page-guard")
+    mode_label = f" (mode={args.mode})" if args.mode != "default" else ""
+    print(f"PASS: page-guard{mode_label}")
     print(
         "  paragraph/table/pageBreak 구조와 텍스트 길이 편차가 허용 범위 내입니다."
     )
