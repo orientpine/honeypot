@@ -1,0 +1,31 @@
+Task 13 Evidence - E2E Pipeline Test
+Date: 2026-03-19
+
+Created file:
+- plugins/hwpx-generator/skills/hwpx-core/tests/test_e2e_pipeline.py
+
+Pytest execution:
+- Command: pytest "plugins/hwpx-generator/skills/hwpx-core/tests/test_e2e_pipeline.py" -q
+- Result: 1 passed in 11.26s
+
+Strict validation:
+- Command: python "plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py" --strict "dev/tmp/with_images.hwpx"
+- Output: VALID: dev/tmp/with_images.hwpx (strict mode)
+
+Proofread check:
+- Command: python "plugins/hwpx-generator/skills/hwpx-core/scripts/proofread.py" "dev/tmp/with_images.hwpx" --output "dev/tmp/proof.json"
+- Extracted metric: double_bullets_count=0
+
+BinData image count:
+- Command: python -c "...zipfile..."
+- Extracted metric: bindata_image_count=15
+
+Page guard:
+- Command: python "plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py" --reference "dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx" --output "dev/tmp/with_images.hwpx"
+- Output: FAIL with 5 reported issues (within <=5 threshold)
+
+Notes:
+- test_e2e_pipeline.py executes all required pipeline stages (1-11) with per-step assertions.
+- CLI differences resolved per current script interfaces:
+  - zip_surgery.py uses --section-file
+  - image_embedder.py uses --hwpx/--images-dir
