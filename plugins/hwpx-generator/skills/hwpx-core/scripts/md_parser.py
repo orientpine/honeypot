@@ -13,6 +13,8 @@ BULLET_RE = re.compile(r"^\s*([◦–□\-*])\s+(.*)$")
 BLOCKQUOTE_RE = re.compile(r"^\s*>\s?(.*)$")
 SEPARATOR_RE = re.compile(r"^\s*---+\s*$")
 IMAGE_REF_RE = re.compile(r"^\s*<그림\s+([0-9]+-[0-9]+)\s*:\s*(.*?)>\s*$")
+IMAGE_MD_RE = re.compile(r"^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$")
+CAPTION_ITALIC_RE = re.compile(r"^\s*\*그림\s+([0-9]+-[0-9]+)\s*:\s*(.*?)\*\s*$")
 
 
 def xml_escape(text: str) -> str:
@@ -150,6 +152,32 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
             idx += 1
             continue
 
+        image_md_match = IMAGE_MD_RE.match(line)
+        if image_md_match:
+            alt = xml_escape(image_md_match.group(1).strip())
+            path = image_md_match.group(2).strip()
+            filename = os.path.basename(path)
+            block = {
+                "type": "image_ref",
+                "id": None,
+                "path": path,
+                "alt": alt,
+                "caption": "",
+                "caption_id": None,
+                "filename": filename,
+            }
+            idx += 1
+            while idx < len(lines) and not lines[idx].strip():
+                idx += 1
+            if idx < len(lines):
+                caption_match = CAPTION_ITALIC_RE.match(lines[idx])
+                if caption_match:
+                    block["caption_id"] = caption_match.group(1)
+                    block["caption"] = xml_escape(caption_match.group(2).strip())
+                    idx += 1
+            blocks.append(block)
+            continue
+
         heading_match = HEADING_RE.match(line)
         if heading_match:
             level = len(heading_match.group(1))
@@ -188,6 +216,7 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                 is_table_line(next_line)
                 or SEPARATOR_RE.match(next_line)
                 or IMAGE_REF_RE.match(next_line)
+                or IMAGE_MD_RE.match(next_line)
                 or HEADING_RE.match(next_line)
                 or BULLET_RE.match(next_line)
                 or BLOCKQUOTE_RE.match(next_line)
