@@ -1,0 +1,19 @@
+Task: image_embedder.py --from-parsed + JPEG support
+Date: 2026-03-19
+
+Changed files:
+- plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py
+- plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py
+
+Implemented:
+- Added CLI options: --from-parsed, --base-dir
+- Added parsed JSON loader for type=="image_ref" path collection with base-dir resolution
+- Kept --mapping mode compatible (object and legacy string formats)
+- Added JPEG support (.jpg/.jpeg) for auto-map, dimension parsing, BinData entry naming, and content.hpf media-type=image/jpeg
+
+Verification:
+- pytest "plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py"
+  - 3 passed in 0.15s
+- LSP diagnostics
+  - plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py: clean
+  - plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py: clean
