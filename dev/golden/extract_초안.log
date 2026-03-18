@@ -1,0 +1,1907 @@
+section0.xml → dev/golden/section0_초안.xml
+================================================================
+  HWPX 심층 분석: (양식) '27년도 전략연구사업 제안서_초안.hwpx
+================================================================
+
+▶ 폰트 정의
+  hangul/0: 돋움
+  hangul/1: 돋움체
+  hangul/2: 맑은 고딕
+  hangul/3: 바탕
+  hangul/4: 한컴바탕
+  hangul/5: 함초롬돋움
+  hangul/6: 함초롬바탕
+  hangul/7: 휴먼명조
+  hangul/8: HY중고딕
+  hangul/9: HY헤드라인M
+  hangul/10: KoPub바탕체 Medium
+  hangul/11: 신명 태고딕
+  hangul/12: 한양중고딕
+  hangul/13: Noto Sans CJK SC
+  hangul/14: Arial
+  hangul/15: Calibri
+
+▶ borderFill (테두리/배경)
+  [1] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [2] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [3] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [4] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [5] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [6] left=SOLID 0.5 mm, right=SOLID 0.5 mm, top=SOLID 0.5 mm, bottom=SOLID 0.5 mm
+       배경=#2B2D63
+  [7] left=SOLID 0.5 mm, right=NONE, top=NONE, bottom=NONE
+  [8] left=NONE, right=NONE, top=SOLID 0.5 mm, bottom=SOLID 0.5 mm
+  [9] left=SOLID 0.12 mm, right=SOLID 0.5 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#2B5686
+  [10] left=NONE, right=NONE, top=NONE, bottom=SOLID 0.12 mm
+  [11] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#3A3C84
+  [12] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#DFE6F7
+  [13] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#D9D9D9
+  [14] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [15] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.12 mm
+  [16] left=NONE, right=NONE, top=NONE, bottom=DASH 0.12 mm
+       배경=#7F7F7F
+  [17] left=NONE, right=NONE, top=NONE, bottom=DASH 0.12 mm
+  [18] left=DASH 0.12 mm, right=DASH 0.12 mm, top=DASH 0.12 mm, bottom=DASH 0.12 mm
+       배경=#F2F2F2
+  [19] left=DASH 0.15 mm, right=DASH 0.15 mm, top=DASH 0.15 mm, bottom=DASH 0.15 mm
+  [20] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.1 mm
+       배경=#F2F2F2
+  [21] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#F2F2F2
+  [22] left=NONE, right=NONE, top=NONE, bottom=SOLID 0.12 mm
+  [23] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+  [24] left=NONE, right=NONE, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [25] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [26] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [27] left=NONE, right=NONE, top=NONE, bottom=NONE
+       배경=#1F4E79
+  [28] left=NONE, right=NONE, top=NONE, bottom=NONE
+       배경=#2E75B6
+  [29] left=SOLID 0.12 mm, right=SOLID 0.15 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#D9D9D9
+  [30] left=NONE, right=NONE, top=NONE, bottom=NONE
+       배경=#D6E4F0
+  [31] left=NONE, right=SOLID 0.15 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#D9D9D9
+  [32] left=NONE, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#D9D9D9
+  [33] left=NONE, right=NONE, top=NONE, bottom=NONE
+       배경=#FFF2CC
+  [34] left=NONE, right=NONE, top=NONE, bottom=NONE
+       배경=#FFFFFF
+  [35] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.15 mm
+       배경=#D9D9D9
+  [36] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=NONE, bottom=SOLID 0.12 mm
+       배경=#D9D9D9
+  [37] left=SOLID 0.12 mm, right=SOLID 0.15 mm, top=SOLID 0.12 mm, bottom=SOLID 0.15 mm
+  [38] left=SOLID 0.12 mm, right=SOLID 0.15 mm, top=NONE, bottom=SOLID 0.12 mm
+  [39] left=NONE, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [40] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.25 mm, bottom=SOLID 0.25 mm
+  [41] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [42] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+  [43] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [44] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+  [45] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [46] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.1 mm
+       배경=#D4D4D4
+  [47] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.1 mm
+       배경=#F2F2F2
+  [48] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.1 mm, bottom=SOLID 0.1 mm
+       배경=#F2F2F2
+  [49] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.3 mm
+  [50] left=SOLID 0.12 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.3 mm
+  [51] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.1 mm, bottom=SOLID 0.3 mm
+  [52] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.12 mm
+       배경=#D4D4D4
+  [53] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.1 mm
+       배경=#F2F2F2
+  [54] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.12 mm, bottom=SOLID 0.1 mm
+  [55] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.1 mm, bottom=SOLID 0.12 mm
+       배경=#F2F2F2
+  [56] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.1 mm, bottom=SOLID 0.12 mm
+  [57] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+       배경=#F2F2F2
+  [58] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.12 mm, bottom=SOLID 0.12 mm
+  [59] left=SOLID 0.3 mm, right=SOLID 0.12 mm, top=SOLID 0.12 mm, bottom=SOLID 0.3 mm
+       배경=#F2F2F2
+  [60] left=SOLID 0.12 mm, right=SOLID 0.3 mm, top=SOLID 0.12 mm, bottom=SOLID 0.3 mm
+  [61] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.25 mm
+       배경=#D4D4D4
+  [62] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.25 mm, bottom=SOLID 0.3 mm
+  [63] left=SOLID 0.3 mm, right=SOLID 0.3 mm, top=SOLID 0.25 mm, bottom=SOLID 0.25 mm
+  [64] left=SOLID 0.3 mm, right=SOLID 0.1 mm, top=SOLID 0.25 mm, bottom=SOLID 0.3 mm
+       배경=#F2F2F2
+  [65] left=SOLID 0.1 mm, right=SOLID 0.3 mm, top=SOLID 0.25 mm, bottom=SOLID 0.25 mm
+  [66] left=SOLID 0.1 mm, right=SOLID 0.3 mm, top=SOLID 0.25 mm, bottom=SOLID 0.3 mm
+  [67] left=SOLID 0.15 mm, right=SOLID 0.15 mm, top=SOLID 0.15 mm, bottom=SOLID 0.15 mm
+       배경=#D9D9D9
+  [68] left=SOLID 0.15 mm, right=SOLID 0.15 mm, top=SOLID 0.15 mm, bottom=SOLID 0.15 mm
+  [69] left=SOLID 0.15 mm, right=SOLID 0.15 mm, top=SOLID 0.3 mm, bottom=SOLID 0.15 mm
+  [70] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [71] left=SOLID 0.15 mm, right=SOLID 0.15 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [72] left=SOLID 0.15 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [73] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.3 mm, bottom=SOLID 0.15 mm
+  [74] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.15 mm, bottom=SOLID 0.15 mm
+  [75] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.3 mm, bottom=SOLID 0.15 mm
+       배경=#D6D6D6
+  [76] left=SOLID 0.15 mm, right=SOLID 0.3 mm, top=SOLID 0.3 mm, bottom=SOLID 0.15 mm
+       배경=#D6D6D6
+  [77] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.15 mm, bottom=SOLID 0.15 mm
+       배경=#D6D6D6
+  [78] left=SOLID 0.15 mm, right=SOLID 0.3 mm, top=SOLID 0.15 mm, bottom=SOLID 0.15 mm
+       배경=#D6D6D6
+  [79] left=SOLID 0.3 mm, right=SOLID 0.15 mm, top=SOLID 0.15 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+  [80] left=SOLID 0.15 mm, right=SOLID 0.3 mm, top=SOLID 0.15 mm, bottom=SOLID 0.3 mm
+       배경=#D6D6D6
+
+▶ charPr (글자 스타일)
+  [0] 10.0pt 바탕 #000000 취소선
+       fontRef=hangul:3 borderFillIDRef=5
+  [1] 10.0pt 함초롬바탕 #000000 취소선
+       fontRef=hangul:6 borderFillIDRef=4
+  [2] 9.0pt 맑은 고딕 #000000 spacing=-3 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [3] 9.0pt 맑은 고딕 #0000FF spacing=-3 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [4] 10.0pt 함초롬돋움 #000000 취소선
+       fontRef=hangul:5 borderFillIDRef=4
+  [5] 9.0pt 함초롬돋움 #000000 취소선
+       fontRef=hangul:5 borderFillIDRef=4
+  [6] 9.0pt 함초롬바탕 #000000 취소선
+       fontRef=hangul:6 borderFillIDRef=4
+  [7] 9.0pt 함초롬돋움 #000000 spacing=-5 취소선
+       fontRef=hangul:5 borderFillIDRef=4
+  [8] 14.0pt 신명 태고딕 #000000 취소선
+       fontRef=hangul:11 borderFillIDRef=1
+  [9] 13.0pt 맑은 고딕 #000000 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [10] 10.0pt 맑은 고딕 #000000 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [11] 16.0pt HY헤드라인M #000000 spacing=2 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [12] 15.5pt HY헤드라인M #000000 취소선
+       fontRef=hangul:9 borderFillIDRef=1
+  [13] 16.0pt HY헤드라인M #FFFFFF 취소선
+       fontRef=hangul:9 borderFillIDRef=5
+  [14] 10.0pt 맑은 고딕 #000000 spacing=-3 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [15] 10.0pt 맑은 고딕 #000000 spacing=-8 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [16] 10.0pt 맑은 고딕 #FFFFFF spacing=-5 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [17] 10.0pt 맑은 고딕 #000000 spacing=-5 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [18] 10.0pt 한컴바탕 #000000 취소선
+       fontRef=hangul:4 borderFillIDRef=1
+  [19] 10.0pt 맑은 고딕 #000000 spacing=-5 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [20] 16.0pt HY헤드라인M #FFFFFF spacing=2 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [21] 16.0pt HY헤드라인M #000000 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [22] 10.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [23] 9.0pt 맑은 고딕 #000000 spacing=-10 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=2
+  [24] 9.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [25] 9.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [26] 9.0pt 맑은 고딕 #0000FF spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [27] 9.0pt 맑은 고딕 #000000 spacing=-10 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [28] 9.0pt 맑은 고딕 #000000 spacing=-17 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [29] 9.0pt 맑은 고딕 #000000 spacing=-17 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [30] 9.0pt 맑은 고딕 #000000 spacing=-15 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [31] 8.0pt 맑은 고딕 #000000 spacing=-10 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [32] 5.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [33] 9.0pt 맑은 고딕 #000000 spacing=-7 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [34] 10.0pt 함초롬바탕 #000000 취소선
+       fontRef=hangul:6 borderFillIDRef=2
+  [35] 16.0pt HY헤드라인M #0000FF 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [36] 10.0pt 맑은 고딕 #0000FF spacing=-8 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [37] 13.0pt 한양중고딕 #FF0000 spacing=-7 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [38] 10.0pt 맑은 고딕 #0000FF spacing=-3 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [39] 13.0pt 한양중고딕 #000000 spacing=-10 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [40] 10.0pt 한양중고딕 #000000 취소선
+       fontRef=hangul:12 borderFillIDRef=2
+  [41] 15.0pt HY헤드라인M #000000 spacing=-5 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [42] 15.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [43] 14.0pt 한양중고딕 #000000 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [44] 12.0pt 한양중고딕 #000000 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [45] 10.0pt 한양중고딕 #000000 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [46] 11.0pt 돋움체 #0000FF
+       fontRef=hangul:1 borderFillIDRef=4
+  [47] 11.0pt 돋움체 #0000FF 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [48] 15.0pt 한양중고딕 #000000 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [49] 13.0pt 한양중고딕 #000000 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [50] 13.0pt 한양중고딕 #FFFFFF spacing=-5 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [51] 12.0pt 한양중고딕 #0000FF spacing=-9 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [52] 13.0pt 한양중고딕 #000000 spacing=-11 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [53] 11.0pt 한양중고딕 #000000 spacing=-3 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [54] 13.0pt 한양중고딕 #000000 spacing=-2 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [55] 13.0pt 한양중고딕 #000000 spacing=-3 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [56] 13.0pt 한양중고딕 #000000 spacing=-2 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [57] 13.0pt 한양중고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [58] 13.0pt 한양중고딕 #000000 spacing=-5 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [59] 11.0pt 한양중고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [60] 13.0pt 한양중고딕 #000000 spacing=-7 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [61] 13.0pt 한양중고딕 #000000 spacing=-9 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [62] 13.0pt 한양중고딕 #000000 spacing=-7 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [63] 11.0pt 한양중고딕 #000000 spacing=-5 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [64] 13.0pt 한양중고딕 #0000FF 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [65] 13.0pt 한양중고딕 #000000 spacing=-3 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [66] 8.0pt 돋움체 #0000FF 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [67] 11.0pt 한양중고딕 #000000 spacing=-9 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [68] 12.0pt 한양중고딕 #FF0000 spacing=-9 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [69] 10.0pt 한양중고딕 #000000 spacing=-3 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [70] 13.0pt HY중고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:8 borderFillIDRef=4
+  [71] 11.0pt 한양중고딕 #000000 spacing=-16 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [72] 12.0pt 한양중고딕 #000000 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [73] 15.0pt 한양중고딕 #000000 spacing=-1 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [74] 15.0pt HY헤드라인M #000000 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [75] 16.0pt 한양중고딕 #000000 볼드 밑줄(SOLID) 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [76] 14.0pt 한양중고딕 #000000 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [77] 14.0pt 한양중고딕 #0000FF 이탤릭 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [78] 12.0pt 맑은 고딕 #000000 볼드
+       fontRef=hangul:2 borderFillIDRef=4
+  [79] 12.0pt KoPub바탕체 Medium #000000 spacing=-3
+       fontRef=hangul:10 borderFillIDRef=4
+  [80] 10.0pt 맑은 고딕 #000000
+       fontRef=hangul:2 borderFillIDRef=4
+  [81] 14.0pt HY헤드라인M #000000 spacing=2 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [82] 16.0pt HY헤드라인M #000000 spacing=-5 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [83] 14.0pt HY헤드라인M #000000 spacing=-5 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [84] 10.0pt 맑은 고딕 #FF0000 spacing=-8 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [85] 8.0pt 맑은 고딕 #0000FF 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [86] 8.0pt 돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=4
+  [87] 8.0pt 돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=5
+  [88] 13.0pt 한양중고딕 #000000 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [89] 11.0pt 돋움 #000000 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [90] 11.0pt 돋움체 #000000
+       fontRef=hangul:1 borderFillIDRef=4
+  [91] 13.0pt 한양중고딕 #000000 spacing=-1 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [92] 8.0pt 돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=5
+  [93] 11.0pt 돋움 #000000 spacing=-1 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [94] 8.0pt 돋움 #000000 spacing=-15 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [95] 8.0pt 돋움 #000000 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [96] 8.0pt 돋움 #000000 spacing=-2 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [97] 8.0pt 돋움 #000000 취소선
+       fontRef=hangul:0 borderFillIDRef=5
+  [98] 8.0pt 돋움 #000000 spacing=-6 취소선
+       fontRef=hangul:0 borderFillIDRef=5
+  [99] 11.0pt 돋움 #000000 spacing=-2 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [100] 8.0pt 돋움 #000000 취소선
+       fontRef=hangul:0 borderFillIDRef=5
+  [101] 11.0pt 돋움 #000000 spacing=-10 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [102] 11.0pt 돋움 #000000 spacing=-11 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [103] 11.0pt 돋움 #000000 spacing=-13 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [104] 13.0pt 한양중고딕 #FF0000 spacing=-1 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [105] 11.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [106] 8.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [107] 8.0pt 돋움체 #000000 spacing=-19 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [108] 3.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [109] 10.48pt 휴먼명조 #000000
+       fontRef=hangul:7 borderFillIDRef=1
+  [110] 5.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [111] 11.0pt 돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=4
+  [112] 11.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [113] 3.0pt 돋움체 #000000 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [114] 11.0pt 돋움체 #000000 spacing=-15 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [115] 11.0pt 돋움체 #000000 spacing=-16 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [116] 8.0pt 돋움 #000000 spacing=-17 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [117] 8.0pt 돋움 #000000 spacing=-8 취소선
+       fontRef=hangul:0 borderFillIDRef=5
+  [118] 13.0pt 한양중고딕 #FF0000 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [119] 16.0pt HY헤드라인M #0000FF spacing=-5 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [120] 14.0pt HY헤드라인M #0000FF spacing=-5 취소선
+       fontRef=hangul:9 borderFillIDRef=4
+  [121] 10.0pt 돋움체 #000000
+       fontRef=hangul:1 borderFillIDRef=4
+  [122] 9.0pt 맑은 고딕 #0000FF 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [123] 10.0pt 맑은 고딕 #808080 spacing=-8 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [124] 11.0pt 함초롬바탕 #000000
+       fontRef=hangul:6 borderFillIDRef=2
+  [125] 12.0pt 함초롬바탕 #000000
+       fontRef=hangul:6 borderFillIDRef=2
+  [126] 10.0pt 맑은 고딕 #000000 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [127] 11.0pt 맑은 고딕 #000000 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [128] 10.0pt 맑은 고딕 #0000FF 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [129] 12.0pt 맑은 고딕 #000000 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [130] 11.0pt 돋움체 #0000FF spacing=-3 취소선
+       fontRef=hangul:1 borderFillIDRef=4
+  [131] 11.0pt 돋움 #0000FF spacing=-3 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [132] 9.0pt 맑은 고딕 #0000FF spacing=-10 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=2
+  [133] 2.0pt 맑은 고딕 #000000 spacing=-5 취소선
+       fontRef=hangul:2 borderFillIDRef=5
+  [134] 9.0pt Arial #000000 볼드
+       fontRef=hangul:14 borderFillIDRef=5
+  [135] 9.0pt Arial #000000
+       fontRef=hangul:14 borderFillIDRef=5
+  [136] 9.0pt Arial #0000FF
+       fontRef=hangul:14 borderFillIDRef=5
+  [137] 9.0pt Noto Sans CJK SC #FFFFFF 볼드
+       fontRef=hangul:13 borderFillIDRef=1
+  [138] 9.0pt Arial #FFFFFF 볼드
+       fontRef=hangul:14 borderFillIDRef=1
+  [139] 9.0pt Noto Sans CJK SC #000000 볼드
+       fontRef=hangul:13 borderFillIDRef=1
+  [140] 9.0pt Arial #000000
+       fontRef=hangul:14 borderFillIDRef=1
+  [141] 9.0pt Arial #0000FF
+       fontRef=hangul:14 borderFillIDRef=1
+  [142] 9.0pt Arial #000000 볼드
+       fontRef=hangul:14 borderFillIDRef=1
+  [143] 11.0pt Calibri #000000
+       fontRef=hangul:15 borderFillIDRef=1
+  [144] 8.0pt Noto Sans CJK SC #7F7F7F 이탤릭
+       fontRef=hangul:13 borderFillIDRef=1
+  [145] 11.0pt 돋움 #0000FF spacing=-2 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [146] 10.0pt 맑은 고딕 #000000
+       fontRef=hangul:2 borderFillIDRef=1
+  [147] 9.0pt 맑은 고딕 #000000 볼드
+       fontRef=hangul:2 borderFillIDRef=5
+  [148] 8.0pt 맑은 고딕 #0000FF 이탤릭
+       fontRef=hangul:2 borderFillIDRef=5
+  [149] 8.0pt 돋움 #000000 볼드 취소선
+       fontRef=hangul:0 borderFillIDRef=4
+  [150] 10.0pt 맑은 고딕 #0000FF 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [151] 10.0pt 맑은 고딕 #0000FF spacing=-10 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [152] 10.0pt 맑은 고딕 #0000FF spacing=-19 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [153] 10.0pt 맑은 고딕 #0000FF spacing=-11 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [154] 10.0pt 맑은 고딕 #0000FF spacing=-12 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [155] 10.0pt 맑은 고딕 #0000FF spacing=-24 취소선
+       fontRef=hangul:2 borderFillIDRef=4
+  [156] 12.0pt 한양중고딕 #0000FF 볼드 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [157] 10.0pt 한양중고딕 #0000FF 취소선
+       fontRef=hangul:12 borderFillIDRef=4
+  [158] 9.0pt 돋움체 #0000FF 취소선
+       fontRef=hangul:1 borderFillIDRef=5
+  [159] 12.0pt 맑은 고딕 #000000 취소선
+       fontRef=hangul:2 borderFillIDRef=2
+  [160] 11.0pt 맑은 고딕 #000000 취소선
+       fontRef=hangul:2 borderFillIDRef=2
+  [161] 11.0pt 맑은 고딕 #000000 볼드 취소선
+       fontRef=hangul:2 borderFillIDRef=2
+
+▶ paraPr (문단 스타일)
+  [0] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=1
+  [1] LEFT lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=4
+  [2] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-1310) borderFillIDRef=4
+  [3] JUSTIFY lineSpacing=150PERCENT
+       여백(없음) borderFillIDRef=4
+  [4] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=4
+  [5] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=6
+       여백(left=7000) borderFillIDRef=4
+  [6] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=5
+       여백(left=6000) borderFillIDRef=4
+  [7] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=4
+       여백(left=5000) borderFillIDRef=4
+  [8] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=3
+       여백(left=4000) borderFillIDRef=4
+  [9] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=2
+       여백(left=3000) borderFillIDRef=4
+  [10] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=1
+       여백(left=2000) borderFillIDRef=4
+  [11] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=0
+       여백(left=1000) borderFillIDRef=4
+  [12] JUSTIFY lineSpacing=160PERCENT
+       여백(left=1500) borderFillIDRef=4
+  [13] JUSTIFY lineSpacing=200PERCENT
+       여백(left=1000) borderFillIDRef=1
+  [14] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=5
+  [15] LEFT lineSpacing=160PERCENT
+       여백(intent=-3360) borderFillIDRef=4
+  [16] CENTER lineSpacing=160PERCENT
+       여백(intent=-2328) borderFillIDRef=4
+  [17] JUSTIFY lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=4
+  [18] CENTER lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=4
+  [19] CENTER lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=2
+  [20] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=2
+  [21] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-2490) borderFillIDRef=2
+  [22] JUSTIFY lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=5
+  [23] CENTER lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=2
+  [24] CENTER lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=2
+  [25] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=2
+  [26] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-1395, prev=300) borderFillIDRef=4
+  [27] CENTER lineSpacing=130PERCENT
+       여백(intent=-1395, prev=300) borderFillIDRef=4
+  [28] JUSTIFY lineSpacing=120PERCENT
+       여백(intent=-2000, prev=300) borderFillIDRef=4
+  [29] CENTER lineSpacing=130PERCENT
+       여백(intent=-484, prev=300) borderFillIDRef=4
+  [30] LEFT lineSpacing=130PERCENT
+       여백(intent=-736, prev=200) borderFillIDRef=2
+  [31] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-811) borderFillIDRef=4
+  [32] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-1010) borderFillIDRef=4
+  [33] CENTER lineSpacing=130PERCENT
+       여백(intent=-811) borderFillIDRef=4
+  [34] JUSTIFY lineSpacing=140PERCENT
+       여백(intent=-2320) borderFillIDRef=4
+  [35] JUSTIFY lineSpacing=120PERCENT
+       여백(prev=300) borderFillIDRef=4
+  [36] LEFT lineSpacing=130PERCENT
+       여백(intent=-1840) borderFillIDRef=4
+  [37] JUSTIFY lineSpacing=110PERCENT
+       여백(intent=-1885, prev=300) borderFillIDRef=4
+  [38] JUSTIFY lineSpacing=140PERCENT
+       여백(intent=-2331) borderFillIDRef=4
+  [39] JUSTIFY lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=4
+  [40] JUSTIFY lineSpacing=160PERCENT
+       여백(prev=300) borderFillIDRef=4
+  [41] JUSTIFY lineSpacing=130PERCENT heading=BULLET level=0
+       여백(prev=300) borderFillIDRef=4
+  [42] JUSTIFY lineSpacing=130PERCENT
+       여백(prev=300) borderFillIDRef=4
+  [43] LEFT lineSpacing=130PERCENT
+       여백(intent=-5904, prev=300) borderFillIDRef=4
+  [44] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-2688, prev=300) borderFillIDRef=4
+  [45] JUSTIFY lineSpacing=120PERCENT heading=BULLET level=0
+       여백(prev=300) borderFillIDRef=4
+  [46] JUSTIFY lineSpacing=120PERCENT
+       여백(intent=-1924, prev=300) borderFillIDRef=4
+  [47] JUSTIFY lineSpacing=120PERCENT
+       여백(intent=-1908, prev=300) borderFillIDRef=4
+  [48] JUSTIFY lineSpacing=120PERCENT
+       여백(intent=-3196, prev=300) borderFillIDRef=4
+  [49] CENTER lineSpacing=130PERCENT
+       여백(prev=300) borderFillIDRef=4
+  [50] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=4
+  [51] JUSTIFY lineSpacing=110PERCENT
+       여백(intent=-3822) borderFillIDRef=4
+  [52] CENTER lineSpacing=130PERCENT
+       여백(intent=-2330) borderFillIDRef=4
+  [53] LEFT lineSpacing=130PERCENT
+       여백(intent=-2330) borderFillIDRef=4
+  [54] CENTER lineSpacing=200PERCENT
+       여백(없음) borderFillIDRef=4
+  [55] JUSTIFY lineSpacing=160PERCENT
+       여백(intent=-10030, prev=500) borderFillIDRef=4
+  [56] JUSTIFY lineSpacing=150PERCENT
+       여백(intent=-1320, left=700) borderFillIDRef=4
+  [57] JUSTIFY lineSpacing=170PERCENT
+       여백(없음) borderFillIDRef=4
+  [58] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-460, prev=300) borderFillIDRef=4
+  [59] LEFT lineSpacing=130PERCENT
+       여백(intent=-1040, prev=300) borderFillIDRef=4
+  [60] JUSTIFY lineSpacing=120PERCENT
+       여백(없음) borderFillIDRef=2
+  [61] CENTER lineSpacing=160PERCENT
+       여백(intent=-100) borderFillIDRef=2
+  [62] CENTER lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=2
+  [63] LEFT lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=2
+  [64] CENTER lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=5
+  [65] JUSTIFY lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=4
+  [66] CENTER lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=4
+  [67] CENTER lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=1
+  [68] CENTER lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=5
+  [69] JUSTIFY lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=5
+  [70] JUSTIFY lineSpacing=140PERCENT
+       여백(intent=-3296) borderFillIDRef=4
+  [71] CENTER lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=4
+  [72] CENTER lineSpacing=140PERCENT
+       여백(없음) borderFillIDRef=4
+  [73] JUSTIFY lineSpacing=133PERCENT
+       여백(intent=-3296) borderFillIDRef=4
+  [74] CENTER lineSpacing=133PERCENT
+       여백(없음) borderFillIDRef=4
+  [75] JUSTIFY lineSpacing=133PERCENT
+       여백(없음) borderFillIDRef=4
+  [76] JUSTIFY lineSpacing=133PERCENT
+       여백(intent=-3518) borderFillIDRef=2
+  [77] CENTER lineSpacing=130PERCENT
+       여백(right=500) borderFillIDRef=5
+  [78] CENTER lineSpacing=133PERCENT
+       여백(없음) borderFillIDRef=5
+  [79] JUSTIFY lineSpacing=133PERCENT
+       여백(없음) borderFillIDRef=5
+  [80] JUSTIFY lineSpacing=133PERCENT
+       여백(intent=-3128) borderFillIDRef=4
+  [81] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=1
+  [82] JUSTIFY lineSpacing=160PERCENT
+       여백(left=1000) borderFillIDRef=4
+  [83] JUSTIFY lineSpacing=120PERCENT
+       여백(intent=-2156, prev=300) borderFillIDRef=4
+  [84] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=4
+  [85] JUSTIFY lineSpacing=140PERCENT
+       여백(intent=-1200) borderFillIDRef=5
+  [86] LEFT lineSpacing=150PERCENT
+       여백(intent=-800, left=400) borderFillIDRef=4
+  [87] LEFT lineSpacing=150PERCENT
+       여백(intent=-1264, left=400) borderFillIDRef=4
+  [88] CENTER lineSpacing=130PERCENT
+       여백(intent=-1864, prev=300) borderFillIDRef=4
+  [89] LEFT lineSpacing=130PERCENT
+       여백(intent=-1656, prev=300) borderFillIDRef=4
+  [90] JUSTIFY lineSpacing=140PERCENT
+       여백(intent=-2024) borderFillIDRef=4
+  [91] LEFT lineSpacing=130PERCENT
+       여백(intent=-1584, prev=300) borderFillIDRef=4
+  [92] JUSTIFY lineSpacing=180PERCENT heading=BULLET level=3
+       여백(left=1500, prev=500, next=200) borderFillIDRef=2
+  [93] JUSTIFY lineSpacing=180PERCENT heading=BULLET level=1
+       여백(left=2500) borderFillIDRef=2
+  [94] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=27
+  [95] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=28
+  [96] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=30
+  [97] LEFT lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=1
+  [98] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=1
+  [99] LEFT lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=27
+  [100] LEFT lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=33
+  [101] RIGHT lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=4
+  [102] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-1681, prev=300) borderFillIDRef=4
+  [103] LEFT lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=34
+  [104] LEFT lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=1
+  [105] CENTER lineSpacing=108PERCENT
+       여백(없음) borderFillIDRef=1
+  [106] LEFT lineSpacing=108PERCENT
+       여백(없음) borderFillIDRef=1
+  [107] CENTER lineSpacing=110PERCENT
+       여백(intent=-1885, prev=300) borderFillIDRef=4
+  [108] CENTER lineSpacing=100PERCENT
+       여백(없음) borderFillIDRef=1
+  [109] CENTER lineSpacing=130PERCENT
+       여백(intent=-2688, prev=300) borderFillIDRef=4
+  [110] JUSTIFY lineSpacing=180PERCENT
+       여백(left=2500) borderFillIDRef=2
+  [111] CENTER lineSpacing=130PERCENT
+       여백(intent=-1656, prev=300) borderFillIDRef=4
+  [112] JUSTIFY lineSpacing=130PERCENT
+       여백(left=2200, prev=300) borderFillIDRef=4
+  [113] JUSTIFY lineSpacing=130PERCENT
+       여백(left=1800, prev=300) borderFillIDRef=4
+  [114] JUSTIFY lineSpacing=130PERCENT
+       여백(left=1400, prev=300) borderFillIDRef=4
+  [115] JUSTIFY lineSpacing=130PERCENT
+       여백(left=2000, prev=300) borderFillIDRef=4
+  [116] JUSTIFY lineSpacing=130PERCENT
+       여백(left=1500, prev=300) borderFillIDRef=4
+  [117] LEFT lineSpacing=120PERCENT heading=BULLET level=0
+       여백(prev=300) borderFillIDRef=4
+  [118] JUSTIFY lineSpacing=180PERCENT heading=BULLET level=3
+       여백(left=1500, prev=500, next=200) borderFillIDRef=2
+  [119] JUSTIFY lineSpacing=180PERCENT heading=BULLET level=1
+       여백(left=2500) borderFillIDRef=2
+
+▶ 문서 구조
+  페이지: 59528 × 84188 (WIDELY)
+  여백: 좌=5669 우=5669 상=2834 하=4251
+  머리말=4251 꼬리말=2834
+  본문폭: 48190 (59528-5669-5669)
+  페이지테두리: borderFill=1 textBorder=PAPER offset=[1417,1417,1417,1417]
+
+  ════════ 본문 ════════
+
+  ┌─ TABLE id=2065816222 1행×3열 w=48159 h=2831
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [5968, 565, 41626]
+  │  합계: 48159
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=5968 h=2831 borderFill=6 cellMargin=[141,141,141,141]
+  │       P paraPr=16 charPr=13:"참고"
+  │     Cell(1,0) w=565 h=2831 borderFill=7 cellMargin=[141,141,141,141]
+  │       P paraPr=4 charPr=12:(빈)
+  │     Cell(2,0) w=41626 h=2831 borderFill=8 cellMargin=[141,141,141,141]
+  │       P paraPr=17 charPr=82:" 출연연 연구기획 기반 제안서 양식(안)" + charPr=83:(빈)
+  └─────
+
+  ┌─ TABLE id=2089348062 1행×3열 w=47056 h=2697
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [4554, 737, 41765]
+  │  합계: 47056
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=4554 h=2697 borderFill=9 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=20:"01"
+  │     Cell(1,0) w=737 h=2697 borderFill=7 cellMargin=[141,141,141,141]
+  │       P paraPr=20 charPr=21:" "
+  │     Cell(2,0) w=41765 h=2697 borderFill=10 cellMargin=[510,510,141,141]
+  │       P paraPr=21 charPr=35:" <- 연번 작성 + 과제명 작성"
+  └─────
+
+  ┌─ TABLE id=2065816258 35행×8열 w=47772 h=61760
+  │  borderFill=3 treatAsChar=0 horzAlign=LEFT
+  │  열너비: [6496, 4799, 1964, 3662, ?, 7347, 7347, 14436]
+  │  합계: 46051
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=47772 h=1200 colSpan=8 borderFill=52 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=44:"개요"
+  │  ── Row 1
+  │     Cell(0,1) w=11295 h=4200 colSpan=2 borderFill=53 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=127:"전략연구사업 과제명"
+  │     Cell(2,1) w=36477 h=1583 colSpan=6 borderFill=54 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=128:" " + charPr=36:"※ 융합형의 경우, 반드시 두 단계(하이픈 “-” 활용)에 걸쳐 작성"
+  │       P paraPr=58 charPr=36:" (ex. " + charPr=84:"AAAAA 개발 (융합형 공동의 내용)" + charPr=36:" – BBBBB 개발 (제출기관의 내용))" + charPr=84:"※ 융합형 공동의 내용(AAAAA 개발)은 반드시 융합형 상대 출연연과 ..." + charPr=36:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=11295 h=6500 colSpan=2 rowSpan=2 borderFill=55 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=10:"연계 임무번호"
+  │       P paraPr=18 charPr=10:"연계 임무명"
+  │     Cell(2,2) w=1964 h=3732 borderFill=15 cellMargin=[510,510,141,141]
+  │       P paraPr=88 charPr=36:"21"
+  │     Cell(3,2) w=34513 h=3732 colSpan=5 borderFill=56 cellMargin=[510,510,141,141]
+  │       P paraPr=89 charPr=36:" ※ 연계 임무 및 수요는 자유롭게 조합 가능(관련도 높은 임무 순으로 ..."
+  │  ── Row 3
+  │     Cell(2,3) w=1964 h=4068 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=111 charPr=36:(빈)
+  │     Cell(3,3) w=34513 h=4068 colSpan=5 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=49 charPr=123:(빈)
+  │  ── Row 4
+  │     Cell(0,4) w=6496 h=21792 rowSpan=6 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=10:"연계 수요명"
+  │       P paraPr=59 charPr=85:"※ 수요 적합도가 높은 순으로 작성"
+  │     Cell(1,4) w=4799 h=10613 rowSpan=3 borderFill=21 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=10:"정부"
+  │       P paraPr=18 charPr=10:"수요"
+  │       P paraPr=18 charPr=150:"(예시)"
+  │     Cell(2,4) w=1964 h=3281 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"86"
+  │     Cell(3,4) w=3662 h=3281 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=49 charPr=151:"과학기술정보통신부 "
+  │     Cell(4,4) w=30851 h=3281 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=42 charPr=36:" " + charPr=152:"중소 생산･제조현장의 Man to Robot Skill Transfer ..."
+  │  ── Row 5
+  │     Cell(2,5) w=1964 h=3847 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"84"
+  │     Cell(3,5) w=3662 h=3847 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=49 charPr=153:"과학기술정보통신부 "
+  │     Cell(4,5) w=30851 h=3847 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=42 charPr=153:" 피지컬AI의 위험에 대응하는 무재해 제조안전 AX 기술개발"
+  │  ── Row 6
+  │     Cell(2,6) w=1964 h=3485 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"111"
+  │     Cell(3,6) w=3662 h=3485 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=49 charPr=154:"(부처)"
+  │     Cell(4,6) w=30851 h=3485 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=42 charPr=154:" " + charPr=155:"초월적 신체 지능을 위한 가상 연동 학습데이터 생성 원천기술 개발"
+  │  ── Row 7
+  │     Cell(1,7) w=4799 h=11179 rowSpan=3 borderFill=21 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=10:"산업계"
+  │       P paraPr=18 charPr=150:"(예시)"
+  │     Cell(2,7) w=1964 h=3715 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"2-1"
+  │     Cell(3,7) w=3662 h=3715 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"AI "
+  │     Cell(4,7) w=30851 h=3715 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=36:" 산업용 로봇 VLAM을 위한 멀티모달 데이터셋 구축"
+  │  ── Row 8
+  │     Cell(2,8) w=1964 h=3732 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"2-3"
+  │     Cell(3,8) w=3662 h=3732 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"AI "
+  │     Cell(4,8) w=30851 h=3732 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=36:" 로봇 지능화를 위한 차세대 AI 데이터트레이닝 인프라 구축"
+  │  ── Row 9
+  │     Cell(2,9) w=1964 h=3732 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"(번호)"
+  │     Cell(3,9) w=3662 h=3732 borderFill=3 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"(분야)"
+  │     Cell(4,9) w=30851 h=3732 colSpan=4 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=36:(빈)
+  │  ── Row 10
+  │     Cell(0,10) w=11295 h=1666 colSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=127:"K-문샷"
+  │     Cell(2,10) w=36477 h=1666 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=128:"해당분야 기입"
+  │  ── Row 11
+  │     Cell(0,11) w=11295 h=1666 colSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=127:"유형"
+  │     Cell(2,11) w=36477 h=1666 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=126:"□ 융합형 (상대 출연연:             )"
+  │  ── Row 12
+  │     Cell(0,12) w=11295 h=2200 colSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=127:"AI 연관성"
+  │     Cell(2,12) w=36477 h=2200 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=126:"□ 해당(AI개발)      □ 해당(AI활용)             "
+  │  ── Row 13
+  │     Cell(0,13) w=11295 h=1866 colSpan=2 borderFill=55 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=127:"주관연구개발기관"
+  │     Cell(2,13) w=36477 h=1866 colSpan=6 borderFill=56 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=128:" 000 연구원 (제출기관명)"
+  │  ── Row 14
+  │     Cell(0,14) w=11295 h=2600 colSpan=2 rowSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=10:"연구책임자"
+  │     Cell(2,14) w=36477 h=1300 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=36:"(부서명)                    (직함)           ..."
+  │  ── Row 15
+  │     Cell(2,15) w=36477 h=283 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=36:"(전화번호)                  (e-mail)"
+  │  ── Row 16
+  │     Cell(0,16) w=11295 h=2000 colSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=10:"인력"
+  │       P paraPr=50 charPr=10:"(연구책임자 포함)"
+  │     Cell(2,16) w=36477 h=2000 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"명"
+  │  ── Row 17
+  │     Cell(0,17) w=11295 h=5200 colSpan=2 rowSpan=4 borderFill=59 cellMargin=[510,510,141,141]
+  │       P paraPr=50 charPr=10:"공동·위탁"
+  │       P paraPr=50 charPr=10:"(" + charPr=150:"미해당 시 삭제" + charPr=10:")"
+  │     Cell(2,17) w=36477 h=1300 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=15:"(산)"
+  │  ── Row 18
+  │     Cell(2,18) w=36477 h=1300 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=15:"(학)"
+  │  ── Row 19
+  │     Cell(2,19) w=36477 h=1300 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=15:"(연)"
+  │  ── Row 20
+  │     Cell(2,20) w=36477 h=1300 colSpan=6 borderFill=60 cellMargin=[510,510,141,141]
+  │       P paraPr=26 charPr=19:"(기타)"
+  │  ── Row 21
+  │     Cell(0,21) w=47772 h=2766 colSpan=8 borderFill=46 cellMargin=[141,141,141,141]
+  │       P paraPr=50 charPr=129:"연구기간 및 연구개발비" + charPr=14:"(융합형 상대 출연연의 연구개발비는 제외)"
+  │  ── Row 22
+  │     Cell(0,22) w=11295 h=2232 colSpan=2 borderFill=47 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=127:"연구기간"
+  │     Cell(2,22) w=7347 h=2232 colSpan=3 borderFill=20 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=127:"주관기관"
+  │     Cell(5,22) w=7347 h=2232 borderFill=20 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=127:"공동기관"
+  │     Cell(6,22) w=7347 h=2232 borderFill=20 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=127:"위탁기관"
+  │     Cell(7,22) w=14436 h=2232 borderFill=48 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=127:"합계"
+  │  ── Row 23
+  │     Cell(0,23) w=11295 h=3732 colSpan=2 borderFill=49 cellMargin=[510,510,141,141]
+  │       P paraPr=29 charPr=38:"’00-’00 (0+0)"
+  │     Cell(2,23) w=7347 h=3732 colSpan=3 borderFill=50 cellMargin=[510,510,141,141]
+  │       P paraPr=29 charPr=14:"(연도별) " + charPr=38:"000억원 " + charPr=14:"(총) " + charPr=38:"000억원"
+  │     Cell(5,23) w=7347 h=3732 borderFill=50 cellMargin=[510,510,141,141]
+  │       P paraPr=29 charPr=14:"(연도별) " + charPr=38:"000억원 " + charPr=14:"(총) " + charPr=38:"000억원"
+  │     Cell(6,23) w=7347 h=3732 borderFill=50 cellMargin=[510,510,141,141]
+  │       P paraPr=29 charPr=14:"(연도별) " + charPr=38:"000억원 " + charPr=14:"(총) " + charPr=38:"000억원"
+  │     Cell(7,23) w=14436 h=3732 borderFill=51 cellMargin=[510,510,141,141]
+  │       P paraPr=29 charPr=14:"(연도별) " + charPr=38:"000억원 " + charPr=14:"(총) " + charPr=38:"000억원"
+  │  ── Row 24
+  │     Cell(0,24) w=47772 h=2898 colSpan=8 borderFill=46 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=129:"비전 및 목표"
+  │  ── Row 25
+  │     Cell(0,25) w=11295 h=5062 colSpan=2 borderFill=57 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=127:"비전"
+  │     Cell(2,25) w=36477 h=5062 colSpan=6 borderFill=58 cellMargin=[510,510,141,141]
+  │       P paraPr=36 charPr=36:(빈)
+  │  ── Row 26
+  │     Cell(0,26) w=11295 h=5262 colSpan=2 borderFill=59 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=127:"목표"
+  │     Cell(2,26) w=36477 h=5262 colSpan=6 borderFill=60 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:(빈)
+  │  ── Row 27
+  │     Cell(0,27) w=47772 h=2049 colSpan=8 borderFill=61 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=129:"핵심 연구내용"
+  │  ── Row 28
+  │     Cell(0,28) w=47772 h=15350 colSpan=8 borderFill=40 cellMargin=[141,141,141,141]
+  │       P paraPr=27 charPr=36:(빈)
+  │  ── Row 29
+  │     Cell(0,29) w=47772 h=2049 colSpan=8 borderFill=61 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=129:"수행체계 및 연구전략"
+  │  ── Row 30
+  │     Cell(0,30) w=47772 h=10639 colSpan=8 borderFill=62 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:(빈)
+  │  ── Row 31
+  │     Cell(0,31) w=47772 h=2049 colSpan=8 borderFill=61 cellMargin=[141,141,141,141]
+  │       P paraPr=18 charPr=129:"기대효과"
+  │  ── Row 32
+  │     Cell(0,32) w=47772 h=8375 colSpan=8 borderFill=63 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:(빈)
+  │  ── Row 33
+  │     Cell(0,33) w=11295 h=2600 colSpan=2 rowSpan=2 borderFill=64 cellMargin=[510,510,141,141]
+  │       P paraPr=18 charPr=127:"색인어"
+  │     Cell(2,33) w=36477 h=1300 colSpan=6 borderFill=65 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"(국문 5개)"
+  │  ── Row 34
+  │     Cell(2,34) w=36477 h=1300 colSpan=6 borderFill=66 cellMargin=[510,510,141,141]
+  │       P paraPr=27 charPr=36:"(영문 5개)"
+  └─────
+
+  P id=2147483648 paraPr=37 charPr=44:(빈)
+  P id=0 paraPr=37 charPr=156:"※ 2page 분량 제한 준수" + charPr=157:"(글자 10point, 줄간격 130%)"
+  ┌─ TABLE id=2101414220 2행×2열 w=48473 h=8980
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=7098 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"연구기관은 참여 기관에 따라 수정"
+  │       P paraPr=41 charPr=52:"최종 목표: 수치, 산출물 등 측정 가능한 달성 결과를 작성"
+  │       P paraPr=41 charPr=52:"비전: 연구가 실현할 사회적, 과학적 미래상을 문장으로 간략히 작성"
+  └─────
+
+  P id=0 paraPr=37 charPr=48:"1. 필요성(배경)"
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 1-1 기술/사회 문제 정의"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  ┌─ TABLE id=2105526913 2행×2열 w=48473 h=11232
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=7098 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"본 과제가 해결하고자 하는 핵심 문제를 명확히 정의하여 기술"
+  │       P paraPr=41 charPr=39:"문제의 범위와 대상을 구체적으로 한정하고, 문제가 발생하는 맥락(기술적·..."
+  │       P paraPr=41 charPr=39:"추상적 선언이 아닌, 누가·어떤 상황에서·어떤 어려움을 겪는지가 드러나도..."
+  │       P paraPr=42 charPr=53:"    ※ 필요시 그림, 표 등 활용하여 자유롭게 제시"
+  └─────
+
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 1-2 국내외 기술 현황"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  ┌─ TABLE id=2105526914 2행×2열 w=48473 h=9540
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=7098 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"해당 문제와 직접 관련된 국내외 연구·기술 동향과 수준을 구체적으로 기술"
+  │       P paraPr=41 charPr=39:"국내외 현황의 차이가 있는 경우 이를 구분하여 제시"
+  │       P paraPr=41 charPr=39:"단순 나열이 아닌, 현황이 본 과제의 필요성과 어떻게 연결되는지 맥락을 ..."
+  │       P paraPr=42 charPr=53:"    ※ 필요시 그림, 표 등 활용하여 자유롭게 제시"
+  └─────
+
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 1-3 기존 연구의 한계"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  ┌─ TABLE id=2105526915 2행×2열 w=48473 h=11232
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=7098 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"1-2에서 제시한 현황을 바탕으로, 기존 접근으로는 해결되지 않는 이유를..."
+  │       P paraPr=41 charPr=39:"기술적 한계뿐 아니라 조직·체계·자원 등 구조적 한계도 포함 가능"
+  │       P paraPr=41 charPr=39:"본 과제가 기존 연구와 차별화되는 출발점이 이 항목에서 드러나야 함"
+  │       P paraPr=42 charPr=53:"    ※ 필요시 그림, 표 등 활용하여 자유롭게 제시"
+  └─────
+
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 1-4 전략연구 필요성"
+  P id=3174339429 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  ┌─ TABLE id=2105526916 2행×2열 w=48473 h=11232
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=7098 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"앞선 1, 2, 3의 흐름을 바탕으로, 왜 이 문제를 전략연구 방식으로 ..."
+  │       P paraPr=41 charPr=39:"해당 출연연이 수행해야 하는 이유(보유 역량·인프라·도메인 전문성 등)를..."
+  │       P paraPr=41 charPr=39:"국가적 중요성·시급성이 있는 경우 그 근거를 구체적으로 서술"
+  │       P paraPr=42 charPr=53:"    ※ 필요시 그림, 표 등 활용하여 자유롭게 제시"
+  └─────
+
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=39 charPr=49:(빈)
+  P id=0 paraPr=38 charPr=48:"2. 정부·산업계 수요 연계성"
+  P id=2147483648 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 2-1 정부 수요"
+  P id=0 paraPr=37 charPr=48:(빈)
+  ┌─ TABLE id=2102047242 4행×5열 w=46930 h=6664
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [5500, 10500, 11000, 10500, 9430]
+  │  합계: 46930
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=5500 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"정부수요"
+  │       P paraPr=105 charPr=147:"번호"
+  │     Cell(1,0) w=10500 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"정부수요명"
+  │     Cell(2,0) w=11000 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"수요 세부내용"
+  │     Cell(3,0) w=10500 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"대응 연구내용"
+  │     Cell(4,0) w=9430 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"주요 산출물"
+  │  ── Row 1
+  │     Cell(0,1) w=5500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=146:(빈)
+  │     Cell(1,1) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"표지 기재 정부수요명과 동일하게 작성"
+  │     Cell(2,1) w=11000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"해당 수요의 구체적 내용 및 현재 미충족 사유"
+  │     Cell(3,1) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"본 과제에서 수요 충족을 위한 연구내용"
+  │     Cell(4,1) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"연구를 통해 산출되는 구체적 결과물"
+  │  ── Row 2
+  │     Cell(0,2) w=5500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(1,2) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(2,2) w=11000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(3,2) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(4,2) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │  ── Row 3
+  │     Cell(0,3) w=5500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(1,3) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(2,3) w=11000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(3,3) w=10500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(4,3) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  └─────
+
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:(빈)
+  ┌─ TABLE id=2102047246 2행×2열 w=48473 h=11984
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=10102 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"표지에 기재한 정부 수요 각각에 대해 작성 (최대 3 개)"
+  │       P paraPr=41 charPr=39:"해당 수요가 현재 미충족 상태인 원인과 본 과제 접근의 차별성을 보충 서..."
+  │       P paraPr=41 charPr=39:"정부수요의 세부 내용을 본 전략연구사업 과제를 통해 어떻게 충족할 수 있..."
+  └─────
+
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:(빈)
+  P id=0 paraPr=37 charPr=48:" 2-2 산업계 수요"
+  P id=2147483648 paraPr=37 charPr=48:(빈)
+  ┌─ TABLE id=2102047244 4행×6열 w=46930 h=6664
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [5000, 8500, 9430, 9000, 8000, 7000]
+  │  합계: 46930
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=5000 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"산업계"
+  │       P paraPr=105 charPr=147:"수요번호"
+  │     Cell(1,0) w=8500 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"산업계"
+  │       P paraPr=105 charPr=147:"수요명"
+  │     Cell(2,0) w=9430 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"현장 기술 갭"
+  │     Cell(3,0) w=9000 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"대응 연구내용"
+  │     Cell(4,0) w=8000 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"주요 산출물"
+  │     Cell(5,0) w=7000 h=282 borderFill=67 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=147:"수요처"
+  │  ── Row 1
+  │     Cell(0,1) w=5000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=105 charPr=146:(빈)
+  │     Cell(1,1) w=8500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"표지 기재 산업계 수요명과 동일"
+  │     Cell(2,1) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"산업 현장의 기술적 미비점 또는 니즈"
+  │     Cell(3,1) w=9000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"해당 갭 해소를 위한 연구내용"
+  │     Cell(4,1) w=8000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"산출물 및 기술이전 대상"
+  │     Cell(5,1) w=7000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=148:"수요 기업·기관명"
+  │  ── Row 2
+  │     Cell(0,2) w=5000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(1,2) w=8500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(2,2) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(3,2) w=9000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(4,2) w=8000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(5,2) w=7000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │  ── Row 3
+  │     Cell(0,3) w=5000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(1,3) w=8500 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(2,3) w=9430 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(3,3) w=9000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(4,3) w=8000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  │     Cell(5,3) w=7000 h=282 borderFill=68 cellMargin=[400,400,200,200]
+  │       P paraPr=106 charPr=146:(빈)
+  └─────
+
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=2147483648 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  ┌─ TABLE id=2102047248 2행×2열 w=48473 h=8871
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=6989 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=39:"표지에 기재한 산업계 수요 각각에 대해 작성 (최대 3 개)"
+  │       P paraPr=41 charPr=39:"산업 현장의 실제 니즈(시장 데이터 등)를 근거로 보충 서술"
+  │       P paraPr=41 charPr=39:"연구 성과의 산업계 전달 경로(기술이전, 공동연구 등)까지 구체적으로 작..."
+  └─────
+
+  P id=2147483648 paraPr=38 charPr=48:"3. 비전 및 목표"
+  P id=0 paraPr=38 charPr=48:" 3-1 비전"
+  P id=0 paraPr=39 charPr=129:""인구절벽 시대, 야외 비정형 현장에서 작업자를 대신하는 필드로봇 피지컬 AI 자율화 플랫..."
+  P id=0 paraPr=118 charPr=159:"저출산·고령화에 따른 생산가능인구 급감으로 재난대응·농업·건설 등 야외 비정형 필드환경의 ..."
+  P id=2147483648 paraPr=119 charPr=161:"(안전한 현장)" + charPr=160:" 재난 현장에 자율 로봇을 선제 투입하여 인명 피해를 차단하고, 건설 현장의 고위험 작업을..."
+  P id=2147483648 paraPr=119 charPr=161:"(지속가능한 산업) " + charPr=160:"숙련공의 현장 노하우를 AI 모델로 보존하여, 비숙련자도 전문가 수준의 작업 수행이 가능하..."
+  P id=2147483648 paraPr=119 charPr=161:"(확장가능한 기술 기반)" + charPr=160:" 필드환경 공통 파운데이션 모델 중심의 피지컬 AI 플랫폼을 확보하여, 다양한 필드로봇 및..."
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=2147483648 paraPr=38 charPr=48:" 3-2 목표"
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=2147483648 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  ┌─ TABLE id=2065816263 2행×2열 w=48473 h=53644
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=10959 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=61:"비전은 1번에서 정의한 문제와 한계가 해소되고, 2번에서 확인한 정부·산..."
+  │       P paraPr=41 charPr=61:"목표는 그 미래상에 도달하기 위한 구체적 경로로, 1번·2번의 내용과 논..."
+  │       P paraPr=41 charPr=88:"최종목표를 달성하기 위한 단계별 세부 연구목표를 연도 단위로 구체화하여 ..."
+  │       P paraPr=41 charPr=88:"연차별 핵심목표는 해당 연도에 달성해야 할 결과를 측정 가능한 형태로 기..."
+  │       P paraPr=43 charPr=63:"    * " + charPr=59:"예시:" + charPr=63:" (1단계) 3MW급 수전해 수소생산 후보기술 발굴 및 가능성 검증" + charPr=59:(빈) + charPr=63:"(2단계) 수전해 수소생산 규모 스케일업 기술 개발 및 실증"
+  │       P paraPr=44 charPr=57:"  - " + charPr=54:"목표 설정 근거를 구체적으로 제시하고, 기존 과제 대비 새로운 연구 가치..."
+  │       P paraPr=44 charPr=54:"    <예시>"
+  │       P paraPr=109 [내부테이블]
+  │       P paraPr=41 charPr=88:"핵심기술은 기술 키워드 나열이 아닌, 연구 단계·목적이 드러나는 명칭으로..." + charPr=54:"(예: "○○ 센서 개발" → "저전력 환경 적용을 위한 ○○ 센서 소형..."
+  │       P paraPr=41 charPr=88:"주요 산출물은 데이터셋·모델·프로토타입·평가보고서 등 검증 가능한 형태로..."
+  │       P paraPr=41 charPr=88:"성과지표는 수치 또는 달성 수준으로 명시하며, 현재 수준 대비 목표 수준..."
+  │       P paraPr=41 charPr=118:"융합형" + charPr=88:"의 경우, 제출기관(주관)·공동·위탁뿐만 아니라, " + charPr=49:"상대 출연연(주관)·공동·위탁을 모두 포함한 비전과 목표 체계를 작성 (..."
+  │       P paraPr=44 charPr=57:"  - " + charPr=91:"이 내용은 " + charPr=104:"반드시 상대 출연연과 동일한 내용" + charPr=91:"으로 작성하여 제출해야 함"
+  └─────
+
+  P id=0 paraPr=38 charPr=48:"4. 핵심 연구내용"
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  ┌─ TABLE id=2102047254 2행×2열 w=48473 h=40724
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=10959 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=88:"본 항목은 연구의 기술적 실체를 드러내는 핵심 항목으로 활용하되 "무엇을..."
+  │       P paraPr=45 charPr=88:"하위 구조는 자유롭게 구성하되(핵심기술별, 연구단계별, 연구영역별 등),..."
+  │       P paraPr=35 charPr=49:"    ① 연구 대상 및 범위"
+  │       P paraPr=35 charPr=49:"    ② 접근 방법 및 선택 근거"
+  │       P paraPr=35 charPr=49:"    ③ 구체적 연구 방법"
+  │       P paraPr=35 charPr=49:"    ④ 단계별 산출물"
+  │       P paraPr=45 charPr=88:"핵심 내용 중심으로 간결하게 작성하고 배경 설명을 반복하지는 말 것"
+  │       P paraPr=45 charPr=88:"모든 연구내용은 3번 항목의 목표에 대응되어야 하고, 모든 목표는 본 항..."
+  │       P paraPr=45 charPr=88:"방법론은 단순한 방법 나열이 아닌, 기존 연구 방법 대비 본 연구 접근의..."
+  │       P paraPr=45 charPr=88:"이 항목에서의 차별성은 연구 방법론 차원에 한정하여 작성"
+  │       P paraPr=45 charPr=88:"산출물은 측정·검증 가능한 형태로 명시(예: 데이터셋, 모델, 프로토타입..."
+  │       P paraPr=45 charPr=88:"추상적 서술 지양: "~을 연구한다", "~을 분석한다"만으로는 부족"
+  │       P paraPr=45 charPr=88:"구체적으로 무엇을 어떤 조건에서 어떤 수준까지 연구·분석하는지 명시"
+  │       P paraPr=45 charPr=49:"그림, 표, 개념도" + charPr=88:" 등을 적극 활용하여 연구의 구조와 흐름을 시각적으로 제시"
+  │       P paraPr=45 charPr=88:"본 항목의 연구영역 구분은 8번 항목(연구개발비 산출근거)의 예산 배분 ..."
+  └─────
+
+  P id=2147483648 paraPr=38 (빈)
+  P id=2147483648 paraPr=39 charPr=64:(빈)
+  P id=0 paraPr=38 charPr=49:" 5-1. 연구전략"
+  P id=2147483648 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=38 charPr=49:(빈)
+  P id=0 paraPr=38 charPr=49:(빈)
+  ┌─ TABLE id=2102047256 2행×2열 w=48473 h=14024
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=11800 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=65:"(" + charPr=49:"연구전략" + charPr=88:") 비전 및 최종목표를 달성하기 위한 단계별 연구 접근 방법론과 핵심 기..."
+  │       P paraPr=46 charPr=55:" - " + charPr=88:"비전을 달성하기 위한 연구개발기관별 역량(기존 수행사업 등) 및 기관·기..."
+  │       P paraPr=46 charPr=55:" - " + charPr=52:"기존 과제와의 차별성이 아닌, 본 과제의 목표를 달성하기 위해 왜 이 전..."
+  │       P paraPr=46 charPr=52:" " + charPr=55:"- " + charPr=52:"이 항목에서의 차별성은 연구 전략·방향 차원에 한정하여 작성"
+  └─────
+
+  P id=0 paraPr=38 charPr=49:(빈)
+  P id=0 paraPr=38 charPr=49:" 5-2. 수행체계"
+  P id=2147483648 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=110 charPr=124:(빈)
+  P id=0 paraPr=110 charPr=124:(빈)
+  ┌─ TABLE id=2102047257 2행×2열 w=48473 h=27284
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=13498 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=58:"(수행체계" + charPr=57:") 비전 및 목표 달성을 위한 협력체계 및 조직·인력·재원 활용 구조를 ..."
+  │       P paraPr=48 charPr=53:"   ※ 기관간 칸막이를 넘어 협력하는 수행·자원 체계 제시" + charPr=67:"(장비" + charPr=53:"·DB, 인력, 예산, 네트워킹 등)"
+  │       P paraPr=47 charPr=88:" - (" + charPr=49:"단일형" + charPr=88:") " + charPr=49:"주관·공동·위탁" + charPr=88:" 연구개발기관 간 협력체계 작성"
+  │       P paraPr=28 charPr=88:" - (" + charPr=118:"융합형" + charPr=88:") " + charPr=60:"제출기관(주관)·공동·위탁뿐만 아니라, " + charPr=62:"상대 출연연(주관)·공동·위탁을 모두 포함" + charPr=60:"하여 작성 (이 내용은 " + charPr=37:"반드시 상대 출연연과 동일한 내용" + charPr=60:"으로 작성하여 제출해야 함)"
+  │       P paraPr=48 charPr=53:"    ※ 연구전략과 수행체계는 기관별 역할이 연구 방법론과 연결되므로 ..."
+  │       P paraPr=45 charPr=49:"(AI 해당 융합형) 아래 사항을 수행체계도에 포함할 것을 권고함"
+  │       P paraPr=46 charPr=55:" - " + charPr=52:"GPU 등 컴퓨팅 자원 및 고가 연구 장비의 기관 간 공동 활용 방안을 ..."
+  │       P paraPr=46 charPr=55:" - " + charPr=52:"공동 활용 시 참여 기관별 활용 자원의 종류, 규모, 운용 방식(자체 보..."
+  │       P paraPr=46 charPr=55:" - " + charPr=52:"연구회 공동 인프라 활용 계획이 있는 경우 해당 내용을 포함하여 기술"
+  └─────
+
+  P id=0 paraPr=38 charPr=49:(빈)
+  P id=0 paraPr=38 charPr=49:" 5-3. AI 및 데이터 전략 " + charPr=64:"(AI 활용·개발 해당시 작성)"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=38 charPr=64:(빈)
+  ┌─ TABLE id=2065816264 2행×2열 w=48473 h=40524
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30901]
+  │  합계: 48473
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30901 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=48473 h=10951 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=65:"표지에서 선택한 AI 연관성 구분에 따라 아래 해당 유형의 항목을 작성"
+  │       P paraPr=45 charPr=65:"작성 근거"
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"AI 활용 과제에서 활용 목적과 방식을 구체적으로 기술할수록, 연구 목적..."
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"AI 개발 과제에서 개발 목적과 활용 맥락을 명확히 기술할수록, 기술 구..."
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"이 항목은 과제 유형과 관계없이 AI와 연구 목적 간의 관계를 연구자 스..."
+  │       P paraPr=45 charPr=65:"AI 활용 과제"
+  │       P paraPr=47 charPr=88:" - 데이터 확보 전략: 활용할 데이터의 종류, 출처(공공·민간·자체 보..."
+  │       P paraPr=47 charPr=88:" - 출연연 보유 도메인 데이터(연구·실험 데이터 등)를 활용하는 경우 ..."
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"데이터 표준화 및 자산화 계획(포맷·품질관리·보관 방식 등)"
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"AI 알고리즘·모델의 선택 및 적용 방식"
+  │       P paraPr=45 charPr=65:"AI 개발 과제"
+  │       P paraPr=46 charPr=88:" - " + charPr=55:"위 AI 활용 과제 항목 전체 포함"
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"학습·추론에 필요한 컴퓨팅 자원 규모 및 운용 방식 (자체 보유 / 공동..."
+  │       P paraPr=47 charPr=88:" - " + charPr=55:"개발된 모델·코드·데이터셋의 오픈소스 공개 여부 및 공개 전략 (공개 범..."
+  │       P paraPr=48 charPr=53:"    ※ AI 해당없음 선택이 평가상 불이익으로 작용하지 않음"
+  └─────
+
+  P id=2147483648 paraPr=39 charPr=48:"6. 연구개발기관의 선행 사업·과제와 연계성 및 제안과제의 차별성"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=90 charPr=48:(빈)
+  P id=0 paraPr=90 charPr=48:(빈)
+  P id=0 paraPr=90 charPr=48:(빈)
+  ┌─ TABLE id=2089348069 2행×2열 w=47907 h=15884
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30335]
+  │  합계: 47907
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30335 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=47907 h=10102 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=54:"본 전략연구사업 과제와 관련된 선행 사업·과제를 구체적으로 작성"
+  │       P paraPr=83 charPr=88:" - 선행 사업·과제의 " + charPr=49:"부처명, 과제관리기관(전문기관)명, 세부사업명, 내역사업명, 과제명, 수..." + charPr=88:"을 명확히 작성"
+  │       P paraPr=46 charPr=88:" - 선행 사업·과제의 수행내용 및 본 전략연구사업 과제와의 " + charPr=49:"연계성" + charPr=88:"을 구체적으로 작성"
+  │       P paraPr=117 charPr=54:"선행 사업·과제에서 축적한 성과와 한계를 바탕으로, 본 과제가 무엇을 계..."
+  │       P paraPr=46 charPr=88:" - 단순 반복·확장이 아닌 새로운 연구 가치를 중심으로 서술"
+  └─────
+
+  P id=0 paraPr=91 charPr=36:"ex. 과학기술정보통신부 - (과제관리기관) 한국철도기술연구원 - 한국철도기술연구원연구운영..."
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:"7. 연구책임자 주요 연구실적 및 전문성"
+  ┌─ TABLE id=2089348089 2행×2열 w=47907 h=7184
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30335]
+  │  합계: 47907
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30335 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=51:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=47907 h=5302 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=45 charPr=54:"연구책임자의 본 전략연구사업 과제 수행의 전문성을 구체적으로 작성"
+  │       P paraPr=46 charPr=55:" - " + charPr=58:"하단 이력 양식" + charPr=57:"에 따라" + charPr=55:" 과제와 관련된 주요 연구실적과 전문성을 중심으로 작성"
+  └─────
+
+  P id=0 paraPr=60 charPr=105:"   가. 인적사항"
+  ┌─ TABLE id=2089348080 6행×5열 w=45922 h=6492
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [4147, 5279, 14901, 10373, 11222]
+  │  합계: 45922
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=4147 h=2164 rowSpan=2 borderFill=41 cellMargin=[510,510,141,141]
+  │       P paraPr=61 charPr=106:"개인"
+  │     Cell(1,0) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"국문"
+  │     Cell(2,0) w=14901 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:(빈)
+  │     Cell(3,0) w=10373 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"국적"
+  │     Cell(4,0) w=11222 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:(빈)
+  │  ── Row 1
+  │     Cell(1,1) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"영문"
+  │     Cell(2,1) w=14901 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:(빈)
+  │     Cell(3,1) w=10373 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"국가연구자번호"
+  │     Cell(4,1) w=11222 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=4147 h=4328 rowSpan=4 borderFill=41 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"직장"
+  │     Cell(1,2) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"기관명"
+  │     Cell(2,2) w=14901 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:(빈)
+  │     Cell(3,2) w=10373 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"전화번호"
+  │     Cell(4,2) w=11222 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:(빈)
+  │  ── Row 3
+  │     Cell(1,3) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"부서"
+  │     Cell(2,3) w=14901 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:(빈)
+  │     Cell(3,3) w=10373 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"휴대전화"
+  │     Cell(4,3) w=11222 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:(빈)
+  │  ── Row 4
+  │     Cell(1,4) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=107:"직위"
+  │     Cell(2,4) w=14901 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:(빈)
+  │     Cell(3,4) w=10373 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"전자우편"
+  │     Cell(4,4) w=11222 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:(빈)
+  │  ── Row 5
+  │     Cell(1,5) w=5279 h=1082 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=106:"주소"
+  │     Cell(2,5) w=36496 h=1082 colSpan=3 borderFill=42 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=106:"(우:      )"
+  └─────
+
+  P id=2147483648 paraPr=63 charPr=108:(빈)
+  P id=2147483648 paraPr=63 charPr=105:"   나. 학력" + charPr=47:"(연구개발과제 특성에 따라 선택적으로 작성이 가능)"
+  ┌─ TABLE id=2089348081 4행×5열 w=46208 h=4328
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [11788, 8605, 8605, 8605, 8605]
+  │  합계: 46208
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=11788 h=1082 borderFill=43 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:"취득연월(최근 순으로 작성)"
+  │     Cell(1,0) w=8605 h=1082 borderFill=43 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:"학교명"
+  │     Cell(2,0) w=8605 h=1082 borderFill=43 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:"전공"
+  │     Cell(3,0) w=8605 h=1082 borderFill=43 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:"학위"
+  │     Cell(4,0) w=8605 h=1082 borderFill=43 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:"지도교수"
+  │  ── Row 1
+  │     Cell(0,1) w=11788 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=64 charPr=92:"yy.mm~yy.mm"
+  │     Cell(1,1) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(2,1) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(3,1) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(4,1) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=11788 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=64 charPr=92:"yy.mm~yy.mm"
+  │     Cell(1,2) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(2,2) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(3,2) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │     Cell(4,2) w=8605 h=1082 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=19 charPr=97:(빈)
+  │  ── Row 3
+  │     Cell(0,3) w=46208 h=1082 colSpan=5 borderFill=44 cellMargin=[510,510,141,141]
+  │       P paraPr=20 charPr=97:"최종학위 논문명(해당 시):"
+  └─────
+
+  P id=2147483648 paraPr=62 charPr=110:(빈)
+  P id=0 paraPr=65 charPr=90:"   다. 경력" + charPr=46:"(연구개발과제 특성에 따라 선택적으로 작성이 가능)"
+  ┌─ TABLE id=2089348082 3행×4열 w=45852 h=3240
+  │  borderFill=25 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [11463, 11463, 11463, 11463]
+  │  합계: 45852
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=11463 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=86:"기간"
+  │     Cell(1,0) w=11463 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=86:"기관명"
+  │     Cell(2,0) w=11463 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=86:"직위"
+  │     Cell(3,0) w=11463 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=86:"비고"
+  │  ── Row 1
+  │     Cell(0,1) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=92:"yy.mm~yy.mm"
+  │     Cell(1,1) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  │     Cell(2,1) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  │     Cell(3,1) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=92:"yy.mm~yy.mm"
+  │     Cell(1,2) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  │     Cell(2,2) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  │     Cell(3,2) w=11463 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=87:(빈)
+  └─────
+
+  P id=2147483648 paraPr=69 charPr=113:(빈)
+  P id=2147483648 paraPr=70 charPr=89:"   라. " + charPr=93:"주요 연구개발 실적" + charPr=131:"(최근 5년간 5개 이내의 실적으로 작성하되, 신청 중이거나 수행 중인 연구개발과제는 필수..."
+  ┌─ TABLE id=2089348083 4행×7열 w=45690 h=5320
+  │  borderFill=25 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [4841, 4842, 10532, 6631, 8734, 4772, 5338]
+  │  합계: 45690
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=4841 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=94:"중앙행정기관"
+  │       P paraPr=71 charPr=95:"(전문기관)"
+  │     Cell(1,0) w=4842 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"세부사업명"
+  │     Cell(2,0) w=10532 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"연구개발과제명"
+  │     Cell(3,0) w=6631 h=1431 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=96:"주관연구개발기관"
+  │     Cell(4,0) w=8734 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"연구개발기간"
+  │       P paraPr=71 charPr=95:"(참여한 기간)"
+  │     Cell(5,0) w=4772 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"역할: 연구책임자/연구자"
+  │     Cell(6,0) w=5338 h=3160 rowSpan=2 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"비고"
+  │       P paraPr=71 charPr=95:"(신청/수행중/완료)"
+  │  ── Row 1
+  │     Cell(3,1) w=6631 h=1729 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"당시 소속기관"
+  │  ── Row 2
+  │     Cell(0,2) w=4841 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │     Cell(1,2) w=4842 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │     Cell(2,2) w=10532 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │     Cell(3,2) w=6631 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │     Cell(4,2) w=8734 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=98:"yy.mm.dd~yy.mm.dd"
+  │       P paraPr=64 charPr=98:"(yy.mm.dd~yy.mm.dd)"
+  │     Cell(5,2) w=4772 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │     Cell(6,2) w=5338 h=2160 rowSpan=2 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  │  ── Row 3
+  │     Cell(3,3) w=6631 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:(빈)
+  └─────
+
+  P id=2147483648 paraPr=65 charPr=89:(빈)
+  P id=2147483648 paraPr=73 charPr=89:"   마. " + charPr=99:"대표적 논문/저서 실적" + charPr=145:"(최근 5년간 5개 이내의 실적으로 작성하되, 연구개발과제 특성에 따라 선택적으로 작성이 ..."
+  ┌─ TABLE id=2089348084 3행×7열 w=45569 h=4280
+  │  borderFill=25 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [4812, 12453, 4812, 5095, 5661, 6085, 6651]
+  │  합계: 45569
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=4812 h=1363 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"구분"
+  │       P paraPr=71 charPr=95:"(논문/저서)"
+  │     Cell(1,0) w=12453 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"논문명/저서명"
+  │     Cell(2,0) w=4812 h=1363 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"게재지"
+  │       P paraPr=71 charPr=95:"(권, 쪽)"
+  │     Cell(3,0) w=5095 h=1363 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"게재연도"
+  │       P paraPr=71 charPr=95:"(발표연도)"
+  │     Cell(4,0) w=5661 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"역할"
+  │     Cell(5,0) w=6085 h=1363 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"등록번호"
+  │       P paraPr=71 charPr=95:"(ISSN)"
+  │     Cell(6,0) w=6651 h=1363 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=71 charPr=95:"비고"
+  │       P paraPr=71 charPr=95:"(피인용 지수)"
+  │  ── Row 1
+  │     Cell(0,1) w=4812 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(1,1) w=12453 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(2,1) w=4812 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(3,1) w=5095 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:"yy"
+  │     Cell(4,1) w=5661 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(5,1) w=6085 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(6,1) w=6651 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=4812 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(1,2) w=12453 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(2,2) w=4812 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(3,2) w=5095 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:"yy"
+  │     Cell(4,2) w=5661 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(5,2) w=6085 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(6,2) w=6651 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  └─────
+
+  P id=2147483648 paraPr=75 charPr=89:(빈)
+  P id=2147483648 paraPr=76 charPr=105:"   " + charPr=114:"바. " + charPr=115:"지식재산권 출원ㆍ등록 실적" + charPr=130:"(최근 5년간 5개 이내의 실적으로 작성하되, 연구개발과제 특성에 따라 선택적으로 작성이 ..."
+  ┌─ TABLE id=2089348085 3행×6열 w=45679 h=4280
+  │  borderFill=25 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [6267, 12777, 4832, 6796, 7490, 7517]
+  │  합계: 45679
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=6267 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=116:"구분"
+  │     Cell(1,0) w=12777 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=95:"지식재산권명"
+  │     Cell(2,0) w=4832 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=95:"국가명"
+  │     Cell(3,0) w=6796 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=95:"출원ㆍ등록일"
+  │     Cell(4,0) w=7490 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=95:"출원ㆍ등록번호/"
+  │       P paraPr=23 charPr=95:"출원ㆍ등록자 수"
+  │     Cell(5,0) w=7517 h=2120 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=23 charPr=95:"비고"
+  │  ── Row 1
+  │     Cell(0,1) w=6267 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(1,1) w=12777 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(2,1) w=4832 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(3,1) w=6796 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(4,1) w=7490 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(5,1) w=7517 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=6267 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(1,2) w=12777 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(2,2) w=4832 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(3,2) w=6796 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(4,2) w=7490 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  │     Cell(5,2) w=7517 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=77 charPr=117:(빈)
+  └─────
+
+  P id=2147483648 paraPr=79 charPr=113:(빈)
+  P id=2147483648 paraPr=80 charPr=89:"   " + charPr=101:"사." + charPr=102:" " + charPr=103:"그 밖의 대표적" + charPr=102:" 실적" + charPr=131:"(최근 5년간 5개 이내의 실적으로 작성하되, 연구개발과제 특성에 따라" + charPr=145:" 선택적으로 작성이 가능)"
+  ┌─ TABLE id=2089348086 3행×4열 w=45850 h=3240
+  │  borderFill=25 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [9270, 14081, 11251, 11248]
+  │  합계: 45850
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=9270 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=95:"구분"
+  │     Cell(1,0) w=14081 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=95:"실적명"
+  │     Cell(2,0) w=11251 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=95:"내용요약"
+  │     Cell(3,0) w=11248 h=1080 borderFill=45 cellMargin=[141,141,141,141]
+  │       P paraPr=66 charPr=95:"실적연도"
+  │  ── Row 1
+  │     Cell(0,1) w=9270 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(1,1) w=14081 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(2,1) w=11251 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(3,1) w=11248 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:"yy"
+  │  ── Row 2
+  │     Cell(0,2) w=9270 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(1,2) w=14081 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(2,2) w=11251 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=67 charPr=100:(빈)
+  │     Cell(3,2) w=11248 h=1080 borderFill=23 cellMargin=[141,141,141,141]
+  │       P paraPr=64 charPr=97:"yy"
+  └─────
+
+  P id=0 paraPr=78 charPr=112:(빈)
+  P id=0 paraPr=78 charPr=112:(빈)
+  P id=0 paraPr=38 charPr=48:"8. 연구개발비 산출근거"
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  ┌─ TABLE id=2065816269 2행×2열 w=47907 h=44323
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 30335]
+  │  합계: 47907
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=30335 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=68:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=47907 h=10982 colSpan=2 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=54:"예산을 " + charPr=56:"대략적으로" + charPr=54:" 산출하되 핵심기술과 주요 연구내용에 따라 작성"
+  │       P paraPr=42 charPr=55:" ※ (" + charPr=65:"융합형" + charPr=55:") 상대 출연연을 " + charPr=65:"제외" + charPr=55:"한 " + charPr=65:"제출기관 중심" + charPr=55:"으로 작성"
+  │       P paraPr=41 charPr=54:"전체 연구개발비 규모와 연구 기간을 고려하여 핵심기술을 충분히 세분화하고..."
+  │       P paraPr=41 charPr=54:"공동·위탁 연구개발기관의 연구개발비 합산 금액 기재"
+  │       P paraPr=49 charPr=56:(빈)
+  │       P paraPr=101 charPr=40:"< 예시 >                                  ..."
+  │       P paraPr=49 [내부테이블]
+  │       P paraPr=102 charPr=69:"※ 핵심기술은 4번 항목 핵심 연구내용과 일치하도록 작성하고 기술 키워드..."
+  │       P paraPr=42 charPr=69:"※ 산출근거는 인건비·장비·재료비 등 비목별 주요 내역을 간략히 기재"
+  │       P paraPr=42 charPr=69:"※ 연도·행은 과제 기간에 맞게 조정 가능"
+  │       P paraPr=42 charPr=69:"※ 기획 단계이므로 개략적 산출로 작성 가능하나, 핵심기술별 예산 배분의..."
+  └─────
+
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=2147483648 paraPr=38 charPr=48:"9. 기대효과 "
+  P id=0 paraPr=92 charPr=125:(빈)
+  P id=2147483648 paraPr=93 charPr=124:(빈)
+  P id=2147483648 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  P id=0 paraPr=38 charPr=48:(빈)
+  ┌─ TABLE id=2065816271 2행×3열 w=47624 h=34680
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [17572, 14176, 15876]
+  │  합계: 47624
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=17572 h=1882 borderFill=16 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=50:"★ 작성 요령(제출 시 삭제)"
+  │     Cell(1,0) w=14176 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=70:(빈)
+  │     Cell(2,0) w=15876 h=1882 borderFill=17 cellMargin=[510,510,141,141]
+  │       P paraPr=40 charPr=70:(빈)
+  │  ── Row 1
+  │     Cell(0,1) w=47624 h=2165 colSpan=3 borderFill=18 cellMargin=[510,510,141,141]
+  │       P paraPr=41 charPr=57:"과학적 기대효과: 본 연구를 통해 창출되는 지식·기술의 학문적 기여와 후..."
+  │       P paraPr=41 charPr=57:"사회·경제적 기대효과: 연구 성과가 실제 현장·산업·정책에 어떻게 활용될..."
+  │       P paraPr=41 charPr=57:"기술사업화 계획이 있는 경우, 사업화 대상 기술·제품·서비스와 추진 방향..."
+  │       P paraPr=41 charPr=57:"참여기업이 있는 경우, 해당 기업의 수요와 활용 계획을 반영하여 작성"
+  │       P paraPr=41 charPr=57:"막연한 경제적 파급효과 수치 나열보다 실현 가능한 활용 경로와 근거를 중..."
+  │       P paraPr=116 charPr=71:"* 예 1: 기술 활용 중심"
+  │       P paraPr=112 charPr=71:"본 연구를 통해 개발된 ○○ 진단 알고리즘은 현장 적용 가능한 프로토타입..."
+  │       P paraPr=114 charPr=71:"* 예 2: 정책·공공 활용 중심"
+  │       P paraPr=112 charPr=71:"개발된 ○○ 데이터베이스 및 분석 모델은 관계 부처(○○부)의 정책 수립..."
+  │       P paraPr=113 charPr=71:"*예 3: 학문적 기여 중심"
+  │       P paraPr=115 charPr=71:"본 연구 결과는 ○○ 분야의 핵심 미해결 문제에 대한 새로운 접근을 제시..."
+  └─────
+
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  P id=2147483648 paraPr=39 charPr=1:(빈)
+  P id=2147483648 paraPr=39 charPr=72:(빈)
+  P id=2147483648 paraPr=51 charPr=73:"[별첨 양식]"
+  P id=2147483648 paraPr=51 charPr=73:(빈)
+  P id=2147483648 paraPr=34 charPr=74:"□ " + charPr=41:"융합형 상대 출연연 및 공동·위탁연구개발기관의 " + charPr=42:"’" + charPr=41:"27년도 전략연구사업 과제 제안서 제출 동의서"
+  ┌─ TABLE id=2065816272 1행×1열 w=47914 h=62141
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [47914]
+  │  합계: 47914
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=47914 h=62141 borderFill=19 cellMargin=[510,510,141,141]
+  │       vertAlign=TOP
+  │       P paraPr=52 charPr=75:(빈)
+  │       P paraPr=52 charPr=75:(빈)
+  │       P paraPr=52 charPr=75:(빈)
+  │       P paraPr=52 charPr=75:"「’27년도 전략연구사업」과제 제안서 제출 동의서"
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=53 charPr=43:(빈)
+  │       P paraPr=53 charPr=43:"□ 과제명: "
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=54 charPr=43:"본 " + charPr=77:"기관명" + charPr=43:"은 「’27년도 전략연구사업」과제의 "
+  │       P paraPr=54 charPr=43:"제안서 내용과 제출에 동의합니다."
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=52 charPr=76:(빈)
+  │       P paraPr=54 charPr=72:"2026년   월   일"
+  │       P paraPr=54 charPr=72:"  "
+  │       P paraPr=54 charPr=72:"          "
+  │       P paraPr=54 charPr=72:(빈)
+  │       P paraPr=54 charPr=72:(빈)
+  │       P paraPr=54 charPr=72:"                          "
+  │       P paraPr=54 charPr=72:"                                     연구개..."
+  └─────
+
