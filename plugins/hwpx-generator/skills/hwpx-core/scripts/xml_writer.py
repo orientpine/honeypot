@@ -20,6 +20,25 @@ ROOT_NS = (
     'xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"'
 )
 
+SEC_ROOT_NS = (
+    'xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" '
+    'xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" '
+    'xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" '
+    'xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head"'
+)
+
+DEFAULT_SECTION_SETTINGS = {
+    "page_width": 59528,
+    "page_height": 84188,
+    "margin_left": 5669,
+    "margin_right": 5669,
+    "margin_top": 2834,
+    "margin_bottom": 4251,
+    "margin_header": 4251,
+    "margin_footer": 2834,
+    "margin_gutter": 0,
+}
+
 
 def xml_escape(text: str) -> str:
     return (
@@ -56,6 +75,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input", required=True, help="Input parsed JSON path")
     parser.add_argument("--style-config", required=True, help="Style config JSON path")
     parser.add_argument("--output", required=True, help="Output XML fragment path")
+    parser.add_argument(
+        "--wrap-section",
+        action="store_true",
+        help="Wrap output in hs:sec root with hs:secPr for zip_surgery replace",
+    )
     return parser.parse_args()
 
 
@@ -320,7 +344,60 @@ def build_image_placeholder(image_index: int) -> str:
     return f"<!--IMAGE:image{image_index}-->"
 
 
-def build_fragment(parsed: dict, styles: dict) -> str:
+def section_settings(styles: dict) -> dict[str, int]:
+    margins = styles.get("margins", {})
+    if not isinstance(margins, dict):
+        margins = {}
+
+    def get_int(*keys: str, default: int) -> int:
+        for key in keys:
+            value = styles.get(key)
+            if value is not None:
+                return int(value)
+        return default
+
+    def get_margin(name: str) -> int:
+        if name in margins and margins[name] is not None:
+            return int(margins[name])
+        return int(
+            styles.get(f"margin_{name}", DEFAULT_SECTION_SETTINGS[f"margin_{name}"])
+        )
+
+    return {
+        "page_width": get_int(
+            "page_width", "pageWidth", default=DEFAULT_SECTION_SETTINGS["page_width"]
+        ),
+        "page_height": get_int(
+            "page_height", "pageHeight", default=DEFAULT_SECTION_SETTINGS["page_height"]
+        ),
+        "margin_left": get_margin("left"),
+        "margin_right": get_margin("right"),
+        "margin_top": get_margin("top"),
+        "margin_bottom": get_margin("bottom"),
+        "margin_header": get_margin("header"),
+        "margin_footer": get_margin("footer"),
+        "margin_gutter": int(
+            styles.get("margin_gutter", DEFAULT_SECTION_SETTINGS["margin_gutter"])
+        ),
+    }
+
+
+def wrap_in_section(children_xml: str, styles: dict) -> str:
+    sec = section_settings(styles)
+    sec_pr = (
+        "<hs:secPr>"
+        f'<hs:pageSize width="{sec["page_width"]}" height="{sec["page_height"]}" orientation="PORTRAIT"/>'
+        f'<hs:pageMargin left="{sec["margin_left"]}" right="{sec["margin_right"]}" '
+        f'top="{sec["margin_top"]}" bottom="{sec["margin_bottom"]}" '
+        f'header="{sec["margin_header"]}" footer="{sec["margin_footer"]}" gutter="{sec["margin_gutter"]}"/>'
+        '<hs:pageBorderFill fillArea="PAPER"><hp:borderFill><hp:slash fillErase="0" haveSlash="NONE"/>'
+        "</hp:borderFill></hs:pageBorderFill>"
+        "</hs:secPr>"
+    )
+    return f"<hs:sec {SEC_ROOT_NS}>{sec_pr}{children_xml}</hs:sec>"
+
+
+def build_fragment(parsed: dict, styles: dict, wrap_section: bool = False) -> str:
     require_styles(styles)
     blocks = parsed.get("blocks", [])
     if not isinstance(blocks, list):
@@ -348,9 +425,11 @@ def build_fragment(parsed: dict, styles: dict) -> str:
         else:
             out.append(build_paragraph(block, ids, styles))
 
-    fragment = [f"<hwpx-fragment {ROOT_NS}>"]
-    fragment.extend(out)
-    fragment.append("</hwpx-fragment>")
+    content = "".join(out)
+    if wrap_section:
+        return wrap_in_section(content, styles)
+
+    fragment = [f"<hwpx-fragment {ROOT_NS}>", content, "</hwpx-fragment>"]
     return "".join(fragment)
 
 
@@ -359,7 +438,7 @@ def main() -> None:
     try:
         parsed = load_json(args.input)
         styles = load_json(args.style_config)
-        fragment_xml = build_fragment(parsed, styles)
+        fragment_xml = build_fragment(parsed, styles, wrap_section=args.wrap_section)
         Path(args.output).write_text(fragment_xml, encoding="utf-8")
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
