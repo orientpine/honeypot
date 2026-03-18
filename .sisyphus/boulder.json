@@ -1,26 +1,10 @@
 {
-  "active_plan": "/home/cha/Documents/honeypot/.sisyphus/plans/hwpx-generator-v3.md",
-  "started_at": "2026-03-17T16:18:12.691Z",
+  "active_plan": "C:\\Users\\BaekdongCha\\Documents\\honeypot\\.sisyphus\\plans\\hwpx-quality-upgrade.md",
+  "started_at": "2026-03-18T14:52:15.869Z",
   "session_ids": [
-    "ses_30368cfeaffeXDj096tfW3tuge",
-    "ses_30366ecc5ffe66MTkjjJ8vNeRh",
-    "ses_303653b19ffedO1hxU30KHS51v",
-    "ses_30366572effeX5PudqtNKV20hL",
-    "ses_30365aee1ffeuoRqMx6NNKx2M7",
-    "ses_3035c52d0fferRMK9xMEV3xWLG",
-    "ses_3035c95f2ffeklXnBPxQ8Gwxjm",
-    "ses_303588e88ffei0QNWwf3CP3vJw",
-    "ses_30354ef25ffeHPuO6HipI5lbBg",
-    "ses_3035033e3ffeIUAs67GnosZ0wH",
-    "ses_3034d4fccffeEPBgO9lv2qb1ID",
-    "ses_3034dd0a7ffeNOm5ZLGqjw80po",
-    "ses_3034d8d6affeHj6LPEsArGvo0X",
-    "ses_3034e21cfffedXCSeBjoTtKruO",
-    "ses_303433dc7ffeH3vE1wbfmVMkC1",
-    "ses_303436e38ffeV1nOzbu1M55xyw",
-    "ses_3033c2816ffer59xjyWG6t91U6"
+    "ses_2fe912396ffe807TulBPjjeTCz",
+    "ses_2fe8f016effernPD82tAQOd90q"
   ],
-  "plan_name": "hwpx-generator-v3",
-  "agent": "atlas",
-  "worktree_path": "/home/cha/Documents/honeypot"
+  "plan_name": "hwpx-quality-upgrade",
+  "agent": "atlas"
 }

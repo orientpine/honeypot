@@ -1,0 +1,112 @@
+{
+  "source": "dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx",
+  "total_images": 3,
+  "sample_structure": "<hp:pic xmlns:hp=\"http://www.hancom.co.kr/hwpml/2011/paragraph\" xmlns:ha=\"http://www.hancom.co.kr/hwpml/2011/app\" xmlns:hp10=\"http://www.hancom.co.kr/hwpml/2016/paragraph\" xmlns:hs=\"http://www.hancom.co.kr/hwpml/2011/section\" xmlns:hc=\"http://www.hancom.co.kr/hwpml/2011/core\" xmlns:hh=\"http://www.hancom.co.kr/hwpml/2011/head\" xmlns:hhs=\"http://www.hancom.co.kr/hwpml/2011/history\" xmlns:hm=\"http://www.hancom.co.kr/hwpml/2011/master-page\" xmlns:hpf=\"http://www.hancom.co.kr/schema/2011/hpf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:opf=\"http://www.idpf.org/2007/opf/\" xmlns:ooxmlchart=\"http://www.hancom.co.kr/hwpml/2016/ooxmlchart\" xmlns:hwpunitchar=\"http://www.hancom.co.kr/hwpml/2016/HwpUnitChar\" xmlns:epub=\"http://www.idpf.org/2007/ops\" xmlns:config=\"urn:oasis:names:tc:opendocument:xmlns:config:1.0\" id=\"2112876661\" zOrder=\"40\" numberingType=\"PICTURE\" textWrap=\"TOP_AND_BOTTOM\" textFlow=\"BOTH_SIDES\" lock=\"0\" dropcapstyle=\"None\" href=\"\" groupLevel=\"0\" instid=\"1039134838\" reverse=\"0\"><hp:offset x=\"0\" y=\"0\"/><hp:orgSz width=\"198180\" height=\"110640\"/><hp:curSz width=\"48190\" height=\"26907\"/><hp:flip horizontal=\"0\" vertical=\"0\"/><hp:rotationInfo angle=\"0\" centerX=\"24095\" centerY=\"134",
+  "pic_attribute_keys": {
+    "id": 3,
+    "zOrder": 3,
+    "numberingType": 3,
+    "textWrap": 3,
+    "textFlow": 3,
+    "lock": 3,
+    "dropcapstyle": 3,
+    "href": 3,
+    "groupLevel": 3,
+    "instid": 3,
+    "reverse": 3
+  },
+  "pic_child_tags": {
+    "offset": 3,
+    "orgSz": 3,
+    "curSz": 3,
+    "flip": 3,
+    "rotationInfo": 3,
+    "renderingInfo": 3,
+    "img": 3,
+    "imgRect": 3,
+    "imgClip": 3,
+    "inMargin": 3,
+    "imgDim": 3,
+    "effects": 3,
+    "sz": 3,
+    "pos": 3,
+    "outMargin": 3,
+    "shapeComment": 3
+  },
+  "caption_style": {
+    "paraPrIDRef": "118",
+    "charPrIDRef": "121",
+    "confidence": "confirmed"
+  },
+  "bindata_refs": [
+    "image1",
+    "image2",
+    "image3"
+  ],
+  "bindata_pattern": "image{N}",
+  "images": [
+    {
+      "index": 1,
+      "paragraph_index": 67,
+      "paraPrIDRef": "4",
+      "pic_attributes": {
+        "id": "2112876661",
+        "zOrder": "40",
+        "numberingType": "PICTURE",
+        "textWrap": "TOP_AND_BOTTOM",
+        "textFlow": "BOTH_SIDES",
+        "lock": "0",
+        "dropcapstyle": "None",
+        "href": "",
+        "groupLevel": "0",
+        "instid": "1039134838",
+        "reverse": "0"
+      },
+      "caption_text": "그림 3-1: 비전 개념도 — 인구절벽 시대의 필드로봇 피지컬 AI가 가져올 미래상",
+      "caption_paraPrIDRef": "117",
+      "caption_charPrIDRef": "158"
+    },
+    {
+      "index": 2,
+      "paragraph_index": 78,
+      "paraPrIDRef": "4",
+      "pic_attributes": {
+        "id": "2112876665",
+        "zOrder": "41",
+        "numberingType": "PICTURE",
+        "textWrap": "TOP_AND_BOTTOM",
+        "textFlow": "BOTH_SIDES",
+        "lock": "0",
+        "dropcapstyle": "None",
+        "href": "",
+        "groupLevel": "0",
+        "instid": "1039134842",
+        "reverse": "0"
+      },
+      "caption_text": "그림 3-2: 최종 연구목표 체계도 — 인식-판단-제어-실증의 4대 기술영역과 세부기술 간 관계",
+      "caption_paraPrIDRef": "118",
+      "caption_charPrIDRef": "121"
+    },
+    {
+      "index": 3,
+      "paragraph_index": 83,
+      "paraPrIDRef": "4",
+      "pic_attributes": {
+        "id": "2112876669",
+        "zOrder": "42",
+        "numberingType": "PICTURE",
+        "textWrap": "TOP_AND_BOTTOM",
+        "textFlow": "BOTH_SIDES",
+        "lock": "0",
+        "dropcapstyle": "None",
+        "href": "",
+        "groupLevel": "0",
+        "instid": "1039134846",
+        "reverse": "0"
+      },
+      "caption_text": "그림 4-1: 핵심 연구내용 전체 구조도 — 4개 세부기술(파운데이션-전문가AI-장착형모듈-실증플랫폼) 간 데이터·모델·하드웨어 연계 흐름",
+      "caption_paraPrIDRef": "118",
+      "caption_charPrIDRef": "121"
+    }
+  ]
+}
