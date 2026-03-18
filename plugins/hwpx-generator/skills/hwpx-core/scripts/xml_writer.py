@@ -14,6 +14,11 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from PIL import Image
+except Exception:  # pragma: no cover - graceful fallback when Pillow is unavailable
+    Image = None
+
 
 ROOT_NS = (
     'xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" '
@@ -414,6 +419,87 @@ def build_image_placeholder(image_index: int) -> str:
     return f"<!--IMAGE:image{image_index}-->"
 
 
+def build_image_with_caption(block: dict, config: dict, image_idx: int) -> str:
+    bindata_name = f"image{image_idx}"
+    image_id = 2112876660 + int(image_idx)
+    instid = 1000000000 + int(image_idx)
+    z_order = int(image_idx)
+
+    max_content_width = int(
+        config.get(
+            "table_width",
+            int(config.get("page_width", 48190))
+            - int(config.get("margin_left", 5669))
+            - int(config.get("margin_right", 5669)),
+        )
+    )
+
+    placeholder = bool(block.get("placeholder", False))
+    image_path = str(block.get("path", "") or "")
+    orig_w = 19200
+    orig_h = 10800
+
+    if Image is not None and image_path:
+        resolved_path = Path(image_path)
+        if not resolved_path.is_absolute():
+            resolved_path = Path.cwd() / resolved_path
+        if resolved_path.is_file() or placeholder:
+            try:
+                if resolved_path.is_file():
+                    with Image.open(resolved_path) as img:
+                        px_w, px_h = img.size
+                        if px_w > 0 and px_h > 0:
+                            orig_w = int(px_w) * 100
+                            orig_h = int(px_h) * 100
+            except Exception:
+                orig_w = 19200
+                orig_h = 10800
+
+    scaled_w = int(orig_w)
+    scaled_h = int(orig_h)
+    if scaled_w > max_content_width:
+        ratio = max_content_width / float(scaled_w)
+        scaled_w = max_content_width
+        scaled_h = max(1, int(round(scaled_h * ratio)))
+
+    image_style = config.get("image_placeholder", {})
+    image_para_pr = str(image_style.get("paraPrIDRef", 4))
+
+    caption_style = config.get("image_caption", config.get("body", {}))
+    caption_para_pr = str(caption_style.get("paraPrIDRef", 0))
+    caption_char_pr = str(caption_style.get("charPrIDRef", 0))
+    caption_id = str(block.get("caption_id", image_idx))
+    caption = str(block.get("caption", ""))
+    caption_text = f"그림 {caption_id}: {caption}" if caption else f"그림 {caption_id}"
+
+    pic_para = (
+        f'<hp:para paraPrIDRef="{image_para_pr}">'
+        "<hp:run>"
+        f'<hp:pic hp:id="{image_id}" zOrder="{z_order}" numberingType="PICTURE" '
+        'textWrap="TOP_AND_BOTTOM" textFlow="BOTH_SIDES" lock="0" '
+        f'dropcapstyle="None" href="" groupLevel="0" instid="{instid}" reverse="0">'
+        '<hp:offset x="0" y="0"/>'
+        f'<hp:orgSz width="{orig_w}" height="{orig_h}"/>'
+        f'<hp:curSz width="{scaled_w}" height="{scaled_h}"/>'
+        '<hp:flip horizontal="0" vertical="0"/>'
+        f'<hp:rotationInfo angle="0" centerX="{scaled_w // 2}" centerY="{scaled_h // 2}"/>'
+        f'<hp:renderingInfo embeddingFile="{bindata_name}">'
+        f'<hp:img hp:binaryItemIDRef="{bindata_name}"/>'
+        "</hp:renderingInfo>"
+        "</hp:pic>"
+        "</hp:run>"
+        "</hp:para>"
+    )
+    caption_para = (
+        f'<hp:para paraPrIDRef="{caption_para_pr}" hp:align="CENTER">'
+        f'<hp:run charPrIDRef="{caption_char_pr}">'
+        f"<hp:t>{xml_escape(caption_text)}</hp:t>"
+        "</hp:run>"
+        "</hp:para>"
+    )
+    return f"{pic_para}{caption_para}"
+
+
 def section_settings(styles: dict) -> dict[str, int]:
     margins = styles.get("margins", {})
     if not isinstance(margins, dict):
@@ -490,7 +576,7 @@ def build_fragment(parsed: dict, styles: dict, wrap_section: bool = False) -> st
         elif btype == "table":
             out.append(build_table(block, ids, styles))
         elif btype == "image_ref":
-            out.append(build_image_placeholder(image_counter))
+            out.append(build_image_with_caption(block, styles, image_counter))
             image_counter += 1
         else:
             out.append(build_paragraph(block, ids, styles))
