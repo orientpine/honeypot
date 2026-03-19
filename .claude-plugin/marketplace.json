@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.14.0",
+    "version": "3.15.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -136,7 +136,7 @@
       "name": "hwpx-generator",
       "source": "./plugins/hwpx-generator",
       "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + ZIP-level surgery 지원. Workflow 7: 마크다운 → HWPX 템플릿 채우기 + 이미지 임베딩.",
-      "version": "3.4.0",
+      "version": "3.5.0",
       "strict": true,
       "agents": [
         "./agents/hwpx-builder.md",

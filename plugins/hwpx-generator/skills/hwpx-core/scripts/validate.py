@@ -131,12 +131,13 @@ def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
     header_text = zf.read(header_name).decode("utf-8") if header_name in names else ""
     hpf_text = zf.read(hpf_name).decode("utf-8") if hpf_name in names else ""
 
-    # 1 & 2: hp:pic must include renderingInfo and instid
+    # 1 & 2: hp:pic must include renderingInfo, instid, and be inside hp:run
     if sec_text:
-        pic_pattern = re.compile(r"<hp:pic\\b([^>]*)>(.*?)</hp:pic>", re.DOTALL)
+        pic_pattern = re.compile(r"<hp:pic\b([^>]*)>(.*?)</hp:pic>", re.DOTALL)
         for match in pic_pattern.finditer(sec_text):
             pic_attrs = match.group(1)
             pic_content = match.group(2)
+            pic_start = match.start()
 
             if "instid=" not in pic_attrs:
                 errors.append(
@@ -147,6 +148,18 @@ def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
                 errors.append(
                     "[image] hp:pic element missing required <hp:renderingInfo>"
                 )
+
+            # hp:pic must be inside <hp:run>, not a section-level sibling
+            preceding = sec_text[max(0, pic_start - 200):pic_start]
+            if "<hp:run" not in preceding or "</hp:run>" in preceding:
+                # Check if the closest run tag before hp:pic is an opening tag
+                last_run_open = preceding.rfind("<hp:run")
+                last_run_close = preceding.rfind("</hp:run>")
+                if last_run_open < 0 or last_run_close > last_run_open:
+                    errors.append(
+                        "[image] hp:pic is not inside <hp:run> — "
+                        "한/글 ignores section-level hp:pic elements"
+                    )
 
     # 3 & 6: header.xml must have hh:binDataList and matching itemCnt
     if header_text:

@@ -270,34 +270,66 @@ def auto_map_images(
 
 
 def make_pic_xml(
-    bin_id: str, width: int, height: int, pic_id: int, inst_id: int
+    bin_id: str,
+    cur_width: int,
+    cur_height: int,
+    org_width: int,
+    org_height: int,
+    pixel_width: int,
+    pixel_height: int,
+    pic_id: int,
+    inst_id: int,
+    para_id: int,
 ) -> str:
+    """Generate <hp:p><hp:run><hp:pic>...</hp:pic></hp:run></hp:p> XML.
+
+    hp:pic MUST be inside <hp:run> — 한/글 ignores section-level hp:pic.
+
+    Args:
+        bin_id: Binary data ID (e.g. "BIN0001")
+        cur_width: Display width in HWP units (A4 body = 42520)
+        cur_height: Display height in HWP units
+        org_width: Original image width in HWP units (pixel_width × 100)
+        org_height: Original image height in HWP units (pixel_height × 100)
+        pixel_width: Original image width in pixels
+        pixel_height: Original image height in pixels
+        pic_id: Unique picture element ID
+        inst_id: Unique instance ID
+        para_id: Unique paragraph ID for the wrapper <hp:p>
+    """
+    # scaMatrix = curSz / orgSz (scaling ratio from original to display)
+    sca_x = cur_width / org_width if org_width > 0 else 1.0
+    sca_y = cur_height / org_height if org_height > 0 else 1.0
+
     return (
+        f'<hp:p id="{para_id}" paraPrIDRef="0" styleIDRef="0" '
+        f'pageBreak="0" columnBreak="0" merged="0">'
+        f'<hp:run charPrIDRef="0">'
         f'<hp:pic id="{pic_id}" instid="{inst_id}" reverse="0" '
         f'numberingType="NONE" textWrap="TOP_AND_BOTTOM" '
         f'textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" '
         f'href="" groupLevel="0">'
         f'<hp:offset x="0" y="0"/>'
-        f'<hp:orgSz width="{width}" height="{height}"/>'
-        f'<hp:curSz width="{width}" height="{height}"/>'
+        f'<hp:orgSz width="{org_width}" height="{org_height}"/>'
+        f'<hp:curSz width="{cur_width}" height="{cur_height}"/>'
         f'<hp:flip horizontal="0" vertical="0"/>'
         f'<hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>'
         f"<hp:renderingInfo>"
         f'<hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>'
-        f'<hc:scaMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>'
+        f'<hc:scaMatrix e1="{sca_x:.6f}" e2="0" e3="0" e4="0" e5="{sca_y:.6f}" e6="0"/>'
         f'<hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>'
         f"</hp:renderingInfo>"
+        f"<hp:imgRect>"
+        f'<hc:pt0 x="0" y="0"/><hc:pt1 x="{cur_width}" y="0"/>'
+        f'<hc:pt2 x="{cur_width}" y="{cur_height}"/><hc:pt3 x="0" y="{cur_height}"/>'
+        f"</hp:imgRect>"
+        f'<hp:imgClip left="0" right="{org_width}" top="0" bottom="{org_height}"/>'
+        f'<hp:inMargin left="0" right="0" top="0" bottom="0"/>'
+        f'<hp:imgDim dimwidth="{pixel_width}" dimheight="{pixel_height}"/>'
         f'<hc:img binaryItemIDRef="{bin_id}" bright="0" contrast="0" '
         f'effect="REAL_PIC" alpha="0"/>'
-        f"<hp:imgRect>"
-        f'<hc:pt0 x="0" y="0"/><hc:pt1 x="{width}" y="0"/>'
-        f'<hc:pt2 x="{width}" y="{height}"/><hc:pt3 x="0" y="{height}"/>'
-        f"</hp:imgRect>"
-        f'<hp:imgClip left="0" right="0" top="0" bottom="0"/>'
-        f'<hp:inMargin left="0" right="0" top="0" bottom="0"/>'
-        f'<hp:imgDim dimwidth="0" dimheight="0"/>'
         f"<hp:effects/>"
-        f'<hp:sz width="{width}" widthRelTo="ABSOLUTE" height="{height}" '
+        f'<hp:sz width="{cur_width}" widthRelTo="ABSOLUTE" height="{cur_height}" '
         f'heightRelTo="ABSOLUTE" protect="0"/>'
         f'<hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" '
         f'allowOverlap="1" holdAnchorAndSO="0" '
@@ -307,6 +339,8 @@ def make_pic_xml(
         f'<hp:outMargin left="0" right="0" top="0" bottom="0"/>'
         f"<hp:shapeComment/>"
         f"</hp:pic>"
+        f"</hp:run>"
+        f"</hp:p>"
     )
 
 
@@ -524,6 +558,7 @@ def embed_images(
     image_entries: dict[str, str] = {}
     image_bin_ids: dict[str, str] = {}
     image_heights: dict[str, int] = {}
+    image_pixel_dims: dict[str, tuple[int, int]] = {}
     bin_entries: list[dict[str, str]] = []
 
     sorted_keys = sorted(mapping.keys(), key=image_sort_key)
@@ -542,8 +577,8 @@ def embed_images(
             raise SystemExit(f"Error: image file not found for {key}: {image_path}")
 
         image_path = ensure_png_format(image_path)
-        width, height = image_dimensions(image_path)
-        hwpx_height = calc_hwpx_height(width, height)
+        pixel_w, pixel_h = image_dimensions(image_path)
+        hwpx_height = calc_hwpx_height(pixel_w, pixel_h)
         ext = normalize_image_extension(image_path)
 
         if has_header_xml:
@@ -562,15 +597,30 @@ def embed_images(
 
         image_paths[key] = image_path
         image_heights[key] = hwpx_height
+        image_pixel_dims[key] = (pixel_w, pixel_h)
         image_bin_ids[key] = bin_id
         image_entries[bin_id] = f"BinData/{bin_data_name}"
 
+    para_id_base = 7000000001
     for index, key in enumerate(sorted_keys):
         pic_id = 8000000001 + index
         inst_id = 8100000001 + index
+        para_id = para_id_base + index
         bin_id = image_bin_ids[key]
+        pixel_w, pixel_h = image_pixel_dims[key]
+        org_width = pixel_w * 100  # 1 pixel = 1pt = 100 HWP units
+        org_height = pixel_h * 100
         pic_xml = make_pic_xml(
-            bin_id, A4_BODY_WIDTH, image_heights[key], pic_id, inst_id
+            bin_id=bin_id,
+            cur_width=A4_BODY_WIDTH,
+            cur_height=image_heights[key],
+            org_width=org_width,
+            org_height=org_height,
+            pixel_width=pixel_w,
+            pixel_height=pixel_h,
+            pic_id=pic_id,
+            inst_id=inst_id,
+            para_id=para_id,
         )
         section_text = section_text.replace(f"<!--IMAGE:{key}-->", pic_xml)
 

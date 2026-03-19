@@ -796,9 +796,10 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 | **3곳 동시 등록** | `BinData/` + `content.hpf` + `header.xml` 모두 등록해야 함. 하나라도 누락 시 한/글 에러 |
 | **hh:binItem (NOT hh:binData)** | header.xml에 등록 시 요소명은 `hh:binItem`이다. `hh:binData`가 아님 |
 | **소스 이미지 포맷 검증** | `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있음. `image_embedder.py`가 자동 감지/변환 |
-| **orgSz = curSz** | 이미지가 이미 최종 크기로 리사이즈된 경우, `orgSz`와 `curSz`를 동일하게 설정 |
+| **orgSz ≠ curSz** | `orgSz` = 원본 이미지 픽셀 × 100 HWP units (원본 이미지 크기). `curSz` = 표시 크기 HWP units. 스케일이 1:1이 아니면 두 값이 다름. 예: 원본 1000×800px → orgSz=100000×80000, 표시 크기 50mm×40mm → curSz=약 47244×37795 |
 | **이미지 높이 상한** | MAX_IMAGE_HEIGHT = 70000 HWP units (~247mm). 초과 시 에러 |
 | **BIN ID 형식** | `BIN0001`, `BIN0002` 등 4자리 패딩. `image1` 형식은 사용하지 않음 |
+| **hp:pic 반드시 <hp:run> 안에 위치** | `hp:pic`은 section-level sibling으로 배치하면 한/글이 렌더링하지 않음. 반드시 `<hp:p><hp:run>...</hp:run></hp:p>` 구조 내에 위치해야 함 |
 
 ### `<hp:pic>` 검증된 구조 (pypandoc-hwpx, python-hwpx, HwpForge 참조)
 
@@ -806,44 +807,47 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 
 ```
 offset → orgSz → curSz → flip → rotationInfo → renderingInfo →
-img → imgRect → imgClip → inMargin → imgDim → effects →
-sz → pos → outMargin → shapeComment
+imgRect → imgClip → inMargin → imgDim → img → effects →
 ```
 
 ```xml
-<hp:pic id="PIC_ID" instid="INST_ID" reverse="0"
-        numberingType="NONE" textWrap="TOP_AND_BOTTOM"
-        textFlow="BOTH_SIDES" lock="0" dropcapstyle="None"
-        href="" groupLevel="0">
-  <hp:offset x="0" y="0"/>
-  <hp:orgSz width="W" height="H"/>
-  <hp:curSz width="W" height="H"/>
-  <hp:flip horizontal="0" vertical="0"/>
-  <hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>
-  <hp:renderingInfo>
-    <hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
-    <hc:scaMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
-    <hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
-  </hp:renderingInfo>
-  <hc:img binaryItemIDRef="BIN_ID" bright="0" contrast="0"
-          effect="REAL_PIC" alpha="0"/>
-  <hp:imgRect>
-    <hc:pt0 x="0" y="0"/><hc:pt1 x="W" y="0"/>
-    <hc:pt2 x="W" y="H"/><hc:pt3 x="0" y="H"/>
-  </hp:imgRect>
-  <hp:imgClip left="0" right="0" top="0" bottom="0"/>
-  <hp:inMargin left="0" right="0" top="0" bottom="0"/>
-  <hp:imgDim dimwidth="0" dimheight="0"/>
-  <hp:effects/>
-  <hp:sz width="W" widthRelTo="ABSOLUTE" height="H"
-         heightRelTo="ABSOLUTE" protect="0"/>
-  <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1"
-          allowOverlap="1" holdAnchorAndSO="0"
-          vertRelTo="PARA" horzRelTo="COLUMN"
-          vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
-  <hp:outMargin left="0" right="0" top="0" bottom="0"/>
-  <hp:shapeComment/>
-</hp:pic>
+<hp:p>
+  <hp:run>
+    <hp:pic id="PIC_ID" instid="INST_ID" reverse="0"
+            numberingType="NONE" textWrap="TOP_AND_BOTTOM"
+            textFlow="BOTH_SIDES" lock="0" dropcapstyle="None"
+            href="" groupLevel="0">
+      <hp:offset x="0" y="0"/>
+      <hp:orgSz width="100000" height="80000"/>
+      <hp:curSz width="47244" height="37795"/>
+      <hp:flip horizontal="0" vertical="0"/>
+      <hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>
+      <hp:renderingInfo>
+        <hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+        <hc:scaMatrix e1="0.47244" e2="0" e3="0" e4="0" e5="0.47244" e6="0"/>
+        <hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+      </hp:renderingInfo>
+      <hp:imgRect>
+        <hc:pt0 x="0" y="0"/><hc:pt1 x="47244" y="0"/>
+        <hc:pt2 x="47244" y="37795"/><hc:pt3 x="0" y="37795"/>
+      </hp:imgRect>
+      <hp:imgClip left="0" right="100000" top="0" bottom="80000"/>
+      <hp:inMargin left="0" right="0" top="0" bottom="0"/>
+      <hp:imgDim dimwidth="1000" dimheight="800"/>
+      <hc:img binaryItemIDRef="BIN_ID" bright="0" contrast="0"
+              effect="REAL_PIC" alpha="0"/>
+      <hp:effects/>
+      <hp:sz width="47244" widthRelTo="ABSOLUTE" height="37795"
+             heightRelTo="ABSOLUTE" protect="0"/>
+      <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1"
+              allowOverlap="1" holdAnchorAndSO="0"
+              vertRelTo="PARA" horzRelTo="COLUMN"
+              vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
+      <hp:outMargin left="0" right="0" top="0" bottom="0"/>
+      <hp:shapeComment/>
+    </hp:pic>
+  </hp:run>
+</hp:p>
 ```
 
 ### header.xml binDataList 등록 구조
