@@ -218,22 +218,110 @@ Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙
 3. **중첩 수준**: 양식에 정의된 불릿 중첩 수준을 초과하지 않는다.
 4. **이중 불릿 방지**: 마크다운의 `-` 또는 `*` 기호가 HWPX의 불릿 스타일과 중복되어 `◦ - 항목` 처럼 보이지 않도록, `md_parser.py` 처리 시 마커를 제거했는지 반드시 확인한다.
 
-## 표 생성 규칙
+## 표 생성 규칙 (CRITICAL — xml_writer.py 필수)
 
-1. **데이터 직접 삽입**: MD 테이블 데이터를 그대로 셀에 삽입한다. 불필요한 마커(■, ●, ▶ 등)를 추가하지 않는다.
-2. **양식 표 구조 유지**: 양식에 이미 정의된 표의 행/열 구조를 변경하지 않는다. 데이터가 부족하면 빈 셀로 남긴다.
+표(table) XML은 반드시 `xml_writer.py`의 `build_table()` 함수로 생성한다. 에이전트가 직접 `<hp:tbl>`, `<hp:tc>`, `<hp:tr>` 등의 표 XML을 작성하는 것은 **절대 금지**한다.
 
-## 이미지 삽입
+### 왜 xml_writer.py를 사용해야 하는가
 
-마크다운 콘텐츠의 표준 이미지 구문 `![alt](path)`와 바로 아래의 *기울임 캡션* 쌍을 매칭하여 HWPX에 임베딩한다.
+에이전트의 LLM 지식에는 HWPX 스펙의 여러 버전이 혼재되어 있어, 직접 작성 시 다음과 같은 호환되지 않는 구조를 생성하는 사례가 반복되었다:
+- `hc:` 네임스페이스를 표 요소에 사용 (올바른 접두사: `hp:`)
+- `hp:tcPr` 래퍼 요소 삽입 (HWPX 스펙에 존재하지 않는 요소)
+- `hp:cellAddr`, `hp:cellSpan`, `hp:cellSz` 순서/속성 오류
+- `hp:subList`의 필수 속성 누락
 
-1. **image_embedder.py 사용**: ZIP-level에서 PNG 이미지를 HWPX에 삽입한다.
-2. **--from-parsed 모드 (권장)**: `md_parser.py`가 생성한 `parsed_blocks.json`을 직접 사용하여 이미지와 캡션을 정확히 매칭한다.
+`xml_writer.py`는 이러한 문제를 모두 해결한 검증된 구현이므로, 표 생성은 예외 없이 이 스크립트를 사용한다.
+
+### xml_writer.py 표 생성 CLI
+
+```bash
+# 1) md_parser.py로 마크다운 파싱 (표 데이터 포함)
+python3 md_parser.py input.md --output parsed.json
+
+# 2) xml_writer.py로 표 포함 XML 프래그먼트 생성
+python3 xml_writer.py --input parsed.json --style-config styles.json --output fragment.xml
+```
+
+`xml_writer.py`의 `build_table()` 함수는 다음을 자동 처리한다:
+- 열 너비 균등 분배 (`table_width / col_count`)
+- `hp:tc`, `hp:cellAddr`, `hp:cellSpan`, `hp:cellSz`, `hp:cellMargin` 올바른 구조
+- `hp:subList` + `hp:p` + `hp:run` 중첩 구조
+- `noAdjust="0"` + `pageBreak="CELL"` 필수 속성
+- `borderFillIDRef` 스타일 참조
+
+### 금지 패턴 (표 관련)
+
+| 금지 패턴 | 문제 | 올바른 방법 |
+|-----------|------|------------|
+| 에이전트가 직접 `<hp:tbl>` XML 작성 | 네임스페이스/속성 오류 | `xml_writer.py build_table()` 사용 |
+| `generate_content.py` 등 자체 스크립트 생성 | 검증되지 않은 XML 구조 | 기존 `xml_writer.py` 호출 |
+| `hc:` 접두사를 표 요소에 사용 | HWPX 비호환 | `hp:` 접두사만 사용 (xml_writer.py가 자동 처리) |
+| `hp:tcPr` 래퍼 요소 사용 | HWPX 스펙에 없는 요소 | `hp:tc` 직계 자식으로 `hp:cellAddr` 등 배치 (xml_writer.py가 자동 처리) |
+| 표 데이터에 장식 마커(■, ●, ▶) 추가 | 원본 데이터 왜곡 | MD 원본 데이터 그대로 사용 |
+
+## 절대 금지: 자체 XML/스크립트 생성 (CRITICAL)
+
+에이전트가 HWPX XML을 생성하기 위해 **자체 Python 스크립트를 작성하는 것은 절대 금지**한다.
+
+### 금지 행위
+
+1. **`generate_content.py`, `create_table.py` 등 자체 스크립트 작성**: 기존 `xml_writer.py`가 모든 XML 생성 기능을 제공한다. 새 스크립트를 작성하면 네임스페이스, 속성 순서, 필수 요소 등에서 반드시 오류가 발생한다.
+2. **인라인 XML 문자열 조합**: `f"<hp:tbl ...>"` 형태로 에이전트가 직접 XML을 조합하지 않는다.
+3. **HWPX 스펙을 '기억'에 의존한 XML 작성**: LLM의 HWPX 지식은 여러 버전이 혼재되어 있어, `hc:` 접두사, `hp:tcPr` 래퍼 등 존재하지 않는 요소를 생성하는 원인이 된다.
+4. **lxml / ElementTree를 사용한 section XML 조작**: lxml의 `etree.tostring()`과 `tree.write()`는 XML 선언 뒤에 `\n`(개행)을 삽입한다. 한/글은 이 개행을 텍스트 노드로 해석하여 **문서를 깨뜨린다**. 기존 스크립트(`xml_writer.py`, `zip_surgery.py`)는 의도적으로 순수 문자열 기반으로 구현되어 있으므로, 이들만 사용한다.
+
+### lxml 개행 문제 상세
+
+```
+# 원본 템플릿 (정상):
+<?xml version='1.0' encoding='UTF-8' standalone='no'?><hs:sec ...>
+
+# lxml tree.write() 결과 (깨짐):
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<hs:sec ...>
+```
+
+XML 선언과 `<hs:sec>` 사이의 개행 1개만으로도 한/글에서 파일이 열리지 않는다.
+기존 스크립트 파이프라인(`xml_writer.py` → `zip_surgery.py`)은 이 문제를 방지하도록 순수 문자열 기반으로 설계되어 있다.
+
+### 올바른 방법
+
+모든 XML 생성은 기존 스크립트 파이프라인을 사용한다:
+
+```
+md_parser.py → xml_writer.py → zip_surgery.py
+```
+
+표가 포함된 마크다운을 처리할 때:
+1. `md_parser.py`가 표를 `{"type": "table", "headers": [...], "rows": [...]}` 형태로 파싱
+2. `xml_writer.py`의 `build_table()`이 올바른 HWPX XML로 변환
+3. `zip_surgery.py`가 결과를 HWPX에 삽입
+
+**스크립트를 찾을 수 없는 경우**: 자체 코드를 작성하지 않고 즉시 중단하여 경로 확인을 요청한다.
+## 이미지 삽입 (CRITICAL — image_embedder.py 필수)
+
+마크다운 콘텐츠의 표준 이미지 구문 `![alt](path)`와 바로 아래의 *기울임 측션* 쌍을 매칭하여 HWPX에 임베딩한다.
+
+1. **image_embedder.py 사용 필수**: ZIP-level에서 PNG 이미지를 HWPX에 삽입한다. 이미지 임베딩을 직접 구현하지 않는다.
+2. **--from-parsed 모드 (권장)**: `md_parser.py`가 생성한 `parsed_blocks.json`을 직접 사용하여 이미지와 측션을 정확히 매칭한다.
 3. **CLI 예시**:
    ```bash
    python3 image_embedder.py --hwpx output.hwpx --from-parsed parsed_blocks.json --base-dir ./images/ --output final.hwpx
    ```
-4. **캡션-파일 매핑**: `md_parser.py`가 추출한 이미지 경로와 캡션 텍스트를 기반으로 삽입 위치를 결정한다.
+4. **측션-파일 매핑**: `md_parser.py`가 추출한 이미지 경로와 측션 텍스트를 기반으로 삽입 위치를 결정한다.
+
+### 이미지 임베딩 필수 규칙
+
+| 규칙 | 설명 |
+|------|------|
+| **3곳 동시 등록** | BinData/ + content.hpf + header.xml 모두 등록. 하나라도 누락하면 한/글 에러 |
+| **header.xml에 hh:binItem** | 요소명은 `hh:binItem` (≠ `hh:binData`). id=0부터 순차 |
+| **포맷 자동 검증** | `.png` 확장자인데 실제 JPEG일 수 있음. image_embedder.py가 PIL로 자동 변환 |
+| **orgSz = curSz** | 리사이즈된 이미지는 orgSz와 curSz를 동일하게 설정 |
+| **크기 상한** | MAX_HEIGHT = 70000 HWP units (~247mm). 초과 시 에러 |
+| **hp:pic 직접 작성 금지** | hp:pic XML을 에이전트가 직접 작성하지 않는다. image_embedder.py의 make_pic_xml() 사용 |
+| **imgDim은 0** | `dimwidth="0" dimheight="0"` (실제 크기가 아닌 0으로 설정) |
+| **numberingType="NONE"** | `"PICTURE"`가 아닌 `"NONE"`으로 설정 |
 
 ## Constraints
 
@@ -249,4 +337,10 @@ Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙
 - Do not hardcode XML blocks in the agent instructions; rely on skill scripts and templates.
 - Use relative path resolution first, then documented Glob fallback rules when locating scripts.
 - **템플릿 채우기 시 style-map 선행 필수**: Workflow 7 실행 시 반드시 `analyze_template.py --style-map`을 먼저 실행하여 스타일 설정을 추출한 후 후속 단계를 진행한다.
-- **xml_writer.py로 XML 생성**: 에이전트가 직접 XML을 작성하지 않고 `xml_writer.py`를 사용하여 XML fragment를 생성한다. 직접 XML 작성은 최소화한다.
+- **xml_writer.py 사용 필수 (표/문단/불릿 등 모든 XML 생성)**: 에이전트가 직접 `<hp:tbl>`, `<hp:tc>`, `<hp:p>` 등의 XML을 작성하는 것은 **절대 금지**한다. 반드시 `xml_writer.py`의 `build_table()`, `build_paragraph()`, `build_heading()`, `build_bullet()` 등을 사용하여 XML fragment를 생성한다.
+- **자체 Python 스크립트 생성 금지**: `generate_content.py`, `create_table.py` 등 XML 생성을 위한 새 스크립트를 작성하지 않는다. 기존 `md_parser.py` → `xml_writer.py` → `zip_surgery.py` 파이프라인만 사용한다.
+- **HWPX 네임스페이스 규칙**: 표 요소에는 `hp:` 접두사만 사용한다. `hc:` 접두사를 표/셀 요소에 사용하지 않는다. `hp:tcPr` 래퍼 요소는 HWPX 스펙에 존재하지 않으므로 생성하지 않는다.
+- **lxml/ElementTree로 section XML 직렬화 절대 금지**: `etree.tostring()`, `tree.write()`는 XML 선언 뒤에 개행(`\n`)을 삽입하여 한/글에서 파일이 열리지 않게 된다. 모든 XML 생성은 순수 문자열 기반 스크립트(`xml_writer.py`, `zip_surgery.py`)만 사용한다. 에이전트가 자체 코드에서 `from lxml import etree`, `import xml.etree.ElementTree` 등을 사용하는 것은 금지한다.
+- **이미지 임베딩 시 image_embedder.py 필수**: hp:pic XML을 직접 작성하지 않는다. 반드시 `image_embedder.py`를 사용하여 BinData/ + content.hpf + header.xml 3곳 등록을 자동 처리한다.
+- **header.xml에 hh:binDataList 필수 등록**: `image_embedder.py`가 자동 처리하므로 수동으로 header.xml을 수정하지 않는다. `hh:binData`가 아닌 `hh:binItem` 요소를 사용한다.
+- **orgSz ≠ curSz 설정 금지**: 리사이즈된 이미지 기준으로 orgSz = curSz로 동일하게 설정. 불일치 시 이미지가 축소 표시된다.

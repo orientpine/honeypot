@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.12.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.14.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -954,6 +954,8 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.14.0 | 2026-03-19 | hwpx-generator v3.4.0: image_embedder.py 전면 개편 — make_pic_xml() 검증 구조 교체(pypandoc-hwpx/HwpForge 기반), header.xml hh:binDataList 자동 등록, PIL 포맷 감지+자동변환, 이미지 높이 상한 검증, validate.py 이미지 6개 검사 추가(renderingInfo/instid/binDataList/magic bytes), section0.xml 개행 검사 0개 기준으로 교정 |
+| 3.13.0 | 2026-03-19 | hwpx-generator v3.3.0: xml_writer.py 필수 사용 강제 + lxml 금지 — 에이전트 자체 표 XML 재구현 방지(hc: 네임스페이스/hp:tcPr 오류), lxml 개행 삽입으로 인한 한/글 파일 깨짐 방지, generate_content.py 등 자체 스크립트 생성 금지 규칙 추가 |
 | 3.12.1 | 2026-03-19 | visual-generator v3.3.1: Gemini API JPEG→PNG 명시적 변환 — `image.save(format='PNG')` 강제, CMYK/P 모드 호환 변환, `evaluate_image_quality()` MIME 타입 동적 감지 |
 | 3.12.0 | 2026-03-19 | hwpx-generator v3.2.0: page_guard.py 워크플로우 모드 분기 — 오케스트레이터가 워크플로우 유형(MD 채우기/스타일 복제/XML-first)에 따라 `--mode template-fill` 자동 선택, template-fill 모드에서 표 추가/변경 구분 로직 추가, WARNING 수준 리포트 도입 |
 | 3.11.0 | 2026-03-18 | hwpx-generator v3.1.0: Template-Aware Markdown Insertion — 템플릿 sub-header와 MD heading 매칭으로 헤더 이중 출현 방지, placeholder 문단 자동 정리, 적용 조건 분기 추가 |
