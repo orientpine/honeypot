@@ -53,9 +53,20 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 
 1. Run mandatory structural validation on the generated output.
    - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py "{generated_hwpx_path}"`
-2. When `reference_hwpx` was provided, run page drift guard (필수).
-   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py --reference "{reference_hwpx}" --output "{generated_hwpx_path}"`
+2. When `reference_hwpx` or `template_hwpx` was provided, run page drift guard with appropriate mode.
+   - **모드 선택 기준** (Phase 2에서 결정된 워크플로우 유형에 따라):
+     | 워크플로우 | page_guard 모드 |
+     |------------|-----------------|
+     | MD 채우기 (`content_md` 존재) | `--mode template-fill` |
+     | XML-first 생성 (템플릿 없음) | 실행하지 않음 (비교 대상 없음) |
+     | 스타일 복제 (`reference_hwpx`만 존재) | `--mode default` |
+     | 템플릿 소규모 편집 | `--mode default` |
+   - MD 채우기 모드 시:
+     Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py --mode template-fill --reference "{reference_hwpx}" --output "{generated_hwpx_path}"`
+   - 스타일 복제/소규모 편집 시:
+     Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py --reference "{reference_hwpx}" --output "{generated_hwpx_path}"`
    - `page_guard.py`는 문단 수, 표 구조, 텍스트 길이 편차를 검사하여 쪽수 변동 위험을 사전 차단한다.
+   - `template-fill` 모드에서는 표 추가를 WARNING으로 보고하고, 기존 표 구조 보존 여부만 검사한다.
 3. Handle validation result.
    - PASS (both): Phase 5로 진행.
    - FAIL (validate.py): 검증 오류를 첨부해 Phase 3을 재실행(최대 2회).
