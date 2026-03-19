@@ -7,6 +7,7 @@ Checks (standard):
   - mimetype content is correct
   - mimetype is the first ZIP entry and stored without compression
   - All XML files are well-formed
+  - Image embedding consistency (BinData/header.xml/content.hpf/section0.xml)
 
 Checks (--strict, for ZIP-level surgery output):
   - standalone='no' present in section0.xml XML declaration
@@ -22,13 +23,14 @@ Usage:
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 from zipfile import ZIP_STORED, BadZipFile, ZipFile
 
-from lxml import etree
+from lxml import etree  # pyright: ignore[reportMissingImports]
 
 REQUIRED_FILES = [
     "mimetype",
@@ -102,9 +104,129 @@ def validate(hwpx_path: str, *, strict: bool = False) -> list[str]:
                 except etree.XMLSyntaxError as e:
                     errors.append(f"Malformed XML in {name}: {e}")
 
+        # Image embedding consistency checks (always run when images exist)
+        errors.extend(_image_checks(zf, names))
+
         # Strict mode: ZIP-level surgery compliance checks
         if strict:
             errors.extend(_strict_checks(zf, names))
+
+    return errors
+
+
+def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
+    """Validate image embedding consistency across section0.xml, header.xml, and content.hpf."""
+    errors: list[str] = []
+
+    # Run only when BinData files exist
+    bin_files = [n for n in names if n.startswith("BinData/") and not n.endswith("/")]
+    if not bin_files:
+        return errors
+
+    section_name = "Contents/section0.xml"
+    header_name = "Contents/header.xml"
+    hpf_name = "Contents/content.hpf"
+
+    sec_text = zf.read(section_name).decode("utf-8") if section_name in names else ""
+    header_text = zf.read(header_name).decode("utf-8") if header_name in names else ""
+    hpf_text = zf.read(hpf_name).decode("utf-8") if hpf_name in names else ""
+
+    # 1 & 2: hp:pic must include renderingInfo and instid
+    if sec_text:
+        pic_pattern = re.compile(r"<hp:pic\\b([^>]*)>(.*?)</hp:pic>", re.DOTALL)
+        for match in pic_pattern.finditer(sec_text):
+            pic_attrs = match.group(1)
+            pic_content = match.group(2)
+
+            if "instid=" not in pic_attrs:
+                errors.append(
+                    "[image] hp:pic element missing required 'instid' attribute"
+                )
+
+            if "<hp:renderingInfo>" not in pic_content:
+                errors.append(
+                    "[image] hp:pic element missing required <hp:renderingInfo>"
+                )
+
+    # 3 & 6: header.xml must have hh:binDataList and matching itemCnt
+    if header_text:
+        if "<hh:binDataList" not in header_text:
+            errors.append(
+                f"[image] header.xml missing <hh:binDataList> but BinData/ has "
+                f"{len(bin_files)} file(s)"
+            )
+        else:
+            cnt_match = re.search(
+                r"<hh:binDataList\\b[^>]*\\bitemCnt=\"(\\d+)\"", header_text
+            )
+            if cnt_match:
+                declared_cnt = int(cnt_match.group(1))
+                if declared_cnt != len(bin_files):
+                    errors.append(
+                        f"[image] hh:binDataList itemCnt={declared_cnt} but "
+                        f"BinData/ has {len(bin_files)} file(s)"
+                    )
+    else:
+        errors.append(
+            f"[image] header.xml missing <hh:binDataList> but BinData/ has "
+            f"{len(bin_files)} file(s)"
+        )
+
+    # 4: binaryItemIDRef in section0.xml must exist in hh:binItem BinData refs
+    if sec_text and header_text:
+        bin_item_refs = set()
+        for m in re.finditer(
+            r"<hh:binItem\\b[^>]*\\bBinData=\"([^\"]*)\"", header_text
+        ):
+            ref = os.path.splitext(os.path.basename(m.group(1)))[0]
+            if ref:
+                bin_item_refs.add(ref)
+
+        if bin_item_refs:
+            for m in re.finditer(r"binaryItemIDRef=\"([^\"]*)\"", sec_text):
+                ref_id = m.group(1)
+                if ref_id not in bin_item_refs:
+                    errors.append(
+                        f'[image] binaryItemIDRef="{ref_id}" not found in '
+                        f"header.xml hh:binItem entries"
+                    )
+
+    # 5: BinData magic bytes must match media-type in content.hpf
+    if hpf_text:
+        declared_media_by_href: dict[str, str] = {}
+        for item_match in re.finditer(r"<opf:item\\b[^>]*/?>", hpf_text):
+            tag = item_match.group(0)
+            href_match = re.search(r"\\bhref=\"([^\"]+)\"", tag)
+            media_match = re.search(r"\\bmedia-type=\"([^\"]+)\"", tag)
+            if href_match and media_match:
+                declared_media_by_href[href_match.group(1)] = media_match.group(1)
+
+        for bin_file in bin_files:
+            bin_data = zf.read(bin_file)
+            basename = os.path.basename(bin_file)
+
+            is_png = bin_data[:8] == b"\x89PNG\r\n\x1a\n"
+            is_jpeg = bin_data[:3] == b"\xff\xd8\xff"
+
+            declared_type = declared_media_by_href.get(bin_file)
+            if declared_type is None:
+                for href, media_type in declared_media_by_href.items():
+                    if href.endswith(basename):
+                        declared_type = media_type
+                        break
+
+            if declared_type == "image/png" and not is_png:
+                actual = "JPEG" if is_jpeg else "unknown"
+                errors.append(
+                    f"[image] {bin_file}: declared as image/png but actual format "
+                    f"is {actual} (magic bytes mismatch)"
+                )
+            elif declared_type == "image/jpeg" and not is_jpeg:
+                actual = "PNG" if is_png else "unknown"
+                errors.append(
+                    f"[image] {bin_file}: declared as image/jpeg but actual format "
+                    f"is {actual} (magic bytes mismatch)"
+                )
 
     return errors
 
@@ -153,12 +275,14 @@ def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:
     else:
         errors.append("[strict] No <hs:sec> root tag found in section0.xml")
 
-    # 4. Newline count (should be exactly 1: after XML declaration)
+    # 4. Newline count (HWPX section0.xml must have 0 newlines)
+    # 한/글 templates have 0 newlines. lxml's tostring() adds a newline
+    # between <?xml ...?> and <hs:sec>, which crashes 한/글.
     newline_count = sec_text.count("\n")
-    if newline_count != 1:
+    if newline_count > 0:
         errors.append(
-            f"[strict] section0.xml has {newline_count} newlines "
-            f"(expected exactly 1, after XML declaration)"
+            f"[strict] section0.xml contains {newline_count} newline(s) "
+            f"(expected 0 — 한/글 crashes on any newline in section XML)"
         )
 
     # 5. Table attributes: noAdjust and pageBreak
@@ -182,7 +306,8 @@ def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:
 
     return errors
 
-def _run_proofread(hwpx_path: str) -> dict:
+
+def _run_proofread(hwpx_path: str) -> dict[str, object]:
     """Run proofread.py as a subprocess and return structured result."""
     proofread_script = Path(__file__).parent / "proofread.py"
     if not proofread_script.is_file():
@@ -203,14 +328,22 @@ def _run_proofread(hwpx_path: str) -> dict:
         if proc.stdout.strip():
             data = json.loads(proc.stdout)
             # Determine overall pass from individual checks
-            checks = ["double_bullets", "font_consistency", "empty_paragraphs",
-                      "orphaned_placeholders", "table_borders"]
+            checks = [
+                "double_bullets",
+                "font_consistency",
+                "empty_paragraphs",
+                "orphaned_placeholders",
+                "table_borders",
+            ]
             all_pass = all(
                 isinstance(data.get(c), dict) and data[c].get("pass", False)
                 for c in checks
             )
-            failed = [c for c in checks
-                      if isinstance(data.get(c), dict) and not data[c].get("pass", True)]
+            failed = [
+                c
+                for c in checks
+                if isinstance(data.get(c), dict) and not data[c].get("pass", True)
+            ]
             summary = "PASS" if all_pass else f"FAIL ({', '.join(failed)})"
             return {"pass": all_pass, "summary": summary, "details": data}
         else:
@@ -271,8 +404,13 @@ def main() -> None:
             print(f"  Proofread: {proofread_result['summary']}")
             if not proofread_result["pass"]:
                 print("  WARNING: proofread found issues (see details below)")
-                print(json.dumps(proofread_result["details"], ensure_ascii=False, indent=4))
+                print(
+                    json.dumps(
+                        proofread_result["details"], ensure_ascii=False, indent=4
+                    )
+                )
                 sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

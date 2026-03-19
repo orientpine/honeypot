@@ -41,6 +41,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - **MD 채우기 모드 시**: hwpx-builder에게 md_parser, xml_writer, image_embedder 사용을 명시적으로 위임. `content_md`와 `images_dir` 파라미터를 전달하여 Workflow 7 실행.
    - 입력 콘텐츠가 Markdown이고 템플릿에 이미 섹션 헤더가 존재하는 경우, Template-Aware Markdown Insertion 절차를 적용하여 헤더 중복을 방지할 것.
    - 마크다운 heading(`#`, `##`, `###`)을 템플릿 sub-header와 매칭하고, 매칭된 heading은 skip하며 body만 해당 위치에 삽입할 것.
+   - **XML 생성 규칙 (필수 전달)**: 모든 XML 생성(표, 문단, 불릿 포함)은 반드시 기존 `xml_writer.py`의 `build_table()`, `build_paragraph()` 등을 사용할 것. 에이전트가 직접 XML을 작성하거나 `generate_content.py` 등 자체 스크립트를 생성하는 것은 금지. lxml/ElementTree를 사용한 section XML 직렬화도 금지(개행 삽입으로 한/글에서 파일이 깨짐).
    - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 

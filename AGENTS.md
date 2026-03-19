@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-03-19T00:00:00+09:00
-**Version:** 3.12.1
+**Version:** 3.14.0
 **Branch:** main
 
 ## OVERVIEW

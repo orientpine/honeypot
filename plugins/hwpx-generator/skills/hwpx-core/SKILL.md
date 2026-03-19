@@ -446,7 +446,15 @@ hanging indent = paraPr의 `left` margin + 음수 `indent` (첫 줄이 왼쪽으
 
 **금지 패턴:** 공백 문자로 들여쓰기하지 않는다. 반드시 paraPr의 `left`/`indent` 속성 사용.
 
-### 표 작성법
+### 표 작성법 (참조 형식 — 프로그래밍 생성 시 xml_writer.py 사용 필수)
+
+> **중요**: 아래 XML 예시는 HWPX 표 구조를 이해하기 위한 **참조 형식**이다.
+> 프로그래밍으로 표를 생성할 때는 반드시 `xml_writer.py`의 `build_table()` / `table_cell_xml()` 함수를 사용한다.
+> 에이전트가 직접 `<hp:tbl>` XML을 작성하면 네임스페이스(`hc:` 오용), 속성 순서, 필수 요소 누락 등의 오류가 발생한다.
+>
+> ```bash
+> python3 xml_writer.py --input parsed.json --style-config styles.json --output fragment.xml
+> ```
 
 ```xml
 <hp:p id="고유ID" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">
@@ -496,6 +504,7 @@ hanging indent = paraPr의 `left` margin + 음수 `indent` (첫 줄이 왼쪽으
 - **금지**: 셀에 ■, ▶, □ 등 장식 마커를 임의 추가하지 않는다
 - **열 너비 공식**: `table_width / col_count` 균등 분배 (레퍼런스가 있으면 레퍼런스 따름)
 - **예**: 3열 균등 → `42520 / 3` ≈ 14173 + 14173 + 14174
+- **xml_writer.py 필수**: 프로그래밍으로 표를 생성할 때는 반드시 `xml_writer.py`의 `build_table()` 함수를 호출한다. 에이전트가 직접 `<hp:tbl>` XML을 작성하지 않는다.
 
 ### ID 규칙
 
@@ -761,7 +770,11 @@ python3 "$SKILL_DIR/scripts/page_guard.py" --reference template.hwpx --output fi
 
 ### 이미지 임베딩 가이드
 
-HWPX 이미지 구조: `BinData/` 폴더에 이미지 파일 저장 + `content.hpf`에 바이너리 참조 등록 + `section0.xml`에 `<hp:pic>` 요소 삽입.
+HWPX 이미지 구조는 3곳에 동시 등록해야 한다:
+1. `BinData/` 폴더에 실제 이미지 파일 (BIN0001.png, BIN0002.png, ...)
+2. `Contents/content.hpf`에 `<opf:item>` 등록
+3. `Contents/header.xml`에 `<hh:binDataList>` > `<hh:binItem>` 등록
+4. `Contents/section0.xml`에 `<hp:pic>` 요소 삽입
 
 **CLI:**
 
@@ -776,17 +789,74 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 `--mapping` JSON 형식: `{"placeholder_id": "image_filename.png", ...}`
 `--auto-map` 옵션으로 플레이스홀더-이미지 자동 매칭 가능.
 
-**`<hp:pic>` XML 예시:**
+### 이미지 임베딩 필수 규칙 (CRITICAL)
+
+| 규칙 | 설명 |
+|------|------|
+| **3곳 동시 등록** | `BinData/` + `content.hpf` + `header.xml` 모두 등록해야 함. 하나라도 누락 시 한/글 에러 |
+| **hh:binItem (NOT hh:binData)** | header.xml에 등록 시 요소명은 `hh:binItem`이다. `hh:binData`가 아님 |
+| **소스 이미지 포맷 검증** | `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있음. `image_embedder.py`가 자동 감지/변환 |
+| **orgSz = curSz** | 이미지가 이미 최종 크기로 리사이즈된 경우, `orgSz`와 `curSz`를 동일하게 설정 |
+| **이미지 높이 상한** | MAX_IMAGE_HEIGHT = 70000 HWP units (~247mm). 초과 시 에러 |
+| **BIN ID 형식** | `BIN0001`, `BIN0002` 등 4자리 패딩. `image1` 형식은 사용하지 않음 |
+
+### `<hp:pic>` 검증된 구조 (pypandoc-hwpx, python-hwpx, HwpForge 참조)
+
+요소 순서가 중요하며, 한/글의 직렬화 순서와 일치해야 한다:
+
+```
+offset → orgSz → curSz → flip → rotationInfo → renderingInfo →
+img → imgRect → imgClip → inMargin → imgDim → effects →
+sz → pos → outMargin → shapeComment
+```
 
 ```xml
-<hp:pic>
-  <hp:sz width="42520" height="28000" widthRelTo="ABSOLUTE" heightRelTo="ABSOLUTE"/>
-  <hp:pos treatAsChar="1" vertRelTo="PARA" horzRelTo="COLUMN"
+<hp:pic id="PIC_ID" instid="INST_ID" reverse="0"
+        numberingType="NONE" textWrap="TOP_AND_BOTTOM"
+        textFlow="BOTH_SIDES" lock="0" dropcapstyle="None"
+        href="" groupLevel="0">
+  <hp:offset x="0" y="0"/>
+  <hp:orgSz width="W" height="H"/>
+  <hp:curSz width="W" height="H"/>
+  <hp:flip horizontal="0" vertical="0"/>
+  <hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>
+  <hp:renderingInfo>
+    <hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+    <hc:scaMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+    <hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
+  </hp:renderingInfo>
+  <hc:img binaryItemIDRef="BIN_ID" bright="0" contrast="0"
+          effect="REAL_PIC" alpha="0"/>
+  <hp:imgRect>
+    <hc:pt0 x="0" y="0"/><hc:pt1 x="W" y="0"/>
+    <hc:pt2 x="W" y="H"/><hc:pt3 x="0" y="H"/>
+  </hp:imgRect>
+  <hp:imgClip left="0" right="0" top="0" bottom="0"/>
+  <hp:inMargin left="0" right="0" top="0" bottom="0"/>
+  <hp:imgDim dimwidth="0" dimheight="0"/>
+  <hp:effects/>
+  <hp:sz width="W" widthRelTo="ABSOLUTE" height="H"
+         heightRelTo="ABSOLUTE" protect="0"/>
+  <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1"
+          allowOverlap="1" holdAnchorAndSO="0"
+          vertRelTo="PARA" horzRelTo="COLUMN"
           vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
-  <hp:img binaryItemIDRef="image1" bright="0" contrast="0"
-          effect="REAL_PIC" binaryPageNo="0"/>
+  <hp:outMargin left="0" right="0" top="0" bottom="0"/>
+  <hp:shapeComment/>
 </hp:pic>
 ```
+
+### header.xml binDataList 등록 구조
+
+```xml
+<hh:binDataList itemCnt="N">
+  <hh:binItem id="0" Type="Embedding" BinData="BIN0001.png" Format="png"/>
+  <hh:binItem id="1" Type="Embedding" BinData="BIN0002.png" Format="png"/>
+  ...
+</hh:binDataList>
+```
+
+`id`는 0부터 순차. `BinData`는 BinData/ 폴더의 파일명. `Format`은 확장자(점 제외).
 
 ---
 
@@ -844,6 +914,11 @@ HWPX 파일이 한글에서 열리지 않을 때:
 19. **ZIP-level surgery 규칙**: 기존 HWPX 편집 시 `zip_surgery.py`를 사용하고, 상세 규칙은 `$SKILL_DIR/references/zip-surgery-guide.md` 준수. ET.tostring()/tree.write() 사용 금지, 개행 삽입 금지, standalone='no' 보존 필수.
 20. **표 속성 필수**: `noAdjust="0"` (행 높이 자동 조절) + `pageBreak="CELL"` (페이지 넘김 허용)
 21. **validate.py --strict**: ZIP-level surgery 결과물은 `validate.py --strict`로 추가 검증 (standalone, xmlns, newlines, 표 속성)
+22. **lxml/ElementTree로 section XML 직렬화 절대 금지**: lxml의 `etree.tostring()`과 `tree.write()`는 XML 선언(`<?xml ... ?>`) 뒤에 `\n`(개행)을 삽입한다. 한/글은 이 개행을 텍스트 노드로 해석하여 파일을 깨뜨린다. 원본: `...yes"?><hs:sec`(개행 0개) → lxml: `...yes"?>\n<hs:sec`(개행 1개). 모든 section XML 생성/조작은 순수 문자열 기반 스크립트(`xml_writer.py`, `zip_surgery.py`)만 사용한다. 에이전트가 자체 코드에서 `from lxml import etree` 또는 `import xml.etree.ElementTree`를 사용하는 것은 금지한다.
+23. **표 생성 시 xml_writer.py 필수**: 표(table) XML은 반드시 `xml_writer.py`의 `build_table()` / `table_cell_xml()` 함수로 생성한다. 에이전트가 직접 `<hp:tbl>` XML을 작성하거나 `generate_content.py` 등의 자체 스크립트를 생성하는 것은 금지한다.
+24. **이미지 3곳 동시 등록**: 이미지를 HWPX에 임베딩할 때는 반드시 `BinData/` + `content.hpf` + `header.xml` 3곳에 동시 등록한다. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.
+25. **이미지 포맷 검증**: `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있다 (Gemini API 등). `image_embedder.py`가 PIL로 자동 감지/변환하므로 별도 처리 불필요.
+26. **hp:pic 구조 직접 작성 금지**: hp:pic XML을 에이전트가 직접 작성하지 않는다. 반드시 `image_embedder.py`의 `make_pic_xml()`을 사용한다. 검증된 구조(pypandoc-hwpx/HwpForge)를 사용하며, 요소 순서가 중요하다.
 
 ## 빠른 실행 예시
 
