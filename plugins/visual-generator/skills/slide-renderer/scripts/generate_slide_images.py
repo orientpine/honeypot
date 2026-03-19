@@ -27,6 +27,7 @@ from pathlib import Path
 
 from google import genai
 from google.genai import types
+from PIL import Image as PILImage
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -111,11 +112,21 @@ def generate_image(
                         if part.text:
                             print(f"  [사고 과정] {part.text[:100]}...")
 
-                # 이미지 저장
+                # 이미지 저장 (Gemini가 JPEG을 반환할 수 있으므로 PNG로 명시적 변환)
                 for part in response.parts:
                     if part.inline_data is not None:
+                        source_mime = getattr(
+                            part.inline_data, "mime_type", "unknown"
+                        )
                         image = part.as_image()
-                        image.save(save_path)
+                        # CMYK/P 모드는 PNG 비호환 → RGB 변환
+                        if image.mode not in ("RGB", "RGBA", "L"):
+                            image = image.convert("RGB")
+                        image.save(save_path, format="PNG")
+                        if source_mime != "image/png":
+                            print(
+                                f"  [변환] {source_mime} → PNG"
+                            )
                         return True
 
                 print(
@@ -204,6 +215,22 @@ def generate_image(
     return True
 
 
+def _detect_image_mime(image_path: str) -> str:
+    """이미지 파일의 실제 MIME 타입을 감지"""
+    try:
+        with PILImage.open(image_path) as img:
+            fmt = (img.format or "").upper()
+            mime_map = {
+                "JPEG": "image/jpeg",
+                "PNG": "image/png",
+                "WEBP": "image/webp",
+                "GIF": "image/gif",
+            }
+            return mime_map.get(fmt, "image/png")
+    except Exception:
+        return "image/png"
+
+
 def evaluate_image_quality(client, image_path: str, prompt_text: str = "") -> dict:
     """
     Gemini 비전 모델로 생성된 이미지 품질 평가 (5차원)
@@ -241,7 +268,10 @@ def evaluate_image_quality(client, image_path: str, prompt_text: str = "") -> di
             model=MODEL_NAME,
             contents=[
                 types.Part.from_text(text=evaluation_prompt),
-                types.Part.from_bytes(data=image_bytes, mime_type="image/png"),
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=_detect_image_mime(image_path),
+                ),
             ],
             config=types.GenerateContentConfig(
                 response_modalities=["TEXT"],
