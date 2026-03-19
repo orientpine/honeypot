@@ -317,11 +317,13 @@ md_parser.py → xml_writer.py → zip_surgery.py
 | **3곳 동시 등록** | BinData/ + content.hpf + header.xml 모두 등록. 하나라도 누락하면 한/글 에러 |
 | **header.xml에 hh:binItem** | 요소명은 `hh:binItem` (≠ `hh:binData`). id=0부터 순차 |
 | **포맷 자동 검증** | `.png` 확장자인데 실제 JPEG일 수 있음. image_embedder.py가 PIL로 자동 변환 |
-| **orgSz = curSz** | 리사이즈된 이미지는 orgSz와 curSz를 동일하게 설정 |
+| **orgSz = pixel × 100** | 원본 이미지 크기를 HWP 단위로 변환 (pixel × 100). orgSz ≠ curSz — curSz는 표시 크기만 의미 |
 | **크기 상한** | MAX_HEIGHT = 70000 HWP units (~247mm). 초과 시 에러 |
 | **hp:pic 직접 작성 금지** | hp:pic XML을 에이전트가 직접 작성하지 않는다. image_embedder.py의 make_pic_xml() 사용 |
-| **imgDim은 0** | `dimwidth="0" dimheight="0"` (실제 크기가 아닌 0으로 설정) |
+| **imgDim = pixel 크기** | `dimwidth`, `dimheight`는 실제 픽셀 크기 (0이 아님). image_embedder.py가 자동 계산 |
 | **numberingType="NONE"** | `"PICTURE"`가 아닌 `"NONE"`으로 설정 |
+| **scaMatrix = curSz/orgSz** | 스케일링 비율 (identity matrix 아님). image_embedder.py가 자동 계산 |
+| **hp:pic은 <hp:run> 내부 필수** | hp:pic이 section-level sibling으로 배치되면 한/글이 무시함. image_embedder.py가 <hp:p><hp:run> 래퍼 자동 생성 |
 
 ## Constraints
 
