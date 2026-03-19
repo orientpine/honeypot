@@ -119,8 +119,9 @@ def compare_metrics(
     max_text_delta_ratio: float,
     max_paragraph_delta_ratio: float,
     mode: str = "default",
-) -> List[str]:
+) -> Tuple[List[str], List[str]]:
     errors: List[str] = []
+    warnings: List[str] = []
 
     # In template-fill mode, paragraph count changes are expected
     if mode != "template-fill" and ref.paragraph_count != out.paragraph_count:
@@ -135,10 +136,32 @@ def compare_metrics(
         errors.append(
             f"명시적 columnBreak 수 불일치: ref={ref.column_break_count}, out={out.column_break_count}"
         )
-    if ref.table_count != out.table_count:
-        errors.append(f"표 수 불일치: ref={ref.table_count}, out={out.table_count}")
-    if ref.table_shapes != out.table_shapes:
-        errors.append("표 구조(rowCnt/colCnt/width/height/pageBreak) 불일치")
+    if mode == "template-fill":
+        # 표 추가는 허용, 기존 표 변경만 오류로 보고
+        if out.table_count < ref.table_count:
+            errors.append(f"표 삭제 감지: ref={ref.table_count}, out={out.table_count}")
+        if out.table_count >= ref.table_count:
+            # 기존 표(앞쪽 ref.table_count개)의 구조가 보존되었는지만 검사
+            ref_shapes = ref.table_shapes
+            out_prefix = out.table_shapes[:ref.table_count]
+            if ref_shapes != out_prefix:
+                errors.append("기존 표 구조 변경 감지 (신규 표 추가는 정상)")
+            if out.table_count > ref.table_count:
+                added = out.table_count - ref.table_count
+                warnings.append(
+                    f"표 {added}개 추가 (ref={ref.table_count}, out={out.table_count}) "
+                    "— 신규 콘텐츠 표 삽입으로 판단"
+                )
+            if ref_shapes == out_prefix:
+                warnings.append(
+                    f"기존 표 {ref.table_count}개 구조 보존 확인."
+                )
+    else:
+        # default 모드: 기존 전체 비교 유지
+        if ref.table_count != out.table_count:
+            errors.append(f"표 수 불일치: ref={ref.table_count}, out={out.table_count}")
+        if ref.table_shapes != out.table_shapes:
+            errors.append("표 구조(rowCnt/colCnt/width/height/pageBreak) 불일치")
 
     td = _ratio_delta(ref.text_char_total_nospace, out.text_char_total_nospace)
     # In template-fill mode, text length growth is expected (filling empty fields)
@@ -163,7 +186,7 @@ def compare_metrics(
                     f"ref={a}, out={b}, delta={pd:.2%}, limit={max_paragraph_delta_ratio:.2%}"
                 )
 
-    return errors
+    return errors, warnings
 
 
 def main() -> int:
@@ -219,7 +242,7 @@ def main() -> int:
             )
         )
 
-    errors = compare_metrics(
+    errors, warnings = compare_metrics(
         ref,
         out,
         max_text_delta_ratio=args.max_text_delta_ratio,
@@ -234,6 +257,9 @@ def main() -> int:
 
     mode_label = f" (mode={args.mode})" if args.mode != "default" else ""
     print(f"PASS: page-guard{mode_label}")
+    if warnings:
+        for w in warnings:
+            print(f"  WARNING: {w}")
     print(
         "  paragraph/table/pageBreak 구조와 텍스트 길이 편차가 허용 범위 내입니다."
     )

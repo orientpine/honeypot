@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-18T00:00:00+09:00
-**Version:** 3.11.0
+**Generated:** 2026-03-19T00:00:00+09:00
+**Version:** 3.12.0
 **Branch:** main
 
 ## OVERVIEW
@@ -96,6 +96,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 - Verification docs: Generate BEFORE main content (절대 스킵 금지)
 - Task delegation: Use `Task(subagent_type=...)` - never analyze directly
 - Auto mode: `auto_mode=true` skips user confirmations
+- `/start-work` 완료 후: 모든 작업이 끝나면 반드시 `git push`를 실행하여 원격 저장소에 반영
 
 ### Windows Bash 명령어 실행 규칙 (CRITICAL)
 

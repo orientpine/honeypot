@@ -135,7 +135,7 @@ def test_default_mode_detects_paragraph_count_mismatch():
     """Default mode flags paragraph count differences."""
     ref = _make_metrics(paragraph_count=10)
     out = _make_metrics(paragraph_count=15)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert any("문단 수 불일치" in e for e in errors)
 
 
@@ -143,7 +143,7 @@ def test_default_mode_detects_text_length_delta():
     """Default mode flags large text length changes."""
     ref = _make_metrics(text_char_total_nospace=800)
     out = _make_metrics(text_char_total_nospace=1200)  # 50% delta
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert any("전체 텍스트 길이 편차 초과" in e for e in errors)
 
 
@@ -151,7 +151,7 @@ def test_default_mode_detects_paragraph_text_delta():
     """Default mode flags per-paragraph text changes."""
     ref = _make_metrics(paragraph_count=3, paragraph_text_lengths=[100, 100, 100])
     out = _make_metrics(paragraph_count=3, paragraph_text_lengths=[100, 200, 100])
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert any("문단 텍스트 길이 편차 초과" in e for e in errors)
 
 
@@ -159,7 +159,7 @@ def test_default_mode_passes_identical():
     """Default mode passes when metrics are identical."""
     ref = _make_metrics()
     out = _make_metrics()
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert errors == []
 
 
@@ -167,7 +167,7 @@ def test_default_mode_detects_table_count_mismatch():
     """Default mode flags table count differences."""
     ref = _make_metrics(table_count=2)
     out = _make_metrics(table_count=3)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert any("표 수 불일치" in e for e in errors)
 
 
@@ -175,7 +175,7 @@ def test_default_mode_detects_page_break_mismatch():
     """Default mode flags pageBreak differences."""
     ref = _make_metrics(page_break_count=1)
     out = _make_metrics(page_break_count=2)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="default")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="default")
     assert any("pageBreak 수 불일치" in e for e in errors)
 
 
@@ -186,7 +186,7 @@ def test_template_fill_suppresses_paragraph_count():
     """Template-fill mode ignores paragraph count differences."""
     ref = _make_metrics(paragraph_count=5)
     out = _make_metrics(paragraph_count=20)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert not any("문단 수 불일치" in e for e in errors)
 
 
@@ -194,7 +194,7 @@ def test_template_fill_suppresses_text_length_delta():
     """Template-fill mode ignores text length growth."""
     ref = _make_metrics(text_char_total_nospace=100)
     out = _make_metrics(text_char_total_nospace=2000)  # 1900% delta
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert not any("전체 텍스트 길이 편차 초과" in e for e in errors)
 
 
@@ -202,23 +202,24 @@ def test_template_fill_suppresses_paragraph_text_delta():
     """Template-fill mode ignores per-paragraph text changes."""
     ref = _make_metrics(paragraph_count=3, paragraph_text_lengths=[10, 10, 10])
     out = _make_metrics(paragraph_count=3, paragraph_text_lengths=[10, 500, 10])
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert not any("문단 텍스트 길이 편차 초과" in e for e in errors)
 
 
-def test_template_fill_still_detects_table_count():
-    """Template-fill mode still catches table count mismatches."""
+def test_template_fill_allows_table_addition():
+    """Template-fill mode allows table additions (warning, not error)."""
     ref = _make_metrics(table_count=3)
     out = _make_metrics(table_count=5)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
-    assert any("표 수 불일치" in e for e in errors)
+    errors, warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    assert not any("표 수 불일치" in e for e in errors)
+    assert any("표 2개 추가" in w for w in warnings)
 
 
 def test_template_fill_still_detects_table_shape():
     """Template-fill mode still catches table shape changes."""
     ref = _make_metrics(table_shapes=[("3", "4", "100", "200", "", "")])
     out = _make_metrics(table_shapes=[("5", "4", "100", "200", "", "")])
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert any("표 구조" in e for e in errors)
 
 
@@ -226,7 +227,7 @@ def test_template_fill_still_detects_page_break():
     """Template-fill mode still catches pageBreak differences."""
     ref = _make_metrics(page_break_count=1)
     out = _make_metrics(page_break_count=3)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert any("pageBreak 수 불일치" in e for e in errors)
 
 
@@ -234,7 +235,7 @@ def test_template_fill_still_detects_column_break():
     """Template-fill mode still catches columnBreak differences."""
     ref = _make_metrics(column_break_count=0)
     out = _make_metrics(column_break_count=2)
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert any("columnBreak 수 불일치" in e for e in errors)
 
 
@@ -248,5 +249,47 @@ def test_template_fill_passes_when_structure_identical():
         paragraph_count=50,
         paragraph_text_lengths=[100] * 50,
     )
-    errors = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
     assert errors == []
+
+
+def test_template_fill_detects_table_deletion():
+    """Template-fill mode detects table deletion as error."""
+    ref = _make_metrics(table_count=5)
+    out = _make_metrics(table_count=3)
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    assert any("표 삭제 감지" in e for e in errors)
+
+
+def test_template_fill_detects_existing_table_structure_change():
+    """Template-fill mode detects modification of existing table structures."""
+    original = [("3", "4", "100", "200", "", ""), ("2", "3", "50", "60", "", "")]
+    modified = [("3", "4", "100", "200", "", ""), ("9", "9", "50", "60", "", "")]
+    ref = _make_metrics(table_count=2, table_shapes=original)
+    out = _make_metrics(table_count=3, table_shapes=modified + [("1", "1", "10", "10", "", "")])
+    errors, _warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    assert any("기존 표 구조 변경 감지" in e for e in errors)
+
+
+def test_template_fill_warning_on_table_addition():
+    """Template-fill mode emits warning (not error) for table additions with preserved structure."""
+    shapes = [("3", "4", "100", "200", "", "")]
+    ref = _make_metrics(table_count=1, table_shapes=shapes)
+    out = _make_metrics(
+        table_count=3,
+        table_shapes=shapes + [("2", "2", "50", "50", "", ""), ("1", "1", "10", "10", "", "")]
+    )
+    errors, warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    assert errors == []
+    assert any("표 2개 추가" in w for w in warnings)
+    assert any("구조 보존 확인" in w for w in warnings)
+
+
+def test_template_fill_preservation_warning():
+    """Template-fill mode emits preservation confirmation warning."""
+    shapes = [("3", "4", "100", "200", "", ""), ("2", "3", "50", "60", "", "")]
+    ref = _make_metrics(table_count=2, table_shapes=shapes)
+    out = _make_metrics(table_count=2, table_shapes=shapes)
+    errors, warnings = compare_metrics(ref, out, 0.15, 0.25, mode="template-fill")
+    assert errors == []
+    assert any("기존 표 2개 구조 보존 확인" in w for w in warnings)
