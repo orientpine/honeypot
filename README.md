@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.12.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.12.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -954,6 +954,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.12.1 | 2026-03-19 | visual-generator v3.3.1: Gemini API JPEG→PNG 명시적 변환 — `image.save(format='PNG')` 강제, CMYK/P 모드 호환 변환, `evaluate_image_quality()` MIME 타입 동적 감지 |
 | 3.12.0 | 2026-03-19 | hwpx-generator v3.2.0: page_guard.py 워크플로우 모드 분기 — 오케스트레이터가 워크플로우 유형(MD 채우기/스타일 복제/XML-first)에 따라 `--mode template-fill` 자동 선택, template-fill 모드에서 표 추가/변경 구분 로직 추가, WARNING 수준 리포트 도입 |
 | 3.11.0 | 2026-03-18 | hwpx-generator v3.1.0: Template-Aware Markdown Insertion — 템플릿 sub-header와 MD heading 매칭으로 헤더 이중 출현 방지, placeholder 문단 자동 정리, 적용 조건 분기 추가 |
 | 3.10.0 | 2026-03-18 | patent-trend-analyzer v1.3.0: 표준 분석 스크립트(`analyze_patents.py`) 추가 — JSON config 기반 분류, 고정 출력 구조(11개 필수 파일), multi-topic 병합 규칙, 출력물 검증 체크리스트로 대시보드 일관성 보장 |
