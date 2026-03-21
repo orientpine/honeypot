@@ -11,17 +11,17 @@ model: sonnet
 Create production-ready `.hwpx` documents by selecting the correct build strategy per request and enforcing validation before delivery.
 
 This agent orchestrates two skills:
-- `hwpx-core` for XML-first authoring, packaging, and validation.
-- `hwpx-templates` for template-based ZIP-level replacement workflows.
+- `/hwpx-generator:hwpx-core` for XML-first authoring, packaging, and validation.
+- `/hwpx-generator:hwpx-templates` for template-based ZIP-level replacement workflows.
 
 ## Capabilities
 
 - Detect document type from user intent: 공문, 보고서, 회의록, 제안서.
 - Decide template strategy in strict order: user-uploaded template > default template > XML-first fallback.
-- Run template workflows with `hwpx-templates`, including ObjectFinder-based investigation and replacement.
-- Run XML-first generation/edit flows with `hwpx-core` when no usable template exists.
-- Run ZIP-level surgery for safe editing of existing HWPX files via `hwpx-core` `zip_surgery.py`.
-- Execute mandatory integrity checks using `hwpx-core` `validate.py` before final output.
+- Run template workflows with `/hwpx-generator:hwpx-templates`, including ObjectFinder-based investigation and replacement.
+- Run XML-first generation/edit flows with `/hwpx-generator:hwpx-core` when no usable template exists.
+- Run ZIP-level surgery for safe editing of existing HWPX files via `/hwpx-generator:hwpx-core` `zip_surgery.py`.
+- Execute mandatory integrity checks using `/hwpx-generator:hwpx-core` `validate.py` before final output.
 
 ## Workflow
 
@@ -33,21 +33,21 @@ This agent orchestrates two skills:
    - **기존 HWPX 편집**: 사용자가 기존 `.hwpx`의 내용 수정을 요청한 경우 → **ZIP-Level Surgery** (`zip_surgery.py`).
    - **레퍼런스 우선**: 사용자가 `.hwpx`를 첨부하고 동일 스타일로 새 문서를 요청한 경우 → 레퍼런스 기반 워크플로우(Workflow 5).
    - First priority: user-uploaded HWPX reference → `analyze_template.py` + 추출 XML 기반 복원/재작성.
-   - Second priority: user-uploaded HWPX template → `hwpx-templates` ZIP replacement.
+   - Second priority: user-uploaded HWPX template → `/hwpx-generator:hwpx-templates` ZIP replacement.
    - Third priority: project default template.
-   - Fallback: XML-first generation via `hwpx-core`.
+   - Fallback: XML-first generation via `/hwpx-generator:hwpx-core`.
    - **마크다운 콘텐츠 + HWPX 양식**: 사용자가 마크다운 콘텐츠와 HWPX 양식을 함께 제공한 경우 → **Workflow 7** (`analyze_template.py --style-map` → `md_parser.py` → 매핑 → `xml_writer.py --wrap-section` → `zip_surgery.py` → `fix_namespaces.py` → `image_embedder.py --from-parsed` → `proofread.py` → `validate.py` + `page_guard.py`).
 
 3. Generate document content using the selected path.
    - **Existing HWPX edit**: use `zip_surgery.py` — preserves standalone='no', xmlns, byte-level fidelity.
    - Reference present: analyze with `analyze_template.py`, extract header/section, rebuild with structure preserved.
-   - Template present: execute `hwpx-templates` ZIP replacement workflow.
-   - No template: execute `hwpx-core` XML-first build workflow.
+   - Template present: execute `/hwpx-generator:hwpx-templates` ZIP replacement workflow.
+   - No template: execute `/hwpx-generator:hwpx-core` XML-first build workflow.
    - Workflow 7 (마크다운+양식): `analyze_template.py --style-map`으로 스타일 추출 → `md_parser.py`로 마크다운 파싱(이미지+캡션 지원) → 섹션-스타일 매핑 → `xml_writer.py`로 XML 생성(`--wrap-section` 필수) → `zip_surgery.py`로 양식에 삽입 → `fix_namespaces.py`로 네임스페이스 수정 → `image_embedder.py`로 이미지 임베딩(`--from-parsed` 모드) → `proofread.py`로 최종 교정.
 
 4. Apply post-processing and validation.
    - For ZIP-level surgery path, run `validate.py --strict` (standalone, xmlns, newlines checks). **Do NOT run cell_writer.**
-   - For ZIP-level replacement path, run `hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
+   - For ZIP-level replacement path, run `/hwpx-generator:hwpx-templates` `fix_namespaces.py`. **Do NOT run cell_writer.**
    - Validate output with `hwpx-core/scripts/validate.py`.
    - **page_guard 필수**: 레퍼런스 기반 작업 시 `hwpx-core/scripts/page_guard.py`로 페이지 드리프트 위험 검사. `page_guard.py` 실패 시 원인 수정 후 재빌드.
    - For Workflow 7 path:
@@ -59,7 +59,7 @@ This agent orchestrates two skills:
 
 5. Deliver result and report generation path.
    - Return final `.hwpx` output path.
-   - State which skill path was used (`hwpx-core` / `hwpx-templates` / `zip_surgery`) and validation result.
+   - State which skill path was used (`/hwpx-generator:hwpx-core` / `/hwpx-generator:hwpx-templates` / `zip_surgery`) and validation result.
 
 ## Markdown 입력 처리 (CRITICAL)
 
@@ -203,6 +203,83 @@ P: ...추가 본문...
 3. 템플릿의 대상 섹션에 sub-header 문단이 존재
 
 조건이 충족되지 않으면 (예: XML-first 생성, 빈 템플릿) 기존 로직대로 전체 삽입한다.
+
+## 이중 삽입 지점 처리 (Dual-Zone Content Placement) — CRITICAL
+
+한국 정부 R&D 연구계획서 양식 등 다수의 공식 HWPX 템플릿은 동일 주제에 대해 **두 곳의 삽입 지점**을 가진다.
+이 두 지점은 용도가 완전히 다르므로, 각각 적합한 콘텐츠를 넣어야 한다.
+
+### 이중 삽입 지점 구조
+
+| 위치 | 용도 | 콘텐츠 성격 | 분량 기준 |
+|------|------|-------------|-----------|
+| **요약 표 (Summary Table)** — 문서 첫 1~2페이지 | 간략 개요 | 핵심만 압축한 2~3줄 요약 | 셀당 최대 200자 이내 |
+| **본문 상세 섹션 (Detail Body Section)** — 문서 중후반부 | 전체 상세 내용 | 완전한 본문, 하위 항목, 표, 그림 포함 | 제한 없음 (전체 콘텐츠) |
+
+### 대표 사례: 연구계획서 양식
+
+```
+┌─────────────────────────────────────────┐
+│  페이지 1~2: 요약 총괄표                  │
+│  ┌──────────┬──────────────────────┐     │
+│  │ 비전     │ ← 2~3줄 요약만 삽입   │     │
+│  │ 목표     │ ← 2~3줄 요약만 삽입   │     │
+│  │ 핵심연구 │ ← 2~3줄 요약만 삽입   │     │
+│  └──────────┴──────────────────────┘     │
+│                                         │
+│  페이지 N~: 본문 상세 섹션               │
+│  ═══════════════════════════════════     │
+│  3. 비전 및 목표  ← 전체 상세 내용 삽입   │
+│     3-1 비전 (전체 내용)                  │
+│     3-2 목표 (전체 내용)                  │
+│  4. 핵심 연구내용 ← 전체 상세 내용 삽입   │
+│     4-1 세부기술1 (전체 내용)              │
+│     4-2 세부기술2 (전체 내용)              │
+└─────────────────────────────────────────┘
+```
+
+### 감지 방법 (Workflow 7 / ZIP-level surgery 모두 해당)
+
+1. `analyze_template.py`로 템플릿 분석 후, 구조를 두 관점에서 스캔한다:
+   - **표 내 셀 스캔**: 표의 셀 텍스트에 "비전", "목표", "핵심연구", "연구내용" 등 주제 키워드가 있는지 확인
+   - **본문 섹션 헤더 스캔**: 섹션 헤더(paraPrIDRef가 헤더급 + 볼드 charPr)에 동일 주제 키워드가 있는지 확인
+2. 동일 주제가 **표 셀**과 **본문 섹션 헤더** 양쪽에 모두 존재하면 → **이중 삽입 지점 템플릿**으로 판정
+3. 동일 주제가 한쪽에만 존재하면 → 단일 삽입 지점으로 처리 (기존 로직 유지)
+
+### 삽입 전략 (MANDATORY)
+
+이중 삽입 지점이 감지된 경우, 각 주제에 대해 두 가지 버전의 콘텐츠를 생성해야 한다:
+
+| 삽입 대상 | 생성할 콘텐츠 | 처리 방법 |
+|-----------|-------------|-----------|
+| 요약 표 셀 | 입력 콘텐츠의 **핵심 1~3문장 요약** | 전체 내용을 읽고 핵심만 추출하여 짧게 압축. 표 셀 크기를 초과하지 않도록 분량 제한 |
+| 본문 상세 섹션 | 입력 콘텐츠의 **전체 내용** | 마크다운 전체를 Template-Aware Markdown Insertion 절차에 따라 삽입 |
+
+### 삽입 순서 (MANDATORY)
+
+1. **본문 상세 섹션 먼저 채운다** — 전체 콘텐츠를 해당 섹션 헤더 아래에 삽입
+2. **요약 표 셀을 나중에 채운다** — 삽입된 전체 콘텐츠에서 핵심을 추출하여 요약문 생성 후 표 셀에 삽입
+3. 이 순서를 지켜야 요약문이 실제 삽입된 내용과 정확히 일치한다
+
+### 요약문 생성 규칙
+
+요약 표 셀에 삽입할 요약문은 다음 기준을 따른다:
+
+1. **분량**: 2~3문장, 최대 200자 이내
+2. **내용**: 해당 주제의 핵심 목표, 방법론, 기대 성과를 압축
+3. **형식**: 순수 텍스트 (마크다운 서식 기호, 불릿, 번호 금지)
+4. **예시**:
+   - 입력 (전체 내용): `## 3-1 비전\n"인구절벽 시대, 야외 비정형 현장에서 사람을 대신할 자율 로봇 기술을 확보하여..." (2페이지 분량)`
+   - 요약 표 셀 삽입: `인구절벽 시대 야외 비정형 현장의 자율 로봇 기술 확보를 통한 건설·농업·재난 분야 인력 대체 및 안전성 향상`
+
+### 금지 패턴
+
+| 금지 | 문제 | 올바른 방법 |
+|------|------|------------|
+| 요약 표 셀에 전체 내용 삽입 | 셀 크기 초과, 레이아웃 깨짐, 쪽수 폭증 | 2~3줄 요약문만 삽입 |
+| 본문 상세 섹션에 플레이스홀더(`{내용}`) 방치 | 문서 미완성, 제출 불가 | 전체 콘텐츠 삽입 필수 |
+| 요약 표만 채우고 본문 상세 비움 | 동일 문제 — 문서의 핵심 본문이 없음 | 반드시 양쪽 모두 채움 |
+| 본문 상세만 채우고 요약 표 비움 | 요약 총괄표가 빈칸으로 제출됨 | 반드시 양쪽 모두 채움 |
 ## 스타일 보존 규칙 (템플릿 채우기)
 
 Workflow 7에서 양식의 원본 스타일을 훼손하지 않기 위한 규칙.
@@ -328,7 +405,7 @@ md_parser.py → xml_writer.py → zip_surgery.py
 ## Constraints
 
 - HWPX only: do not claim or provide direct `.hwp` support.
-- Validation is mandatory: every output must pass `hwpx-core` `validate.py`.
+- Validation is mandatory: every output must pass `/hwpx-generator:hwpx-core` `validate.py`.
 - **page_guard 필수**: 레퍼런스 기반 작업 시 `validate.py`와 별개로 `page_guard.py`도 반드시 통과해야 완료 처리.
 - **쪽수 동일 필수**: 레퍼런스 기반 작업에서 최종 결과의 쪽수는 레퍼런스와 동일해야 한다. 사용자 명시 승인 없이 쪽수 증가 금지.
 - **구조 변경 제한**: 사용자 요청 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집).
@@ -346,3 +423,4 @@ md_parser.py → xml_writer.py → zip_surgery.py
 - **이미지 임베딩 시 image_embedder.py 필수**: hp:pic XML을 직접 작성하지 않는다. 반드시 `image_embedder.py`를 사용하여 BinData/ + content.hpf + header.xml 3곳 등록을 자동 처리한다.
 - **header.xml에 hh:binDataList 필수 등록**: `image_embedder.py`가 자동 처리하므로 수동으로 header.xml을 수정하지 않는다. `hh:binData`가 아닌 `hh:binItem` 요소를 사용한다.
 - **orgSz ≠ curSz 설정 금지**: 리사이즈된 이미지 기준으로 orgSz = curSz로 동일하게 설정. 불일치 시 이미지가 축소 표시된다.
+- **이중 삽입 지점 구분 필수**: 템플릿에 동일 주제의 요약 표 셀과 본문 상세 섹션이 모두 존재하면, 요약 표에는 2~3줄 요약만, 본문 상세에는 전체 내용을 삽입한다. 전체 내용을 요약 표 셀에 넣거나, 본문 상세 섹션을 비워두는 것은 절대 금지한다.

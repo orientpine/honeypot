@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.15.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.16.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -954,6 +954,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.16.0 | 2026-03-21 | hwpx-generator v3.6.0: 이중 삽입 지점 처리(Dual-Zone Content Placement) 지침 추가 — 요약 총괄표 셀에 전체 내용 삽입 방지, 본문 상세 섹션 플레이스홀더 방치 방지, 감지→요약 생성→본문 삽입 순서 강제, hwpx-generate 오케스트레이터 MUST DO/MUST NOT DO 보강 |
 | 3.15.0 | 2026-03-20 | hwpx-generator v3.5.0: image_embedder.py hp:pic 구조 7대 결함 수정 — hp:pic을 `<hp:p><hp:run>` 래퍼로 감싸 section-level 배치 방지(🔴 렌더링 안됨 해결), orgSz=pixel×100(원본 크기)·curSz=표시 크기 분리, scaMatrix=curSz/orgSz 비율 자동 계산, imgDim=실제 픽셀 크기, imgClip=orgSz 전체 범위, hc:img 순서 imgDim 뒤로 이동, validate.py hp:run 내부 배치 검증 추가 |
 | 3.14.0 | 2026-03-19 | hwpx-generator v3.4.0: image_embedder.py 전면 개편 — make_pic_xml() 검증 구조 교체(pypandoc-hwpx/HwpForge 기반), header.xml hh:binDataList 자동 등록, PIL 포맷 감지+자동변환, 이미지 높이 상한 검증, validate.py 이미지 6개 검사 추가(renderingInfo/instid/binDataList/magic bytes), section0.xml 개행 검사 0개 기준으로 교정 |
 | 3.13.0 | 2026-03-19 | hwpx-generator v3.3.0: xml_writer.py 필수 사용 강제 + lxml 금지 — 에이전트 자체 표 XML 재구현 방지(hc: 네임스페이스/hp:tcPr 오류), lxml 개행 삽입으로 인한 한/글 파일 깨짐 방지, generate_content.py 등 자체 스크립트 생성 금지 규칙 추가 |
