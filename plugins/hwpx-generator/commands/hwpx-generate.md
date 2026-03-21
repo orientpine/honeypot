@@ -42,7 +42,11 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - 입력 콘텐츠가 Markdown이고 템플릿에 이미 섹션 헤더가 존재하는 경우, Template-Aware Markdown Insertion 절차를 적용하여 헤더 중복을 방지할 것.
    - 마크다운 heading(`#`, `##`, `###`)을 템플릿 sub-header와 매칭하고, 매칭된 heading은 skip하며 body만 해당 위치에 삽입할 것.
    - **XML 생성 규칙 (필수 전달)**: 모든 XML 생성(표, 문단, 불릿 포함)은 반드시 기존 `xml_writer.py`의 `build_table()`, `build_paragraph()` 등을 사용할 것. 에이전트가 직접 XML을 작성하거나 `generate_content.py` 등 자체 스크립트를 생성하는 것은 금지. lxml/ElementTree를 사용한 section XML 직렬화도 금지(개행 삽입으로 한/글에서 파일이 깨짐).
-   - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`hwpx-core`/`hwpx-templates`), 생성 요약.
+   - **이중 삽입 지점 처리 (CRITICAL)**: 템플릿에 동일 주제의 삽입 지점이 두 곳(요약 총괄표 셀 + 본문 상세 섹션)에 존재할 수 있다. 이 경우 hwpx-builder에게 다음을 명시적으로 전달한다:
+     - 요약 표 셀(첫 1~2페이지의 표 내 "비전", "목표", "핵심연구내용" 등)에는 **2~3줄 요약만** 삽입할 것.
+     - 본문 상세 섹션("3. 비전 및 목표", "4. 핵심 연구내용" 등)에는 **전체 상세 내용**을 삽입할 것.
+     - 전체 내용을 요약 표 셀에 넣거나, 본문 상세 섹션을 플레이스홀더 상태로 방치하는 것은 절대 금지.
+   - Expected output: 생성된 `.hwpx` 파일 경로, 사용된 생성 경로(`/hwpx-generator:hwpx-core`/`/hwpx-generator:hwpx-templates`), 생성 요약.
 2. Ensure builder output includes the generated file path under `output_dir`.
 
 ## Phase 3.5: 교정 (Proofreading)
@@ -93,6 +97,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] `validate.py` 검증 통과 전 결과를 완료 처리하지 않는다.
 - [ ] 레퍼런스 기반 작업 시 `page_guard.py` 통과 전 결과를 완료 처리하지 않는다.
 - [ ] 입력 콘텐츠에 Markdown 서식 기호(`**`, `*`, `~~` 등)가 포함된 경우, HWPX 변환 전 인라인 서식을 multi-run으로 분할하거나 순수 텍스트로 정제한다.
+- [ ] 템플릿에 이중 삽입 지점(요약 표 셀 + 본문 상세 섹션)이 존재하면, hwpx-builder에게 요약/상세 구분 삽입을 명시적으로 지시한다.
 
 ## MUST NOT DO
 
@@ -101,6 +106,8 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] 검증 실패 결과를 숨기거나 무시하지 않는다.
 - [ ] `.hwp` 직접 생성을 지원한다고 안내하지 않는다.
 - [ ] Markdown 서식 기호(`**`, `*`, `#` 등)를 HWPX 텍스트(`<hp:t>`)에 그대로 포함시키지 않는다.
+- [ ] 전체 콘텐츠를 요약 표 셀에 삽입하지 않는다. 요약 표 셀에는 2~3줄 요약만 넣고, 전체 내용은 본문 상세 섹션에 삽입한다.
+- [ ] 본문 상세 섹션에 플레이스홀더(`{내용}` 등)를 남겨두지 않는다. 반드시 전체 콘텐츠로 교체한다.
 
 ## Usage Example
 
