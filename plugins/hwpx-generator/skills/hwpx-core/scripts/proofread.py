@@ -21,6 +21,9 @@ from zipfile import BadZipFile, ZipFile
 
 DEFAULT_BULLET_AUTO_IDS = [41, 43, 45, 90, 91, 92, 93, 113, 114, 115, 117, 118, 119]
 BULLET_PREFIX_RE = re.compile(r"^[\s\u00A0]*[○●□■◆◇•▶►→※◦–]")
+DOUBLE_BULLET_RE = re.compile(
+    r"^[\s\u00A0]*[○●□■◆◇•▶►→※◦–][\s\u00A0]*[○●□■◆◇•▶►→※◦–]"
+)
 SECTION_ENTRY = "Contents/section0.xml"
 
 
@@ -88,16 +91,33 @@ def check_double_bullets(section_xml: str, bullet_ids: list[int]) -> dict[str, o
         if not para_id_match:
             continue
         para_style = para_id_match.group(1)
-        if para_style not in bullet_set:
-            continue
 
         text = _paragraph_text(p_block)
-        if BULLET_PREFIX_RE.search(text):
+        if not text.strip():
+            continue
+
+        # Check 1: For bullet_auto styles, any bullet prefix in text is a violation
+        # (HWPX auto-generates the marker, so text content should be clean).
+        if para_style in bullet_set and BULLET_PREFIX_RE.search(text):
             violations.append(
                 {
                     "paragraph_index": idx,
                     "paraPrIDRef": int(para_style),
                     "text_preview": text.strip()[:80],
+                    "reason": "bullet_auto_prefix",
+                }
+            )
+            continue
+
+        # Check 2: For ALL styles, double bullet markers are always a violation
+        # (e.g., \"◦ ◦text\" from marker prepended + unstripped content).
+        if DOUBLE_BULLET_RE.search(text):
+            violations.append(
+                {
+                    "paragraph_index": idx,
+                    "paraPrIDRef": int(para_style),
+                    "text_preview": text.strip()[:80],
+                    "reason": "double_bullet",
                 }
             )
 

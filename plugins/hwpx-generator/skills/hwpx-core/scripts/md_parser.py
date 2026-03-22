@@ -206,18 +206,56 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
         bullet_match = BULLET_RE.match(line)
         if bullet_match:
             marker = bullet_match.group(1)
-            text, segments = clean_text_to_segments(bullet_match.group(2))
+            bullet_lines = [bullet_match.group(2)]
+            idx += 1
+            while idx < len(lines):
+                next_line = lines[idx]
+                next_stripped = next_line.strip()
+                if not next_stripped:
+                    break
+                if (
+                    is_table_line(next_line)
+                    or SEPARATOR_RE.match(next_line)
+                    or IMAGE_REF_RE.match(next_line)
+                    or IMAGE_MD_RE.match(next_line)
+                    or HEADING_RE.match(next_line)
+                    or BOLD_LABEL_RE.match(next_line)
+                    or BULLET_RE.match(next_line)
+                    or BLOCKQUOTE_RE.match(next_line)
+                ):
+                    break
+                bullet_lines.append(next_stripped)
+                idx += 1
+            text, segments = clean_text_to_segments(" ".join(bullet_lines))
             blocks.append(
                 {"type": "bullet", "marker": marker, "text": text, "segments": segments}
             )
-            idx += 1
             continue
 
         blockquote_match = BLOCKQUOTE_RE.match(line)
         if blockquote_match:
-            text, segments = clean_text_to_segments(blockquote_match.group(1))
-            blocks.append({"type": "blockquote", "text": text, "segments": segments})
+            bq_lines = [blockquote_match.group(1)]
             idx += 1
+            while idx < len(lines):
+                next_line = lines[idx]
+                next_stripped = next_line.strip()
+                if not next_stripped:
+                    break
+                if (
+                    is_table_line(next_line)
+                    or SEPARATOR_RE.match(next_line)
+                    or IMAGE_REF_RE.match(next_line)
+                    or IMAGE_MD_RE.match(next_line)
+                    or HEADING_RE.match(next_line)
+                    or BOLD_LABEL_RE.match(next_line)
+                    or BULLET_RE.match(next_line)
+                    or BLOCKQUOTE_RE.match(next_line)
+                ):
+                    break
+                bq_lines.append(next_stripped)
+                idx += 1
+            text, segments = clean_text_to_segments(" ".join(bq_lines))
+            blocks.append({"type": "blockquote", "text": text, "segments": segments})
             continue
 
         para_lines = [line.strip()]
