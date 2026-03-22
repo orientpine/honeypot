@@ -18,6 +18,7 @@ import shutil
 import zipfile
 import argparse
 import json
+import warnings
 from collections import Counter, defaultdict
 import lxml.etree as etree
 
@@ -404,7 +405,16 @@ def extract_style_map(header_root, section_root):
             return default
 
     # --- Step 1: Parse charPr definitions from header.xml ---
-    charpr_map = {}  # id -> {"fontSize_hu": int, "bold": bool}
+    charpr_map = {}  # id -> {"fontSize_hu": int, "bold": bool, "textColor": str|None}
+
+    def _normalize_hex_color(raw):
+        if not raw:
+            return None
+        cleaned = raw.strip().lstrip("#").upper()
+        if len(cleaned) == 6 and all(c in "0123456789ABCDEF" for c in cleaned):
+            return f"#{cleaned}"
+        return None
+
     for cp in header_root.findall(".//hh:charPr", NS):
         cid = cp.get("id")
         if cid is None:
@@ -413,7 +423,18 @@ def extract_style_map(header_root, section_root):
         is_bold = cp.find("hh:bold", NS) is not None
         if not is_bold and cp.get("bold", "0") == "1":
             is_bold = True
-        charpr_map[cid] = {"fontSize_hu": height, "bold": is_bold}
+        fc_el = cp.find("hh:fontColor", NS)
+        text_color = None
+        if fc_el is not None:
+            text_color = fc_el.get("val") or fc_el.get("color")
+        if text_color is None:
+            text_color = cp.get("textColor")
+        text_color = _normalize_hex_color(text_color)
+        charpr_map[cid] = {
+            "fontSize_hu": height,
+            "bold": is_bold,
+            "textColor": text_color,
+        }
 
     # --- Step 2: Parse paraPr/style definitions from header.xml ---
     parapr_map = {}  # id -> {"left_margin": int, "indent": int}
@@ -483,6 +504,45 @@ def extract_style_map(header_root, section_root):
             return None
         return best
 
+    def _has_colored_background(hdr_root, bf_id: str) -> bool:
+        """Returns True if borderFill has a non-white/non-transparent fill color."""
+        for bf in hdr_root.findall(".//hh:borderFill", NS):
+            if bf.get("id") != bf_id:
+                continue
+
+            fill_el = bf.find("hh:fillBrush", NS)
+            if fill_el is None:
+                fill_el = bf.find("hc:fillBrush", NS)
+            if fill_el is None:
+                fill_el = bf.find("hh:winBrush", NS)
+            if fill_el is None:
+                fill_el = bf.find("hc:winBrush", NS)
+            if fill_el is None:
+                return False
+
+            brush = fill_el
+            if fill_el.tag.endswith("fillBrush"):
+                nested_brush = fill_el.find("hh:winBrush", NS)
+                if nested_brush is None:
+                    nested_brush = fill_el.find("hc:winBrush", NS)
+                if nested_brush is not None:
+                    brush = nested_brush
+
+            face_color = (
+                brush.get("faceColor")
+                or brush.get("FaceColor")
+                or brush.get("color")
+                or fill_el.get("faceColor")
+                or fill_el.get("FaceColor")
+                or fill_el.get("color")
+            )
+            normalized = _normalize_hex_color(face_color)
+            if normalized is None:
+                return False
+            return normalized != "#FFFFFF"
+
+        return False
+
     # --- Step 3: Scan section0.xml paragraphs ---
     sec = section_root.find(".//hs:sec", NS)
     if sec is None:
@@ -505,6 +565,7 @@ def extract_style_map(header_root, section_root):
                 sublist = tc.find("hp:subList", NS)
                 if sublist is None:
                     continue
+                vert_align = sublist.get("vertAlign")
                 for p in sublist.findall("hp:p", NS):
                     ppr = p.get("paraPrIDRef", "0")
                     for run in p.findall("hp:run", NS):
@@ -518,6 +579,8 @@ def extract_style_map(header_root, section_root):
                             "paraPrIDRef": ppr,
                             "borderFillIDRef": cell_bf,
                         }
+                        if vert_align:
+                            entry["vertAlign"] = vert_align
                         if is_header:
                             tbl_header_entries.append(entry)
                         else:
@@ -654,7 +717,38 @@ def extract_style_map(header_root, section_root):
 
     # Body: most frequent (charPrIDRef, paraPrIDRef) in non-table paragraphs
     if body_pairs:
-        bc = Counter(body_pairs).most_common(1)[0][0]
+
+        def _is_black(cpr_id):
+            info = charpr_map.get(cpr_id, {})
+            text_color = info.get("textColor")
+            return text_color is None or text_color in {"#000000", "000000"}
+
+        def _is_non_bold(cpr_id):
+            return not charpr_map.get(cpr_id, {}).get("bold", False)
+
+        candidates = [
+            (cpr, ppr)
+            for cpr, ppr in body_pairs
+            if _is_non_bold(cpr) and _is_black(cpr)
+        ]
+        if candidates:
+            bc = Counter(candidates).most_common(1)[0][0]
+        else:
+            candidates = [(cpr, ppr) for cpr, ppr in body_pairs if _is_black(cpr)]
+            if candidates:
+                bc = Counter(candidates).most_common(1)[0][0]
+            else:
+                candidates = [
+                    (cpr, ppr) for cpr, ppr in body_pairs if _is_non_bold(cpr)
+                ]
+                if candidates:
+                    bc = Counter(candidates).most_common(1)[0][0]
+                else:
+                    warnings.warn(
+                        "All body charPr candidates are bold - using most common",
+                        stacklevel=2,
+                    )
+                    bc = Counter(body_pairs).most_common(1)[0][0]
         _set_entry("body", {"charPrIDRef": bc[0], "paraPrIDRef": bc[1]}, "confirmed")
     else:
         named = _pick_named_style(
@@ -721,10 +815,16 @@ def extract_style_map(header_root, section_root):
             )
 
     # Bold: charPrIDRef with <hh:bold/> or bold="1"; prefer most used
+    # BUGFIX: Exclude high-ID bold charPrs (like id=9 for table headers) from bold style
+    # These are heading-style bold, not inline bold
     bold_ids = [cid for cid, info in charpr_map.items() if info["bold"]]
-    if bold_ids:
+    # Filter out bold IDs >= 9 (these are typically heading/table-header styles)
+    inline_bold_ids = [bid for bid in bold_ids if int(bid) < 9 if bid.isdigit()]
+    if not inline_bold_ids:
+        inline_bold_ids = bold_ids  # fallback to all bold if filter removes all
+    if inline_bold_ids:
         body_cpr_count = Counter(cpr for cpr, _ in body_pairs)
-        best_bold = max(bold_ids, key=lambda x: body_cpr_count.get(x, 0))
+        best_bold = max(inline_bold_ids, key=lambda x: body_cpr_count.get(x, 0))
         _set_entry("bold", {"charPrIDRef": best_bold}, "confirmed")
     else:
         _set_entry(
@@ -742,7 +842,15 @@ def extract_style_map(header_root, section_root):
             (e["charPrIDRef"], e["paraPrIDRef"], e["borderFillIDRef"])
             for e in tbl_header_entries
         )
-        th = thc.most_common(1)[0][0]
+        white_candidates = [
+            (k, v)
+            for k, v in thc.items()
+            if not _has_colored_background(header_root, k[2])
+        ]
+        if white_candidates:
+            th = max(white_candidates, key=lambda x: x[1])[0]
+        else:
+            th = thc.most_common(1)[0][0]
         _set_entry(
             "table_header",
             {
@@ -770,7 +878,15 @@ def extract_style_map(header_root, section_root):
             (e["charPrIDRef"], e["paraPrIDRef"], e["borderFillIDRef"])
             for e in tbl_cell_entries
         )
-        tc_most = tcc.most_common(1)[0][0]
+        white_candidates = [
+            (k, v)
+            for k, v in tcc.items()
+            if not _has_colored_background(header_root, k[2])
+        ]
+        if white_candidates:
+            tc_most = max(white_candidates, key=lambda x: x[1])[0]
+        else:
+            tc_most = tcc.most_common(1)[0][0]
         _set_entry(
             "table_cell",
             {
