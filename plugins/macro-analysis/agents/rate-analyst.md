@@ -52,7 +52,7 @@ model: opus
 
 | 규칙 | 상세 |
 |------|------|
-| **스킬 필수** | 모든 금리 데이터는 `web-search-verifier` 스킬 통해 수집 |
+| **스킬 필수** | 모든 금리 데이터는 `/investments-portfolio:web-search-verifier` 스킬 통해 수집 |
 | **출처 필수** | 모든 수치/전망에 `[출처: ...]` 태그 필수 |
 | **교차 검증** | 스킬이 최소 3개 출처 교차 검증 보장 |
 | **범위 표현** | 전망은 범위로 (예: 1,400~1,420원), 현재 금리는 정확한 값 |
@@ -96,7 +96,7 @@ mcp_websearch_web_search_exa(query="korea interest rate site:tradingeconomics.co
 
 ## Workflow
 
-1. **스킬 참조**: `web-search-verifier` 스킬에서 검색 쿼리 패턴 확인
+1. **스킬 참조**: `/investments-portfolio:web-search-verifier` 스킬에서 검색 쿼리 패턴 확인
 2. **index-fetcher 결과 수신**: 현재 USD/KRW 환율 확인
 3. **Fed 정책 분석**: 
    - `mcp_websearch_web_search_exa(query="federal funds rate current 2026")` 직접 호출

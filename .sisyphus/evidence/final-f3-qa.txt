@@ -1,0 +1,21 @@
+F3: Real Manual QA — Image Embedding End-to-End
+============================================================
+
+Scenarios [14/14 pass]
+- header.xml: no binDataList ✓  (header snippet: <?xml version="1.0" encoding="UTF-8" standalone="no"?><hh:head xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><hh:beginNum page="1" footnote="1" ...)
+- section0.xml: numberingType=PICTURE ✓
+- section0.xml: paraPrIDRef=4 ✓
+- section0.xml: charPrIDRef=1 ✓
+- section0.xml: allowOverlap=0 ✓
+- section0.xml: hc:img before imgRect ✓  (hc:img@1864, imgRect@1950)
+- section0.xml: correct orgSz ✓  (got width=23040 height=17280 (expect 23040, 17280))
+- section0.xml: correct imgDim ✓  (got dimwidth=48000 dimheight=36000 (expect 48000, 36000))
+- section0.xml: imgClip right=48000 ✓  (got right=48000)
+- section0.xml: imgRect pt1 x=23040 ✓  (got pt1.x=23040)
+- section0.xml: shapeComment contains filename+dims ✓  (got: 'image1.png 640x480')
+- content.hpf: image1 present ✓  (snippet: :item id="image1" href="BinData/image1.png" media-type="image/png" isEmbeded="1"/>
+  </opf)
+- BinData/image1.png: present ✓  (all entries: ['BinData/image1.png'])
+- validate.py: exit 0 ✓  (errors=[])
+
+VERDICT: APPROVE

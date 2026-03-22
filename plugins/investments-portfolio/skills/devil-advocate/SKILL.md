@@ -183,10 +183,10 @@ description: "악마의 변호인 스킬. 모든 분석 결과에 대해 체계�
 
 | 스킬 | 연계 방법 |
 |:-----|:----------|
-| `perspective-balance` | Bull/Bear 분석의 Bear Case 강화 |
-| `analyst-common` | 반론 근거에 대한 출처 검증 |
+| `/investments-portfolio:perspective-balance` | Bull/Bear 분석의 Bear Case 강화 |
+| `/investments-portfolio:analyst-common` | 반론 근거에 대한 출처 검증 |
 | `risk-analyst` | 리스크 분석 결과에 대한 2차 검증 |
-| `bogle-principles` | 장기 투자 원칙 관점에서 단기 과신 경고 |
+| `/investments-portfolio:bogle-principles` | 장기 투자 원칙 관점에서 단기 과신 경고 |
 
 ---
 

@@ -298,13 +298,13 @@ whatif/pitch/comparison은 목적형 테마로, **무드 선택 없이 단일 �
 
 | 스킬명 | 설명 |
 |--------|------|
-| `layout-types` | 24종 레이아웃 유형 상세 정의 |
-| `theme-concept` | concept 테마 (TED 미니멀, 9종 무드 팔레트) |
-| `theme-gov` | gov 테마 (정부/공공기관, 9종 무드 팔레트) |
-| `theme-seminar` | seminar 테마 (세미나/발표, 9종 무드 팔레트) |
-| `theme-whatif` | whatif 목적 테마 (미래 비전 스냅샷, 단일 팔레트 + 장면 가이드) |
-| `theme-pitch` | pitch 목적 테마 (피치덱, 단일 팔레트 + Z-Pattern 가이드) |
-| `theme-comparison` | comparison 목적 테마 (Before/After, 단일 팔레트 + 대비 가이드) |
+| `/visual-generator:layout-types` | 24종 레이아웃 유형 상세 정의 |
+| `/visual-generator:theme-concept` | concept 테마 (TED 미니멀, 9종 무드 팔레트) |
+| `/visual-generator:theme-gov` | gov 테마 (정부/공공기관, 9종 무드 팔레트) |
+| `/visual-generator:theme-seminar` | seminar 테마 (세미나/발표, 9종 무드 팔레트) |
+| `/visual-generator:theme-whatif` | whatif 목적 테마 (미래 비전 스냅샷, 단일 팔레트 + 장면 가이드) |
+| `/visual-generator:theme-pitch` | pitch 목적 테마 (피치덱, 단일 팔레트 + Z-Pattern 가이드) |
+| `/visual-generator:theme-comparison` | comparison 목적 테마 (Before/After, 단일 팔레트 + 대비 가이드) |
 
 ## 고정 팔레트 규칙 (CRITICAL)
 

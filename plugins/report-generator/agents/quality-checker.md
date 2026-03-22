@@ -276,6 +276,6 @@ Step 6-2. 결과 출력
 
 ### 스킬
 
-- `four-step-pattern`: 4단계 패턴 검증 기준
-- `chapter-structure`: 문서 구조 완성도 기준
-- `field-keywords`: 용어 일관성 검증 기준
+- `/report-generator:four-step-pattern`: 4단계 패턴 검증 기준
+- `/report-generator:chapter-structure`: 문서 구조 완성도 기준
+- `/report-generator:field-keywords`: 용어 일관성 검증 기준

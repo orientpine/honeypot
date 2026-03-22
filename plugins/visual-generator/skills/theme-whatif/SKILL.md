@@ -157,7 +157,7 @@ What-If 장면은 다음 **5가지 요소**를 모두 포함해야 합니다:
 
 **적합**: 신규 시스템 작동 모습, 연구 성과 현실 적용, 투자 유치 비전 몰입, 정책 변화 후 일상
 
-**부적합**: 두 옵션 비교 → `theme-comparison`, 현재 문제점 분석 → gov/seminar, 단계별 프로세스 → concept, Before 필수 → `theme-comparison`
+**부적합**: 두 옵션 비교 → `/visual-generator:theme-comparison`, 현재 문제점 분석 → gov/seminar, 단계별 프로세스 → concept, Before 필수 → `/visual-generator:theme-comparison`
 
 ---
 

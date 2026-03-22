@@ -112,7 +112,7 @@ description: "visual-generator comparison 목적 테마(Before/After 비교). th
 
 **적합**: Before/After 변화 증명, As-Is/To-Be 시스템 비교, 방법 A vs 방법 B 의사결정, 경쟁사 대비 우위, 개선 전후 KPI 비교
 
-**부적합**: 3개 이상 대안 비교 (다자 비교), 관계망/순환/계층, 시간 순서 프로세스, 단일 상태 설명 (비교 대상 없음), 미래 비전 몰입 → `theme-whatif`
+**부적합**: 3개 이상 대안 비교 (다자 비교), 관계망/순환/계층, 시간 순서 프로세스, 단일 상태 설명 (비교 대상 없음), 미래 비전 몰입 → `/visual-generator:theme-whatif`
 
 ---
 

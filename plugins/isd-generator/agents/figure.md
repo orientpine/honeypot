@@ -178,8 +178,8 @@ output/[프로젝트명]/
 ### Skills (자동 로드)
 
 이 에이전트는 다음 스킬을 자동으로 로드합니다:
-- `figure-guide`: 이미지 프롬프트 작성 가이드 (프롬프트 가이드, 캡션 패턴, 예시 프롬프트 포함)
-- `image-reference-guide`: 이미지/도표 수집 가이드
+- `/isd-generator:figure-guide`: 이미지 프롬프트 작성 가이드 (프롬프트 가이드, 캡션 패턴, 예시 프롬프트 포함)
+- `/isd-generator:image-reference-guide`: 이미지/도표 수집 가이드
 
 ### assets/ (Read 도구로 로드)
 

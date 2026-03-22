@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 5 items / 4 deselected / 1 selected
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_body_excludes_bold_and_colored PASSED [100%]
+
+======================= 1 passed, 4 deselected in 0.09s =======================

@@ -10,7 +10,7 @@ skills: [chapter3-guide, verification-rules]
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-> **공통 규칙**: `verification-rules` 스킬 참조
+> **공통 규칙**: `/isd-generator:verification-rules` 스킬 참조
 
 **검증문서 정보 (Chapter 3 전용)**
 - 파일명: `chapter3_research_verification.md`
@@ -211,8 +211,8 @@ skills: [chapter3-guide, verification-rules]
 ### Skills (자동 로드)
 
 이 에이전트는 다음 스킬을 자동으로 로드합니다:
-- `chapter3-guide`: Chapter 3 작성 가이드 (템플릿, 요구사항 포함)
-- `verification-rules`: 검증문서 생성 필수 규칙
+- `/isd-generator:chapter3-guide`: Chapter 3 작성 가이드 (템플릿, 요구사항 포함)
+- `/isd-generator:verification-rules`: 검증문서 생성 필수 규칙
 
 ### writing_patterns/ (Read 도구로 로드)
 

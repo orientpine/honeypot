@@ -103,7 +103,7 @@ output/
 ## Notes
 
 - Each phase can be run independently if you already have intermediate outputs.
-- Run `/patent-research-planning` for Phase 1 only (keyword optimization and IPC mapping).
-- Run `/patent-search-collect` for Phase 2 only (search execution and deduplication).
-- Run `/patent-analysis-viz` for Phase 3 only (classification, charts, and reports).
+- Run `/patent-trend-analyzer:patent-research-planning` for Phase 1 only (keyword optimization and IPC mapping).
+- Run `/patent-trend-analyzer:patent-search-collect` for Phase 2 only (search execution and deduplication).
+- Run `/patent-trend-analyzer:patent-analysis-viz` for Phase 3 only (classification, charts, and reports).
 - If a phase fails mid-run, re-invoke the same phase — batch exports are resumable.

@@ -1,0 +1,59 @@
+TASK 2: Fix cellMargin and textWidth in xml_writer.py
+======================================================
+
+COMPLETED SUCCESSFULLY ✓
+
+Changes Made:
+=============
+
+1. File: plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py
+   
+   Line 326 (cellMargin):
+   BEFORE: '<hp:cellMargin left="283" right="283" top="141" bottom="141"/>'
+   AFTER:  '<hp:cellMargin left="141" right="141" top="141" bottom="141"/>'
+   
+   Line 329 (textWidth formula):
+   BEFORE: f'textWidth="{max(width - 566, 0)}" fieldName="">'
+   AFTER:  f'textWidth="{max(width - 282, 0)}" fieldName="">'
+
+Verification:
+=============
+
+✓ cellMargin values verified: left=141, right=141, top=141, bottom=141
+✓ textWidth formula verified: width - 282 (not width - 566)
+✓ All table tests pass (2/2)
+✓ No test references to old values (283, 566) found
+✓ XML output contains correct values
+
+Test Results:
+=============
+
+test_table_cell_xml_adds_colspan_rowspan_attributes PASSED
+test_build_table_reflects_merge_info_from_cell_dict PASSED
+
+2 passed in 0.07s
+
+Git Commit:
+===========
+
+Commit: eb0815b55923aed01cb3041dd9f5a4a4046b80b5
+Message: fix(hwpx): cellMargin 283→141, textWidth width-566→width-282
+Author: BaekdongCha <orientpine@gmail.com>
+Date: Sun Mar 22 16:43:41 2026 +0900
+
+Files Changed: 1
+Insertions: 5
+Deletions: 5
+
+Rationale:
+==========
+
+The cellMargin values were corrected to match the reference HWPX file specification:
+- left and right margins changed from 283 to 141 (matching top/bottom)
+- This ensures symmetric cell margins: 141 on all sides
+
+The textWidth formula was updated to reflect the new margin values:
+- Old formula: width - 566 (283 + 283 for left + right)
+- New formula: width - 282 (141 + 141 for left + right)
+
+This maintains proper text width calculation within table cells.

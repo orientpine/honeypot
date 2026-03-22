@@ -1,0 +1,4 @@
+Task 5: hwpx-generate.md check — NO-OP
+grep -c binDataList hwpx-generate.md: 0 (no match)
+grep -c '3곳 등록' hwpx-generate.md: 0 (no match)
+No old image embedding rules found. No changes required.
