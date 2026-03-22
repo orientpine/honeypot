@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
+import shutil
 import struct
 import zipfile
 from pathlib import Path
+
+import pytest
 
 
 def load_image_embedder_module(script_path: Path):
@@ -43,6 +47,29 @@ def create_input_hwpx(path: Path, placeholder: str = "image1") -> None:
     with zipfile.ZipFile(path, "w") as zf:
         zf.writestr("Contents/section0.xml", section.encode("utf-8"))
         zf.writestr("Contents/content.hpf", content.encode("utf-8"))
+
+
+@pytest.fixture
+def create_png():
+    """Create a minimal PNG file and return its path."""
+
+    def _create_png(base_dir, name, width, height):
+        path = base_dir / name
+        write_minimal_png(path, width=width, height=height)
+        return path
+
+    return _create_png
+
+
+@pytest.fixture
+def embed(scripts_dir):
+    """Embed images into HWPX using auto-mapping."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    def _embed(hwpx, images_dir, output):
+        embedder.embed_images(hwpx, images_dir, None, None, ".", True, output)
+
+    return _embed
 
 
 def test_from_parsed_collects_image_ref_paths(scripts_dir, tmp_path):
@@ -205,7 +232,7 @@ def test_pic_wrapped_in_run_and_paragraph(scripts_dir, tmp_path):
 
 
 def test_orgSz_uses_pixel_dimensions(scripts_dir, tmp_path):
-    """orgSz must reflect original pixel dimensions (×100 HWP units), not display size."""
+    """orgSz must reflect original pixel dimensions (×36 HWP units, 200 DPI), not display size."""
     embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
     images_dir = tmp_path / "images"
     images_dir.mkdir()
@@ -237,9 +264,9 @@ def test_orgSz_uses_pixel_dimensions(scripts_dir, tmp_path):
     with zipfile.ZipFile(output_hwpx, "r") as zf:
         section = zf.read("Contents/section0.xml").decode("utf-8")
 
-        # orgSz = pixel dimensions × 100
-        org_w = pixel_w * 100  # 64000
-        org_h = pixel_h * 100  # 48000
+        # orgSz = pixel dimensions × 36 (200 DPI)
+        org_w = pixel_w * 36  # 23040
+        org_h = pixel_h * 36  # 17280
         assert f'orgSz width="{org_w}" height="{org_h}"' in section
 
         # curSz = display size (A4 body width)
@@ -287,17 +314,17 @@ def test_scaMatrix_reflects_scaling_ratio(scripts_dir, tmp_path):
         assert 'scaMatrix e1="1" ' not in section
         assert 'scaMatrix e1="1.0" ' not in section
 
-        # scaMatrix should have a ratio < 1 since image is larger than A4 body
+        # scaMatrix should have a ratio > 1 since orgSz(200DPI) < curSz(A4 body)
         import re
 
         sca_match = re.search(r'scaMatrix e1="([^"]+)"', section)
         assert sca_match is not None, "scaMatrix must be present"
         sca_value = float(sca_match.group(1))
-        assert 0.0 < sca_value < 1.0, f"scaMatrix e1 should be <1, got {sca_value}"
+        assert sca_value > 1.0, f"scaMatrix e1 should be >1 (upscale), got {sca_value}"
 
 
 def test_imgDim_has_pixel_values(scripts_dir, tmp_path):
-    """imgDim must have actual pixel dimensions, not 0×0."""
+    """imgDim must have pixel × 75 dimensions (96 DPI), not raw pixels or 0×0."""
     embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
     images_dir = tmp_path / "images"
     images_dir.mkdir()
@@ -329,9 +356,9 @@ def test_imgDim_has_pixel_values(scripts_dir, tmp_path):
     with zipfile.ZipFile(output_hwpx, "r") as zf:
         section = zf.read("Contents/section0.xml").decode("utf-8")
 
-        # imgDim must have pixel values
-        assert f'dimwidth="{pixel_w}"' in section
-        assert f'dimheight="{pixel_h}"' in section
+        # imgDim must have pixel × 75 values (96 DPI)
+        assert f'dimwidth="{pixel_w * 75}"' in section
+        assert f'dimheight="{pixel_h * 75}"' in section
         # Must NOT be 0×0 (the old defect)
         assert 'dimwidth="0"' not in section
 
@@ -534,3 +561,127 @@ def test_compression_small_image_not_resized(scripts_dir, tmp_path):
                 embedded_img = Image.open(io.BytesIO(embedded_data))
                 assert embedded_img.width == 500
                 assert embedded_img.height == 300
+
+
+# ── Helper: HWPX with header.xml ─────────────────────────────────────
+
+
+def create_input_hwpx_with_header(tmp_path: Path) -> Path:
+    """Create a minimal HWPX with both section0.xml and header.xml."""
+    hwpx_path = tmp_path / "input_with_header.hwpx"
+    with zipfile.ZipFile(hwpx_path, "w") as zf:
+        zf.writestr("mimetype", "application/hwp+zip")
+        zf.writestr(
+            "Contents/content.hpf",
+            '<?xml version="1.0"?>'
+            "<opf:package><opf:manifest></opf:manifest></opf:package>",
+        )
+        zf.writestr("Contents/section0.xml", "<root><!--IMAGE:image1--></root>")
+        # header.xml with existing binDataList (should be stripped)
+        zf.writestr(
+            "Contents/header.xml",
+            '<?xml version="1.0"?><hh:head><hh:refList>'
+            '<hh:binDataList itemCnt="1">'
+            '<hh:binItem id="0" Type="Embedding" '
+            'BinData="BIN0001.png" Format="PNG"/>'
+            "</hh:binDataList>"
+            "</hh:refList></hh:head>",
+        )
+    return hwpx_path
+
+
+# ── New tests: structural integrity + coordinate system ─────────────
+
+
+def test_no_binDataList_in_output(tmp_path, embed, create_png):
+    """Output header.xml must not contain binDataList."""
+    img = create_png(tmp_path, "image1.png", 100, 80)
+    images_dir = tmp_path / "imgs"
+    images_dir.mkdir()
+    shutil.copy(img, images_dir / "image1.png")
+    hwpx = create_input_hwpx_with_header(tmp_path)
+    out = tmp_path / "output.hwpx"
+    embed(str(hwpx), str(images_dir), output=str(out))
+    with zipfile.ZipFile(out) as zf:
+        header = zf.read("Contents/header.xml").decode()
+    assert "<hh:binDataList" not in header, "header.xml must not contain binDataList"
+
+
+def test_binaryItemIDRef_matches_content_hpf(tmp_path, embed, create_png):
+    """binaryItemIDRef in section must match opf:item id in content.hpf."""
+    img = create_png(tmp_path, "image1.png", 100, 80)
+    images_dir = tmp_path / "imgs"
+    images_dir.mkdir()
+    shutil.copy(img, images_dir / "image1.png")
+    hwpx_path = tmp_path / "input.hwpx"
+    create_input_hwpx(hwpx_path)
+    out = tmp_path / "output.hwpx"
+    embed(str(hwpx_path), str(images_dir), output=str(out))
+    with zipfile.ZipFile(out) as zf:
+        section = zf.read("Contents/section0.xml").decode()
+        content_hpf = zf.read("Contents/content.hpf").decode()
+    # Extract binaryItemIDRef
+    refs = re.findall(r'binaryItemIDRef="([^"]+)"', section)
+    assert refs, "No binaryItemIDRef found in section"
+    # Each ref must appear as opf:item id in content.hpf
+    for ref in refs:
+        assert f'id="{ref}"' in content_hpf, (
+            f'binaryItemIDRef="{ref}" not found in content.hpf'
+        )
+
+
+def test_element_order_hc_img_before_imgRect(tmp_path, embed, create_png):
+    """hc:img must appear before hp:imgRect in the XML output."""
+    img = create_png(tmp_path, "image1.png", 100, 80)
+    images_dir = tmp_path / "imgs"
+    images_dir.mkdir()
+    shutil.copy(img, images_dir / "image1.png")
+    hwpx_path = tmp_path / "input.hwpx"
+    create_input_hwpx(hwpx_path)
+    out = tmp_path / "output.hwpx"
+    embed(str(hwpx_path), str(images_dir), output=str(out))
+    with zipfile.ZipFile(out) as zf:
+        section = zf.read("Contents/section0.xml").decode()
+    img_pos = section.find("<hc:img")
+    rect_pos = section.find("<hp:imgRect")
+    assert img_pos != -1, "<hc:img not found"
+    assert rect_pos != -1, "<hp:imgRect not found"
+    assert img_pos < rect_pos, f"hc:img ({img_pos}) must precede hp:imgRect ({rect_pos})"
+
+
+def test_numberingType_is_PICTURE(tmp_path, embed, create_png):
+    """hp:pic must have numberingType='PICTURE'."""
+    img = create_png(tmp_path, "image1.png", 100, 80)
+    images_dir = tmp_path / "imgs"
+    images_dir.mkdir()
+    shutil.copy(img, images_dir / "image1.png")
+    hwpx_path = tmp_path / "input.hwpx"
+    create_input_hwpx(hwpx_path)
+    out = tmp_path / "output.hwpx"
+    embed(str(hwpx_path), str(images_dir), output=str(out))
+    with zipfile.ZipFile(out) as zf:
+        section = zf.read("Contents/section0.xml").decode()
+    assert 'numberingType="PICTURE"' in section
+
+
+def test_shapeComment_has_info(tmp_path, embed, create_png):
+    """shapeComment must contain filename and pixel dimensions."""
+    img = create_png(tmp_path, "image1.png", 100, 80)
+    images_dir = tmp_path / "imgs"
+    images_dir.mkdir()
+    shutil.copy(img, images_dir / "image1.png")
+    hwpx_path = tmp_path / "input.hwpx"
+    create_input_hwpx(hwpx_path)
+    out = tmp_path / "output.hwpx"
+    embed(str(hwpx_path), str(images_dir), output=str(out))
+    with zipfile.ZipFile(out) as zf:
+        section = zf.read("Contents/section0.xml").decode()
+    m = re.search(r"<hp:shapeComment>([^<]*)</hp:shapeComment>", section)
+    assert m, "shapeComment element not found or empty"
+    comment = m.group(1)
+    assert "image1.png" in comment or "image1" in comment, (
+        f"filename not in shapeComment: {comment}"
+    )
+    assert "100" in comment and "80" in comment, (
+        f"pixel dims not in shapeComment: {comment}"
+    )

@@ -1,0 +1,27 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 17 items
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_from_parsed_collects_image_ref_paths PASSED [  5%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_jpeg_files_use_image_jpeg_media_type PASSED [ 11%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_mapping_mode_png_remains_compatible PASSED [ 17%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_pic_wrapped_in_run_and_paragraph PASSED [ 23%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_orgSz_uses_pixel_dimensions PASSED [ 29%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_scaMatrix_reflects_scaling_ratio PASSED [ 35%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_imgDim_has_pixel_values PASSED [ 41%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_auto_resize_max_height PASSED [ 47%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_auto_resize_normal_height_unchanged PASSED [ 52%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_max_width_resizes_large_images PASSED [ 58%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_no_max_width_unchanged PASSED [ 64%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_small_image_not_resized PASSED [ 70%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_no_binDataList_in_output PASSED [ 76%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_binaryItemIDRef_matches_content_hpf PASSED [ 82%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_element_order_hc_img_before_imgRect PASSED [ 88%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_numberingType_is_PICTURE PASSED [ 94%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_shapeComment_has_info PASSED [100%]
+
+============================= 17 passed in 0.49s ==============================

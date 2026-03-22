@@ -1,0 +1,7 @@
+Scenario 3: extract_body_width validation
+with_page_data=48190
+expected_with_page_data=48190
+without_page_data=42520
+expected_fallback=42520
+pass_with=True
+pass_fallback=True
