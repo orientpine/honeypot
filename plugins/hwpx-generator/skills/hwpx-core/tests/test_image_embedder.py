@@ -289,6 +289,7 @@ def test_scaMatrix_reflects_scaling_ratio(scripts_dir, tmp_path):
 
         # scaMatrix should have a ratio < 1 since image is larger than A4 body
         import re
+
         sca_match = re.search(r'scaMatrix e1="([^"]+)"', section)
         assert sca_match is not None, "scaMatrix must be present"
         sca_value = float(sca_match.group(1))
@@ -333,3 +334,203 @@ def test_imgDim_has_pixel_values(scripts_dir, tmp_path):
         assert f'dimheight="{pixel_h}"' in section
         # Must NOT be 0×0 (the old defect)
         assert 'dimwidth="0"' not in section
+
+
+# ── New tests: auto_resize + compression ─────────────────────────────
+
+
+def test_auto_resize_max_height(scripts_dir):
+    """calc_hwpx_height must auto-cap instead of raising ValueError when MAX_IMAGE_HEIGHT exceeded."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    # width=100, height=10000 -> result = (10000/100) * 42520 = 4252000
+    # which far exceeds MAX_IMAGE_HEIGHT=70000
+    import warnings
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        result = embedder.calc_hwpx_height(100, 10000)
+        # Should NOT raise, should return capped value
+        assert result <= embedder.MAX_IMAGE_HEIGHT
+        assert result == embedder.MAX_IMAGE_HEIGHT  # capped to max
+        # Should have issued a warning
+        assert len(w) >= 1
+        assert any(
+            "exceeds" in str(warning.message).lower()
+            or "cap" in str(warning.message).lower()
+            for warning in w
+        )
+
+
+def test_auto_resize_normal_height_unchanged(scripts_dir):
+    """calc_hwpx_height must return exact value when within MAX_IMAGE_HEIGHT."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    # width=640, height=480 -> result = (480/640) * 42520 = 31890
+    # well within MAX_IMAGE_HEIGHT=70000
+    import warnings
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        result = embedder.calc_hwpx_height(640, 480)
+        assert result == int((480 / 640) * 42520)
+        # No warning should be issued
+        height_warnings = [
+            x
+            for x in w
+            if "exceeds" in str(x.message).lower() or "cap" in str(x.message).lower()
+        ]
+        assert len(height_warnings) == 0
+
+
+def test_compression_max_width_resizes_large_images(scripts_dir, tmp_path):
+    """When --max-width is set, images wider than the limit must be resized."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    from PIL import Image
+
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+
+    # Create a 3000x2000 PNG image (wider than max_width=1000)
+    large_img = images_dir / "image1.png"
+    img = Image.new("RGB", (3000, 2000), color=(255, 0, 0))
+    img.save(str(large_img), "PNG")
+
+    input_hwpx = tmp_path / "input.hwpx"
+    output_hwpx = tmp_path / "output.hwpx"
+    create_input_hwpx(input_hwpx, placeholder="image1")
+
+    mapping_json = tmp_path / "mapping.json"
+    mapping_json.write_text(
+        json.dumps({"image1": {"file": "image1.png", "caption": ""}}),
+        encoding="utf-8",
+    )
+
+    embedder.embed_images(
+        str(input_hwpx),
+        str(images_dir),
+        str(mapping_json),
+        None,
+        str(tmp_path),
+        False,
+        str(output_hwpx),
+        max_width=1000,
+        quality=85,
+    )
+
+    assert output_hwpx.exists()
+
+    # Verify embedded image was actually resized
+    import io
+
+    with zipfile.ZipFile(output_hwpx, "r") as zf:
+        for name in zf.namelist():
+            if name.startswith("BinData/"):
+                embedded_data = zf.read(name)
+                embedded_img = Image.open(io.BytesIO(embedded_data))
+                assert embedded_img.width <= 1000, (
+                    f"Embedded image width {embedded_img.width} exceeds max_width 1000"
+                )
+                # Aspect ratio preserved: 3000:2000 = 3:2, so 1000 -> ~667
+                expected_height = int(2000 * (1000 / 3000))
+                assert abs(embedded_img.height - expected_height) <= 1
+
+
+def test_compression_no_max_width_unchanged(scripts_dir, tmp_path):
+    """When --max-width is NOT set, images should not be modified."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    from PIL import Image
+
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+
+    # Create a 3000x2000 PNG image
+    large_img = images_dir / "image1.png"
+    img = Image.new("RGB", (3000, 2000), color=(255, 0, 0))
+    img.save(str(large_img), "PNG")
+
+    input_hwpx = tmp_path / "input.hwpx"
+    output_hwpx = tmp_path / "output.hwpx"
+    create_input_hwpx(input_hwpx, placeholder="image1")
+
+    mapping_json = tmp_path / "mapping.json"
+    mapping_json.write_text(
+        json.dumps({"image1": {"file": "image1.png", "caption": ""}}),
+        encoding="utf-8",
+    )
+
+    # max_width=None (default) -> no resizing
+    embedder.embed_images(
+        str(input_hwpx),
+        str(images_dir),
+        str(mapping_json),
+        None,
+        str(tmp_path),
+        False,
+        str(output_hwpx),
+    )
+
+    assert output_hwpx.exists()
+
+    # Verify embedded image is still original size
+    import io
+
+    with zipfile.ZipFile(output_hwpx, "r") as zf:
+        for name in zf.namelist():
+            if name.startswith("BinData/"):
+                embedded_data = zf.read(name)
+                embedded_img = Image.open(io.BytesIO(embedded_data))
+                assert embedded_img.width == 3000
+                assert embedded_img.height == 2000
+
+
+def test_compression_small_image_not_resized(scripts_dir, tmp_path):
+    """When --max-width is set but image is smaller, no resize should occur."""
+    embedder = load_image_embedder_module(scripts_dir / "image_embedder.py")
+
+    from PIL import Image
+
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+
+    # Create a 500x300 PNG image (smaller than max_width=1000)
+    small_img = images_dir / "image1.png"
+    img = Image.new("RGB", (500, 300), color=(0, 255, 0))
+    img.save(str(small_img), "PNG")
+
+    input_hwpx = tmp_path / "input.hwpx"
+    output_hwpx = tmp_path / "output.hwpx"
+    create_input_hwpx(input_hwpx, placeholder="image1")
+
+    mapping_json = tmp_path / "mapping.json"
+    mapping_json.write_text(
+        json.dumps({"image1": {"file": "image1.png", "caption": ""}}),
+        encoding="utf-8",
+    )
+
+    embedder.embed_images(
+        str(input_hwpx),
+        str(images_dir),
+        str(mapping_json),
+        None,
+        str(tmp_path),
+        False,
+        str(output_hwpx),
+        max_width=1000,
+        quality=85,
+    )
+
+    assert output_hwpx.exists()
+
+    # Image should remain original size since it's within max_width
+    import io
+
+    with zipfile.ZipFile(output_hwpx, "r") as zf:
+        for name in zf.namelist():
+            if name.startswith("BinData/"):
+                embedded_data = zf.read(name)
+                embedded_img = Image.open(io.BytesIO(embedded_data))
+                assert embedded_img.width == 500
+                assert embedded_img.height == 300

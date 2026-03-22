@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 12 items / 9 deselected / 3 selected
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_max_width_resizes_large_images PASSED [ 33%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_no_max_width_unchanged PASSED [ 66%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_small_image_not_resized PASSED [100%]
+
+======================= 3 passed, 9 deselected in 0.28s =======================
