@@ -65,3 +65,20 @@
 
 ### QA evidence
 - .sisyphus/evidence/task-2-pytest-all-pass.txt: 17 passed in 0.49s, 0 failures
+
+## [2026-03-22] Task T3 execution notes
+
+### validate.py check #4 reversal
+- binDataList absent = OK (no error). binDataList present = `[image][WARN]` deprecation message.
+- Logic reversed: was "missing = error", now "present = warning".
+- Aligns with manual section 8 step 6 and section 9 checklist item #4 ("binDataList가 없는가").
+
+### validate.py check #5 rewrite (binaryItemIDRef cross-ref)
+- Old: binaryItemIDRef → header.xml `hh:binItem BinData` refs
+- New: binaryItemIDRef → content.hpf `opf:item id` refs
+- Regex: `re.findall(r'<opf:item[^>]+\bid="([^"]+)"', hpf_text)`
+- Aligns with manual section 9 checklist items #2 and #3.
+
+### QA evidence
+- `.sisyphus/evidence/task-3-validate-pass.txt`: valid HWPX (no binDataList, cross-ref OK) → exit 0
+- `.sisyphus/evidence/task-3-crossref.txt`: 3 cases — valid exit=0, missing ref exit=1, deprecated binDataList exit=1
