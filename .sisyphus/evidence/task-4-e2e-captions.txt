@@ -1,0 +1,7 @@
+E2E skipped: dev fixtures not present
+
+DEV_FIXTURES: ABSENT
+dev/3장.md: NOT FOUND
+dev/4장.md: NOT FOUND
+
+Condition: skip E2E (fixtures absent)

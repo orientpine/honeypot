@@ -358,6 +358,25 @@ def _run_proofread(hwpx_path: str) -> dict[str, object]:
     except Exception as exc:
         return {"pass": False, "summary": f"proofread.py error: {exc}", "details": {}}
 
+def _caption_checks(section_xml: str, parsed_path: str | None, errors: list, warnings: list) -> None:
+    """Validate image caption count matches parsed blocks."""
+    if not parsed_path:
+        return
+    with open(parsed_path, encoding="utf-8") as f:
+        parsed = json.load(f)
+    md_caption_count = sum(
+        1 for b in parsed.get("blocks", [])
+        if b.get("type") == "image_ref"
+        and (b.get("caption_id") or b.get("id"))
+        and (b.get("caption", "").strip())
+    )
+    hwpx_caption_count = len(re.findall(r"그림\s*\d+-\d+", section_xml))
+    if md_caption_count != hwpx_caption_count:
+        errors.append(
+            f"Caption count mismatch: MD has {md_caption_count} captions, "
+            f"HWPX has {hwpx_caption_count} caption paragraphs"
+        )
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -375,6 +394,11 @@ def main() -> None:
         action="store_true",
         help="Run proofread.py after validation and include results",
     )
+    parser.add_argument(
+        "--parsed",
+        help="Path to parsed JSON (from md_parser.py) for caption count validation. "
+        "If omitted, caption validation is skipped.",
+    )
     args = parser.parse_args()
 
     errors, warnings = validate(args.input, strict=args.strict)
@@ -382,6 +406,15 @@ def main() -> None:
     proofread_result = None
     if args.proofread:
         proofread_result = _run_proofread(args.input)
+    if args.parsed:
+        # Read section0.xml for caption check
+        try:
+            with ZipFile(args.input, "r") as zf:
+                if "Contents/section0.xml" in zf.namelist():
+                    section_xml = zf.read("Contents/section0.xml").decode("utf-8")
+                    _caption_checks(section_xml, args.parsed, errors, [])
+        except Exception as exc:
+            errors.append(f"Caption check error: {exc}")
 
     if errors:
         print(f"INVALID: {args.input}", file=sys.stderr)

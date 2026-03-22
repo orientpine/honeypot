@@ -1,0 +1,23 @@
+F3: Real Manual QA
+==================
+
+SCENARIO 1: caption tests 4개 통과
+  python -m pytest ... -k "build_fragment_caption": 4 PASSED ✅
+
+SCENARIO 2: _caption_checks() 단위 테스트
+  Input: 1 MD caption, 0 HWPX caption paragraphs
+  Output: ['Caption count mismatch: MD has 1 captions, HWPX has 0 caption paragraphs']
+  Result: PASS ✅
+
+SCENARIO 3: parsed_path=None → backward compat
+  Input: parsed_path=None
+  Output: errors = []
+  Result: PASS ✅
+
+SCENARIO 4: E2E 조건부
+  DEV_FIXTURES: ABSENT → E2E skipped ✅
+
+CROSS-TASK INTEGRATION:
+  build_image_with_caption: grep in plugins/hwpx-generator/ → 0 results ✅
+  sample_image_block: deleted from test file ✅
+  Full suite: 67 passed, 3 pre-existing dev fixture failures ✅

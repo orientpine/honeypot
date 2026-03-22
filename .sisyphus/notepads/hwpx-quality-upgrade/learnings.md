@@ -103,3 +103,9 @@ All 17 tests PASS:
 - standalone 라벨(`**[재난 분야]**`, `**[농업 분야]**`, `**[건설 분야]**` 등)은 기존 규칙에서 paragraph로 흡수되므로 `BOLD_LABEL_RE`를 bullet보다 먼저 검사해야 안정적으로 `bold_label` 블록으로 분기됨.
 - `HEADING_RE`는 헤딩 텍스트를 보존하므로 `#### (1) ...` 토큰 보존은 그대로 유지됨. `dev/4장.md`에서는 H4가 주로 `①/②/③` 형태로 나타남.
 - 실문서 검증 결과(`.sisyphus/evidence/task-4-complex-parsing.json`): blockquote=4, bold_label=6, separator=5, circle-numbered H4=12.
+
+## [2026-03-22] Task 2: image_ref caption emission + dead code removal
+- `build_fragment()`의 `image_ref` 분기에서 `block.get("caption_id") or block.get("id")`로 markdown/legacy 형식을 모두 처리해야 캡션 호환성이 유지됨.
+- 캡션 문단은 raw XML 문자열이 아니라 `paragraph_from_segments()`를 통해 생성해야 `xml_escape()`와 표준 `<hp:p>` 속성 세트가 자동 보장됨.
+- 캡션 스타일은 `styles.get("image_caption", styles.get("body", {}))` 폴백이 의도이며, `require_styles()`에 `image_caption` 강제를 추가하지 않는 것이 맞음.
+- `build_image_with_caption()` 제거 후 테스트는 `build_fragment_*` 4개만 유지하면 현재 경로를 정확히 검증할 수 있음.

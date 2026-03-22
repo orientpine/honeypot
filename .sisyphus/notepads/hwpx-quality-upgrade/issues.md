@@ -42,3 +42,7 @@
 - Golden reference (작성.hwpx) fails font_consistency: score=0.7313, 29/80 groups failed
 - Our generated output scores BETTER: 0.8773, 1/6 groups failed
 - The metric's threshold is too strict for real HWPX documents with intentional mixed formatting
+
+## Task 2 Follow-up (2026-03-22)
+- `python -m pytest plugins/hwpx-generator/skills/hwpx-core/tests/ -v --ignore=...` 실행 시 `dev/3장.md`, `dev/4장.md` 파일 부재로 `test_md_parser_complex.py`, `test_md_parser_images.py`에서 `FileNotFoundError` 3건 발생.
+- 이번 변경 범위(xml_writer/test_xml_writer_images)와 무관한 환경 데이터 이슈이며, `test_xml_writer_images.py` 대상 4개 테스트는 모두 PASS.

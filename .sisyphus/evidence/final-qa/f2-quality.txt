@@ -1,0 +1,23 @@
+F2: Code Quality Review
+=======================
+
+TEST RESULTS:
+  Unit tests (excl. E2E/dev_data): 67 passed, 3 failed
+  ✅ 3 failures are pre-existing dev fixture missing (dev/3장.md, dev/4장.md)
+  ✅ All 4 new caption tests PASSED
+  ✅ All xml_writer, image_embedder, page_guard, proofread, bullet tests PASSED
+
+CODE QUALITY:
+  ✅ No "type: ignore" or "noqa" added
+  ✅ No production print() statements outside __main__
+  ✅ caption logic uses paragraph_from_segments() — consistent with build_paragraph() pattern
+  ✅ image_counter += 1 correctly placed OUTSIDE if block (L516)
+  ✅ validate.py uses existing re and json imports (no new imports needed)
+  ✅ _caption_checks() signature follows plan spec exactly
+
+DEAD CODE REMOVAL:
+  ✅ build_image_with_caption() (former L419-497) completely removed
+  ✅ test_build_image_with_caption_* (3 tests) removed from test file
+  ✅ sample_image_block() fixture removed (no longer needed)
+
+VERDICT: APPROVE
