@@ -1,0 +1,33 @@
+=== Check: 3곳 제거 ===
+0
+0
+=== Check: 2곳 등록 ===
+3
+=== Check: numberingType PICTURE ===
+1
+=== Check: binDataList 사용안함 ===
+5
+=== Check: imageN 형식 ===
+4
+=== Check: orgSz pixel×36 ===
+1
+
+=== Verification Details ===
+
+1. 3곳 제거 확인:
+  (제거됨)
+
+2. 2곳 등록 확인:
+778:HWPX 이미지 구조는 2곳에 등록한다:
+804:| **2곳 등록** | `BinData/` + `content.hpf`에만 등록. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거 |
+925:24. **이미지 2곳 등록**: 이미지를 HWPX에 임베딩할 때는 `BinData/` + `content.hpf` 2곳에만 등록한다. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.
+
+3. numberingType PICTURE 확인:
+825:            numberingType="PICTURE" textWrap="TOP_AND_BOTTOM"
+
+4. binDataList 사용 안함 확인:
+783:**header.xml binDataList 추가 금지**: 기존 binDataList가 있으면 제거한다.
+804:| **2곳 등록** | `BinData/` + `content.hpf`에만 등록. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거 |
+809:| **BIN ID 형식** | imageN 형식 (image1, image2, ...). BIN0001 형식은 사용하지 않음 |
+861:### header.xml binDataList (사용하지 않음)
+925:24. **이미지 2곳 등록**: 이미지를 HWPX에 임베딩할 때는 `BinData/` + `content.hpf` 2곳에만 등록한다. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.

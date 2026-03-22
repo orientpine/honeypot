@@ -775,11 +775,12 @@ python3 "$SKILL_DIR/scripts/page_guard.py" --reference template.hwpx --output fi
 
 ### 이미지 임베딩 가이드
 
-HWPX 이미지 구조는 3곳에 동시 등록해야 한다:
-1. `BinData/` 폴더에 실제 이미지 파일 (BIN0001.png, BIN0002.png, ...)
+HWPX 이미지 구조는 2곳에 등록한다:
+1. `BinData/` 폴더에 실제 이미지 파일 (image1.png, image2.png, ...)
 2. `Contents/content.hpf`에 `<opf:item>` 등록
-3. `Contents/header.xml`에 `<hh:binDataList>` > `<hh:binItem>` 등록
-4. `Contents/section0.xml`에 `<hp:pic>` 요소 삽입
+3. `Contents/section0.xml`에 `<hp:pic>` 요소 삽입
+
+**header.xml binDataList 추가 금지**: 기존 binDataList가 있으면 제거한다.
 
 **CLI:**
 
@@ -800,12 +801,12 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 
 | 규칙 | 설명 |
 |------|------|
-| **3곳 동시 등록** | `BinData/` + `content.hpf` + `header.xml` 모두 등록해야 함. 하나라도 누락 시 한/글 에러 |
-| **hh:binItem (NOT hh:binData)** | header.xml에 등록 시 요소명은 `hh:binItem`이다. `hh:binData`가 아님 |
+| **2곳 등록** | `BinData/` + `content.hpf`에만 등록. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거 |
+| **binaryItemIDRef 형식** | header.xml binDataList 미사용. section0.xml의 hc:img에서 `binaryItemIDRef="imageN"` 형식 사용 (image1, image2, ...) |
 | **소스 이미지 포맷 검증** | `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있음. `image_embedder.py`가 자동 감지/변환 |
-| **orgSz ≠ curSz** | `orgSz` = 원본 이미지 픽셀 × 100 HWP units (원본 이미지 크기). `curSz` = 표시 크기 HWP units. 스케일이 1:1이 아니면 두 값이 다름. 예: 원본 1000×800px → orgSz=100000×80000, 표시 크기 50mm×40mm → curSz=약 47244×37795 |
+| **orgSz = pixel×36** | `orgSz` = 원본 이미지 픽셀 × 36 HWP units (200DPI 기준). 예: 원본 1000×800px → orgSz=36000×28800 |
 | **이미지 높이 상한** | MAX_IMAGE_HEIGHT = 70000 HWP units (~247mm). 초과 시 에러 |
-| **BIN ID 형식** | `BIN0001`, `BIN0002` 등 4자리 패딩. `image1` 형식은 사용하지 않음 |
+| **BIN ID 형식** | imageN 형식 (image1, image2, ...). BIN0001 형식은 사용하지 않음 |
 | **hp:pic 반드시 <hp:run> 안에 위치** | `hp:pic`은 section-level sibling으로 배치하면 한/글이 렌더링하지 않음. 반드시 `<hp:p><hp:run>...</hp:run></hp:p>` 구조 내에 위치해야 함 |
 
 ### `<hp:pic>` 검증된 구조 (pypandoc-hwpx, python-hwpx, HwpForge 참조)
@@ -821,11 +822,11 @@ imgRect → imgClip → inMargin → imgDim → img → effects →
 <hp:p>
   <hp:run>
     <hp:pic id="PIC_ID" instid="INST_ID" reverse="0"
-            numberingType="NONE" textWrap="TOP_AND_BOTTOM"
+            numberingType="PICTURE" textWrap="TOP_AND_BOTTOM"
             textFlow="BOTH_SIDES" lock="0" dropcapstyle="None"
             href="" groupLevel="0">
       <hp:offset x="0" y="0"/>
-      <hp:orgSz width="100000" height="80000"/>
+      <hp:orgSz width="36000" height="28800"/>
       <hp:curSz width="47244" height="37795"/>
       <hp:flip horizontal="0" vertical="0"/>
       <hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>
@@ -841,7 +842,7 @@ imgRect → imgClip → inMargin → imgDim → img → effects →
       <hp:imgClip left="0" right="100000" top="0" bottom="80000"/>
       <hp:inMargin left="0" right="0" top="0" bottom="0"/>
       <hp:imgDim dimwidth="1000" dimheight="800"/>
-      <hc:img binaryItemIDRef="BIN_ID" bright="0" contrast="0"
+      <hc:img binaryItemIDRef="image1" bright="0" contrast="0"
               effect="REAL_PIC" alpha="0"/>
       <hp:effects/>
       <hp:sz width="47244" widthRelTo="ABSOLUTE" height="37795"
@@ -857,17 +858,11 @@ imgRect → imgClip → inMargin → imgDim → img → effects →
 </hp:p>
 ```
 
-### header.xml binDataList 등록 구조
+### header.xml binDataList (사용하지 않음)
 
-```xml
-<hh:binDataList itemCnt="N">
-  <hh:binItem id="0" Type="Embedding" BinData="BIN0001.png" Format="png"/>
-  <hh:binItem id="1" Type="Embedding" BinData="BIN0002.png" Format="png"/>
-  ...
-</hh:binDataList>
-```
+**규칙**: header.xml에 binDataList를 추가하지 않는다. 기존 binDataList가 있으면 제거한다.
 
-`id`는 0부터 순차. `BinData`는 BinData/ 폴더의 파일명. `Format`은 확장자(점 제외).
+이미지 등록은 `BinData/` 폴더 + `content.hpf`만으로 충분하다.
 
 ---
 
@@ -927,7 +922,7 @@ HWPX 파일이 한글에서 열리지 않을 때:
 21. **validate.py --strict**: ZIP-level surgery 결과물은 `validate.py --strict`로 추가 검증 (standalone, xmlns, newlines, 표 속성)
 22. **lxml/ElementTree로 section XML 직렬화 절대 금지**: lxml의 `etree.tostring()`과 `tree.write()`는 XML 선언(`<?xml ... ?>`) 뒤에 `\n`(개행)을 삽입한다. 한/글은 이 개행을 텍스트 노드로 해석하여 파일을 깨뜨린다. 원본: `...yes"?><hs:sec`(개행 0개) → lxml: `...yes"?>\n<hs:sec`(개행 1개). 모든 section XML 생성/조작은 순수 문자열 기반 스크립트(`xml_writer.py`, `zip_surgery.py`)만 사용한다. 에이전트가 자체 코드에서 `from lxml import etree` 또는 `import xml.etree.ElementTree`를 사용하는 것은 금지한다.
 23. **표 생성 시 xml_writer.py 필수**: 표(table) XML은 반드시 `xml_writer.py`의 `build_table()` / `table_cell_xml()` 함수로 생성한다. 에이전트가 직접 `<hp:tbl>` XML을 작성하거나 `generate_content.py` 등의 자체 스크립트를 생성하는 것은 금지한다.
-24. **이미지 3곳 동시 등록**: 이미지를 HWPX에 임베딩할 때는 반드시 `BinData/` + `content.hpf` + `header.xml` 3곳에 동시 등록한다. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.
+24. **이미지 2곳 등록**: 이미지를 HWPX에 임베딩할 때는 `BinData/` + `content.hpf` 2곳에만 등록한다. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.
 25. **이미지 포맷 검증**: `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있다 (Gemini API 등). `image_embedder.py`가 PIL로 자동 감지/변환하므로 별도 처리 불필요.
 26. **hp:pic 구조 직접 작성 금지**: hp:pic XML을 에이전트가 직접 작성하지 않는다. 반드시 `image_embedder.py`의 `make_pic_xml()`을 사용한다. 검증된 구조(pypandoc-hwpx/HwpForge)를 사용하며, 요소 순서가 중요하다.
 
