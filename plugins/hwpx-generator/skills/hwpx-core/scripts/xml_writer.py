@@ -322,11 +322,11 @@ def table_cell_xml(
         f'<hp:tc borderFillIDRef="{style["borderFillIDRef"]}"{span_attrs}>'
         f'<hp:cellAddr colAddr="{col_index}" rowAddr="{row_index}"/>'
         f'<hp:cellSpan colSpan="{colspan}" rowSpan="{rowspan}"/>'
-        f'<hp:cellSz width="{width}" height="2400"/>'
-        '<hp:cellMargin left="283" right="283" top="141" bottom="141"/>'
+        f'<hp:cellSz width="{width}" height="{max(2400, len(text) * 100)}"/>'
+        '<hp:cellMargin left="141" right="141" top="141" bottom="141"/>'
         '<hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" '
         'vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" '
-        f'textWidth="{max(width - 566, 0)}" fieldName="">'
+        f'textWidth="{max(width - 282, 0)}" fieldName="">'
         f'<hp:p id="{pid}" paraPrIDRef="{style["paraPrIDRef"]}" styleIDRef="0" '
         'pageBreak="0" columnBreak="0" merged="0">'
         f'<hp:run charPrIDRef="{style["charPrIDRef"]}"><hp:t>{safe_text}</hp:t></hp:run>'
@@ -391,7 +391,7 @@ def build_table(block: dict, ids: IdGenerator, styles: dict) -> str:
         f'rowCnt="{len(table_rows)}" colCnt="{col_count}" cellSpacing="0" '
         f'borderFillIDRef="{styles["table_cell"]["borderFillIDRef"]}" noAdjust="0">'
         f'<hp:sz width="{int(styles["table_width"])}" widthRelTo="ABSOLUTE" '
-        f'height="{len(table_rows) * 2400}" heightRelTo="ABSOLUTE" protect="0"/>'
+        f'height="{max(3000, len(table_rows) * 3000)}" heightRelTo="ABSOLUTE" protect="0"/>'
         '<hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" '
         'allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" '
         'horzRelTo="COLUMN" vertAlign="TOP" horzAlign="LEFT" '
@@ -573,7 +573,7 @@ def build_fragment(parsed: dict, styles: dict, wrap_section: bool = False) -> st
         elif btype == "table":
             out.append(build_table(block, ids, styles))
         elif btype == "image_ref":
-            out.append(build_image_with_caption(block, styles, image_counter))
+            out.append(build_image_placeholder(image_counter))
             image_counter += 1
         else:
             out.append(build_paragraph(block, ids, styles))
