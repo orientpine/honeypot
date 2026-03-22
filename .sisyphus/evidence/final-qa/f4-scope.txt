@@ -1,0 +1,28 @@
+F4: Scope Fidelity Check
+========================
+
+FILES CHANGED (git diff HEAD~3 --name-only):
+  .sisyphus/boulder.json                                    (system — session tracking)
+  .sisyphus/notepads/hwpx-quality-upgrade/decisions.md     (system — notepad)
+  .sisyphus/notepads/hwpx-quality-upgrade/issues.md        (system — notepad)
+  .sisyphus/notepads/hwpx-quality-upgrade/learnings.md     (system — notepad)
+  .sisyphus/notepads/hwpx-quality-upgrade/problems.md      (system — notepad)
+  plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py     ✅ Expected
+  plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py   ✅ Expected
+  plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py ✅ Expected
+
+EXPECTED FILES (3): xml_writer.py, test_xml_writer_images.py, validate.py
+ALL 3 CHANGED ✅
+
+SCOPE VIOLATIONS:
+  md_parser.py: NOT CHANGED ✅
+  image_embedder.py: NOT CHANGED ✅
+  Any other plugins/**/*.py: NOT CHANGED ✅
+
+MUST NOT DO COMPLIANCE:
+  hp:para in xml_writer.py: 0 occurrences ✅
+  hp:align in xml_writer.py: 0 occurrences ✅
+  build_image_with_caption in any file: 0 occurrences ✅
+  image_counter used as caption_id fallback: NOT present ✅
+
+VERDICT: APPROVE

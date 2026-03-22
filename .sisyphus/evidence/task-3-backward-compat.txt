@@ -1,0 +1,24 @@
+SCENARIO 2: Backward Compatibility (parsed_path=None)
+======================================================
+
+Test: _caption_checks() gracefully skips validation when parsed_path is None
+
+Input:
+  - section_xml: '<root></root>'
+  - parsed_path: None (omitted)
+  - errors: [] (empty list)
+
+Expected:
+  - Function should return early without adding any errors
+  - errors list should remain empty
+
+Result:
+  ERRORS: []
+  PASS: backward compatible ✓
+
+Verification:
+  - Function correctly handles None parsed_path
+  - No errors are appended when caption validation is skipped
+  - Existing code paths are not affected
+  - --parsed CLI argument is optional (not required)
+  - Existing validate.py behavior is preserved
