@@ -1,0 +1,12 @@
+plugin.json:
+  "version": "3.8.0",
+
+marketplace.json hwpx-generator:
+
+marketplace.json metadata:
+    "version": "3.17.0",
+
+AGENTS.md Version:
+
+README.md Version:
+**Version**: 3.17.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
