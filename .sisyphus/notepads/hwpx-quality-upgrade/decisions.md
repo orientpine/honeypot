@@ -9,8 +9,12 @@
 
 ### Image-Caption Pairing
 - md_parser: ![alt](path) + next italic line = image_ref block with caption field
-- xml_writer: build_image_with_caption() creates hp:pic + caption paragraph
+- xml_writer: `build_fragment()` emits image placeholder first and appends caption paragraph via `paragraph_from_segments()`
 - image_embedder: --from-parsed mode reads path field from image_ref blocks
+
+### Dead Code Cleanup (2026-03-22)
+- `build_image_with_caption()`는 호출 경로가 없어 제거하고, 테스트도 `build_fragment` 중심으로 정리한다.
+- Legacy image_ref(`id`)와 markdown image_ref(`caption_id`)는 동일 분기에서 `caption_id or id`로 통합 처리한다.
 
 ### hs:sec Wrapper
 - --wrap-section flag controls wrapping (backward-compatible)

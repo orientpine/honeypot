@@ -1,0 +1,10 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
+SUMMARY: 3 failed (dev fixture missing), 67 passed
+NOTE: All 3 failures are pre-existing due to missing dev/3장.md, dev/4장.md fixtures.
+These are NOT caused by any changes in this plan.
+
+Our new tests (test_xml_writer_images.py::test_build_fragment_caption_*):
+  PASSED [x4] all 4 caption tests
+
+All xml_writer, image_embedder, md_parser (non-dev), page_guard, proofread, bullet tests: PASSED

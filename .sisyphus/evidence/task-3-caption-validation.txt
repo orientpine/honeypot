@@ -1,0 +1,21 @@
+SCENARIO 1: Caption Count Mismatch Detection
+=============================================
+
+Test: _caption_checks() detects mismatch between MD captions and HWPX caption paragraphs
+
+Input:
+  - parsed JSON: {'blocks': [{'type': 'image_ref', 'caption_id': '3-1', 'caption': 'test'}]}
+  - section_xml: '<root></root>' (no caption paragraphs)
+
+Expected:
+  - errors list should contain 1 error message with "Caption count mismatch"
+
+Result:
+  ERRORS: ['Caption count mismatch: MD has 1 captions, HWPX has 0 caption paragraphs']
+  PASS: caption mismatch detected ✓
+
+Verification:
+  - Function correctly counts MD captions (1)
+  - Function correctly counts HWPX caption paragraphs (0)
+  - Mismatch is detected and error message is appended
+  - Error message format is clear and actionable
