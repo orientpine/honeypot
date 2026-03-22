@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.17.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.18.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -954,7 +954,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
-| 3.17.0 | 2026-03-22 | hwpx-generator v3.8.0: 이미지 임베딩 매뉴얼 기반 리팩토링 — 좌표계 전환(orgSz=pixel×36, imgDim=pixel×75), binDataList 제거, hc:img 요소 순서(16개 고정), 동적 BODY_WIDTH, validate.py 동기화 |
+| 3.18.0 | 2026-03-22 | hwpx-generator v3.9.0: 캡션 emit — 이미지 placeholder 뒤 캡션 문단 자동 생성(xml_writer.py), validate.py 캡션 개수 검증 추가 |
 | 3.16.1 | 2026-03-22 | hwpx-generator v3.6.1: md_parser.py 불릿/인용문 여러 줄 이어쓰기(continuation) 지원 — 줄바꿈으로 잘리던 한국어 텍스트("카메" → "카메라") 복원, xml_writer.py 이중 불릿 마커 방지 — bullet_auto 설정과 무관하게 항상 접두사 제거, proofread.py 이중 불릿 검사를 전체 문단으로 확대 |
 | 3.16.0 | 2026-03-21 | hwpx-generator v3.6.0: 이중 삽입 지점 처리(Dual-Zone Content Placement) 지침 추가 — 요약 총괄표 셀에 전체 내용 삽입 방지, 본문 상세 섹션 플레이스홀더 방치 방지, 감지→요약 생성→본문 삽입 순서 강제, hwpx-generate 오케스트레이터 MUST DO/MUST NOT DO 보강 |
 | 3.15.0 | 2026-03-20 | hwpx-generator v3.5.0: image_embedder.py hp:pic 구조 7대 결함 수정 — hp:pic을 `<hp:p><hp:run>` 래퍼로 감싸 section-level 배치 방지(🔴 렌더링 안됨 해결), orgSz=pixel×100(원본 크기)·curSz=표시 크기 분리, scaMatrix=curSz/orgSz 비율 자동 계산, imgDim=실제 픽셀 크기, imgClip=orgSz 전체 범위, hc:img 순서 imgDim 뒤로 이동, validate.py hp:run 내부 배치 검증 추가 |
