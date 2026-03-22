@@ -59,10 +59,11 @@ def test_bullet_auto_strips_leading_bullet_prefix(scripts_dir):
     assert "<hp:t>항목 텍스트</hp:t>" in xml
 
 
-def test_bullet_prefix_not_stripped_when_style_not_auto_bullet(scripts_dir):
+def test_bullet_prefix_always_stripped_even_when_not_auto(scripts_dir):
+    """Bullet prefix must be stripped regardless of bullet_auto to prevent double markers."""
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     styles = sample_styles()
-    styles["bullet_auto"] = []
+    styles["bullet_auto"] = []  # No auto-bullet styles
     parsed = {
         "blocks": [
             {
@@ -75,4 +76,47 @@ def test_bullet_prefix_not_stripped_when_style_not_auto_bullet(scripts_dir):
 
     xml = writer.build_fragment(parsed, styles)
 
-    assert "<hp:t>◦ 항목 텍스트</hp:t>" in xml
+    # Prefix stripped: no double bullet
+    assert "<hp:t>◦ 항목 텍스트</hp:t>" not in xml
+    assert "<hp:t>항목 텍스트</hp:t>" in xml
+    # Marker still prepended as separate run
+    assert "<hp:t>◦</hp:t>" in xml
+
+
+def test_bullet_no_double_marker_korean_text(scripts_dir):
+    """Regression: Korean bullet text must not produce double markers like ◦ ◦text."""
+    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
+    parsed = {
+        "blocks": [
+            {
+                "type": "bullet",
+                "marker": "◦",
+                "segments": [{"type": "plain", "text": "LiDAR, 카메라 데이터"}],
+            }
+        ]
+    }
+
+    xml = writer.build_fragment(parsed, sample_styles())
+
+    # Single marker in output, no double bullet
+    assert xml.count("<hp:t>◦</hp:t>") == 1
+    assert "<hp:t>LiDAR, 카메라 데이터</hp:t>" in xml
+
+
+def test_bullet_clean_content_not_stripped(scripts_dir):
+    """Content without bullet prefix should pass through unchanged."""
+    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
+    parsed = {
+        "blocks": [
+            {
+                "type": "bullet",
+                "marker": "◦",
+                "segments": [{"type": "plain", "text": "일반 텍스트 내용"}],
+            }
+        ]
+    }
+
+    xml = writer.build_fragment(parsed, sample_styles())
+
+    assert "<hp:t>일반 텍스트 내용</hp:t>" in xml
+    assert "<hp:t>◦</hp:t>" in xml

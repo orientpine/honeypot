@@ -77,3 +77,84 @@ def test_parse_chapter4_complex_patterns(project_root, scripts_dir):
     assert len(bold_labels) >= 6
     assert len(circle_h4) >= 1
     assert len(separators) >= 4
+
+
+def test_bullet_multiline_continuation(scripts_dir):
+    """Bullet text spanning multiple lines should be joined into one bullet."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "◦ LiDAR, 카메라, GPS 센서 등의\n멀티모달 센서 데이터를 수집"
+    parsed = parser.parse_markdown(md, "inline")
+
+    assert len(parsed["blocks"]) == 1
+    block = parsed["blocks"][0]
+    assert block["type"] == "bullet"
+    assert block["marker"] == "◦"
+    assert "카메라" in block["text"]
+    assert "수집" in block["text"]
+    # Continuation line joined with space
+    assert "등의 멀티모달" in block["text"]
+
+
+def test_bullet_multiline_stops_at_next_bullet(scripts_dir):
+    """Continuation stops when a new bullet starts."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "◦ 첫 번째 항목\n계속되는 내용\n◦ 두 번째 항목"
+    parsed = parser.parse_markdown(md, "inline")
+
+    blocks = parsed["blocks"]
+    assert len(blocks) == 2
+    assert blocks[0]["type"] == "bullet"
+    assert "계속되는 내용" in blocks[0]["text"]
+    assert blocks[1]["type"] == "bullet"
+    assert blocks[1]["text"] == "두 번째 항목"
+
+
+def test_bullet_multiline_stops_at_blank(scripts_dir):
+    """Continuation stops at a blank line."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "◦ 첫 번째 항목\n계속\n\n다음 문단"
+    parsed = parser.parse_markdown(md, "inline")
+
+    blocks = parsed["blocks"]
+    assert len(blocks) == 2
+    assert blocks[0]["type"] == "bullet"
+    assert "계속" in blocks[0]["text"]
+    assert blocks[1]["type"] == "paragraph"
+    assert blocks[1]["text"] == "다음 문단"
+
+
+def test_blockquote_multiline_continuation(scripts_dir):
+    """Blockquote text spanning multiple lines should be joined."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "> 연구 결과를 종합하면\n전체적인 성능이 향상되었다"
+    parsed = parser.parse_markdown(md, "inline")
+
+    assert len(parsed["blocks"]) == 1
+    block = parsed["blocks"][0]
+    assert block["type"] == "blockquote"
+    assert "종합하면 전체적인" in block["text"]
+
+
+def test_blockquote_multiline_stops_at_heading(scripts_dir):
+    """Blockquote continuation stops at a heading."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "> 인용문 내용\n계속 이어지는 인용\n## 다음 섹션"
+    parsed = parser.parse_markdown(md, "inline")
+
+    blocks = parsed["blocks"]
+    assert len(blocks) == 2
+    assert blocks[0]["type"] == "blockquote"
+    assert "계속 이어지는 인용" in blocks[0]["text"]
+    assert blocks[1]["type"] == "heading"
+
+
+def test_bullet_korean_text_not_truncated(scripts_dir):
+    """Regression: Korean text like 카메라 must not be truncated to 카메."""
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    md = "◦ LiDAR, 카메라, GPS 센서를 활용한 멀티모달 인지 기술"
+    parsed = parser.parse_markdown(md, "inline")
+
+    block = parsed["blocks"][0]
+    assert block["type"] == "bullet"
+    assert "카메라" in block["text"]
+    assert block["text"].endswith("인지 기술")

@@ -252,20 +252,17 @@ def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
     marker_text = marker if marker else "◦"
     content_segments = normalize_segments(block)
     para_pr_id = int(bullet_style["paraPrIDRef"])
-    bullet_auto = {
-        int(x)
-        for x in styles.get("bullet_auto", [])
-        if isinstance(x, (int, str)) and str(x).strip() != ""
-    }
-    if para_pr_id in bullet_auto:
-        stripped_segments = [dict(seg) for seg in content_segments]
-        for seg in stripped_segments:
-            seg_text = str(seg.get("text", ""))
-            if seg_text.strip() == "":
-                continue
-            seg["text"] = strip_bullet_prefix(seg_text)
-            break
-        content_segments = stripped_segments
+    # Always strip bullet prefix from content to prevent double markers.
+    # The marker is always prepended as full_segments[0], so content must
+    # not start with a bullet character regardless of bullet_auto setting.
+    stripped_segments = [dict(seg) for seg in content_segments]
+    for seg in stripped_segments:
+        seg_text = str(seg.get("text", ""))
+        if seg_text.strip() == "":
+            continue
+        seg["text"] = strip_bullet_prefix(seg_text)
+        break
+    content_segments = stripped_segments
 
     full_segments: list[dict] = [
         {"type": "plain", "text": marker_text}
