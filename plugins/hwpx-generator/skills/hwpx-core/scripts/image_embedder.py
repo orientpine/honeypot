@@ -7,6 +7,15 @@ Contents/section0.xml with <hp:pic> elements.
 """
 
 import argparse
+import io
+import json
+import os
+import re
+import shutil
+import struct
+import warnings
+import zipfile
+import argparse
 import json
 import os
 import re
@@ -179,11 +188,52 @@ def calc_hwpx_height(width: int, height: int, target_width: int = A4_BODY_WIDTH)
 
     result = int((height / width) * target_width)
     if result > MAX_IMAGE_HEIGHT:
-        raise ValueError(
+        warnings.warn(
             f"Calculated image height {result} exceeds max {MAX_IMAGE_HEIGHT} HWP units. "
-            f"Source image: {width}x{height}px. Consider resizing."
+            f"Source image: {width}x{height}px. Auto-capping to {MAX_IMAGE_HEIGHT}.",
+            stacklevel=2,
         )
+        result = MAX_IMAGE_HEIGHT
     return result
+
+
+def maybe_resize_image(path: str, max_width: int | None, quality: int = 85) -> bytes:
+    """Load image, optionally resize if wider than max_width, return bytes.
+
+    Args:
+        path: Path to the image file
+        max_width: Maximum width in pixels. If None, no resizing.
+        quality: JPEG quality (used only when saving as JPEG)
+
+    Returns:
+        Image bytes (original if no resize, resized if max_width exceeded)
+    """
+    if max_width is None:
+        with open(path, "rb") as f:
+            return f.read()
+
+    img = Image.open(path)
+    if img.width <= max_width:
+        with open(path, "rb") as f:
+            return f.read()
+
+    # Resize maintaining aspect ratio
+    ratio = max_width / img.width
+    new_height = int(img.height * ratio)
+    img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+
+    # Save to bytes in the same format
+    buf = io.BytesIO()
+    fmt = getattr(img, 'format', None)
+    if fmt is None:
+        # Detect format from file extension
+        ext = os.path.splitext(path)[1].lower()
+        fmt = "JPEG" if ext in (".jpg", ".jpeg") else "PNG"
+    if fmt.upper() == "JPEG":
+        img.save(buf, format="JPEG", quality=quality)
+    else:
+        img.save(buf, format="PNG")
+    return buf.getvalue()
 
 
 def extract_image_number(name: str) -> int | None:
@@ -412,7 +462,7 @@ def update_header_xml(header_xml: str, bin_entries: list[dict[str, str]]) -> str
     return header_xml[:insert_pos] + bin_data_list + header_xml[insert_pos:]
 
 
-def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str]:
+def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str, int | None, int]:
     parser = argparse.ArgumentParser(description="Embed image files into HWPX")
     _ = parser.add_argument("--hwpx", required=True, help="Input .hwpx path")
     _ = parser.add_argument(
@@ -439,6 +489,18 @@ def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str]:
         help="Automatically map placeholders to image filenames",
     )
     _ = parser.add_argument("--output", required=True, help="Output .hwpx path")
+    _ = parser.add_argument(
+        "--max-width",
+        type=int,
+        default=None,
+        help="Maximum image width in pixels. Wider images will be proportionally resized. Default: no resize.",
+    )
+    _ = parser.add_argument(
+        "--quality",
+        type=int,
+        default=85,
+        help="JPEG quality when compressing (0-100). Default: 85.",
+    )
     args = parser.parse_args()
     return (
         str(args.hwpx),
@@ -448,6 +510,8 @@ def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str]:
         str(args.base_dir),
         bool(args.auto_map),
         str(args.output),
+        int(args.max_width) if args.max_width is not None else None,
+        int(args.quality),
     )
 
 
@@ -460,17 +524,17 @@ def validate_inputs(
     base_dir: str,
 ) -> None:
     if not os.path.isfile(hwpx):
-        raise SystemExit(f"Error: HWPX file not found: {hwpx}")
+        raise SystemExit(f"Error: HWPX file not found: {os.path.abspath(hwpx)}")
     if not os.path.isdir(images_dir):
-        raise SystemExit(f"Error: images directory not found: {images_dir}")
+        raise SystemExit(f"Error: images directory not found: {os.path.abspath(images_dir)}")
     if not mapping_path and not from_parsed and not auto_map:
         raise SystemExit("Error: provide --mapping, --from-parsed, or --auto-map")
     if mapping_path and not os.path.isfile(mapping_path):
-        raise SystemExit(f"Error: mapping file not found: {mapping_path}")
+        raise SystemExit(f"Error: mapping file not found: {os.path.abspath(mapping_path)}")
     if from_parsed and not os.path.isfile(from_parsed):
-        raise SystemExit(f"Error: parsed JSON not found: {from_parsed}")
+        raise SystemExit(f"Error: parsed JSON not found: {os.path.abspath(from_parsed)}")
     if not os.path.isdir(base_dir):
-        raise SystemExit(f"Error: base directory not found: {base_dir}")
+        raise SystemExit(f"Error: base directory not found: {os.path.abspath(base_dir)}")
 
 
 def build_mapping(
@@ -525,6 +589,8 @@ def embed_images(
     base_dir: str,
     auto_map: bool,
     output: str,
+    max_width: int | None = None,
+    quality: int = 85,
 ) -> None:
     with zipfile.ZipFile(hwpx, "r") as zin:
         infos = zin.infolist()
@@ -574,7 +640,7 @@ def embed_images(
             image_path = os.path.join(images_dir, file_name)
 
         if not os.path.isfile(image_path):
-            raise SystemExit(f"Error: image file not found for {key}: {image_path}")
+            raise SystemExit(f"Error: image file not found for {key}: {os.path.abspath(image_path)}")
 
         image_path = ensure_png_format(image_path)
         pixel_w, pixel_h = image_dimensions(image_path)
@@ -658,8 +724,8 @@ def embed_images(
             image_entry = image_entries[bin_id]
             info_out = zipfile.ZipInfo(image_entry)
             info_out.compress_type = zipfile.ZIP_DEFLATED
-            with open(image_paths[key], "rb") as f:
-                zout.writestr(info_out, f.read())
+            image_data = maybe_resize_image(image_paths[key], max_width, quality)
+            zout.writestr(info_out, image_data)
 
     if tmp_out != output:
         _ = shutil.move(tmp_out, output)
@@ -668,12 +734,13 @@ def embed_images(
 
 
 def main() -> None:
-    hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output = (
+    hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output, max_width, quality = (
         parse_args()
     )
     validate_inputs(hwpx, images_dir, mapping_path, from_parsed, auto_map, base_dir)
     embed_images(
-        hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output
+        hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output,
+        max_width=max_width, quality=quality,
     )
 
 
