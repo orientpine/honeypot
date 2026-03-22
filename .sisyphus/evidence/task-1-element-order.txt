@@ -1,0 +1,9 @@
+Scenario 1: element order + coordinate system (640x480)
+ordered=True
+positions=310,334,374,414,452,528,752,838,963,1022,1074,1121,1134,1228,1425,1478
+orgSz expected=23040x17280
+imgDim expected=48000x36000
+orgSz present=True
+imgDim present=True
+hc:img before hp:imgRect=True
+binaryItemIDRef=image1=True

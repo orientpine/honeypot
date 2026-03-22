@@ -1,0 +1,7 @@
+Scenario 2: no binDataList + binaryItemIDRef=imageN
+header_has_binDataList=False
+section_has_binaryItemIDRef_image1=True
+content_has_id_image1=True
+content_has_href_image1_png=True
+output_has_bindata_image1_png=True
+tmp_dir=C:\Users\BaekdongCha\Documents\honeypot\.sisyphus\evidence\task1_embed_7si3wgdc

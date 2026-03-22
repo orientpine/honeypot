@@ -15,13 +15,6 @@ import shutil
 import struct
 import warnings
 import zipfile
-import argparse
-import json
-import os
-import re
-import shutil
-import struct
-import zipfile
 
 from PIL import Image, UnidentifiedImageError
 
@@ -197,6 +190,19 @@ def calc_hwpx_height(width: int, height: int, target_width: int = A4_BODY_WIDTH)
     return result
 
 
+def extract_body_width(section_xml: str) -> int:
+    """Extract body width from section XML (pageSz - margins). Fallback: 42520 (A4)."""
+    try:
+        page_w_m = re.search(r'<hp:pageSz[^>]*\bwidth="(\d+)"', section_xml)
+        left_m = re.search(r'<hp:pageMargin[^>]*\bleft="(\d+)"', section_xml)
+        right_m = re.search(r'<hp:pageMargin[^>]*\bright="(\d+)"', section_xml)
+        if page_w_m and left_m and right_m:
+            return int(page_w_m.group(1)) - int(left_m.group(1)) - int(right_m.group(1))
+    except Exception:
+        pass
+    return A4_BODY_WIDTH
+
+
 def maybe_resize_image(path: str, max_width: int | None, quality: int = 85) -> bytes:
     """Load image, optionally resize if wider than max_width, return bytes.
 
@@ -224,7 +230,7 @@ def maybe_resize_image(path: str, max_width: int | None, quality: int = 85) -> b
 
     # Save to bytes in the same format
     buf = io.BytesIO()
-    fmt = getattr(img, 'format', None)
+    fmt = getattr(img, "format", None)
     if fmt is None:
         # Detect format from file extension
         ext = os.path.splitext(path)[1].lower()
@@ -330,64 +336,90 @@ def make_pic_xml(
     pic_id: int,
     inst_id: int,
     para_id: int,
+    filename: str,
+    z_order: int,
+    dim_width: int,
+    dim_height: int,
 ) -> str:
     """Generate <hp:p><hp:run><hp:pic>...</hp:pic></hp:run></hp:p> XML.
 
     hp:pic MUST be inside <hp:run> — 한/글 ignores section-level hp:pic.
 
     Args:
-        bin_id: Binary data ID (e.g. "BIN0001")
+        bin_id: Binary data ID (e.g. "image1")
         cur_width: Display width in HWP units (A4 body = 42520)
         cur_height: Display height in HWP units
-        org_width: Original image width in HWP units (pixel_width × 100)
-        org_height: Original image height in HWP units (pixel_height × 100)
+        org_width: Original image width in HWP units (pixel_width × 36)
+        org_height: Original image height in HWP units (pixel_height × 36)
         pixel_width: Original image width in pixels
         pixel_height: Original image height in pixels
         pic_id: Unique picture element ID
         inst_id: Unique instance ID
         para_id: Unique paragraph ID for the wrapper <hp:p>
+        filename: Original image file name for shapeComment
+        z_order: zOrder value for hp:pic
+        dim_width: imgDim width (pixel_width × 75)
+        dim_height: imgDim height (pixel_height × 75)
     """
     # scaMatrix = curSz / orgSz (scaling ratio from original to display)
     sca_x = cur_width / org_width if org_width > 0 else 1.0
     sca_y = cur_height / org_height if org_height > 0 else 1.0
+    center_x = cur_width // 2
+    center_y = cur_height // 2
 
     return (
-        f'<hp:p id="{para_id}" paraPrIDRef="0" styleIDRef="0" '
+        f'<hp:p id="{para_id}" paraPrIDRef="4" styleIDRef="0" '
         f'pageBreak="0" columnBreak="0" merged="0">'
-        f'<hp:run charPrIDRef="0">'
-        f'<hp:pic id="{pic_id}" instid="{inst_id}" reverse="0" '
-        f'numberingType="NONE" textWrap="TOP_AND_BOTTOM" '
+        f'<hp:run charPrIDRef="1">'
+        f'<hp:pic id="{pic_id}" zOrder="{z_order}" instid="{inst_id}" reverse="0" '
+        f'numberingType="PICTURE" textWrap="TOP_AND_BOTTOM" '
         f'textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" '
         f'href="" groupLevel="0">'
+        # 1. hp:offset
         f'<hp:offset x="0" y="0"/>'
+        # 2. hp:orgSz
         f'<hp:orgSz width="{org_width}" height="{org_height}"/>'
+        # 3. hp:curSz
         f'<hp:curSz width="{cur_width}" height="{cur_height}"/>'
+        # 4. hp:flip
         f'<hp:flip horizontal="0" vertical="0"/>'
-        f'<hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>'
+        # 5. hp:rotationInfo
+        f'<hp:rotationInfo angle="0" centerX="{center_x}" centerY="{center_y}" rotateimage="1"/>'
+        # 6. hp:renderingInfo
         f"<hp:renderingInfo>"
         f'<hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>'
         f'<hc:scaMatrix e1="{sca_x:.6f}" e2="0" e3="0" e4="0" e5="{sca_y:.6f}" e6="0"/>'
         f'<hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>'
         f"</hp:renderingInfo>"
-        f"<hp:imgRect>"
-        f'<hc:pt0 x="0" y="0"/><hc:pt1 x="{cur_width}" y="0"/>'
-        f'<hc:pt2 x="{cur_width}" y="{cur_height}"/><hc:pt3 x="0" y="{cur_height}"/>'
-        f"</hp:imgRect>"
-        f'<hp:imgClip left="0" right="{org_width}" top="0" bottom="{org_height}"/>'
-        f'<hp:inMargin left="0" right="0" top="0" bottom="0"/>'
-        f'<hp:imgDim dimwidth="{pixel_width}" dimheight="{pixel_height}"/>'
+        # 7. hc:img
         f'<hc:img binaryItemIDRef="{bin_id}" bright="0" contrast="0" '
         f'effect="REAL_PIC" alpha="0"/>'
+        # 8. hp:imgRect (orgSz coordinate system)
+        f"<hp:imgRect>"
+        f'<hc:pt0 x="0" y="0"/><hc:pt1 x="{org_width}" y="0"/>'
+        f'<hc:pt2 x="{org_width}" y="{org_height}"/><hc:pt3 x="0" y="{org_height}"/>'
+        f"</hp:imgRect>"
+        # 9. hp:imgClip (imgDim coordinate system)
+        f'<hp:imgClip left="0" right="{dim_width}" top="0" bottom="{dim_height}"/>'
+        # 10. hp:inMargin
+        f'<hp:inMargin left="0" right="0" top="0" bottom="0"/>'
+        # 11. hp:imgDim
+        f'<hp:imgDim dimwidth="{dim_width}" dimheight="{dim_height}"/>'
+        # 12. hp:effects
         f"<hp:effects/>"
+        # 13. hp:sz
         f'<hp:sz width="{cur_width}" widthRelTo="ABSOLUTE" height="{cur_height}" '
         f'heightRelTo="ABSOLUTE" protect="0"/>'
+        # 14. hp:pos
         f'<hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" '
-        f'allowOverlap="1" holdAnchorAndSO="0" '
+        f'allowOverlap="0" holdAnchorAndSO="0" '
         f'vertRelTo="PARA" horzRelTo="COLUMN" '
         f'vertAlign="TOP" horzAlign="LEFT" '
         f'vertOffset="0" horzOffset="0"/>'
+        # 15. hp:outMargin
         f'<hp:outMargin left="0" right="0" top="0" bottom="0"/>'
-        f"<hp:shapeComment/>"
+        # 16. hp:shapeComment
+        f"<hp:shapeComment>{filename} {pixel_width}x{pixel_height}</hp:shapeComment>"
         f"</hp:pic>"
         f"</hp:run>"
         f"</hp:p>"
@@ -416,53 +448,9 @@ def update_content_hpf(content_hpf: str, image_entries: dict[str, str]) -> str:
     return content_hpf[:insert_pos] + chunk + "\n  " + content_hpf[insert_pos:]
 
 
-def update_header_xml(header_xml: str, bin_entries: list[dict[str, str]]) -> str:
-    if "<hh:refList" not in header_xml:
-        raise ValueError("hh:refList not found in Contents/header.xml")
-
-    item_lines = [
-        (
-            f'<hh:binItem id="{entry["id"]}" Type="Embedding" '
-            f'BinData="{entry["bin_data"]}" Format="{entry["format"]}"/>'
-        )
-        for entry in bin_entries
-    ]
-
-    if item_lines:
-        bin_data_list = (
-            f'<hh:binDataList itemCnt="{len(bin_entries)}">'
-            + "".join(item_lines)
-            + "</hh:binDataList>"
-        )
-    else:
-        bin_data_list = '<hh:binDataList itemCnt="0"></hh:binDataList>'
-
-    existing_pattern = re.compile(
-        r"<hh:binDataList\b[^>]*>.*?</hh:binDataList>", re.DOTALL
-    )
-    if existing_pattern.search(header_xml):
-        return existing_pattern.sub(bin_data_list, header_xml, count=1)
-
-    ref_list_self_closing = re.compile(r"<hh:refList\b([^>]*)/>")
-    self_closing_match = ref_list_self_closing.search(header_xml)
-    if self_closing_match:
-        attrs = self_closing_match.group(1)
-        replacement = f"<hh:refList{attrs}>{bin_data_list}</hh:refList>"
-        return (
-            header_xml[: self_closing_match.start()]
-            + replacement
-            + header_xml[self_closing_match.end() :]
-        )
-
-    close_tag = "</hh:refList>"
-    insert_pos = header_xml.find(close_tag)
-    if insert_pos == -1:
-        raise ValueError("</hh:refList> not found in Contents/header.xml")
-
-    return header_xml[:insert_pos] + bin_data_list + header_xml[insert_pos:]
-
-
-def parse_args() -> tuple[str, str, str | None, str | None, str, bool, str, int | None, int]:
+def parse_args() -> tuple[
+    str, str, str | None, str | None, str, bool, str, int | None, int
+]:
     parser = argparse.ArgumentParser(description="Embed image files into HWPX")
     _ = parser.add_argument("--hwpx", required=True, help="Input .hwpx path")
     _ = parser.add_argument(
@@ -526,15 +514,23 @@ def validate_inputs(
     if not os.path.isfile(hwpx):
         raise SystemExit(f"Error: HWPX file not found: {os.path.abspath(hwpx)}")
     if not os.path.isdir(images_dir):
-        raise SystemExit(f"Error: images directory not found: {os.path.abspath(images_dir)}")
+        raise SystemExit(
+            f"Error: images directory not found: {os.path.abspath(images_dir)}"
+        )
     if not mapping_path and not from_parsed and not auto_map:
         raise SystemExit("Error: provide --mapping, --from-parsed, or --auto-map")
     if mapping_path and not os.path.isfile(mapping_path):
-        raise SystemExit(f"Error: mapping file not found: {os.path.abspath(mapping_path)}")
+        raise SystemExit(
+            f"Error: mapping file not found: {os.path.abspath(mapping_path)}"
+        )
     if from_parsed and not os.path.isfile(from_parsed):
-        raise SystemExit(f"Error: parsed JSON not found: {os.path.abspath(from_parsed)}")
+        raise SystemExit(
+            f"Error: parsed JSON not found: {os.path.abspath(from_parsed)}"
+        )
     if not os.path.isdir(base_dir):
-        raise SystemExit(f"Error: base directory not found: {os.path.abspath(base_dir)}")
+        raise SystemExit(
+            f"Error: base directory not found: {os.path.abspath(base_dir)}"
+        )
 
 
 def build_mapping(
@@ -606,9 +602,18 @@ def embed_images(
 
     section_text = entries["Contents/section0.xml"].decode("utf-8")
     content_hpf = entries["Contents/content.hpf"].decode("utf-8")
+    body_width = extract_body_width(section_text)
     header_xml = (
         entries["Contents/header.xml"].decode("utf-8") if has_header_xml else ""
     )
+    if has_header_xml:
+        header_xml = re.sub(
+            r"<hh:binDataList\b[^>]*>.*?</hh:binDataList>",
+            "",
+            header_xml,
+            flags=re.DOTALL,
+        )
+        header_xml = re.sub(r"<hh:binDataList\b[^>]*/>", "", header_xml)
 
     placeholders = set(PLACEHOLDER_RE.findall(section_text))
     if not placeholders:
@@ -622,13 +627,12 @@ def embed_images(
 
     image_paths: dict[str, str] = {}
     image_entries: dict[str, str] = {}
-    image_bin_ids: dict[str, str] = {}
     image_heights: dict[str, int] = {}
     image_pixel_dims: dict[str, tuple[int, int]] = {}
-    bin_entries: list[dict[str, str]] = []
+    image_filenames: dict[str, str] = {}
 
     sorted_keys = sorted(mapping.keys(), key=image_sort_key)
-    for index, key in enumerate(sorted_keys):
+    for key in sorted_keys:
         map_item = mapping[key]
         file_name = map_item["file"]
         path_value = map_item.get("path", "")
@@ -640,45 +644,37 @@ def embed_images(
             image_path = os.path.join(images_dir, file_name)
 
         if not os.path.isfile(image_path):
-            raise SystemExit(f"Error: image file not found for {key}: {os.path.abspath(image_path)}")
+            raise SystemExit(
+                f"Error: image file not found for {key}: {os.path.abspath(image_path)}"
+            )
 
         image_path = ensure_png_format(image_path)
         pixel_w, pixel_h = image_dimensions(image_path)
-        hwpx_height = calc_hwpx_height(pixel_w, pixel_h)
+        hwpx_height = calc_hwpx_height(pixel_w, pixel_h, target_width=body_width)
         ext = normalize_image_extension(image_path)
-
-        if has_header_xml:
-            bin_id = f"BIN{index + 1:04d}"
-            bin_data_name = f"{bin_id}{ext}"
-            bin_entries.append(
-                {
-                    "id": str(index),
-                    "bin_data": bin_data_name,
-                    "format": ext.lstrip("."),
-                }
-            )
-        else:
-            bin_id = key
-            bin_data_name = f"{key}{ext}"
+        bin_data_name = f"{key}{ext}"
 
         image_paths[key] = image_path
         image_heights[key] = hwpx_height
         image_pixel_dims[key] = (pixel_w, pixel_h)
-        image_bin_ids[key] = bin_id
-        image_entries[bin_id] = f"BinData/{bin_data_name}"
+        image_filenames[key] = os.path.basename(image_path)
+        image_entries[key] = f"BinData/{bin_data_name}"
 
     para_id_base = 7000000001
     for index, key in enumerate(sorted_keys):
         pic_id = 8000000001 + index
         inst_id = 8100000001 + index
         para_id = para_id_base + index
-        bin_id = image_bin_ids[key]
+        z_order = 40 + index
+        bin_id = key
         pixel_w, pixel_h = image_pixel_dims[key]
-        org_width = pixel_w * 100  # 1 pixel = 1pt = 100 HWP units
-        org_height = pixel_h * 100
+        org_width = pixel_w * 36
+        org_height = pixel_h * 36
+        dim_width = pixel_w * 75
+        dim_height = pixel_h * 75
         pic_xml = make_pic_xml(
             bin_id=bin_id,
-            cur_width=A4_BODY_WIDTH,
+            cur_width=body_width,
             cur_height=image_heights[key],
             org_width=org_width,
             org_height=org_height,
@@ -687,12 +683,14 @@ def embed_images(
             pic_id=pic_id,
             inst_id=inst_id,
             para_id=para_id,
+            filename=image_filenames[key],
+            z_order=z_order,
+            dim_width=dim_width,
+            dim_height=dim_height,
         )
         section_text = section_text.replace(f"<!--IMAGE:{key}-->", pic_xml)
 
     content_hpf = update_content_hpf(content_hpf, image_entries)
-    if has_header_xml:
-        header_xml = update_header_xml(header_xml, bin_entries)
 
     output_dir = os.path.dirname(output)
     if output_dir:
@@ -720,8 +718,7 @@ def embed_images(
             zout.writestr(info_out, data)
 
         for key in sorted_keys:
-            bin_id = image_bin_ids[key]
-            image_entry = image_entries[bin_id]
+            image_entry = image_entries[key]
             info_out = zipfile.ZipInfo(image_entry)
             info_out.compress_type = zipfile.ZIP_DEFLATED
             image_data = maybe_resize_image(image_paths[key], max_width, quality)
@@ -734,13 +731,28 @@ def embed_images(
 
 
 def main() -> None:
-    hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output, max_width, quality = (
-        parse_args()
-    )
+    (
+        hwpx,
+        images_dir,
+        mapping_path,
+        from_parsed,
+        base_dir,
+        auto_map,
+        output,
+        max_width,
+        quality,
+    ) = parse_args()
     validate_inputs(hwpx, images_dir, mapping_path, from_parsed, auto_map, base_dir)
     embed_images(
-        hwpx, images_dir, mapping_path, from_parsed, base_dir, auto_map, output,
-        max_width=max_width, quality=quality,
+        hwpx,
+        images_dir,
+        mapping_path,
+        from_parsed,
+        base_dir,
+        auto_map,
+        output,
+        max_width=max_width,
+        quality=quality,
     )
 
 
