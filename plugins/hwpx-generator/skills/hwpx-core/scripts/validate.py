@@ -189,10 +189,10 @@ def _image_checks(zf: ZipFile, names: list[str]) -> tuple[list[str], list[str]]:
     # 5: BinData magic bytes must match media-type in content.hpf
     if hpf_text:
         declared_media_by_href: dict[str, str] = {}
-        for item_match in re.finditer(r"<opf:item\\b[^>]*/?>", hpf_text):
+        for item_match in re.finditer(r"<opf:item\b[^>]*/?>" , hpf_text):
             tag = item_match.group(0)
-            href_match = re.search(r"\\bhref=\"([^\"]+)\"", tag)
-            media_match = re.search(r"\\bmedia-type=\"([^\"]+)\"", tag)
+            href_match = re.search(r"\bhref=\"([^\"]+)\"" , tag)
+            media_match = re.search(r"\bmedia-type=\"([^\"]+)\"" , tag)
             if href_match and media_match:
                 declared_media_by_href[href_match.group(1)] = media_match.group(1)
 
