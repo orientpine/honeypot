@@ -136,7 +136,7 @@
       "name": "hwpx-generator",
       "source": "./plugins/hwpx-generator",
       "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + ZIP-level surgery 지원. Workflow 7: 마크다운 → HWPX 템플릿 채우기 + 이미지 임베딩.",
-      "version": "3.6.1",
+      "version": "3.7.0",
       "strict": true,
       "agents": [
         "./agents/hwpx-builder.md",
