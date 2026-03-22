@@ -814,10 +814,8 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 요소 순서가 중요하며, 한/글의 직렬화 순서와 일치해야 한다:
 
 ```
-offset → orgSz → curSz → flip → rotationInfo → renderingInfo →
-imgRect → imgClip → inMargin → imgDim → img → effects →
-```
-
+offset → orgSz → curSz → flip → rotationInfo → renderingInfo → hc:img →
+imgRect → imgClip → inMargin → imgDim → effects → sz → pos → outMargin → shapeComment
 ```xml
 <hp:p>
   <hp:run>
@@ -827,32 +825,32 @@ imgRect → imgClip → inMargin → imgDim → img → effects →
             href="" groupLevel="0">
       <hp:offset x="0" y="0"/>
       <hp:orgSz width="36000" height="28800"/>
-      <hp:curSz width="47244" height="37795"/>
+      <hp:curSz width="42520" height="34016"/>
       <hp:flip horizontal="0" vertical="0"/>
-      <hp:rotationInfo angle="0" centerX="0" centerY="0" rotateimage="1"/>
+      <hp:rotationInfo angle="0" centerX="21260" centerY="17008" rotateimage="1"/>
       <hp:renderingInfo>
         <hc:transMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
-        <hc:scaMatrix e1="0.47244" e2="0" e3="0" e4="0" e5="0.47244" e6="0"/>
+        <hc:scaMatrix e1="1.18111" e2="0" e3="0" e4="0" e5="1.18111" e6="0"/>
         <hc:rotMatrix e1="1" e2="0" e3="0" e4="0" e5="1" e6="0"/>
       </hp:renderingInfo>
-      <hp:imgRect>
-        <hc:pt0 x="0" y="0"/><hc:pt1 x="47244" y="0"/>
-        <hc:pt2 x="47244" y="37795"/><hc:pt3 x="0" y="37795"/>
-      </hp:imgRect>
-      <hp:imgClip left="0" right="100000" top="0" bottom="80000"/>
-      <hp:inMargin left="0" right="0" top="0" bottom="0"/>
-      <hp:imgDim dimwidth="1000" dimheight="800"/>
       <hc:img binaryItemIDRef="image1" bright="0" contrast="0"
               effect="REAL_PIC" alpha="0"/>
+      <hp:imgRect>
+        <hc:pt0 x="0" y="0"/><hc:pt1 x="36000" y="0"/>
+        <hc:pt2 x="36000" y="28800"/><hc:pt3 x="0" y="28800"/>
+      </hp:imgRect>
+      <hp:imgClip left="0" right="75000" top="0" bottom="60000"/>
+      <hp:inMargin left="0" right="0" top="0" bottom="0"/>
+      <hp:imgDim dimwidth="75000" dimheight="60000"/>
       <hp:effects/>
-      <hp:sz width="47244" widthRelTo="ABSOLUTE" height="37795"
+      <hp:sz width="42520" widthRelTo="ABSOLUTE" height="34016"
              heightRelTo="ABSOLUTE" protect="0"/>
       <hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1"
-              allowOverlap="1" holdAnchorAndSO="0"
+              allowOverlap="0" holdAnchorAndSO="0"
               vertRelTo="PARA" horzRelTo="COLUMN"
               vertAlign="TOP" horzAlign="LEFT" vertOffset="0" horzOffset="0"/>
       <hp:outMargin left="0" right="0" top="0" bottom="0"/>
-      <hp:shapeComment/>
+      <hp:shapeComment>image1.png 1000x800</hp:shapeComment>
     </hp:pic>
   </hp:run>
 </hp:p>

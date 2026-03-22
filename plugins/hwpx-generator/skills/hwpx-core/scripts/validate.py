@@ -42,8 +42,8 @@ REQUIRED_FILES = [
 EXPECTED_MIMETYPE = "application/hwp+zip"
 
 
-def validate(hwpx_path: str, *, strict: bool = False) -> list[str]:
-    """Validate HWPX file and return a list of error messages (empty = valid).
+def validate(hwpx_path: str, *, strict: bool = False) -> tuple[list[str], list[str]]:
+    """Validate HWPX file and return (errors, warnings) lists (empty = valid).
 
     Args:
         hwpx_path: Path to the HWPX file.
@@ -52,6 +52,7 @@ def validate(hwpx_path: str, *, strict: bool = False) -> list[str]:
     """
 
     errors: list[str] = []
+    warnings: list[str] = []
     path = Path(hwpx_path)
 
     if not path.is_file():
@@ -105,23 +106,29 @@ def validate(hwpx_path: str, *, strict: bool = False) -> list[str]:
                     errors.append(f"Malformed XML in {name}: {e}")
 
         # Image embedding consistency checks (always run when images exist)
-        errors.extend(_image_checks(zf, names))
+        errors_img, warnings_img = _image_checks(zf, names)
+        errors.extend(errors_img)
+        warnings.extend(warnings_img)
 
         # Strict mode: ZIP-level surgery compliance checks
         if strict:
             errors.extend(_strict_checks(zf, names))
 
-    return errors
+    return errors, warnings
 
 
-def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
-    """Validate image embedding consistency across section0.xml, header.xml, and content.hpf."""
+def _image_checks(zf: ZipFile, names: list[str]) -> tuple[list[str], list[str]]:
+    """Validate image embedding consistency across section0.xml, header.xml, and content.hpf.
+    
+    Returns (errors, warnings) tuples.
+    """
     errors: list[str] = []
+    warnings: list[str] = []
 
     # Run only when BinData files exist
     bin_files = [n for n in names if n.startswith("BinData/") and not n.endswith("/")]
     if not bin_files:
-        return errors
+        return errors, warnings
 
     section_name = "Contents/section0.xml"
     header_name = "Contents/header.xml"
@@ -164,11 +171,10 @@ def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
     # 3: header.xml binDataList is deprecated — warn if present, OK if absent
     if header_text:
         if "<hh:binDataList" in header_text:
-            errors.append(
+            warnings.append(
                 "[image][WARN] header.xml contains binDataList "
                 "(deprecated; manual section 8 says remove it)"
             )
-
     # 4: binaryItemIDRef in section0.xml must exist as opf:item id in content.hpf
     if sec_text and hpf_text:
         hpf_ids = set(re.findall(r'<opf:item[^>]+\bid="([^"]+)"', hpf_text))
@@ -217,7 +223,7 @@ def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
                     f"is {actual} (magic bytes mismatch)"
                 )
 
-    return errors
+    return errors, warnings
 
 
 def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:
@@ -371,7 +377,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    errors = validate(args.input, strict=args.strict)
+    errors, warnings = validate(args.input, strict=args.strict)
 
     proofread_result = None
     if args.proofread:
@@ -381,6 +387,10 @@ def main() -> None:
         print(f"INVALID: {args.input}", file=sys.stderr)
         for err in errors:
             print(f"  - {err}", file=sys.stderr)
+        if warnings:
+            print(f"\nWarnings:", file=sys.stderr)
+            for warn in warnings:
+                print(f"  - {warn}", file=sys.stderr)
         if proofread_result is not None:
             print(f"\nProofread: {proofread_result['summary']}", file=sys.stderr)
         sys.exit(1)
@@ -389,6 +399,10 @@ def main() -> None:
         suffix = "+proofread" if args.proofread else ""
         print(f"VALID: {args.input} ({mode}{suffix} mode)")
         print("  All checks passed.")
+        if warnings:
+            print(f"\nWarnings:", file=sys.stderr)
+            for warn in warnings:
+                print(f"  - {warn}", file=sys.stderr)
         if proofread_result is not None:
             print(f"  Proofread: {proofread_result['summary']}")
             if not proofread_result["pass"]:
