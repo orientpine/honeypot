@@ -1,0 +1,46 @@
+F1: Plan Compliance Audit
+=========================
+
+MUST HAVE ITEMS [7/7]:
+1. ✅ 캡션 <hp:p> 문단이 <!--IMAGE:imageN--> 플레이스홀더 뒤에 출력됨
+   → xml_writer.py L495-515: build_image_placeholder() after → paragraph_from_segments()
+
+2. ✅ caption_id/id 필드명 불일치 모두 처리
+   → L496: caption_id = block.get("caption_id") or block.get("id")
+
+3. ✅ paragraph_from_segments() 사용 (raw XML 금지)
+   → L508: out.append(paragraph_from_segments(...))
+
+4. ✅ 빈 캡션 가드
+   → L497-498: caption = (...).strip(); if caption_id or caption:
+
+5. ✅ xml_escape() 적용
+   → Applied internally in paragraph_from_segments() via xml_escape(text) at L204
+
+6. ✅ Dead code build_image_with_caption() 삭제
+   → Grep for "build_image_with_caption" in plugins/hwpx-generator/ → 0 results
+
+7. ✅ 캡션 카운트 E2E 검증 (validate.py)
+   → validate.py L379-396: _caption_checks() function added + --parsed CLI arg
+
+MUST NOT HAVE ITEMS [7/7]:
+1. ✅ md_parser.py 수정 없음 → not in git diff HEAD~3
+2. ✅ image_embedder.py 수정 없음 → not in git diff HEAD~3
+3. ✅ require_styles()에 image_caption 추가 없음 → not found in xml_writer.py
+4. ✅ hp:para, hp:align 없음 → grep for "hp:para|hp:align" in xml_writer.py → 0 results
+5. ✅ raw XML 문자열 연결 없음 → paragraph_from_segments() used exclusively
+6. ✅ build_image_placeholder() 변경 없음 → L415-416: def build_image_placeholder(image_index: int) → unchanged
+7. ✅ image_counter 캡션 ID 폴백 없음 → caption_id/id pattern used
+
+EVIDENCE FILES:
+✅ task-1-red-tests-fail.txt — 3 FAILED (caption logic absent)
+✅ task-1-existing-tests-pass.txt — 3 PASSED
+✅ task-2-green-tests-pass.txt — 4 PASSED
+✅ task-2-dead-code-removed.txt — dead code absent
+✅ task-2-legacy-format.txt — legacy id format works
+✅ task-3-caption-validation.txt — mismatch detected
+✅ task-3-backward-compat.txt — None path skips check
+✅ task-4-full-suite.txt — 67 passed (3 pre-existing dev fixture failures)
+✅ task-4-e2e-captions.txt — E2E skipped (fixtures absent)
+
+VERDICT: APPROVE

@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot-feat-new-feature
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 4 items
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_markdown_format PASSED [ 25%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_legacy_format PASSED [ 50%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_empty_skip PASSED [ 75%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_xml_escape PASSED [100%]
+
+============================== 4 passed in 0.09s ==============================

@@ -1,0 +1,31 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot-feat-new-feature
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 7 items / 3 deselected / 4 selected
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_markdown_format FAILED [ 25%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_legacy_format FAILED [ 50%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_empty_skip PASSED [ 75%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_xml_escape FAILED [100%]
+
+================================== FAILURES ===================================
+_________________ test_build_fragment_caption_markdown_format _________________
+plugins\hwpx-generator\skills\hwpx-core\tests\test_xml_writer_images.py:99: in test_build_fragment_caption_markdown_format
+    assert "그림 3-1: 비전 개념도" in xml
+E   assert '\uadf8\ub9bc 3-1: \ube44\uc804 \uac1c\ub150\ub3c4' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+__________________ test_build_fragment_caption_legacy_format __________________
+plugins\hwpx-generator\skills\hwpx-core\tests\test_xml_writer_images.py:117: in test_build_fragment_caption_legacy_format
+    assert "그림 3-1: 비전 개념도" in xml
+E   assert '\uadf8\ub9bc 3-1: \ube44\uc804 \uac1c\ub150\ub3c4' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+___________________ test_build_fragment_caption_xml_escape ____________________
+plugins\hwpx-generator\skills\hwpx-core\tests\test_xml_writer_images.py:152: in test_build_fragment_caption_xml_escape
+    assert "&amp;" in xml
+E   assert '&amp;' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+=========================== short test summary info ===========================
+FAILED plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_markdown_format - assert '\uadf8\ub9bc 3-1: \ube44\uc804 \uac1c\ub150\ub3c4' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+FAILED plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_legacy_format - assert '\uadf8\ub9bc 3-1: \ube44\uc804 \uac1c\ub150\ub3c4' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+FAILED plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_fragment_caption_xml_escape - assert '&amp;' in '<hwpx-fragment xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core"><!--IMAGE:image1--></hwpx-fragment>'
+================== 3 failed, 1 passed, 3 deselected in 0.25s ==================

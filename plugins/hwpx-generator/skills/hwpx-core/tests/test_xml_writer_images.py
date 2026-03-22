@@ -44,39 +44,74 @@ def sample_styles() -> dict:
     }
 
 
-def sample_image_block() -> dict:
-    return {
-        "type": "image_ref",
-        "path": "./images/01_비전_개념도.png",
-        "alt": "alt",
-        "caption": "caption text",
-        "caption_id": "3-1",
-        "filename": "01_비전_개념도.png",
-        "placeholder": True,
+def test_build_fragment_caption_markdown_format(scripts_dir):
+    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
+    parsed = {
+        "blocks": [
+            {
+                "type": "image_ref",
+                "path": "./images/01.png",
+                "caption": "비전 개념도",
+                "caption_id": "3-1",
+                "filename": "01.png",
+            }
+        ]
     }
+    xml = writer.build_fragment(parsed, sample_styles())
+    assert "그림 3-1: 비전 개념도" in xml
+    assert "<hp:p " in xml  # paragraph_from_segments가 생성하는 태그
+    assert "<!--IMAGE:image1-->" in xml  # 플레이스홀더도 반드시 존재
 
 
-def test_build_image_with_caption_contains_hp_pic(scripts_dir):
+def test_build_fragment_caption_legacy_format(scripts_dir):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert "<hp:pic" in xml
-    assert 'embeddingFile="image1"' in xml
+    parsed = {
+        "blocks": [
+            {
+                "type": "image_ref",
+                "id": "3-1",
+                "caption": "비전 개념도",
+                # caption_id 키 없음 — Legacy 형식
+            }
+        ]
+    }
+    xml = writer.build_fragment(parsed, sample_styles())
+    assert "그림 3-1: 비전 개념도" in xml
 
 
-def test_build_image_with_caption_contains_caption_prefix(scripts_dir):
+def test_build_fragment_caption_empty_skip(scripts_dir):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert "그림 3-1: caption text" in xml
+    parsed = {
+        "blocks": [
+            {
+                "type": "image_ref",
+                "path": "./images/01.png",
+                "caption": "",
+                "caption_id": None,
+                "id": None,
+            }
+        ]
+    }
+    xml = writer.build_fragment(parsed, sample_styles())
+    assert "<!--IMAGE:image1-->" in xml  # 플레이스홀더는 존재
+    assert "그림" not in xml  # 캡션 문단 없음
 
 
-def test_build_image_with_caption_uses_image_caption_style_ids(scripts_dir):
+def test_build_fragment_caption_xml_escape(scripts_dir):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert '<hp:para paraPrIDRef="118" hp:align="CENTER">' in xml
-    assert '<hp:run charPrIDRef="121">' in xml
+    parsed = {
+        "blocks": [
+            {
+                "type": "image_ref",
+                "path": "./images/01.png",
+                "caption": "A & B <=> C",
+                "caption_id": "3-1",
+                "filename": "01.png",
+            }
+        ]
+    }
+    xml = writer.build_fragment(parsed, sample_styles())
+    assert "&amp;" in xml
+    assert "&lt;" in xml
+    assert "&gt;" in xml
+    assert "A & B" not in xml  # 이스케이프 안 된 원본 없음
