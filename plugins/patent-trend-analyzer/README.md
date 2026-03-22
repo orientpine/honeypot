@@ -300,17 +300,17 @@ output/
 
 | Command | 설명 |
 |---------|------|
-| `analyze-patents` | 전체 파이프라인 오케스트레이터 (L1 → L2 → L3) |
+| `/patent-trend-analyzer:analyze-patents` | 전체 파이프라인 오케스트레이터 (L1 → L2 → L3) |
 
 ### Skills (5)
 
 | Skill | 설명 |
 |-------|------|
-| `patent-mcp-setup` | KIPRIS MCP 서버 설치 및 설정 가이드 |
-| `patent-research-planning` | 키워드 최적화, IPC 매핑, 검색 전략 수립 절차 |
-| `patent-search-collect` | 특허 검색 실행, 배치 내보내기, 중복 제거 절차 |
-| `patent-analysis-viz` | 분류, 트렌드 분석, 시각화 대시보드 생성 절차 |
-| `ipc-classification-guide` | IPC/CPC 코드 구조 및 기술 분야별 코드 가이드 |
+| `/patent-trend-analyzer:patent-mcp-setup` | KIPRIS MCP 서버 설치 및 설정 가이드 |
+| `/patent-trend-analyzer:patent-research-planning` | 키워드 최적화, IPC 매핑, 검색 전략 수립 절차 |
+| `/patent-trend-analyzer:patent-search-collect` | 특허 검색 실행, 배치 내보내기, 중복 제거 절차 |
+| `/patent-trend-analyzer:patent-analysis-viz` | 분류, 트렌드 분석, 시각화 대시보드 생성 절차 |
+| `/patent-trend-analyzer:ipc-classification-guide` | IPC/CPC 코드 구조 및 기술 분야별 코드 가이드 |
 
 ### MCP Tools (18)
 

@@ -242,7 +242,7 @@ Step 3: 일치 여부 판단
    - Fed, BOK 현재 기준금리 포함
    - USD/KRW 현재값 포함
    - 모든 현재값이 index-fetcher 결과와 일치
-1. **스킬 사용**: 모든 데이터 수집 에이전트가 `web-search-verifier` 스킬 사용
+1. **스킬 사용**: 모든 데이터 수집 에이전트가 `/investments-portfolio:web-search-verifier` 스킬 사용
 2. **지수 일치**: `matched_indices / total_indices == 1.0` (100%)
 3. **기준금리 검증**: `bok_rate_verified == true`
 4. **지수 독립 검증** (v5.1 신규): `index_independent_verification.all_indices_verified == true`

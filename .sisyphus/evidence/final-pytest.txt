@@ -1,0 +1,85 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\BaekdongCha\scoop\apps\python\current\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\BaekdongCha\Documents\honeypot
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 69 items
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_extract_style_map_detects_image_caption_and_bullet_auto PASSED [  1%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_extract_style_map_uses_name_based_fallback PASSED [  2%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_body_excludes_bold_and_colored PASSED [  4%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_border_fill_excludes_colored_background PASSED [  5%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_cascading_fallback_all_bold PASSED [  7%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_from_parsed_collects_image_ref_paths PASSED [  8%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_jpeg_files_use_image_jpeg_media_type PASSED [ 10%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_mapping_mode_png_remains_compatible PASSED [ 11%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_pic_wrapped_in_run_and_paragraph PASSED [ 13%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_orgSz_uses_pixel_dimensions PASSED [ 14%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_scaMatrix_reflects_scaling_ratio PASSED [ 15%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_imgDim_has_pixel_values PASSED [ 17%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_auto_resize_max_height PASSED [ 18%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_auto_resize_normal_height_unchanged PASSED [ 20%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_max_width_resizes_large_images PASSED [ 21%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_no_max_width_unchanged PASSED [ 23%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_image_embedder.py::test_compression_small_image_not_resized PASSED [ 24%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_blockquote_preserves_inline_bold_segments PASSED [ 26%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_heading_level4_keeps_circle_number_token PASSED [ 27%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_standalone_bold_bracket_line_becomes_bold_label PASSED [ 28%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_parse_chapter4_complex_patterns PASSED [ 30%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_bullet_multiline_continuation PASSED [ 31%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_next_bullet PASSED [ 33%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_blank PASSED [ 34%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_blockquote_multiline_continuation PASSED [ 36%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_blockquote_multiline_stops_at_heading PASSED [ 37%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_complex.py::test_bullet_korean_text_not_truncated PASSED [ 39%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_images.py::test_parse_images_in_chapter3_markdown PASSED [ 40%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_images.py::test_parse_images_in_chapter4_markdown PASSED [ 42%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_images.py::test_legacy_image_ref_format_is_still_supported PASSED [ 43%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_mode_argument_exists PASSED [ 44%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_mode_default_value PASSED [ 46%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_mode_invalid_choice PASSED [ 47%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_help_returns_zero PASSED [ 49%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_detects_paragraph_count_mismatch PASSED [ 50%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_detects_text_length_delta PASSED [ 52%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_detects_paragraph_text_delta PASSED [ 53%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_passes_identical PASSED [ 55%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_detects_table_count_mismatch PASSED [ 56%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_default_mode_detects_page_break_mismatch PASSED [ 57%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_suppresses_paragraph_count PASSED [ 59%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_suppresses_text_length_delta PASSED [ 60%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_suppresses_paragraph_text_delta PASSED [ 62%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_allows_table_addition PASSED [ 63%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_still_detects_table_shape PASSED [ 65%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_still_detects_page_break PASSED [ 66%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_still_detects_column_break PASSED [ 68%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_passes_when_structure_identical PASSED [ 69%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_detects_table_deletion PASSED [ 71%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_detects_existing_table_structure_change PASSED [ 72%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_warning_on_table_addition PASSED [ 73%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_page_guard.py::test_template_fill_preservation_warning PASSED [ 75%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_proofread.py::test_proofread_help_returns_zero PASSED [ 76%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_proofread.py::test_proofread_on_초안_outputs_required_keys PASSED [ 78%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_proofread.py::test_double_bullets_check_detects_manual_prefix PASSED [ 79%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_proofread.py::test_exit_code_zero_when_all_checks_pass PASSED [ 81%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_bullets.py::test_bullet_auto_strips_leading_bullet_prefix PASSED [ 82%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_bullets.py::test_bullet_prefix_always_stripped_even_when_not_auto PASSED [ 84%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_bullets.py::test_bullet_no_double_marker_korean_text PASSED [ 85%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_bullets.py::test_bullet_clean_content_not_stripped PASSED [ 86%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_image_with_caption_contains_hp_pic PASSED [ 88%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_image_with_caption_contains_caption_prefix PASSED [ 89%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py::test_build_image_with_caption_uses_image_caption_style_ids PASSED [ 91%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py::test_wrap_section_outputs_hs_sec_root PASSED [ 92%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py::test_wrap_section_includes_page_size_and_margins PASSED [ 94%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py::test_wrap_section_root_has_all_required_namespaces PASSED [ 95%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_section.py::test_without_wrap_section_keeps_hwpx_fragment_root PASSED [ 97%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_tables.py::test_table_cell_xml_adds_colspan_rowspan_attributes PASSED [ 98%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_tables.py::test_build_table_reflects_merge_info_from_cell_dict PASSED [100%]
+
+============================== warnings summary ===============================
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_cascading_fallback_all_bold
+  C:\Users\BaekdongCha\Documents\honeypot\plugins\hwpx-generator\skills\hwpx-core\tests\test_analyze_template.py:235: UserWarning: All body charPr candidates are bold - using most common
+    style_map = analyzer.extract_style_map(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 69 passed, 1 warning in 1.61s ========================

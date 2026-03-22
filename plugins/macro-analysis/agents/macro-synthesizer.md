@@ -411,7 +411,7 @@ Step 8 저장 순서:
 
 ## 필수 체크리스트 (작업 완료 전 BLOCKING)
 
-> 아래 Phase 1-4 체크리스트를 모두 통과해야 합니다. (상세: `macro-output-template` 스킬 참조)
+> 아래 Phase 1-4 체크리스트를 모두 통과해야 합니다. (상세: `/investments-portfolio:macro-output-template` 스킬 참조)
 
 ### Phase 1: 현재값 포함 (7개 항목)
 

@@ -303,9 +303,9 @@ report-generator로 보고서를 자동 생성해줘. (auto_mode)
 
 ### 스킬 (자동 로드)
 
-- `field-keywords`: 도메인별 키워드 (ROS2, AI/ML, GENERAL)
-- `chapter-structure`: 챕터 구조 정의 및 충분성 평가
-- `four-step-pattern`: 4단계 문장 패턴
+- `/report-generator:field-keywords`: 도메인별 키워드 (ROS2, AI/ML, GENERAL)
+- `/report-generator:chapter-structure`: 챕터 구조 정의 및 충분성 평가
+- `/report-generator:four-step-pattern`: 4단계 문장 패턴
 
 ### 출력 템플릿 (Read 도구로 로드)
 

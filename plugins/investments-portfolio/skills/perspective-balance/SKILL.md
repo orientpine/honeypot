@@ -184,10 +184,10 @@ Base Case (기본): 가장 가능성 높은 시나리오
 
 | 스킬 | 연계 방법 |
 |:-----|:----------|
-| `analyst-common` | 웹검색 교차 검증 후 Bull/Bear 분석에 활용 |
-| `web-search-verifier` | 각 시나리오 근거에 대한 출처 검증 |
-| `devil-advocate` | Bear Case 강화 및 추가 리스크 발굴 |
-| `bogle-principles` | 장기 투자 관점에서 시나리오별 대응 전략 |
+| `/investments-portfolio:analyst-common` | 웹검색 교차 검증 후 Bull/Bear 분석에 활용 |
+| `/investments-portfolio:web-search-verifier` | 각 시나리오 근거에 대한 출처 검증 |
+| `/investments-portfolio:devil-advocate` | Bear Case 강화 및 추가 리스크 발굴 |
+| `/investments-portfolio:bogle-principles` | 장기 투자 관점에서 시나리오별 대응 전략 |
 
 ---
 

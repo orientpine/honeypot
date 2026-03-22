@@ -1,0 +1,43 @@
+TASK 5: Documentation & Version Update for hwpx-generator Wave 1
+================================================================
+
+COMPLETED UPDATES:
+
+1. plugins/hwpx-generator/skills/hwpx-core/SKILL.md
+   ✓ Added --max-width flag documentation (line ~793)
+   ✓ Added --quality flag documentation (line ~794)
+   ✓ Added bullet hierarchy rendering notes (lines ~450-453)
+     - idRef(문자) + hc:left(여백) + level(자동) + leftMargin override 조합
+     - paraPr 87: ◦ 상위 불릿 (left=1500)
+     - paraPr 88: - 하위 불릿 (left=2500)
+
+2. plugins/hwpx-generator/commands/hwpx-generate.md
+   ✓ Added image_max_width parameter (Configuration Options)
+   ✓ Added image_quality parameter (Configuration Options)
+
+3. plugins/hwpx-generator/.claude-plugin/plugin.json
+   ✓ Version bumped: 3.6.1 → 3.7.0 (MINOR version bump)
+
+4. .claude-plugin/marketplace.json
+   ✓ hwpx-generator entry version updated: 3.6.1 → 3.7.0
+
+VERIFICATION RESULTS:
+✓ SKILL.md contains '--max-width' flag documentation
+✓ SKILL.md contains '--quality' flag documentation
+✓ SKILL.md contains bullet hierarchy rendering notes ('불릿 계층')
+✓ hwpx-generate.md contains 'image_max_width' parameter
+✓ hwpx-generate.md contains 'image_quality' parameter
+✓ plugin.json version: 3.7.0
+✓ marketplace.json hwpx-generator version: 3.7.0
+
+CONTEXT (Wave 1 Changes):
+- analyze_template.py: Added textColor to charpr_map, cascading body filter, borderFill colored background filter
+- xml_writer.py: cellMargin 141, textWidth width-282
+- image_embedder.py: --max-width compression flag (opt-in), --quality flag, MAX_HEIGHT auto-resize+warn
+- hwpx-builder.md: Simplified to 107 lines with substitution-first principle
+
+VERSION BUMP RATIONALE:
+MINOR version bump (3.6.1 → 3.7.0) because:
+- New features added: textColor filter, image compression (--max-width, --quality)
+- hwpx-builder simplification
+- No breaking changes to existing APIs

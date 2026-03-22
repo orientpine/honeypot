@@ -273,5 +273,5 @@ Step 5-2. 결과 보고
 
 ### 스킬
 
-- `four-step-pattern`: 4단계 문장 패턴 가이드 및 검증 규칙
-- `field-keywords`: 도메인별 용어 치환 규칙
+- `/report-generator:four-step-pattern`: 4단계 문장 패턴 가이드 및 검증 규칙
+- `/report-generator:field-keywords`: 도메인별 용어 치환 규칙

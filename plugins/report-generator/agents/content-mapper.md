@@ -255,5 +255,5 @@ Step 5-2. 사용자 안내 출력
 
 ### 스킬
 
-- `field-keywords`: 도메인별 챕터 키워드
-- `chapter-structure`: 챕터 구조 정의 및 충분성 평가 기준
+- `/report-generator:field-keywords`: 도메인별 챕터 키워드
+- `/report-generator:chapter-structure`: 챕터 구조 정의 및 충분성 평가 기준

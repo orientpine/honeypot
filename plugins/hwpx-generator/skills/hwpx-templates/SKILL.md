@@ -191,7 +191,7 @@ subprocess.run(["python", "scripts/fix_namespaces.py", work_path], check=True)
 - 목적: `ns0`, `ns1` 같은 prefix 잔존으로 인해 뷰어에서 빈 페이지가 나타나는 문제 완화
 - 구현 방식: `re` 기반 문자열 치환 (의도적으로 `lxml` 미사용)
 - 적용 범위: **ZIP-level replacement 워크플로우에서만 필수**
-- 비적용 범위: **XML-first 빌드(`hwpx-core`)에는 기본적으로 불필요**
+- 비적용 범위: **XML-first 빌드(`/hwpx-generator:hwpx-core`)에는 기본적으로 불필요**
 
 ## 스크립트 참조 및 실행 (CRITICAL)
 
@@ -223,7 +223,7 @@ scripts/fix_namespaces.py
 | 반복 플레이스홀더 치환 | `zip_replace_sequential()` |
 | 양식 텍스트 조사 | `ObjectFinder(...).find_all(tag="t")` |
 | ZIP-level 후처리 | `python scripts/fix_namespaces.py <file.hwpx>` |
-| XML-first 생성 | `hwpx-core` 경로 우선, 본 후처리 생략 가능 |
+| XML-first 생성 | `/hwpx-generator:hwpx-core` 경로 우선, 본 후처리 생략 가능 |
 
 ## Markdown 서식 처리 (zip_replace 시 주의)
 
@@ -236,7 +236,7 @@ scripts/fix_namespaces.py
    - `*이탤릭*` → `이탤릭`
    - `~~취소선~~` → `취소선`
 
-2. ZIP-level 치환은 **단순 텍스트 교체**이므로, Markdown 인라인 서식을 HWPX의 multi-run 구조로 변환할 수 없다. 인라인 서식이 필요한 경우 `hwpx-core`의 XML-first 생성 경로를 사용해야 한다.
+2. ZIP-level 치환은 **단순 텍스트 교체**이므로, Markdown 인라인 서식을 HWPX의 multi-run 구조로 변환할 수 없다. 인라인 서식이 필요한 경우 `/hwpx-generator:hwpx-core`의 XML-first 생성 경로를 사용해야 한다.
 
 3. 치환 값이 `.md` 파일에서 가져온 경우, Markdown 파싱 후 순수 텍스트만 추출하여 치환한다.
 

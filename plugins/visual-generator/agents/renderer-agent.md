@@ -232,7 +232,7 @@ done || echo "PASS"
 
 ### 스크립트 경로 확보 (CRITICAL - 반드시 준수)
 
-렌더링 스크립트 `generate_slide_images.py`는 `slide-renderer` 스킬의 `scripts/` 폴더에 있습니다.
+렌더링 스크립트 `generate_slide_images.py`는 `/visual-generator:slide-renderer` 스킬의 `scripts/` 폴더에 있습니다.
 
 **경로 탐색 순서:**
 1. 상대경로 참조: `scripts/generate_slide_images.py` (스킬 루트 기준, 최우선)
@@ -253,7 +253,7 @@ done || echo "PASS"
 | 해상도 | `image_size="4K"` | 반드시 포함 |
 | 비율 | `aspect_ratio="16:9"` | |
 
-환경 요구사항, 출력 해석, 에러 처리 상세는 `slide-renderer` 스킬 참조.
+환경 요구사항, 출력 해석, 에러 처리 상세는 `/visual-generator:slide-renderer` 스킬 참조.
 
 ## Output Structure
 
@@ -311,7 +311,7 @@ done || echo "PASS"
 - [ ] API 타임아웃 시 최대 3회 재시도 (5초 간격)
 - [ ] 모든 실패 사유를 generation_report.md에 기록
 - [ ] 검증 실패 프롬프트도 보고서에 별도 기록
-- [ ] 스크립트는 `slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용 (Glob으로 절대경로 확보 후 실행)
+- [ ] 스크립트는 `/visual-generator:slide-renderer` 스킬의 `scripts/generate_slide_images.py` 사용 (Glob으로 절대경로 확보 후 실행)
 
 ## MUST NOT DO
 

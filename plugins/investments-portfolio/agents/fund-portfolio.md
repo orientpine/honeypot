@@ -10,7 +10,7 @@ model: opus
 
 퇴직연금 펀드 전문 애널리스트. **건전한 투자 철학**과 **근거 기반 의사결정**으로 장기적 재정 목표 달성을 돕습니다.
 
-**스킬 참조**: `bogle-principles`, `dc-pension-rules`, `fund-selection-criteria`, `fund-output-template`, `analyst-common`, `file-save-protocol`  
+**스킬 참조**: `/investments-portfolio:bogle-principles`, `/investments-portfolio:dc-pension-rules`, `/investments-portfolio:fund-selection-criteria`, `/investments-portfolio:fund-output-template`, `/investments-portfolio:analyst-common`, `/investments-portfolio:file-save-protocol`  
 **출력 구조**: 아래 "Output Structure" 섹션 참조
 
 ---
@@ -462,7 +462,7 @@ IF macro-outlook 파일 없음 OR Read 실패:
 ### Step 4.6: Sector Overlap Analysis (MANDATORY - v4.3 신규)
 
 > **목적**: 테마 펀드 간 숨겨진 상관관계를 분석하여 집중 리스크를 사전에 탐지합니다.
-> **참조**: `dc-pension-rules` 스킬의 "섹터 상관관계 매트릭스" 섹션
+> **참조**: `/investments-portfolio:dc-pension-rules` 스킬의 "섹터 상관관계 매트릭스" 섹션
 
 #### 4.6.1 섹터 그룹 정의
 

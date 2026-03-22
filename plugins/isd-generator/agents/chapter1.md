@@ -10,7 +10,7 @@ skills: [chapter1-guide, verification-rules, image-reference-guide]
 
 ## CRITICAL: 검증문서 생성 필수 규칙
 
-> **공통 규칙**: `verification-rules` 스킬 참조
+> **공통 규칙**: `/isd-generator:verification-rules` 스킬 참조
 
 **검증문서 정보 (Chapter 1 전용)**
 - 파일명: `chapter1_research_verification.md`
@@ -372,9 +372,9 @@ skills: [chapter1-guide, verification-rules, image-reference-guide]
 ### Skills (자동 로드)
 
 이 에이전트는 다음 스킬을 자동으로 로드합니다:
-- `chapter1-guide`: Chapter 1 작성 가이드 (템플릿, 요구사항, 웹검색 가이드 포함)
-- `verification-rules`: 검증문서 생성 필수 규칙
-- `image-reference-guide`: 이미지/도표 수집 가이드
+- `/isd-generator:chapter1-guide`: Chapter 1 작성 가이드 (템플릿, 요구사항, 웹검색 가이드 포함)
+- `/isd-generator:verification-rules`: 검증문서 생성 필수 규칙
+- `/isd-generator:image-reference-guide`: 이미지/도표 수집 가이드
 
 ### writing_patterns/ (Read 도구로 로드)
 

@@ -104,7 +104,7 @@ description: "visual-generator pitch 목적 테마(피치덱). theme=pitch 또�
 
 **적합**: 투자자/VC 대상 발표, 경영진 의사결정 요청, 핵심 성과 1-pager, 데모데이/IR 자료, 프로젝트 킥오프 요약
 
-**부적합**: 상세 기술 아키텍처 설명, 10개 이상 항목 나열, 복잡한 프로세스 플로우, 학술/연구 보고서, 비교 분석 → `theme-comparison`
+**부적합**: 상세 기술 아키텍처 설명, 10개 이상 항목 나열, 복잡한 프로세스 플로우, 학술/연구 보고서, 비교 분석 → `/visual-generator:theme-comparison`
 
 ---
 

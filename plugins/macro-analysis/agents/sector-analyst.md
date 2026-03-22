@@ -40,7 +40,7 @@ model: opus
 
 | 규칙 | 상세 |
 |------|------|
-| **스킬 필수** | 모든 섹터 데이터는 `web-search-verifier` 스킬 통해 수집 |
+| **스킬 필수** | 모든 섹터 데이터는 `/investments-portfolio:web-search-verifier` 스킬 통해 수집 |
 | **출처 필수** | 모든 전망/수치에 `[출처: ...]` 태그 필수 |
 | **교차 검증** | 최소 3개 출처 교차 검증, ±1% 이내 일치 |
 | **원문 인용** | `original_text`에 웹검색 결과 원문 **직접 복사** (모델 생성 금지) |
@@ -79,7 +79,7 @@ model: opus
 
 ### 2. 섹터별 분석 (5개 섹터 순차 처리)
 
-각 섹터 분석 시 `web-search-verifier` 스킬을 활용하여 데이터 수집:
+각 섹터 분석 시 `/investments-portfolio:web-search-verifier` 스킬을 활용하여 데이터 수집:
 
 #### 2.1 기술/반도체 (Technology/Semiconductors)
 - **스킬 활용**: 검색 프로토콜로 최신 반도체 시장 데이터 수집
@@ -183,7 +183,7 @@ Write(
    - 기술/반도체, 로봇/자동화, 헬스케어, 에너지, 원자재
    - 다른 섹터 분석 금지 (배당/인컴, 부동산 등 제외)
 
-2. **스킬 필수**: 모든 데이터는 `web-search-verifier` 스킬 통해 수집
+2. **스킬 필수**: 모든 데이터는 `/investments-portfolio:web-search-verifier` 스킬 통해 수집
 
 3. **데이터 출처**: 신뢰할 수 있는 공개 정보만 사용
    - Gartner, IDC, IEA, EIA, Bloomberg, Goldman Sachs 등

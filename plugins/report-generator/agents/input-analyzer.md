@@ -225,7 +225,7 @@ domain_score =
 
 ### 스킬
 
-- `field-keywords`: 도메인별 키워드 및 감지 힌트
+- `/report-generator:field-keywords`: 도메인별 키워드 및 감지 힌트
   - ROS2: 로봇 시스템 개발 키워드
   - AI/ML: 인공지능/머신러닝 키워드
   - GENERAL: 범용 연구/개발 키워드 및 도메인 감지 힌트
