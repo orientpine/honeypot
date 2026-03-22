@@ -161,48 +161,24 @@ def _image_checks(zf: ZipFile, names: list[str]) -> list[str]:
                         "한/글 ignores section-level hp:pic elements"
                     )
 
-    # 3 & 6: header.xml must have hh:binDataList and matching itemCnt
+    # 3: header.xml binDataList is deprecated — warn if present, OK if absent
     if header_text:
-        if "<hh:binDataList" not in header_text:
+        if "<hh:binDataList" in header_text:
             errors.append(
-                f"[image] header.xml missing <hh:binDataList> but BinData/ has "
-                f"{len(bin_files)} file(s)"
+                "[image][WARN] header.xml contains binDataList "
+                "(deprecated; manual section 8 says remove it)"
             )
-        else:
-            cnt_match = re.search(
-                r"<hh:binDataList\\b[^>]*\\bitemCnt=\"(\\d+)\"", header_text
-            )
-            if cnt_match:
-                declared_cnt = int(cnt_match.group(1))
-                if declared_cnt != len(bin_files):
-                    errors.append(
-                        f"[image] hh:binDataList itemCnt={declared_cnt} but "
-                        f"BinData/ has {len(bin_files)} file(s)"
-                    )
-    else:
-        errors.append(
-            f"[image] header.xml missing <hh:binDataList> but BinData/ has "
-            f"{len(bin_files)} file(s)"
-        )
 
-    # 4: binaryItemIDRef in section0.xml must exist in hh:binItem BinData refs
-    if sec_text and header_text:
-        bin_item_refs = set()
-        for m in re.finditer(
-            r"<hh:binItem\\b[^>]*\\bBinData=\"([^\"]*)\"", header_text
-        ):
-            ref = os.path.splitext(os.path.basename(m.group(1)))[0]
-            if ref:
-                bin_item_refs.add(ref)
-
-        if bin_item_refs:
-            for m in re.finditer(r"binaryItemIDRef=\"([^\"]*)\"", sec_text):
-                ref_id = m.group(1)
-                if ref_id not in bin_item_refs:
-                    errors.append(
-                        f'[image] binaryItemIDRef="{ref_id}" not found in '
-                        f"header.xml hh:binItem entries"
-                    )
+    # 4: binaryItemIDRef in section0.xml must exist as opf:item id in content.hpf
+    if sec_text and hpf_text:
+        hpf_ids = set(re.findall(r'<opf:item[^>]+\bid="([^"]+)"', hpf_text))
+        for m in re.finditer(r'binaryItemIDRef="([^"]*)"', sec_text):
+            ref_id = m.group(1)
+            if ref_id not in hpf_ids:
+                errors.append(
+                    f'[image] binaryItemIDRef="{ref_id}" not found in '
+                    f"content.hpf opf:item entries"
+                )
 
     # 5: BinData magic bytes must match media-type in content.hpf
     if hpf_text:

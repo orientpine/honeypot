@@ -1,0 +1,3 @@
+VALID: test_valid.hwpx (standard mode)
+  All checks passed.
+exit=0

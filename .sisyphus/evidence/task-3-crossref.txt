@@ -1,0 +1,14 @@
+=== VALID CROSS-REF ===
+VALID: test_valid.hwpx (standard mode)
+  All checks passed.
+exit=0
+
+=== MISSING CROSS-REF ===
+INVALID: test_bad_crossref.hwpx
+  - [image] binaryItemIDRef="image99" not found in content.hpf opf:item entries
+exit=1
+
+=== DEPRECATED binDataList ===
+INVALID: test_deprecated.hwpx
+  - [image][WARN] header.xml contains binDataList (deprecated; manual section 8 says remove it)
+exit=1
