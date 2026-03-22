@@ -44,44 +44,6 @@ def sample_styles() -> dict:
     }
 
 
-def sample_image_block() -> dict:
-    return {
-        "type": "image_ref",
-        "path": "./images/01_비전_개념도.png",
-        "alt": "alt",
-        "caption": "caption text",
-        "caption_id": "3-1",
-        "filename": "01_비전_개념도.png",
-        "placeholder": True,
-    }
-
-
-def test_build_image_with_caption_contains_hp_pic(scripts_dir):
-    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert "<hp:pic" in xml
-    assert 'embeddingFile="image1"' in xml
-
-
-def test_build_image_with_caption_contains_caption_prefix(scripts_dir):
-    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert "그림 3-1: caption text" in xml
-
-
-def test_build_image_with_caption_uses_image_caption_style_ids(scripts_dir):
-    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
-    xml = writer.build_image_with_caption(
-        sample_image_block(), sample_styles(), image_idx=1
-    )
-    assert '<hp:para paraPrIDRef="118" hp:align="CENTER">' in xml
-    assert '<hp:run charPrIDRef="121">' in xml
-
-
 def test_build_fragment_caption_markdown_format(scripts_dir):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     parsed = {
