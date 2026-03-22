@@ -7,6 +7,8 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - `template_hwpx` (optional): 사용자 업로드 템플릿 `.hwpx` 경로.
 - `content_md` (optional): 마크다운 콘텐츠 파일 경로. 단일 파일 또는 여러 파일 경로 리스트. 제공 시 "마크다운 → 템플릿 채우기" 모드로 진행.
 - `images_dir` (optional): 이미지 파일 디렉토리 경로. `content_md` 기반 생성 시 이미지 임베딩에 사용.
+- `image_max_width` (optional): 이미지 최대 너비(px). 초과 시 비율 유지 리사이즈. (기본: 압축 없음)
+- `image_quality` (optional): JPEG 품질 (0-100). (기본: 85)
 - `output_dir` (optional): 결과 폴더. 기본값은 `./output/hwpx/`.
 - `auto_mode` (optional): 기본값 `true`.
 

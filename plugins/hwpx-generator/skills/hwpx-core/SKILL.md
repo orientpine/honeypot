@@ -67,7 +67,7 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 
 ## 디렉토리 기준
 
-- `SKILL_DIR`: `SKILL.md`가 위치한 `hwpx-core` 디렉토리의 절대 경로
+- `SKILL_DIR`: `SKILL.md`가 위치한 `/hwpx-generator:hwpx-core` 디렉토리의 절대 경로
 - 스크립트: `$SKILL_DIR/scripts/`
 - 템플릿: `$SKILL_DIR/templates/`
 - 심화 레퍼런스: `$SKILL_DIR/references/`
@@ -112,7 +112,8 @@ Glob: **/build_hwpx.py
 | `scripts/office/pack.py` | 수정 디렉토리를 HWPX로 재패키징 |
 | `scripts/md_parser.py` | 마크다운 → 구조화 JSON 파싱 (`python3 md_parser.py <input.md> --output <output.json>`) |
 | `scripts/xml_writer.py` | JSON → HWPX XML 프래그먼트 생성 (`python3 xml_writer.py --input <parsed.json> --style-config <styles.json> --output <fragment.xml>`) |
-| `scripts/image_embedder.py` | HWPX에 이미지 ZIP-level 임베딩 (`python3 image_embedder.py --hwpx <.hwpx> --images-dir <dir> --mapping <map.json> --output <out.hwpx>`) |
+| `scripts/image_embedder.py` | HWPX에 이미지 ZIP-level 임베딩 (`python3 image_embedder.py --hwpx <.hwpx> --images-dir <dir> --mapping <map.json> --max-width <int> --quality <int> --output <out.hwpx>`) |
+| `scripts/proofread.py` | 이중 불릿, 줄바꿈 오류, 스타일 미적용 문단 자동 교정 |
 
 ## 단위 변환 (HWP Units)
 
@@ -445,6 +446,10 @@ hanging indent = paraPr의 `left` margin + 음수 `indent` (첫 줄이 왼쪽으
 ```
 
 **금지 패턴:** 공백 문자로 들여쓰기하지 않는다. 반드시 paraPr의 `left`/`indent` 속성 사용.
+
+**불릿 계층 렌더링**: idRef(문자) + hc:left(여백) + level(자동) + leftMargin override 조합
+- paraPr 87: ◦ 상위 불릿 (left=1500)
+- paraPr 88: - 하위 불릿 (left=2500)
 
 ### 표 작성법 (참조 형식 — 프로그래밍 생성 시 xml_writer.py 사용 필수)
 
@@ -788,6 +793,8 @@ python3 "$SKILL_DIR/scripts/image_embedder.py" \
 
 `--mapping` JSON 형식: `{"placeholder_id": "image_filename.png", ...}`
 `--auto-map` 옵션으로 플레이스홀더-이미지 자동 매칭 가능.
+`--max-width` INT: 최대 이미지 너비(px). 초과 시 비율 유지 리사이즈. (기본: 압축 없음)
+`--quality` INT: JPEG 품질 (0-100). (기본: 85)
 
 ### 이미지 임베딩 필수 규칙 (CRITICAL)
 
