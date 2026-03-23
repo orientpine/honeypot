@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 5 items
+
+tests/test_e2e_indent.py::test_md_parser_produces_indent_level_on_5jang PASSED [ 20%]
+tests/test_e2e_indent.py::test_xml_writer_indent_levels_produce_different_margins PASSED [ 40%]
+tests/test_e2e_indent.py::test_analyze_template_extracts_bullet_levels_from_real_hwpx PASSED [ 60%]
+tests/test_e2e_indent.py::test_md_merger_produces_separator_between_files PASSED [ 80%]
+tests/test_e2e_indent.py::test_full_pipeline_indent_preserved PASSED     [100%]
+
+============================== 5 passed in 0.16s ===============================

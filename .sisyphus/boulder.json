@@ -1,24 +1,21 @@
 {
-  "active_plan": "C:/Users/BaekdongCha/Documents/honeypot/.sisyphus/plans/hwpx-image-embedder-refactor.md",
-  "started_at": "2026-03-22T12:17:53.747Z",
+  "active_plan": "/home/cha/Documents/honeypot/.sisyphus/plans/hwpx-indent-preserve.md",
+  "started_at": "2026-03-23T03:44:22.925Z",
   "session_ids": [
-    "ses_2ea8507bcffeWx5XC7Zbt0CHof",
-    "ses_2ea82560fffehUJrEkZZ37A0ju",
-    "ses_2ea7a2bc4ffew1rK2qlaWBlBFd",
-    "ses_2ea716b68ffeA2hz3KeulpIQyi",
-    "ses_2ea6bcf60ffeiozOKcMaXq4JzQ",
-    "ses_2ea68e150ffeTYSO9EAWU8iVWu",
-    "ses_2ea67395effeSbr4r4wbAwyvzi",
-    "ses_2ea61329bffeng5buDprDUeo15",
-    "ses_2ea5d1adeffeTKdjHljHaibytH",
-    "ses_2ea5921daffeUORivDu67PMjV9",
-    "ses_2ea528f61ffehbulZYW1KROY50",
-    "ses_2ea50be31ffeOE17YC2cQOuVLa",
-    "ses_2ea4dd07cffexovaC1Hb1gFYRC",
-    "ses_2ea49054affeVok8QEKLzkyp0h",
-    "ses_2ea451aa9ffeF0Yo7EJKzm5htI",
-    "ses_2ea3e14bcffetga1XyKV1X8abh"
-  ],
-  "plan_name": "hwpx-image-embedder-refactor",
+    "ses_2e734ce7affeiclc0qJqzmJftx",
+    "ses_2e733289affeF7xuh2DQxs9Thz",
+    "ses_2e73351b0ffe8QzhqJMtNZBp1t",
+    "ses_2e732ad30ffeOzSCht9pxpqPyG",
+    "ses_2e732e98dffeLB9JWM1vHwRUm7",
+    "ses_2e7327672ffeofNeKx7Y0Qv3jJ",
+    "ses_2e72c4800ffexiPRfmrGavI0A6",
+    "ses_2e72cbfd2ffelnexi7Od7VQGky",
+    "ses_2e72b8948ffewPSCRGR46cOFn3",
+    "ses_2e72bf0baffeLKAl23fMAGli7j",
+    "ses_2e72569d5ffer0xAa8bHBetJp2",
+    "ses_2e725ca00ffeoNu520trmahdId",
+    "ses_2e713b2e8ffeZOsi7QberDzfO5"
+  ]
+  "plan_name": "hwpx-indent-preserve",
   "agent": "atlas"
 }

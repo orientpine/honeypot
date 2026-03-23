@@ -51,6 +51,7 @@ User 요청과 입력 자산(기존 HWPX, 템플릿, 마크다운)을 분석해 
 3. Markdown 입력이면 기호를 제거하고 run 단위로 분해해 XML로 변환한다.
 4. 템플릿 섹션 헤더와 Markdown heading이 중복되면 heading 삽입을 생략하고 body만 해당 헤더 뒤에 삽입한다.
 5. 이중 삽입 지점이 있으면 본문을 먼저 채우고 본문 기반 요약을 표 셀에 채운다.
+5.5. 여러 MD 파일을 통합할 경우 `md_merger.py`를 사용하여 heading offset 자동 계산 후 병합한다. 에이전트는 style_config 검토/보정만 담당한다 (indent_level 수동 계산 금지).
 6. 표/문단/불릿 생성은 `xml_writer.py` 함수(`build_table`, `build_paragraph`, `build_heading`, `build_bullet`)를 사용한다.
 7. ZIP 편집 후 `fix_namespaces.py`를 실행하고, 결과는 `validate.py`로 검증한다.
 8. 레퍼런스 기반 결과는 `page_guard.py`까지 통과해야 완료 처리한다.
@@ -93,12 +94,14 @@ Markdown 인라인 서식은 아래 charPr 규칙으로 변환한다:
 - ZIP-level surgery/replacement 후 `cell_writer.py`는 실행하지 않는다.
 - 레퍼런스 기반 작업은 페이지 드리프트를 허용하지 않는다(승인 없는 쪽수 증가 없음).
 - 스크립트 경로는 상대경로 우선, 실패 시 Glob 폴백 절차를 따른다.
+- indent_level을 에이전트가 수동으로 계산하지 않는다 (md_parser.py가 결정적으로 처리).
 
 ## ABSOLUTE FORBIDDEN (금지 3개)
 
 1. **`lxml` 사용**: XML 선언 뒤 개행 삽입으로 한/글 파일 손상 위험 (`ElementTree` 직렬화 포함)
 2. **자체 스크립트/자체 Python 생성으로 XML 직접 작성**: 반드시 `xml_writer.py` 중심 파이프라인 사용
 3. **`hp:pic` 직접 배치/직접 작성**: 반드시 `image_embedder.py`로 `<hp:p><hp:run>` 래핑 포함 자동 처리
+4. **indent_level 수동 계산**: md_parser.py/md_merger.py가 자동으로 결정하므로 에이전트가 직접 indent_level 값을 산출하거나 수정하는 것은 금지
 
 ## Error Handling
 

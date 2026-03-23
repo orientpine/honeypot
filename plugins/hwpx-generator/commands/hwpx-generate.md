@@ -12,6 +12,13 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - `output_dir` (optional): 결과 폴더. 기본값은 `./output/hwpx/`.
 - `auto_mode` (optional): 기본값 `true`.
 
+## 다중 MD 파일 처리 (자동)
+
+`content_md`가 여러 파일 경로 리스트인 경우:
+1. `md_merger.py`로 자동 병합: `python3 md_merger.py {files} --target-level {target} --output merged.json`
+2. 병합된 `merged.json`을 `xml_writer.py` 입력으로 사용
+단일 파일인 경우: 기존 방식대로 `md_parser.py` 직접 호출
+
 ## Phase 1: 요구사항 파악 (문서 유형, 내용, 양식)
 
 1. Parse `$ARGUMENTS` and normalize requirements.
