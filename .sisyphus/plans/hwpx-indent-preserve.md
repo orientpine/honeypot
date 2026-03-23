@@ -170,7 +170,7 @@ Max Concurrent: 5 (Wave 1)
 ## TODOs
 
 
-- [ ] 1. md_parser indent_level TDD 테스트 작성
+- [x] 1. md_parser indent_level TDD 테스트 작성
 
   **What to do**:
   - `tests/test_md_parser_indent.py` 신규 생성
@@ -224,7 +224,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add TDD tests for indent-level preservation`
   - Files: `tests/test_md_parser_indent.py`
 
-- [ ] 2. md_parser numbered list TDD 테스트 작성
+- [x] 2. md_parser numbered list TDD 테스트 작성
 
   **What to do**:
   - `tests/test_md_parser_numbered.py` 신규 생성
@@ -273,7 +273,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add TDD tests for indent-level preservation`
   - Files: `tests/test_md_parser_numbered.py`
 
-- [ ] 3. xml_writer indent-level 매핑 TDD 테스트 작성
+- [x] 3. xml_writer indent-level 매핑 TDD 테스트 작성
 
   **What to do**:
   - `tests/test_xml_writer_indent.py` 신규 생성
@@ -324,7 +324,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add TDD tests for indent-level preservation`
   - Files: `tests/test_xml_writer_indent.py`
 
-- [ ] 4. md_merger TDD 테스트 작성
+- [x] 4. md_merger TDD 테스트 작성
 
   **What to do**:
   - `tests/test_md_merger.py` 신규 생성
@@ -374,7 +374,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add TDD tests for indent-level preservation`
   - Files: `tests/test_md_merger.py`
 
-- [ ] 5. analyze_template indent 추출 TDD 테스트 작성
+- [x] 5. analyze_template indent 추출 TDD 테스트 작성
 
   **What to do**:
   - `tests/test_analyze_indent.py` 신규 생성
@@ -424,7 +424,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add TDD tests for indent-level preservation`
   - Files: `tests/test_analyze_indent.py`
 
-- [ ] 6. md_parser.py 구현 — indent_level + numbered list 지원
+- [x] 6. md_parser.py 구현 — indent_level + numbered list 지원
 
   **What to do**:
   - `BULLET_RE`를 수정하여 선행 공백을 캡처하고, 공백 수 / 2 = indent_level로 계산
@@ -494,7 +494,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `feat(hwpx): add indent_level detection and numbered list support to md_parser`
   - Files: `scripts/md_parser.py`
 
-- [ ] 7. xml_writer.py 구현 — level→style 매핑 + build_numbered()
+- [x] 7. xml_writer.py 구현 — level→style 매핑 + build_numbered()
 
   **What to do**:
   - `HWPUNIT_PER_LEVEL = 800` 상수 추가 (매직 넘버 금지)
@@ -556,7 +556,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `feat(hwpx): add indent-level style mapping and build_numbered() to xml_writer`
   - Files: `scripts/xml_writer.py`
 
-- [ ] 8. md_merger.py 구현 — 다중 MD 병합 스크립트 (신규)
+- [x] 8. md_merger.py 구현 — 다중 MD 병합 스크립트 (신규)
 
   **What to do**:
   - `scripts/md_merger.py` 신규 생성
@@ -608,7 +608,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `feat(hwpx): add md_merger.py for multi-MD heading offset merge`
   - Files: `scripts/md_merger.py`
 
-- [ ] 9. analyze_template.py 구현 — indent 스타일 자동 추출
+- [x] 9. analyze_template.py 구현 — indent 스타일 자동 추출
 
   **What to do**:
   - `--style-map` 출력 JSON에 `bullet_level_0`, `bullet_level_1`, ... 키 추가
@@ -665,7 +665,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `feat(hwpx): add indent-level style extraction to analyze_template`
   - Files: `scripts/analyze_template.py`
 
-- [ ] 10. E2E 통합 테스트 (5장.md + 제안서 HWPX)
+- [x] 10. E2E 통합 테스트 (5장.md + 제안서 HWPX)
 
   **What to do**:
   - `tests/test_e2e_indent.py` 신규 생성
@@ -729,7 +729,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `test(hwpx): add E2E indent preservation tests with real fixtures`
   - Files: `tests/test_e2e_indent.py`
 
-- [ ] 11. 에이전트/스킬/커맨드 문서 업데이트
+- [x] 11. 에이전트/스�/커맨드 문서 업데이트
 
   **What to do**:
   - `skills/hwpx-core/SKILL.md` 업데이트:

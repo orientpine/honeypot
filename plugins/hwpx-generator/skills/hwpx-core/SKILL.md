@@ -97,7 +97,7 @@ Glob: **/build_hwpx.py
 절대 금지: 스크립트를 찾지 못했을 때 자체 Python 코드를 작성하지 않습니다.
 즉시 중단 후 경로 확인을 요청합니다.
 
-## 스크립트 요약 (12)
+## 스크립트 요약 (13)
 
 | Script | Purpose |
 |---|---|
@@ -114,6 +114,7 @@ Glob: **/build_hwpx.py
 | `scripts/xml_writer.py` | JSON → HWPX XML 프래그먼트 생성 (`python3 xml_writer.py --input <parsed.json> --style-config <styles.json> --output <fragment.xml>`) |
 | `scripts/image_embedder.py` | HWPX에 이미지 ZIP-level 임베딩 (`python3 image_embedder.py --hwpx <.hwpx> --images-dir <dir> --mapping <map.json> --max-width <int> --quality <int> --output <out.hwpx>`) |
 | `scripts/proofread.py` | 이중 불릿, 줄바꿈 오류, 스타일 미적용 문단 자동 교정 |
+| `scripts/md_merger.py` | 다중 MD 파일 병합, heading offset 자동 계산 | CLI: `python3 md_merger.py files --target-level N --output merged.json` |
 
 ## 단위 변환 (HWP Units)
 
@@ -733,7 +734,13 @@ python3 "$SKILL_DIR/scripts/zip_surgery.py" validate document.hwpx result.hwpx
 ### 흐름
 
 1. **스타일 추출** — `analyze_template.py <template.hwpx> --style-map styles.json`
+1.5. **(다중 MD 통합)** — 여러 MD 파일이 있는 경우 `md_merger.py` 실행
+   - CLI: `python3 md_merger.py file1.md file2.md --target-level 2 --output merged.json`
+   - 단일 MD 파일이면 이 단계 생략
 2. **마크다운 파싱** — `md_parser.py input.md --output parsed.json`
+   - md_parser.py가 numbered list를 `numbered_item` 타입으로 파싱하여 번호 마커를 보존함
+   - **indent_level**: 들여쓰기 레벨 (2-space 기준, 0=최상위). bullet/numbered_item 블록에 자동 추가됨.
+   - **bullet_level_N**: style_config의 레벨별 스타일 키 (analyze_template.py --style-map에서 자동 추출)
 3. **매핑 결정** — 에이전트가 MD 섹션 ↔ 템플릿 영역 매핑 결정
 4. **XML 생성** — `xml_writer.py --input parsed.json --style-config styles.json --output fragment.xml`
 5. **삽입** — `zip_surgery.py replace template.hwpx -s fragment.xml -o result.hwpx`
