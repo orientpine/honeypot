@@ -9,7 +9,10 @@ import sys
 
 
 HEADING_RE = re.compile(r"^\s{0,3}(#{1,4})\s+(.*)$")
-BULLET_RE = re.compile(r"^\s*([◦–□\-*])\s+(.*)$")
+BULLET_RE = re.compile(r"^(\s*)([◦–□\-*])\s+(.*)$")
+NUMBERED_DOT_RE = re.compile(r"^(\s*)(\d+|[a-zA-Z])\.\s+(.+)$")
+NUMBERED_PAREN_RE = re.compile(r"^(\s*)(\([0-9]+\))\s+(.+)$")
+NUMBERED_CIRCLE_RE = re.compile(r"^(\s*)([①②③④⑤⑥⑦⑧⑨⑩])\s+(.+)$")
 BLOCKQUOTE_RE = re.compile(r"^\s*>\s?(.*)$")
 SEPARATOR_RE = re.compile(r"^\s*---+\s*$")
 BOLD_LABEL_RE = re.compile(r"^\s*\*\*\s*(\[[^\]\n]*\])\s*\*\*\s*$")
@@ -203,10 +206,15 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
             idx += 1
             continue
 
-        bullet_match = BULLET_RE.match(line)
-        if bullet_match:
-            marker = bullet_match.group(1)
-            bullet_lines = [bullet_match.group(2)]
+        numbered_match = NUMBERED_DOT_RE.match(line)
+        if not numbered_match:
+            numbered_match = NUMBERED_PAREN_RE.match(line)
+        if not numbered_match:
+            numbered_match = NUMBERED_CIRCLE_RE.match(line)
+        if numbered_match:
+            indent_level = len(numbered_match.group(1)) // 2
+            number = numbered_match.group(2)
+            numbered_lines = [numbered_match.group(3)]
             idx += 1
             while idx < len(lines):
                 next_line = lines[idx]
@@ -220,6 +228,48 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                     or IMAGE_MD_RE.match(next_line)
                     or HEADING_RE.match(next_line)
                     or BOLD_LABEL_RE.match(next_line)
+                    or NUMBERED_DOT_RE.match(next_line)
+                    or NUMBERED_PAREN_RE.match(next_line)
+                    or NUMBERED_CIRCLE_RE.match(next_line)
+                    or BULLET_RE.match(next_line)
+                    or BLOCKQUOTE_RE.match(next_line)
+                ):
+                    break
+                numbered_lines.append(next_stripped)
+                idx += 1
+            text, segments = clean_text_to_segments(" ".join(numbered_lines))
+            blocks.append(
+                {
+                    "type": "numbered_item",
+                    "number": number,
+                    "text": text,
+                    "indent_level": indent_level,
+                    "segments": segments,
+                }
+            )
+            continue
+
+        bullet_match = BULLET_RE.match(line)
+        if bullet_match:
+            indent_level = len(bullet_match.group(1)) // 2
+            marker = bullet_match.group(2)
+            bullet_lines = [bullet_match.group(3)]
+            idx += 1
+            while idx < len(lines):
+                next_line = lines[idx]
+                next_stripped = next_line.strip()
+                if not next_stripped:
+                    break
+                if (
+                    is_table_line(next_line)
+                    or SEPARATOR_RE.match(next_line)
+                    or IMAGE_REF_RE.match(next_line)
+                    or IMAGE_MD_RE.match(next_line)
+                    or HEADING_RE.match(next_line)
+                    or BOLD_LABEL_RE.match(next_line)
+                    or NUMBERED_DOT_RE.match(next_line)
+                    or NUMBERED_PAREN_RE.match(next_line)
+                    or NUMBERED_CIRCLE_RE.match(next_line)
                     or BULLET_RE.match(next_line)
                     or BLOCKQUOTE_RE.match(next_line)
                 ):
@@ -228,7 +278,13 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                 idx += 1
             text, segments = clean_text_to_segments(" ".join(bullet_lines))
             blocks.append(
-                {"type": "bullet", "marker": marker, "text": text, "segments": segments}
+                {
+                    "type": "bullet",
+                    "marker": marker,
+                    "text": text,
+                    "indent_level": indent_level,
+                    "segments": segments,
+                }
             )
             continue
 
@@ -248,6 +304,9 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                     or IMAGE_MD_RE.match(next_line)
                     or HEADING_RE.match(next_line)
                     or BOLD_LABEL_RE.match(next_line)
+                    or NUMBERED_DOT_RE.match(next_line)
+                    or NUMBERED_PAREN_RE.match(next_line)
+                    or NUMBERED_CIRCLE_RE.match(next_line)
                     or BULLET_RE.match(next_line)
                     or BLOCKQUOTE_RE.match(next_line)
                 ):
@@ -272,6 +331,9 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
                 or IMAGE_MD_RE.match(next_line)
                 or HEADING_RE.match(next_line)
                 or BOLD_LABEL_RE.match(next_line)
+                or NUMBERED_DOT_RE.match(next_line)
+                or NUMBERED_PAREN_RE.match(next_line)
+                or NUMBERED_CIRCLE_RE.match(next_line)
                 or BULLET_RE.match(next_line)
                 or BLOCKQUOTE_RE.match(next_line)
             ):

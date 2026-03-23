@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 6 items
+
+tests/test_md_merger.py::test_single_file_output_unchanged PASSED        [ 16%]
+tests/test_md_merger.py::test_two_files_h1_to_target_level2_offsets_first_file_headings PASSED [ 33%]
+tests/test_md_merger.py::test_two_files_have_separator_block_between_results PASSED [ 50%]
+tests/test_md_merger.py::test_empty_file_is_skipped_without_error PASSED [ 66%]
+tests/test_md_merger.py::test_body_only_markdown_merges_as_paragraph_blocks PASSED [ 83%]
+tests/test_md_merger.py::test_list_indent_level_not_changed_during_merge PASSED [100%]
+
+============================== 6 passed in 0.02s ===============================
+CLI_OK 5

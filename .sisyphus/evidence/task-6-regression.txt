@@ -1,0 +1,17 @@
+Task 6 regression evidence
+Date: 2026-03-23
+
+Command:
+python3 -m pytest tests/test_md_parser_complex.py -v
+
+Result summary:
+- collected 10 items
+- 10 passed
+
+No regression observed in complex parser scenarios:
+- blockquote bold segment preservation
+- heading level 4 circle/parenthesized numbering token handling
+- bold_label extraction
+- multiline bullet continuation/stop behavior
+- multiline blockquote continuation/stop behavior
+- Korean bullet text truncation regression check

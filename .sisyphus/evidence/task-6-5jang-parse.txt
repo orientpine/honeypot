@@ -1,0 +1,14 @@
+Task 6 chapter 5 parse validation
+Date: 2026-03-23
+
+Command:
+python3 scripts/md_parser.py ../../../../dev/hwpx_indent/5장.md -o /tmp/parsed_5.json
+
+Validation command:
+python3 -c "import json; d=json.load(open('/tmp/parsed_5.json')); bullets=[b for b in d['blocks'] if b['type']=='bullet']; levels=set(b.get('indent_level',0) for b in bullets); print(f'Levels: {levels}'); assert len(levels)>=2, f'Only {levels}'"
+
+Output:
+Levels: {0, 1, 2}
+
+Assertion:
+PASS (len(levels) >= 2)
