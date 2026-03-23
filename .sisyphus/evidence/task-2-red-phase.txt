@@ -1,0 +1,68 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 7 items
+
+tests/test_md_parser_numbered.py::test_numbered_decimal_parses_as_numbered_item FAILED [ 14%]
+tests/test_md_parser_numbered.py::test_numbered_decimal_with_two_space_indent_is_level_one FAILED [ 28%]
+tests/test_md_parser_numbered.py::test_numbered_alpha_marker_parses_as_numbered_item FAILED [ 42%]
+tests/test_md_parser_numbered.py::test_numbered_parenthesized_marker_parses_as_numbered_item FAILED [ 57%]
+tests/test_md_parser_numbered.py::test_numbered_korean_circle_number_parses_as_numbered_item FAILED [ 71%]
+tests/test_md_parser_numbered.py::test_mixed_numbered_and_bullet_blocks_parse_together FAILED [ 85%]
+tests/test_md_parser_numbered.py::test_numbered_item_strips_marker_and_keeps_remaining_text FAILED [100%]
+
+=================================== FAILURES ===================================
+________________ test_numbered_decimal_parses_as_numbered_item _________________
+tests/test_md_parser_numbered.py:23: in test_numbered_decimal_parses_as_numbered_item
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+___________ test_numbered_decimal_with_two_space_indent_is_level_one ___________
+tests/test_md_parser_numbered.py:35: in test_numbered_decimal_with_two_space_indent_is_level_one
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+______________ test_numbered_alpha_marker_parses_as_numbered_item ______________
+tests/test_md_parser_numbered.py:47: in test_numbered_alpha_marker_parses_as_numbered_item
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+__________ test_numbered_parenthesized_marker_parses_as_numbered_item __________
+tests/test_md_parser_numbered.py:59: in test_numbered_parenthesized_marker_parses_as_numbered_item
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+__________ test_numbered_korean_circle_number_parses_as_numbered_item __________
+tests/test_md_parser_numbered.py:71: in test_numbered_korean_circle_number_parses_as_numbered_item
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+_____________ test_mixed_numbered_and_bullet_blocks_parse_together _____________
+tests/test_md_parser_numbered.py:86: in test_mixed_numbered_and_bullet_blocks_parse_together
+    assert numbered["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+__________ test_numbered_item_strips_marker_and_keeps_remaining_text ___________
+tests/test_md_parser_numbered.py:102: in test_numbered_item_strips_marker_and_keeps_remaining_text
+    assert block["type"] == "numbered_item"
+E   AssertionError: assert 'paragraph' == 'numbered_item'
+E     - numbered_item
+E     + paragraph
+=========================== short test summary info ============================
+FAILED tests/test_md_parser_numbered.py::test_numbered_decimal_parses_as_numbered_item
+FAILED tests/test_md_parser_numbered.py::test_numbered_decimal_with_two_space_indent_is_level_one
+FAILED tests/test_md_parser_numbered.py::test_numbered_alpha_marker_parses_as_numbered_item
+FAILED tests/test_md_parser_numbered.py::test_numbered_parenthesized_marker_parses_as_numbered_item
+FAILED tests/test_md_parser_numbered.py::test_numbered_korean_circle_number_parses_as_numbered_item
+FAILED tests/test_md_parser_numbered.py::test_mixed_numbered_and_bullet_blocks_parse_together
+FAILED tests/test_md_parser_numbered.py::test_numbered_item_strips_marker_and_keeps_remaining_text
+============================== 7 failed in 0.07s ===============================
