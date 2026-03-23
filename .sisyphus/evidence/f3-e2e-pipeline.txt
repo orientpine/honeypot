@@ -1,0 +1,2 @@
+Style keys with bullet: ['bullet', 'bullet_level_0', 'bullet_level_1', 'bullet_level_2', 'bullet_auto']
+PASS: bullet_level_0 found in style map

@@ -785,7 +785,7 @@ Max Concurrent: 5 (Wave 1)
   - Message: `docs(hwpx): update agent/skill/command docs for indent pipeline`
   - Files: `skills/hwpx-core/SKILL.md, agents/hwpx-builder.md, commands/hwpx-generate.md`
 
-- [ ] 12. 버전 업데이트 (plugin.json, marketplace.json, AGENTS.md, README.md)
+- [x] 12. 버전 업데이트 (plugin.json, marketplace.json, AGENTS.md, README.md)
 
   **What to do**:
   - `plugins/hwpx-generator/.claude-plugin/plugin.json` MINOR 버전 증가
@@ -835,7 +835,7 @@ Max Concurrent: 5 (Wave 1)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists. For each "Must NOT Have": search codebase for forbidden patterns.
 
   **QA Scenarios:**
@@ -870,7 +870,7 @@ Max Concurrent: 5 (Wave 1)
   ```
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
   Run full test suite. Review changed files for quality issues.
 
   **QA Scenarios:**
@@ -901,7 +901,7 @@ Max Concurrent: 5 (Wave 1)
   ```
   Output: `Tests [N pass/N fail] | Files [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high`
+- [x] F3. **Real Manual QA** — `unspecified-high`
   Execute full pipeline: md_parser → xml_writer → zip_surgery → validate using 제안서 HWPX.
 
   **QA Scenarios:**
@@ -926,7 +926,7 @@ Max Concurrent: 5 (Wave 1)
   ```
   Output: `Scenarios [N/N pass] | Integration [N/N] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
   For each task: read spec vs actual diff. Verify nothing beyond spec was built.
 
   **QA Scenarios:**

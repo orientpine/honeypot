@@ -1,0 +1,42 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 5 items
+
+tests/test_chapter_detection.py::test_find_h1_headings FAILED            [ 20%]
+tests/test_chapter_detection.py::test_chapter_boundaries FAILED          [ 40%]
+tests/test_chapter_detection.py::test_empty_chapter FAILED               [ 60%]
+tests/test_chapter_detection.py::test_content_before_first_h1 FAILED     [ 80%]
+tests/test_chapter_detection.py::test_nested_hp_p_in_table FAILED        [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_find_h1_headings _____________________________
+tests/test_chapter_detection.py:16: in test_find_h1_headings
+    from section_transplant import detect_headings
+E   ModuleNotFoundError: No module named 'section_transplant'
+___________________________ test_chapter_boundaries ____________________________
+tests/test_chapter_detection.py:38: in test_chapter_boundaries
+    from section_transplant import detect_headings, extract_chapter_ranges
+E   ModuleNotFoundError: No module named 'section_transplant'
+______________________________ test_empty_chapter ______________________________
+tests/test_chapter_detection.py:66: in test_empty_chapter
+    from section_transplant import detect_headings, extract_chapter_ranges
+E   ModuleNotFoundError: No module named 'section_transplant'
+_________________________ test_content_before_first_h1 _________________________
+tests/test_chapter_detection.py:93: in test_content_before_first_h1
+    from section_transplant import detect_headings, extract_chapter_ranges
+E   ModuleNotFoundError: No module named 'section_transplant'
+__________________________ test_nested_hp_p_in_table ___________________________
+tests/test_chapter_detection.py:116: in test_nested_hp_p_in_table
+    from section_transplant import detect_headings, extract_chapter_ranges
+E   ModuleNotFoundError: No module named 'section_transplant'
+=========================== short test summary info ============================
+FAILED tests/test_chapter_detection.py::test_find_h1_headings - ModuleNotFoun...
+FAILED tests/test_chapter_detection.py::test_chapter_boundaries - ModuleNotFo...
+FAILED tests/test_chapter_detection.py::test_empty_chapter - ModuleNotFoundEr...
+FAILED tests/test_chapter_detection.py::test_content_before_first_h1 - Module...
+FAILED tests/test_chapter_detection.py::test_nested_hp_p_in_table - ModuleNot...
+============================== 5 failed in 0.04s ===============================

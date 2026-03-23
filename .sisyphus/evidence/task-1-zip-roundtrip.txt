@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 3 items
+
+tests/test_zip_surgery_metadata.py::test_read_zip_entries_expose_metadata_fields PASSED [ 33%]
+tests/test_zip_surgery_metadata.py::test_round_trip_preserves_zipinfo_metadata PASSED [ 66%]
+tests/test_zip_surgery_metadata.py::test_write_zip_passes_all_metadata_to_zipinfo PASSED [100%]
+
+============================== 3 passed in 0.02s ===============================

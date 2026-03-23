@@ -1,46 +1,66 @@
-F1: Plan Compliance Audit
-=========================
+Scope note: Must NOT Have checks were scoped to deliverable implementation files `section_transplant.py` and `zip_surgery.py` per the audit instructions. The wider hwpx-core skill intentionally contains unrelated XML-parser and linesegarray tooling.
 
-MUST HAVE ITEMS [7/7]:
-1. ✅ 캡션 <hp:p> 문단이 <!--IMAGE:imageN--> 플레이스홀더 뒤에 출력됨
-   → xml_writer.py L495-515: build_image_placeholder() after → paragraph_from_segments()
+Plan: `.sisyphus/plans/hwpx-section-transplant.md` lines 70-84 reviewed.
 
-2. ✅ caption_id/id 필드명 불일치 모두 처리
-   → L496: caption_id = block.get("caption_id") or block.get("id")
+Must Have [5/6]:
+  ✅ depth-counted paragraph boundary detection
+     - `section_transplant.py:331-332` calls `zs.extract_children(...)`
+     - `zip_surgery.py:190-236` implements depth-counted `extract_children()`
+  ✅ attribute-scoped regex for style remapping
+     - `section_transplant.py:268-269` uses `re.compile(rf'({re.escape(attr)}="')(\d+)(")')` + `pattern.sub(...)`
+     - no `.replace(...)` calls in `section_transplant.py`
+  ❌ charPrIDRef/paraPrIDRef/borderFillIDRef/styleIDRef 4종 리맵
+     - `section_transplant.py:196-206` initializes all 4 maps
+     - but only `charPrIDRef` and `paraPrIDRef` receive non-zero mappings (`section_transplant.py:213-241`)
+     - `borderFillIDRef` / `styleIDRef` only get `"0" -> "0"`
+  ✅ ID "0" 리맵 제외
+     - `section_transplant.py:203-206`, `214-215`, `232-233`, `261-262`
+  ✅ --dry-run 모드
+     - `section_transplant.py:308`, `352-358`, CLI `444-452`, `469-482`
+  ✅ hp:pic WARNING
+     - `section_transplant.py:247`, `279-283`
 
-3. ✅ paragraph_from_segments() 사용 (raw XML 금지)
-   → L508: out.append(paragraph_from_segments(...))
+Must NOT Have [5/6]:
+  ✅ no lxml/xml.etree/BeautifulSoup import
+     - no matches in `section_transplant.py` or `zip_surgery.py`
+  ❌ no source/target original file modification
+     - `section_transplant.py` complies: `--output` required unless `--dry-run` (`390`, `440-452`)
+     - but `zip_surgery.py` still allows overwrite-by-default:
+       - `save(self, output_path=None)` writes back to `self._path` (`489-493`)
+       - CLI replace uses `output = args.output or args.input` (`612`) and help says `default: overwrite input` (`645`)
+  ✅ no bare string replace for IDs
+     - no `.replace(...)` matches in `section_transplant.py`
+  ✅ no newline insertion between child elements
+     - `zip_surgery.py:248` uses `parts.xml_header + "".join(children) + parts.root_close_tag`
+     - no `"\n".join(...)` matches in either deliverable file
+  ✅ no multi-section file handling (section1.xml etc.)
+     - no `section1.xml` / `section[1-9].xml` references in `section_transplant.py`
+  ✅ no linesegarray generation/modification
+     - no `linesegarray` references in `section_transplant.py` or `zip_surgery.py`
 
-4. ✅ 빈 캡션 가드
-   → L497-498: caption = (...).strip(); if caption_id or caption:
+Deliverables [6/6]:
+  ✅ plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/tests/test_zip_surgery_metadata.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/tests/test_chapter_detection.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/tests/test_style_remap.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/tests/test_transplant_e2e.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/tests/test_transplant_assembly.py
 
-5. ✅ xml_escape() 적용
-   → Applied internally in paragraph_from_segments() via xml_escape(text) at L204
+Tests [27/27 pass]:
+  ✅ test_zip_surgery_metadata.py 3/3
+  ✅ test_chapter_detection.py 5/5
+  ✅ test_style_remap.py 7/7
+  ✅ test_transplant_assembly.py 5/5
+  ✅ test_transplant_e2e.py 7/7
 
-6. ✅ Dead code build_image_with_caption() 삭제
-   → Grep for "build_image_with_caption" in plugins/hwpx-generator/ → 0 results
+Additional checks:
+  ✅ `ZipEntry` has 10 new metadata fields (`zip_surgery.py:58-69`)
+  ✅ `HwpxSurgeon.transplant_from()` exists (`zip_surgery.py:500`)
 
-7. ✅ 캡션 카운트 E2E 검증 (validate.py)
-   → validate.py L379-396: _caption_checks() function added + --parsed CLI arg
+Pytest evidence:
+  Command: `python3 -m pytest tests/test_zip_surgery_metadata.py tests/test_chapter_detection.py tests/test_style_remap.py tests/test_transplant_assembly.py tests/test_transplant_e2e.py -v --tb=short`
+  Result: `27 passed in 0.07s`
 
-MUST NOT HAVE ITEMS [7/7]:
-1. ✅ md_parser.py 수정 없음 → not in git diff HEAD~3
-2. ✅ image_embedder.py 수정 없음 → not in git diff HEAD~3
-3. ✅ require_styles()에 image_caption 추가 없음 → not found in xml_writer.py
-4. ✅ hp:para, hp:align 없음 → grep for "hp:para|hp:align" in xml_writer.py → 0 results
-5. ✅ raw XML 문자열 연결 없음 → paragraph_from_segments() used exclusively
-6. ✅ build_image_placeholder() 변경 없음 → L415-416: def build_image_placeholder(image_index: int) → unchanged
-7. ✅ image_counter 캡션 ID 폴백 없음 → caption_id/id pattern used
-
-EVIDENCE FILES:
-✅ task-1-red-tests-fail.txt — 3 FAILED (caption logic absent)
-✅ task-1-existing-tests-pass.txt — 3 PASSED
-✅ task-2-green-tests-pass.txt — 4 PASSED
-✅ task-2-dead-code-removed.txt — dead code absent
-✅ task-2-legacy-format.txt — legacy id format works
-✅ task-3-caption-validation.txt — mismatch detected
-✅ task-3-backward-compat.txt — None path skips check
-✅ task-4-full-suite.txt — 67 passed (3 pre-existing dev fixture failures)
-✅ task-4-e2e-captions.txt — E2E skipped (fixtures absent)
-
-VERDICT: APPROVE
+VERDICT: REJECT
+Reason: the plan-required 4-type non-zero style remapping is not fully implemented, and `zip_surgery.py` still exposes overwrite-by-default behavior that conflicts with the plan guardrail against modifying original files.

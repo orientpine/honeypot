@@ -1,0 +1,43 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 7 items
+
+tests/test_style_remap.py::test_parse_header_styles_extracts_char_styles PASSED [ 14%]
+tests/test_style_remap.py::test_parse_header_styles_extracts_para_styles PASSED [ 28%]
+tests/test_style_remap.py::test_build_mapping_matches_by_font_size_and_bold PASSED [ 42%]
+tests/test_style_remap.py::test_id_zero_excluded_from_remapping PASSED   [ 57%]
+tests/test_style_remap.py::test_unmatched_style_keeps_original_with_warning PASSED [ 71%]
+tests/test_style_remap.py::test_remap_style_ids_attribute_scoped FAILED  [ 85%]
+tests/test_style_remap.py::test_remap_id_zero_not_changed FAILED         [100%]
+
+=================================== FAILURES ===================================
+____________________ test_remap_style_ids_attribute_scoped _____________________
+tests/test_style_remap.py:19: in _require_symbol
+    return getattr(module, name)
+E   AttributeError: module 'section_transplant' has no attribute 'remap_style_ids'
+
+The above exception was the direct cause of the following exception:
+tests/test_style_remap.py:139: in test_remap_style_ids_attribute_scoped
+    remap_style_ids = _require_symbol("remap_style_ids")
+tests/test_style_remap.py:21: in _require_symbol
+    raise ImportError(
+E   ImportError: cannot import name 'remap_style_ids' from 'section_transplant'
+________________________ test_remap_id_zero_not_changed ________________________
+tests/test_style_remap.py:19: in _require_symbol
+    return getattr(module, name)
+E   AttributeError: module 'section_transplant' has no attribute 'remap_style_ids'
+
+The above exception was the direct cause of the following exception:
+tests/test_style_remap.py:156: in test_remap_id_zero_not_changed
+    remap_style_ids = _require_symbol("remap_style_ids")
+tests/test_style_remap.py:21: in _require_symbol
+    raise ImportError(
+E   ImportError: cannot import name 'remap_style_ids' from 'section_transplant'
+=========================== short test summary info ============================
+FAILED tests/test_style_remap.py::test_remap_style_ids_attribute_scoped - Imp...
+FAILED tests/test_style_remap.py::test_remap_id_zero_not_changed - ImportErro...
+========================= 2 failed, 5 passed in 0.14s ==========================

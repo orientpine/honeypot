@@ -1,0 +1,252 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 133 items
+
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key PASSED [  0%]
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key PASSED [  1%]
+tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase PASSED [  2%]
+tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef PASSED [  3%]
+tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels PASSED [  3%]
+tests/test_analyze_template.py::test_extract_style_map_detects_image_caption_and_bullet_auto PASSED [  4%]
+tests/test_analyze_template.py::test_extract_style_map_uses_name_based_fallback PASSED [  5%]
+tests/test_analyze_template.py::test_body_excludes_bold_and_colored PASSED [  6%]
+tests/test_analyze_template.py::test_border_fill_excludes_colored_background PASSED [  6%]
+tests/test_analyze_template.py::test_cascading_fallback_all_bold PASSED  [  7%]
+tests/test_dev_data_exists.py::TestDevDirectoryExists::test_dev_dir_exists PASSED [  8%]
+tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_작성_exists FAILED [  9%]
+tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_초안_exists FAILED [  9%]
+tests/test_dev_data_exists.py::TestMarkdownFiles::test_3장_md_exists FAILED [ 10%]
+tests/test_dev_data_exists.py::TestMarkdownFiles::test_4장_md_exists PASSED [ 11%]
+tests/test_dev_data_exists.py::TestImagesDirectory::test_images_dir_exists FAILED [ 12%]
+tests/test_dev_data_exists.py::TestImagesDirectory::test_15_png_files_exist FAILED [ 12%]
+tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_are_readable FAILED [ 13%]
+tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_naming_convention FAILED [ 14%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_golden_dir_exists PASSED [ 15%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_style_map_초안_json_exists PASSED [ 15%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_style_map_초안_json_valid PASSED [ 16%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_image_structures_json_exists PASSED [ 17%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_image_structures_json_valid PASSED [ 18%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_bullet_styles_json_exists PASSED [ 18%]
+tests/test_dev_data_exists.py::TestGoldenDirectory::test_bullet_styles_json_valid PASSED [ 19%]
+tests/test_dev_data_exists.py::TestScriptsDirectory::test_scripts_dir_exists PASSED [ 20%]
+tests/test_e2e_indent.py::test_md_parser_produces_indent_level_on_5jang PASSED [ 21%]
+tests/test_e2e_indent.py::test_xml_writer_indent_levels_produce_different_margins PASSED [ 21%]
+tests/test_e2e_indent.py::test_analyze_template_extracts_bullet_levels_from_real_hwpx PASSED [ 22%]
+tests/test_e2e_indent.py::test_md_merger_produces_separator_between_files PASSED [ 23%]
+tests/test_e2e_indent.py::test_full_pipeline_indent_preserved PASSED     [ 24%]
+tests/test_e2e_pipeline.py::test_hwpx_full_e2e_pipeline FAILED           [ 24%]
+tests/test_image_embedder.py::test_from_parsed_collects_image_ref_paths PASSED [ 25%]
+tests/test_image_embedder.py::test_jpeg_files_use_image_jpeg_media_type PASSED [ 26%]
+tests/test_image_embedder.py::test_mapping_mode_png_remains_compatible PASSED [ 27%]
+tests/test_image_embedder.py::test_pic_wrapped_in_run_and_paragraph PASSED [ 27%]
+tests/test_image_embedder.py::test_orgSz_uses_pixel_dimensions PASSED    [ 28%]
+tests/test_image_embedder.py::test_scaMatrix_reflects_scaling_ratio PASSED [ 29%]
+tests/test_image_embedder.py::test_imgDim_has_pixel_values PASSED        [ 30%]
+tests/test_image_embedder.py::test_auto_resize_max_height PASSED         [ 30%]
+tests/test_image_embedder.py::test_auto_resize_normal_height_unchanged PASSED [ 31%]
+tests/test_image_embedder.py::test_compression_max_width_resizes_large_images PASSED [ 32%]
+tests/test_image_embedder.py::test_compression_no_max_width_unchanged PASSED [ 33%]
+tests/test_image_embedder.py::test_compression_small_image_not_resized PASSED [ 33%]
+tests/test_image_embedder.py::test_no_binDataList_in_output PASSED       [ 34%]
+tests/test_image_embedder.py::test_binaryItemIDRef_matches_content_hpf PASSED [ 35%]
+tests/test_image_embedder.py::test_element_order_hc_img_before_imgRect PASSED [ 36%]
+tests/test_image_embedder.py::test_numberingType_is_PICTURE PASSED       [ 36%]
+tests/test_image_embedder.py::test_shapeComment_has_info PASSED          [ 37%]
+tests/test_md_merger.py::test_single_file_output_unchanged PASSED        [ 38%]
+tests/test_md_merger.py::test_two_files_h1_to_target_level2_offsets_first_file_headings PASSED [ 39%]
+tests/test_md_merger.py::test_two_files_have_separator_block_between_results PASSED [ 39%]
+tests/test_md_merger.py::test_empty_file_is_skipped_without_error PASSED [ 40%]
+tests/test_md_merger.py::test_body_only_markdown_merges_as_paragraph_blocks PASSED [ 41%]
+tests/test_md_merger.py::test_list_indent_level_not_changed_during_merge PASSED [ 42%]
+tests/test_md_parser_complex.py::test_blockquote_preserves_inline_bold_segments PASSED [ 42%]
+tests/test_md_parser_complex.py::test_heading_level4_keeps_circle_number_token PASSED [ 43%]
+tests/test_md_parser_complex.py::test_standalone_bold_bracket_line_becomes_bold_label PASSED [ 44%]
+tests/test_md_parser_complex.py::test_parse_chapter4_complex_patterns PASSED [ 45%]
+tests/test_md_parser_complex.py::test_bullet_multiline_continuation PASSED [ 45%]
+tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_next_bullet PASSED [ 46%]
+tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_blank PASSED [ 47%]
+tests/test_md_parser_complex.py::test_blockquote_multiline_continuation PASSED [ 48%]
+tests/test_md_parser_complex.py::test_blockquote_multiline_stops_at_heading PASSED [ 48%]
+tests/test_md_parser_complex.py::test_bullet_korean_text_not_truncated PASSED [ 49%]
+tests/test_md_parser_images.py::test_parse_images_in_chapter3_markdown FAILED [ 50%]
+tests/test_md_parser_images.py::test_parse_images_in_chapter4_markdown FAILED [ 51%]
+tests/test_md_parser_images.py::test_legacy_image_ref_format_is_still_supported PASSED [ 51%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_0 PASSED   [ 52%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_1_with_two_spaces PASSED [ 53%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_2_with_four_spaces PASSED [ 54%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_3_with_six_spaces PASSED [ 54%]
+tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_0 PASSED [ 55%]
+tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_1_with_two_spaces PASSED [ 56%]
+tests/test_md_parser_indent.py::test_mixed_markers_all_include_indent_level PASSED [ 57%]
+tests/test_md_parser_indent.py::test_parse_chapter5_has_multiple_indent_levels PASSED [ 57%]
+tests/test_md_parser_indent.py::test_indent_resets_after_blank_line PASSED [ 58%]
+tests/test_md_parser_numbered.py::test_numbered_decimal_parses_as_numbered_item PASSED [ 59%]
+tests/test_md_parser_numbered.py::test_numbered_decimal_with_two_space_indent_is_level_one PASSED [ 60%]
+tests/test_md_parser_numbered.py::test_numbered_alpha_marker_parses_as_numbered_item PASSED [ 60%]
+tests/test_md_parser_numbered.py::test_numbered_parenthesized_marker_parses_as_numbered_item PASSED [ 61%]
+tests/test_md_parser_numbered.py::test_numbered_korean_circle_number_parses_as_numbered_item PASSED [ 62%]
+tests/test_md_parser_numbered.py::test_mixed_numbered_and_bullet_blocks_parse_together PASSED [ 63%]
+tests/test_md_parser_numbered.py::test_numbered_item_strips_marker_and_keeps_remaining_text PASSED [ 63%]
+tests/test_page_guard.py::test_mode_argument_exists PASSED               [ 64%]
+tests/test_page_guard.py::test_mode_default_value PASSED                 [ 65%]
+tests/test_page_guard.py::test_mode_invalid_choice PASSED                [ 66%]
+tests/test_page_guard.py::test_help_returns_zero PASSED                  [ 66%]
+tests/test_page_guard.py::test_default_mode_detects_paragraph_count_mismatch PASSED [ 67%]
+tests/test_page_guard.py::test_default_mode_detects_text_length_delta PASSED [ 68%]
+tests/test_page_guard.py::test_default_mode_detects_paragraph_text_delta PASSED [ 69%]
+tests/test_page_guard.py::test_default_mode_passes_identical PASSED      [ 69%]
+tests/test_page_guard.py::test_default_mode_detects_table_count_mismatch PASSED [ 70%]
+tests/test_page_guard.py::test_default_mode_detects_page_break_mismatch PASSED [ 71%]
+tests/test_page_guard.py::test_template_fill_suppresses_paragraph_count PASSED [ 72%]
+tests/test_page_guard.py::test_template_fill_suppresses_text_length_delta PASSED [ 72%]
+tests/test_page_guard.py::test_template_fill_suppresses_paragraph_text_delta PASSED [ 73%]
+tests/test_page_guard.py::test_template_fill_allows_table_addition PASSED [ 74%]
+tests/test_page_guard.py::test_template_fill_still_detects_table_shape PASSED [ 75%]
+tests/test_page_guard.py::test_template_fill_still_detects_page_break PASSED [ 75%]
+tests/test_page_guard.py::test_template_fill_still_detects_column_break PASSED [ 76%]
+tests/test_page_guard.py::test_template_fill_passes_when_structure_identical PASSED [ 77%]
+tests/test_page_guard.py::test_template_fill_detects_table_deletion PASSED [ 78%]
+tests/test_page_guard.py::test_template_fill_detects_existing_table_structure_change PASSED [ 78%]
+tests/test_page_guard.py::test_template_fill_warning_on_table_addition PASSED [ 79%]
+tests/test_page_guard.py::test_template_fill_preservation_warning PASSED [ 80%]
+tests/test_proofread.py::test_proofread_help_returns_zero PASSED         [ 81%]
+tests/test_proofread.py::test_proofread_on_초안_outputs_required_keys PASSED [ 81%]
+tests/test_proofread.py::test_double_bullets_check_detects_manual_prefix PASSED [ 82%]
+tests/test_proofread.py::test_exit_code_zero_when_all_checks_pass PASSED [ 83%]
+tests/test_xml_writer_bullets.py::test_bullet_auto_strips_leading_bullet_prefix PASSED [ 84%]
+tests/test_xml_writer_bullets.py::test_bullet_prefix_always_stripped_even_when_not_auto PASSED [ 84%]
+tests/test_xml_writer_bullets.py::test_bullet_no_double_marker_korean_text PASSED [ 85%]
+tests/test_xml_writer_bullets.py::test_bullet_clean_content_not_stripped PASSED [ 86%]
+tests/test_xml_writer_images.py::test_build_fragment_caption_markdown_format PASSED [ 87%]
+tests/test_xml_writer_images.py::test_build_fragment_caption_legacy_format PASSED [ 87%]
+tests/test_xml_writer_images.py::test_build_fragment_caption_empty_skip PASSED [ 88%]
+tests/test_xml_writer_images.py::test_build_fragment_caption_xml_escape PASSED [ 89%]
+tests/test_xml_writer_indent.py::test_indent_level_0_uses_bullet_level_0_parapr_idref PASSED [ 90%]
+tests/test_xml_writer_indent.py::test_indent_level_1_left_margin_is_larger_than_level_0 PASSED [ 90%]
+tests/test_xml_writer_indent.py::test_indent_level_2_left_margin_is_larger_than_level_1 PASSED [ 91%]
+tests/test_xml_writer_indent.py::test_indent_level_3_fallback_uses_level_2_plus_hwpunit_per_level PASSED [ 92%]
+tests/test_xml_writer_indent.py::test_numbered_item_uses_build_numbered_and_emits_number_marker PASSED [ 93%]
+tests/test_xml_writer_indent.py::test_backward_compat_bullet_without_indent_level_behaves_like_level_0 PASSED [ 93%]
+tests/test_xml_writer_indent.py::test_backward_compat_existing_bullet_dict_without_indent_level_no_crash PASSED [ 94%]
+tests/test_xml_writer_indent.py::test_bullet_level_0_style_config_values_are_reflected_in_xml PASSED [ 95%]
+tests/test_xml_writer_section.py::test_wrap_section_outputs_hs_sec_root PASSED [ 96%]
+tests/test_xml_writer_section.py::test_wrap_section_includes_page_size_and_margins PASSED [ 96%]
+tests/test_xml_writer_section.py::test_wrap_section_root_has_all_required_namespaces PASSED [ 97%]
+tests/test_xml_writer_section.py::test_without_wrap_section_keeps_hwpx_fragment_root PASSED [ 98%]
+tests/test_xml_writer_tables.py::test_table_cell_xml_adds_colspan_rowspan_attributes PASSED [ 99%]
+tests/test_xml_writer_tables.py::test_build_table_reflects_merge_info_from_cell_dict PASSED [100%]
+
+=================================== FAILURES ===================================
+______________________ TestHWPXFiles.test_hwpx_작성_exists _______________________
+tests/test_dev_data_exists.py:31: in test_hwpx_작성_exists
+    assert hwpx_path.exists(), f"HWPX 작성 file not found at {hwpx_path}"
+E   AssertionError: HWPX 작성 file not found at /home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx
+E   assert False
+E    +  where False = <bound method Path.exists of PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx")>()
+E    +    where <bound method Path.exists of PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx")> = PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_작성.hwpx").exists
+______________________ TestHWPXFiles.test_hwpx_초안_exists _______________________
+tests/test_dev_data_exists.py:38: in test_hwpx_초안_exists
+    assert hwpx_path.exists(), f"HWPX 초안 file not found at {hwpx_path}"
+E   AssertionError: HWPX 초안 file not found at /home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_초안.hwpx
+E   assert False
+E    +  where False = <bound method Path.exists of PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_초안.hwpx")>()
+E    +    where <bound method Path.exists of PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_초안.hwpx")> = PosixPath("/home/cha/Documents/honeypot/dev/(양식) '27년도 전략연구사업 제안서_초안.hwpx").exists
+_____________________ TestMarkdownFiles.test_3장_md_exists ______________________
+tests/test_dev_data_exists.py:49: in test_3장_md_exists
+    assert md_path.exists(), f"3장.md not found at {md_path}"
+E   AssertionError: 3장.md not found at /home/cha/Documents/honeypot/dev/3장.md
+E   assert False
+E    +  where False = <bound method Path.exists of PosixPath('/home/cha/Documents/honeypot/dev/3장.md')>()
+E    +    where <bound method Path.exists of PosixPath('/home/cha/Documents/honeypot/dev/3장.md')> = PosixPath('/home/cha/Documents/honeypot/dev/3장.md').exists
+__________________ TestImagesDirectory.test_images_dir_exists __________________
+tests/test_dev_data_exists.py:66: in test_images_dir_exists
+    assert images_dir.exists(), f"images/ directory not found at {images_dir}"
+E   AssertionError: images/ directory not found at /home/cha/Documents/honeypot/dev/images
+E   assert False
+E    +  where False = <bound method Path.exists of PosixPath('/home/cha/Documents/honeypot/dev/images')>()
+E    +    where <bound method Path.exists of PosixPath('/home/cha/Documents/honeypot/dev/images')> = PosixPath('/home/cha/Documents/honeypot/dev/images').exists
+_________________ TestImagesDirectory.test_15_png_files_exist __________________
+tests/test_dev_data_exists.py:72: in test_15_png_files_exist
+    assert len(png_files) == 15, (
+E   AssertionError: Expected 15 PNG files, found 0 in /home/cha/Documents/honeypot/dev/images
+E     Files: []
+E   assert 0 == 15
+E    +  where 0 = len([])
+_______________ TestImagesDirectory.test_png_files_are_readable ________________
+tests/test_dev_data_exists.py:80: in test_png_files_are_readable
+    assert len(png_files) == 15, f"Expected 15 PNG files, found {len(png_files)}"
+E   AssertionError: Expected 15 PNG files, found 0
+E   assert 0 == 15
+E    +  where 0 = len([])
+_____________ TestImagesDirectory.test_png_files_naming_convention _____________
+tests/test_dev_data_exists.py:109: in test_png_files_naming_convention
+    assert actual_names == expected_names, (
+E   AssertionError: PNG file names don't match expected convention.
+E     Expected: ['01_비전_개념도.png', '02_최종_연구목표_체계도.png', '03_사업_추진체계도.png', '04_핵심_연구내용_전체_구조도.png', '05_파운데이션_모델_개념도.png', '06_멀티모달_센서_융합_파이프라인.png', '07_파인튜닝_경량화_전략.png', '08_전문가_AI_모델_플랫폼.png', '09_숙련자_노하우_디지털화.png', '10_LLM_작업지시_해석.png', '11_장착형_자율화_모듈_구성도.png', '12_장비별_적용_예시.png', '13_통합_운영_플랫폼.png', '14_3대분야_실증_체계도.png', '15_세부기술_통합_연계.png']
+E     Actual: []
+E   assert [] == ['01_비전_개념도.png', '02_최종_연구목표_체계도.png', '03_사업_추진체계도.png', '04_핵심_연구내용_전체_구조도.png', '05_파운데이션_모델_개념도.png', '06_멀티모달_센서_융합_파이프라인.png', '07_파인튜닝_경량화_전략.png', '08_전문가_AI_모델_플랫폼.png', '09_숙련자_노하우_디지털화.png', '10_LLM_작업지시_해석.png', '11_장착형_자율화_모듈_구성도.png', '12_장비별_적용_예시.png', '13_통합_운영_플랫폼.png', '14_3대분야_실증_체계도.png', '15_세부기술_통합_연계.png']
+E     Right contains 15 more items, first extra item: '01_비전_개념도.png'
+E     Full diff:
+E       [
+E     +  ,
+E     -  '01_비전_개념도.png',
+E     -  '02_최종_연구목표_체계도.png',
+E     -  '03_사업_추진체계도.png',
+E     -  '04_핵심_연구내용_전체_구조도.png',
+E     -  '05_파운데이션_모델_개념도.png',
+E     -  '06_멀티모달_센서_융합_파이프라인.png',
+E     -  '07_파인튜닝_경량화_전략.png',
+E     -  '08_전문가_AI_모델_플랫폼.png',
+E     -  '09_숙련자_노하우_디지털화.png',
+E     -  '10_LLM_작업지시_해석.png',
+E     -  '11_장착형_자율화_모듈_구성도.png',
+E     -  '12_장비별_적용_예시.png',
+E     -  '13_통합_운영_플랫폼.png',
+E     -  '14_3대분야_실증_체계도.png',
+E     -  '15_세부기술_통합_연계.png',
+E       ]
+_________________________ test_hwpx_full_e2e_pipeline __________________________
+tests/test_e2e_pipeline.py:143: in test_hwpx_full_e2e_pipeline
+    _run_step(
+tests/test_e2e_pipeline.py:22: in _run_step
+    raise AssertionError(
+E   AssertionError: step1 md_parser 3장 failed (exit=1)
+E   command: /usr/bin/python3 /home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py /home/cha/Documents/honeypot/dev/3장.md --output /home/cha/Documents/honeypot/dev/tmp/p3.json
+E   stdout:
+E   
+E   stderr:
+E   Error: File not found: /home/cha/Documents/honeypot/dev/3장.md
+____________________ test_parse_images_in_chapter3_markdown ____________________
+tests/test_md_parser_images.py:23: in test_parse_images_in_chapter3_markdown
+    parsed = parser.parse_markdown(md_path.read_text(encoding="utf-8"), str(md_path))
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/dev/3장.md'
+____________________ test_parse_images_in_chapter4_markdown ____________________
+tests/test_md_parser_images.py:45: in test_parse_images_in_chapter4_markdown
+    assert len(image_blocks) == 12
+E   assert 0 == 12
+E    +  where 0 = len([])
+=============================== warnings summary ===============================
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_cascading_fallback_all_bold
+  Warning: All body charPr candidates are bold - using most common
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_작성_exists - ...
+FAILED tests/test_dev_data_exists.py::TestHWPXFiles::test_hwpx_초안_exists - ...
+FAILED tests/test_dev_data_exists.py::TestMarkdownFiles::test_3장_md_exists
+FAILED tests/test_dev_data_exists.py::TestImagesDirectory::test_images_dir_exists
+FAILED tests/test_dev_data_exists.py::TestImagesDirectory::test_15_png_files_exist
+FAILED tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_are_readable
+FAILED tests/test_dev_data_exists.py::TestImagesDirectory::test_png_files_naming_convention
+FAILED tests/test_e2e_pipeline.py::test_hwpx_full_e2e_pipeline - AssertionErr...
+FAILED tests/test_md_parser_images.py::test_parse_images_in_chapter3_markdown
+FAILED tests/test_md_parser_images.py::test_parse_images_in_chapter4_markdown
+================== 10 failed, 123 passed, 1 warning in 1.29s ===================

@@ -111,3 +111,38 @@ Required fields: date_time, compress_type, external_attr(0x01800000), create_sys
 - `transplant_from()`은 `dry_run=True` 시 매핑만 반환하고, `False` 시 section0.xml을 교체한 후 임시 파일 정리.
 - basedpyright import cycle 경고는 lazy import 패턴의 구조적 한계로, 런타임에는 안전함 (기존 `_import_zip_surgery()`와 동일).
 - 증적 파일 `.sisyphus/evidence/task-7-cli-dryrun.txt` 생성 확인.
+
+## [2026-03-23] T8 완료
+- `tests/test_transplant_e2e.py`를 신규 작성해 이식 파이프라인의 E2E 시나리오 7개(기본 이식, 비대상 챕터 보존, 스타일 ID 리매핑, ZIP 메타데이터 보존, dry-run 무출력, 누락 챕터 warning, hp:pic warning)를 모두 검증함.
+- 소스/타깃 간 서로 다른 스타일 ID(소스 41/42·31/32, 타깃 51/52·61/62)를 갖는 합성 HWPX helper를 테스트 파일 내부에 두어 remap 경로를 통합 수준에서 강제 검증함.
+- 실행 결과 `pytest tests/test_transplant_e2e.py -v` 기준 7/7 PASS 확인, 증적 파일 `.sisyphus/evidence/task-8-e2e.txt` 생성함.
+
+## [2026-03-23] T9 완료
+
+- plugin.json 버전 범프: 3.10.0 → 3.11.0
+- marketplace.json 메타데이터 버전: 3.19.0 → 3.20.0
+- AGENTS.md 버전 및 문서 업데이트 완료
+  - WHERE TO LOOK 표에 section_transplant.py 행 추가
+  - COMMANDS 섹션에 2개 CLI 명령어 추가
+- README.md 버전 및 문서 업데이트 완료
+  - hwpx-generator 주요 특징에 챕터 이식 기능 추가
+  - 변경 이력 표에 3.20.0 항목 추가
+- 증적 파일 생성: .sisyphus/evidence/task-9-version-sync.txt
+
+## [2026-03-23] Fix: borderFill extraction added
+- `section_transplant.py`에 `BorderFillStyle` dataclass 및 `StyleMap.border_fill_styles`를 추가해 header.xml의 borderFill 정의를 보관하도록 확장함.
+- `parse_header_styles()`가 `<hh:borderFill>` 블록에서 `fillColor.value`와 `border.type`을 regex-only로 추출하도록 반영함(파서 import 없음).
+- `build_style_mapping()`에 borderFill 속성 매칭(`fill_color`, `border_style`)을 추가해 `borderFillIDRef` 자동 리매핑을 수행하고, 불일치 시 경고 + 원본 ID 유지 폴백을 적용함.
+- `detect_headings()`의 1차(fontSize) + 2차(텍스트 패턴 추출) 구조는 유지됨: 숫자 패턴 미일치 H1도 heading으로 수용하며 `chapter_num=0`으로 처리됨.
+- 검증 결과: `pytest tests/test_style_remap.py tests/test_chapter_detection.py tests/test_transplant_assembly.py tests/test_transplant_e2e.py -v` → 24 passed.
+
+## [2026-03-23] Final QA rerun (F4 scope v2)
+- BorderFill fix 재검증: `BorderFillStyle` 선언, `parse_header_styles()`의 borderFill 추출, `build_style_mapping()`의 `borderFillIDRef` 매핑 루프 존재를 확인함.
+- 챕터 탐지는 계획 의도와 일치: `max_size` 기반 H1 식별 후 텍스트 정규식은 chapter 번호 추출 보조로만 사용, 숫자 미일치 H1은 `chapter_num=0` 처리.
+- 회귀 검증: 지정된 4개 테스트 파일 전체 24/24 PASS 재확인.
+- 정적 검증: LSP 기준 error 없음(경고 다수는 기존 타입 엄격도 이슈이며 본 fix 범위 외).
+
+## [2026-03-23] Final QA rerun
+- Acceptance criteria cleared after the borderFill fix: `parse_header_styles()` now extracts `<hh:borderFill>`, and `build_style_mapping()` matches border fills by `(fill_color, border_style)`, removing the prior `borderFillIDRef/styleIDRef` `0 -> 0`-only failure.
+- Scope clarification confirmed: `section_transplant.py` enforces `output_path` on non-dry-run paths, while `zip_surgery.py save(output_path=None)` remains legacy API behavior and was not modified by commit `d21ef52`.
+- Regression status: full transplant suite passed (`27 passed`).

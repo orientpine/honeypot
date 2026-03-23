@@ -1,28 +1,24 @@
-F4: Scope Fidelity Check
-========================
+Tasks [6/9 compliant]:
+  ✅ T1: zip_surgery.py P0 fix — ZipEntry/read_zip/write_zip + test_zip_surgery_metadata.py
+  ✅ T2: Test fixtures only — conftest.py + test_chapter_detection.py
+  ❌ T3: section_transplant.py chapter detection only — dual validation incomplete (non-numeric H1 still accepted) and no explicit chapter 0 range for pre-H1 content
+  ❌ T4: style map extraction + test_style_remap.py — borderFill extraction/matching required by plan is not implemented
+  ✅ T5: remapping engine in section_transplant.py
+  ✅ T6: assembly pipeline + test_transplant_assembly.py
+  ❌ T7: CLI + transplant_from() only — commit also includes unplanned .sisyphus files (cross-task contamination)
+  ✅ T8: test_transplant_e2e.py only
+  ✅ T9: docs/version bump only
 
-FILES CHANGED (git diff HEAD~3 --name-only):
-  .sisyphus/boulder.json                                    (system — session tracking)
-  .sisyphus/notepads/hwpx-quality-upgrade/decisions.md     (system — notepad)
-  .sisyphus/notepads/hwpx-quality-upgrade/issues.md        (system — notepad)
-  .sisyphus/notepads/hwpx-quality-upgrade/learnings.md     (system — notepad)
-  .sisyphus/notepads/hwpx-quality-upgrade/problems.md      (system — notepad)
-  plugins/hwpx-generator/skills/hwpx-core/scripts/validate.py     ✅ Expected
-  plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py   ✅ Expected
-  plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_images.py ✅ Expected
+Contamination [1 issue]:
+  - Commit 523a949 includes:
+    - .sisyphus/evidence/task-7-cli-dryrun.txt
+    - .sisyphus/notepads/hwpx-section-transplant/learnings.md
+  - Constraint checks:
+    - No added XML parser import statements in changed hwpx-core scripts
+    - No bare string replace for ID remapping
+    - No newline join insertion pattern in section_transplant.py
+    - No lineseg/lineSeg usage in section_transplant.py
+    - No section1/section_1 handling in section_transplant.py
+    - HwpxSurgeon method diff in 523a949 shows only added def transplant_from(...)
 
-EXPECTED FILES (3): xml_writer.py, test_xml_writer_images.py, validate.py
-ALL 3 CHANGED ✅
-
-SCOPE VIOLATIONS:
-  md_parser.py: NOT CHANGED ✅
-  image_embedder.py: NOT CHANGED ✅
-  Any other plugins/**/*.py: NOT CHANGED ✅
-
-MUST NOT DO COMPLIANCE:
-  hp:para in xml_writer.py: 0 occurrences ✅
-  hp:align in xml_writer.py: 0 occurrences ✅
-  build_image_with_caption in any file: 0 occurrences ✅
-  image_counter used as caption_id fallback: NOT present ✅
-
-VERDICT: APPROVE
+VERDICT: REJECT
