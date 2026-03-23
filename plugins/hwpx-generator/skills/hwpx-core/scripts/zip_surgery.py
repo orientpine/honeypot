@@ -497,6 +497,67 @@ class HwpxSurgeon:
         out = Path(output_path) if output_path else self._path
         return validate_surgery(self._path, out)
 
+    def transplant_from(
+        self,
+        source_path: str | Path,
+        chapters: list[int],
+        style_map: dict[str, dict[str, str]] | None = None,
+        dry_run: bool = False,
+    ) -> dict[str, object]:
+        """Transplant chapters from source HWPX into this document.
+
+        Modifies self._modified in place (like replace_children).
+        Use save() afterwards to write output.
+
+        Returns the result dict from transplant_sections().
+        """
+        _my_dir = Path(__file__).parent
+        if str(_my_dir) not in sys.path:
+            sys.path.insert(0, str(_my_dir))
+
+        from section_transplant import transplant_sections
+
+        # Write current state to a temp file, then transplant
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".hwpx", delete=False) as tmp:
+            tmp_path = Path(tmp.name)
+
+        try:
+            # Save current state as temp target
+            write_zip(tmp_path, self._entries, self._order, self._modified)
+
+            if dry_run:
+                return transplant_sections(
+                    source_hwpx=source_path,
+                    target_hwpx=tmp_path,
+                    chapter_nums=chapters,
+                    style_map=style_map,
+                    dry_run=True,
+                )
+
+            with tempfile.NamedTemporaryFile(suffix=".hwpx", delete=False) as out_tmp:
+                out_tmp_path = Path(out_tmp.name)
+
+            try:
+                result = transplant_sections(
+                    source_hwpx=source_path,
+                    target_hwpx=tmp_path,
+                    chapter_nums=chapters,
+                    output_path=out_tmp_path,
+                    style_map=style_map,
+                    dry_run=False,
+                )
+                # Load the result back into self._modified
+                new_entries, _ = read_zip(out_tmp_path)
+                new_map = {e.filename: e for e in new_entries}
+                section_name = "Contents/section0.xml"
+                if section_name in new_map:
+                    self._modified[section_name] = new_map[section_name].data
+                return result
+            finally:
+                out_tmp_path.unlink(missing_ok=True)
+        finally:
+            tmp_path.unlink(missing_ok=True)
     # --- Element factories (convenience wrappers) ---
 
     @staticmethod
