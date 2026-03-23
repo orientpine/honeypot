@@ -39,7 +39,7 @@ import argparse
 import re
 import sys
 import zipfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -55,6 +55,18 @@ class ZipEntry:
     filename: str
     data: bytes
     compress_type: int
+    date_time: tuple[int, int, int, int, int, int] = field(
+        default_factory=lambda: (1980, 1, 1, 0, 0, 0)
+    )
+    external_attr: int = 0
+    create_system: int = 0
+    create_version: int = 20
+    extract_version: int = 20
+    flag_bits: int = 0
+    comment: bytes = field(default_factory=bytes)
+    extra: bytes = field(default_factory=bytes)
+    internal_attr: int = 0
+    volume: int = 0
 
 
 @dataclass
@@ -86,6 +98,16 @@ def read_zip(hwpx_path: str | Path) -> tuple[list[ZipEntry], list[str]]:
                     filename=info.filename,
                     data=zin.read(info.filename),
                     compress_type=info.compress_type,
+                    date_time=info.date_time,
+                    external_attr=info.external_attr,
+                    create_system=info.create_system,
+                    create_version=info.create_version,
+                    extract_version=info.extract_version,
+                    flag_bits=info.flag_bits,
+                    comment=info.comment,
+                    extra=info.extra,
+                    internal_attr=info.internal_attr,
+                    volume=info.volume,
                 )
             )
             order.append(info.filename)
@@ -112,6 +134,15 @@ def write_zip(
             entry = entry_map[name]
             info = zipfile.ZipInfo(name)
             info.compress_type = entry.compress_type
+            info.date_time = entry.date_time
+            info.external_attr = entry.external_attr
+            info.create_system = entry.create_system
+            info.create_version = entry.create_version
+            info.extract_version = entry.extract_version
+            info.flag_bits = entry.flag_bits
+            info.comment = entry.comment
+            info.extra = entry.extra
+            info.internal_attr = entry.internal_attr
             data = modified.get(name, entry.data)
             zout.writestr(info, data)
 
