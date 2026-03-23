@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.19.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.20.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -165,6 +165,7 @@ images_dir: ./images/
 - **네임스페이스 자동 수정**: `fix_namespaces.py` 필수 적용
 - **뷰어 호환성**: `<hp:linesegarray>` 자동 생성으로 한컴오피스 외 뷰어 지원
 - **Workflow 7**: 마크다운 → JSON 블록 파싱 → HWPX XML 작성 → 이미지 임베딩 (md_parser.py, xml_writer.py, image_embedder.py)
+- **챕터 이식**: `section_transplant.py`로 HWPX 간 챕터 단위 콘텐츠 이식 + 스타일 자동 리매핑
 
 | 파라미터 | 필수 | 설명 |
 |----------|:----:|------|
@@ -954,6 +955,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.20.0 | 2026-03-23 | hwpx-generator v3.11.0: section_transplant.py 추가 — HWPX 챕터 이식 CLI + HwpxSurgeon.transplant_from(), zip_surgery.py ZipInfo 메타데이터 전체 보존 P0 수정 |
 | 3.19.0 | 2026-03-23 | hwpx-generator v3.10.0: MD 문서 구조(Indent) 보존 — md_parser.py indent_level 감지, xml_writer.py level→style 매평 + build_numbered(), analyze_template.py indent 스타일 추출, md_merger.py 다중 MD 병합 |
 | 3.18.0 | 2026-03-22 | hwpx-generator v3.9.0: 캡션 emit — 이미지 placeholder 뒤 캡션 문단 자동 생성(xml_writer.py), validate.py 캡션 개수 검증 추가 |
 | 3.16.1 | 2026-03-22 | hwpx-generator v3.6.1: md_parser.py 불릿/인용문 여러 줄 이어쓰기(continuation) 지원 — 줄바꿈으로 잘리던 한국어 텍스트("카메" → "카메라") 복원, xml_writer.py 이중 불릿 마커 방지 — bullet_auto 설정과 무관하게 항상 접두사 제거, proofread.py 이중 불릿 검사를 전체 문단으로 확대 |
