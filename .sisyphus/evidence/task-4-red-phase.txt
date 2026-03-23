@@ -1,0 +1,138 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 6 items
+
+tests/test_md_merger.py::test_single_file_output_unchanged FAILED        [ 16%]
+tests/test_md_merger.py::test_two_files_h1_to_target_level2_offsets_first_file_headings FAILED [ 33%]
+tests/test_md_merger.py::test_two_files_have_separator_block_between_results FAILED [ 50%]
+tests/test_md_merger.py::test_empty_file_is_skipped_without_error FAILED [ 66%]
+tests/test_md_merger.py::test_body_only_markdown_merges_as_paragraph_blocks FAILED [ 83%]
+tests/test_md_merger.py::test_list_indent_level_not_changed_during_merge FAILED [100%]
+
+=================================== FAILURES ===================================
+______________________ test_single_file_output_unchanged _______________________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:42: in test_single_file_output_unchanged
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+________ test_two_files_h1_to_target_level2_offsets_first_file_headings ________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:55: in test_two_files_h1_to_target_level2_offsets_first_file_headings
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+_____________ test_two_files_have_separator_block_between_results ______________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:71: in test_two_files_have_separator_block_between_results
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+___________________ test_empty_file_is_skipped_without_error ___________________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:83: in test_empty_file_is_skipped_without_error
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+______________ test_body_only_markdown_merges_as_paragraph_blocks ______________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:99: in test_body_only_markdown_merges_as_paragraph_blocks
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+_______________ test_list_indent_level_not_changed_during_merge ________________
+tests/test_md_merger.py:23: in load_md_merger_or_fail
+    return load_module("md_merger", script_path)
+tests/test_md_merger.py:16: in load_module
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:991: in exec_module
+    ???
+<frozen importlib._bootstrap_external>:1128: in get_code
+    ???
+<frozen importlib._bootstrap_external>:1186: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+
+During handling of the above exception, another exception occurred:
+tests/test_md_merger.py:116: in test_list_indent_level_not_changed_during_merge
+    md_merger_module = load_md_merger_or_fail(scripts_dir)
+tests/test_md_merger.py:25: in load_md_merger_or_fail
+    pytest.fail(f"md_merger.py not found (expected RED): {exc}")
+E   Failed: md_merger.py not found (expected RED): [Errno 2] No such file or directory: '/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py'
+=========================== short test summary info ============================
+FAILED tests/test_md_merger.py::test_single_file_output_unchanged - Failed: m...
+FAILED tests/test_md_merger.py::test_two_files_h1_to_target_level2_offsets_first_file_headings
+FAILED tests/test_md_merger.py::test_two_files_have_separator_block_between_results
+FAILED tests/test_md_merger.py::test_empty_file_is_skipped_without_error - Fa...
+FAILED tests/test_md_merger.py::test_body_only_markdown_merges_as_paragraph_blocks
+FAILED tests/test_md_merger.py::test_list_indent_level_not_changed_during_merge
+============================== 6 failed in 0.11s ===============================

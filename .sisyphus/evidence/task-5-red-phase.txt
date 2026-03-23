@@ -1,0 +1,100 @@
+Task: test_analyze_indent.py RED phase
+Working directory: /home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core
+
+Executed command:
+python3 -m pytest tests/test_analyze_indent.py -v
+
+Result:
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 5 items
+
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key FAILED [ 20%]
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key FAILED [ 40%]
+tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase FAILED [ 60%]
+tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef FAILED [ 80%]
+tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels FAILED [100%]
+
+=================================== FAILURES ===================================
+________________ test_extract_style_map_has_bullet_level_0_key _________________
+tests/test_analyze_indent.py:42: in test_extract_style_map_has_bullet_level_0_key
+    assert "bullet_level_0" in style_map
+E   AssertionError: assert 'bullet_level_0' in {'body': {'charPrIDRef': '1', 'confidence': 'confirmed', 'paraPrIDRef': '83'}, 'bold': {'charPrIDRef': '5', 'confidence': 'confirmed'}, 'bullet': {'charPrIDRef': '19', 'confidence': 'confirmed', 'indent': -2320, 'left_margin': 0, ...}, 'bullet_auto': [38, 41, 78, 83], ...}
+________________ test_extract_style_map_has_bullet_level_1_key _________________
+tests/test_analyze_indent.py:47: in test_extract_style_map_has_bullet_level_1_key
+    assert "bullet_level_1" in style_map
+E   AssertionError: assert 'bullet_level_1' in {'body': {'charPrIDRef': '1', 'confidence': 'confirmed', 'paraPrIDRef': '83'}, 'bold': {'charPrIDRef': '5', 'confidence': 'confirmed'}, 'bullet': {'charPrIDRef': '19', 'confidence': 'confirmed', 'indent': -2320, 'left_margin': 0, ...}, 'bullet_auto': [38, 41, 78, 83], ...}
+_______________ test_bullet_levels_have_left_margin_and_increase _______________
+tests/test_analyze_indent.py:53: in test_bullet_levels_have_left_margin_and_increase
+    level_0 = style_map["bullet_level_0"]
+E   KeyError: 'bullet_level_0'
+_____________________ test_bullet_levels_have_paraPrIDRef ______________________
+tests/test_analyze_indent.py:64: in test_bullet_levels_have_paraPrIDRef
+    assert "paraPrIDRef" in style_map["bullet_level_0"]
+E   KeyError: 'bullet_level_0'
+_____ test_existing_keys_preserved_and_detects_at_least_two_bullet_levels ______
+tests/test_analyze_indent.py:78: in test_existing_keys_preserved_and_detects_at_least_two_bullet_levels
+    assert len(bullet_level_keys) >= 2
+E   assert 0 >= 2
+E    +  where 0 = len([])
+=========================== short test summary info ============================
+FAILED tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key
+FAILED tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key
+FAILED tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase
+FAILED tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef - Key...
+FAILED tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels
+============================== 5 failed in 0.41s ===============================
+
+Re-run after switching test XML parser import (`lxml` -> stdlib `xml.etree.ElementTree`):
+
+Executed command:
+python3 -m pytest tests/test_analyze_indent.py -v
+
+Result:
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 5 items
+
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key FAILED [ 20%]
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key FAILED [ 40%]
+tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase FAILED [ 60%]
+tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef FAILED [ 80%]
+tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels FAILED [100%]
+
+=================================== FAILURES ===================================
+________________ test_extract_style_map_has_bullet_level_0_key _________________
+tests/test_analyze_indent.py:41: in test_extract_style_map_has_bullet_level_0_key
+    assert "bullet_level_0" in style_map
+E   AssertionError: assert 'bullet_level_0' in {'body': {'charPrIDRef': '1', 'confidence': 'confirmed', 'paraPrIDRef': '83'}, 'bold': {'charPrIDRef': '5', 'confidence': 'confirmed'}, 'bullet': {'charPrIDRef': '19', 'confidence': 'confirmed', 'indent': -2320, 'left_margin': 0, ...}, 'bullet_auto': [38, 41, 78, 83], ...}
+________________ test_extract_style_map_has_bullet_level_1_key _________________
+tests/test_analyze_indent.py:46: in test_extract_style_map_has_bullet_level_1_key
+    assert "bullet_level_1" in style_map
+E   AssertionError: assert 'bullet_level_1' in {'body': {'charPrIDRef': '1', 'confidence': 'confirmed', 'paraPrIDRef': '83'}, 'bold': {'charPrIDRef': '5', 'confidence': 'confirmed'}, 'bullet': {'charPrIDRef': '19', 'confidence': 'confirmed', 'indent': -2320, 'left_margin': 0, ...}, 'bullet_auto': [38, 41, 78, 83], ...}
+_______________ test_bullet_levels_have_left_margin_and_increase _______________
+tests/test_analyze_indent.py:52: in test_bullet_levels_have_left_margin_and_increase
+    level_0 = style_map["bullet_level_0"]
+E   KeyError: 'bullet_level_0'
+_____________________ test_bullet_levels_have_paraPrIDRef ______________________
+tests/test_analyze_indent.py:63: in test_bullet_levels_have_paraPrIDRef
+    assert "paraPrIDRef" in style_map["bullet_level_0"]
+E   KeyError: 'bullet_level_0'
+_____ test_existing_keys_preserved_and_detects_at_least_two_bullet_levels ______
+tests/test_analyze_indent.py:77: in test_existing_keys_preserved_and_detects_at_least_two_bullet_levels
+    assert len(bullet_level_keys) >= 2
+E   assert 0 >= 2
+E    +  where 0 = len([])
+=========================== short test summary info ============================
+FAILED tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key
+FAILED tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key
+FAILED tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase
+FAILED tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef - Ke...
+FAILED tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels
+============================== 5 failed in 0.37s ===============================

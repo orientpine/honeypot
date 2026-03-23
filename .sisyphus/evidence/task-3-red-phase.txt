@@ -1,0 +1,59 @@
+Command attempted:
+python -m pytest tests/test_xml_writer_indent.py -v
+
+Result:
+/bin/bash: line 1: python: command not found
+
+Command executed:
+python3 -m pytest tests/test_xml_writer_indent.py -v
+
+Result:
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 8 items
+
+tests/test_xml_writer_indent.py::test_indent_level_0_uses_bullet_level_0_parapr_idref FAILED [ 12%]
+tests/test_xml_writer_indent.py::test_indent_level_1_left_margin_is_larger_than_level_0 FAILED [ 25%]
+tests/test_xml_writer_indent.py::test_indent_level_2_left_margin_is_larger_than_level_1 FAILED [ 37%]
+tests/test_xml_writer_indent.py::test_indent_level_3_fallback_uses_level_2_plus_hwpunit_per_level FAILED [ 50%]
+tests/test_xml_writer_indent.py::test_numbered_item_uses_build_numbered_and_emits_number_marker FAILED [ 62%]
+tests/test_xml_writer_indent.py::test_backward_compat_bullet_without_indent_level_behaves_like_level_0 FAILED [ 75%]
+tests/test_xml_writer_indent.py::test_backward_compat_existing_bullet_dict_without_indent_level_no_crash FAILED [ 87%]
+tests/test_xml_writer_indent.py::test_bullet_level_0_style_config_values_are_reflected_in_xml FAILED [100%]
+
+=========================== short test summary info ============================
+FAILED tests/test_xml_writer_indent.py::test_indent_level_0_uses_bullet_level_0_parapr_idref
+FAILED tests/test_xml_writer_indent.py::test_indent_level_1_left_margin_is_larger_than_level_0
+FAILED tests/test_xml_writer_indent.py::test_indent_level_2_left_margin_is_larger_than_level_1
+FAILED tests/test_xml_writer_indent.py::test_indent_level_3_fallback_uses_level_2_plus_hwpunit_per_level
+FAILED tests/test_xml_writer_indent.py::test_numbered_item_uses_build_numbered_and_emits_number_marker
+FAILED tests/test_xml_writer_indent.py::test_backward_compat_bullet_without_indent_level_behaves_like_level_0
+FAILED tests/test_xml_writer_indent.py::test_backward_compat_existing_bullet_dict_without_indent_level_no_crash
+FAILED tests/test_xml_writer_indent.py::test_bullet_level_0_style_config_values_are_reflected_in_xml
+============================== 8 failed in 0.09s ===============================
+
+Final verification run after adding `# pyright: basic` to test file:
+python3 -m pytest tests/test_xml_writer_indent.py -v
+
+Result:
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+collecting ... collected 8 items
+
+tests/test_xml_writer_indent.py::test_indent_level_0_uses_bullet_level_0_parapr_idref FAILED [ 12%]
+tests/test_xml_writer_indent.py::test_indent_level_1_left_margin_is_larger_than_level_0 FAILED [ 25%]
+tests/test_xml_writer_indent.py::test_indent_level_2_left_margin_is_larger_than_level_1 FAILED [ 37%]
+tests/test_xml_writer_indent.py::test_indent_level_3_fallback_uses_level_2_plus_hwpunit_per_level FAILED [ 50%]
+tests/test_xml_writer_indent.py::test_numbered_item_uses_build_numbered_and_emits_number_marker FAILED [ 62%]
+tests/test_xml_writer_indent.py::test_backward_compat_bullet_without_indent_level_behaves_like_level_0 FAILED [ 75%]
+tests/test_xml_writer_indent.py::test_backward_compat_existing_bullet_dict_without_indent_level_no_crash FAILED [ 87%]
+tests/test_xml_writer_indent.py::test_bullet_level_0_style_config_values_are_reflected_in_xml FAILED [100%]
+
+============================== 8 failed in 0.07s ===============================

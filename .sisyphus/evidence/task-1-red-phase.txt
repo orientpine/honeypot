@@ -1,0 +1,66 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 9 items
+
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_0 FAILED   [ 11%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_1_with_two_spaces FAILED [ 22%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_2_with_four_spaces FAILED [ 33%]
+tests/test_md_parser_indent.py::test_dash_bullet_indent_level_3_with_six_spaces FAILED [ 44%]
+tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_0 FAILED [ 55%]
+tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_1_with_two_spaces FAILED [ 66%]
+tests/test_md_parser_indent.py::test_mixed_markers_all_include_indent_level FAILED [ 77%]
+tests/test_md_parser_indent.py::test_parse_chapter5_has_multiple_indent_levels FAILED [ 88%]
+tests/test_md_parser_indent.py::test_indent_resets_after_blank_line FAILED [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_dash_bullet_indent_level_0 ________________________
+tests/test_md_parser_indent.py:22: in test_dash_bullet_indent_level_0
+    assert bullet["indent_level"] == 0
+E   KeyError: 'indent_level'
+_______________ test_dash_bullet_indent_level_1_with_two_spaces ________________
+tests/test_md_parser_indent.py:31: in test_dash_bullet_indent_level_1_with_two_spaces
+    assert bullet["indent_level"] == 1
+E   KeyError: 'indent_level'
+_______________ test_dash_bullet_indent_level_2_with_four_spaces _______________
+tests/test_md_parser_indent.py:40: in test_dash_bullet_indent_level_2_with_four_spaces
+    assert bullet["indent_level"] == 2
+E   KeyError: 'indent_level'
+_______________ test_dash_bullet_indent_level_3_with_six_spaces ________________
+tests/test_md_parser_indent.py:49: in test_dash_bullet_indent_level_3_with_six_spaces
+    assert bullet["indent_level"] == 3
+E   KeyError: 'indent_level'
+_____________________ test_asterisk_bullet_indent_level_0 ______________________
+tests/test_md_parser_indent.py:59: in test_asterisk_bullet_indent_level_0
+    assert bullet["indent_level"] == 0
+E   KeyError: 'indent_level'
+_____________ test_asterisk_bullet_indent_level_1_with_two_spaces ______________
+tests/test_md_parser_indent.py:68: in test_asterisk_bullet_indent_level_1_with_two_spaces
+    assert bullet["indent_level"] == 1
+E   KeyError: 'indent_level'
+_________________ test_mixed_markers_all_include_indent_level __________________
+tests/test_md_parser_indent.py:86: in test_mixed_markers_all_include_indent_level
+    assert [b["indent_level"] for b in bullets] == [0, 1, 2, 3, 0]
+E   KeyError: 'indent_level'
+________________ test_parse_chapter5_has_multiple_indent_levels ________________
+tests/test_md_parser_indent.py:96: in test_parse_chapter5_has_multiple_indent_levels
+    indent_levels = {bullet["indent_level"] for bullet in bullets}
+E   KeyError: 'indent_level'
+_____________________ test_indent_resets_after_blank_line ______________________
+tests/test_md_parser_indent.py:106: in test_indent_resets_after_blank_line
+    assert bullets[0]["indent_level"] == 1
+E   KeyError: 'indent_level'
+=========================== short test summary info ============================
+FAILED tests/test_md_parser_indent.py::test_dash_bullet_indent_level_0 - KeyE...
+FAILED tests/test_md_parser_indent.py::test_dash_bullet_indent_level_1_with_two_spaces
+FAILED tests/test_md_parser_indent.py::test_dash_bullet_indent_level_2_with_four_spaces
+FAILED tests/test_md_parser_indent.py::test_dash_bullet_indent_level_3_with_six_spaces
+FAILED tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_0 - ...
+FAILED tests/test_md_parser_indent.py::test_asterisk_bullet_indent_level_1_with_two_spaces
+FAILED tests/test_md_parser_indent.py::test_mixed_markers_all_include_indent_level
+FAILED tests/test_md_parser_indent.py::test_parse_chapter5_has_multiple_indent_levels
+FAILED tests/test_md_parser_indent.py::test_indent_resets_after_blank_line - ...
+============================== 9 failed in 0.07s ===============================
