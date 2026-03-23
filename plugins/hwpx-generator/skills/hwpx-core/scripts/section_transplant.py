@@ -403,3 +403,88 @@ def transplant_sections(
         "target_ranges": tgt_ranges,
         "output_path": output_path,
     }
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def _parse_chapter_list(s: str) -> list[int]:
+    """Parse comma-separated chapter numbers."""
+    try:
+        return [int(x.strip()) for x in s.split(",") if x.strip()]
+    except ValueError as e:
+        import argparse
+        raise argparse.ArgumentTypeError(f"Invalid chapter list: {s}") from e
+
+
+def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="HWPX Section Transplant — transplant chapters between HWPX files",
+    )
+    parser.add_argument("--source", required=True, help="Source HWPX file path")
+    parser.add_argument("--target", required=True, help="Target HWPX file path")
+    parser.add_argument(
+        "--chapters",
+        required=True,
+        type=_parse_chapter_list,
+        help="Comma-separated chapter numbers to transplant (e.g. 3,4,5)",
+    )
+    parser.add_argument(
+        "--style-map",
+        help="Optional path to external JSON style map",
+    )
+    parser.add_argument(
+        "--output",
+        help="Output HWPX file path (required unless --dry-run)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print mapping table and exit without writing output",
+    )
+
+    args = parser.parse_args()
+
+    if not args.dry_run and not args.output:
+        parser.error("--output is required unless --dry-run is specified")
+        sys.exit(1)
+
+    style_map = None
+    if args.style_map:
+        import json
+        style_map = json.loads(Path(args.style_map).read_text())
+
+    result = transplant_sections(
+        source_hwpx=args.source,
+        target_hwpx=args.target,
+        chapter_nums=args.chapters,
+        output_path=args.output,
+        style_map=style_map,
+        dry_run=args.dry_run,
+    )
+
+    if args.dry_run:
+        import json
+        print("=== DRY RUN: Style Mapping Table ===")
+        print(json.dumps(result["mapping"], indent=2, ensure_ascii=False))
+        print("\n=== Source Chapter Ranges ===")
+        src_ranges = result["source_ranges"]
+        assert isinstance(src_ranges, dict)
+        for ch, (s, e) in sorted(src_ranges.items()):
+            print(f"  Chapter {ch}: paragraphs {s}\u2013{e}")
+        print("\n=== Target Chapter Ranges ===")
+        tgt_ranges = result["target_ranges"]
+        assert isinstance(tgt_ranges, dict)
+        for ch, (s, e) in sorted(tgt_ranges.items()):
+            print(f"  Chapter {ch}: paragraphs {s}\u2013{e}")
+    else:
+        print(f"Done: {result['output_path']}")
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

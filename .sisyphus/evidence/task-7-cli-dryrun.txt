@@ -1,0 +1,55 @@
+=== --help ===
+usage: section_transplant.py [-h] --source SOURCE --target TARGET --chapters
+                             CHAPTERS [--style-map STYLE_MAP]
+                             [--output OUTPUT] [--dry-run]
+
+HWPX Section Transplant — transplant chapters between HWPX files
+
+options:
+  -h, --help            show this help message and exit
+  --source SOURCE       Source HWPX file path
+  --target TARGET       Target HWPX file path
+  --chapters CHAPTERS   Comma-separated chapter numbers to transplant (e.g.
+                        3,4,5)
+  --style-map STYLE_MAP
+                        Optional path to external JSON style map
+  --output OUTPUT       Output HWPX file path (required unless --dry-run)
+  --dry-run             Print mapping table and exit without writing output
+
+=== --dry-run (chapters 1,2) ===
+=== DRY RUN: Style Mapping Table ===
+{
+  "charPrIDRef": {
+    "0": "0",
+    "1": "1",
+    "2": "2"
+  },
+  "paraPrIDRef": {
+    "0": "0",
+    "10": "10",
+    "20": "10"
+  },
+  "borderFillIDRef": {
+    "0": "0"
+  },
+  "styleIDRef": {
+    "0": "0"
+  }
+}
+
+=== Source Chapter Ranges ===
+  Chapter 1: paragraphs 1–2
+  Chapter 2: paragraphs 3–4
+  Chapter 3: paragraphs 5–6
+
+=== Target Chapter Ranges ===
+  Chapter 1: paragraphs 1–2
+  Chapter 2: paragraphs 3–4
+  Chapter 3: paragraphs 5–6
+
+=== missing --output (expect error) ===
+usage: section_transplant.py [-h] --source SOURCE --target TARGET --chapters
+                             CHAPTERS [--style-map STYLE_MAP]
+                             [--output OUTPUT] [--dry-run]
+section_transplant.py: error: --output is required unless --dry-run is specified
+exit: 2
