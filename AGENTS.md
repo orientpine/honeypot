@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-03-23T00:00:00+09:00
-**Version:** 3.19.0
+**Version:** 3.20.0
 **Branch:** main
 
 ## OVERVIEW
@@ -36,6 +36,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX XML 작성 | `plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py` | JSON + style config → HWPX XML fragment |
 | HWPX 이미지 임베딩 | `plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py` | PNG embedding into HWPX (Workflow 7) |
 | HWPX 다중 MD 병합 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py` | heading offset 자동계산, --target-level 옵션 |
+| HWPX 챕터 이식 (section transplant) | `plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py` | 범용 CLI + HwpxSurgeon.transplant_from() |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
 | PPTX design styles (30 styles) | `plugins/pptx-design-styles/skills/pptx-design-styles/SKILL.md` | Glassmorphism, Neo-Brutalism 등 30가지 디자인 스타일 가이드 |
@@ -306,6 +307,14 @@ python plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py \
 # HWPX md_merger: 다중 MD 파일을 heading offset 맥쳐 병합
 python plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py \
   file1.md file2.md --target-level 2 --output merged.json
+
+# HWPX Section Transplant: 챕터 이식
+python plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py \
+  --source source.hwpx --target target.hwpx --chapters 3,4,5 --output result.hwpx
+
+# HWPX Section Transplant: dry-run (매핑 테이블만 출력)
+python plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py \
+  --source source.hwpx --target target.hwpx --chapters 3,4,5 --dry-run
 ```
 
 ## CLAUDE CODE MARKETPLACE RULES
