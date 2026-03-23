@@ -149,3 +149,119 @@ def compare_json():
                 )
 
     return _compare
+
+
+@pytest.fixture
+def make_header_xml():
+    """Create synthetic header.xml bytes with style definitions.
+    
+    Usage: header_bytes = make_header_xml(char_styles, para_styles)
+      char_styles: list of (id, fontSize, bold=False)
+      para_styles: list of (id, align="JUSTIFY")
+    """
+    def _make(char_styles=None, para_styles=None):
+        char_styles = char_styles or []
+        para_styles = para_styles or []
+        
+        char_prs = ""
+        for cid, fs, *rest in char_styles:
+            bold = rest[0] if rest else False
+            bold_attr = ' bold="1"' if bold else ''
+            char_prs += f'<hh:charPr id="{cid}"><hh:fontSize size="{fs}" sizeAutomatic="0" lang="HANGUL"/>{bold_attr}</hh:charPr>'
+        
+        para_prs = ""
+        for pid, *rest in para_styles:
+            align = rest[0] if rest else "JUSTIFY"
+            para_prs += f'<hh:paraPr id="{pid}"><hh:alignment type="{align}"/></hh:paraPr>'
+        
+        xml = (
+            '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'
+            '<hs:head xmlns:hs="http://www.hancom.co.kr/hwpml/2011/head/head"'
+            ' xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head/head">'
+            f'<hh:docPrList><hh:charPrList>{char_prs}</hh:charPrList>'
+            f'<hh:paraPrList>{para_prs}</hh:paraPrList></hh:docPrList>'
+            '</hs:head>'
+        )
+        return xml.encode('utf-8')
+    return _make
+
+
+@pytest.fixture
+def make_section_xml():
+    """Create synthetic section0.xml bytes from a list of paragraph strings.
+    
+    Usage: section_bytes = make_section_xml(paragraphs)
+      paragraphs: list of raw <hp:p>...</hp:p> strings
+    """
+    def _make(paragraphs=None):
+        paragraphs = paragraphs or []
+        body = "".join(paragraphs)
+        xml = (
+            '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+            '<hs:sec xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section/section"'
+            ' xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph/paragraph">'
+            + body +
+            '</hs:sec>'
+        )
+        return xml.encode('utf-8')
+    return _make
+
+
+@pytest.fixture
+def make_test_hwpx(make_section_xml, make_header_xml, tmp_path):
+    """Create synthetic HWPX file with N chapters, known style IDs.
+    
+    Usage: hwpx_path = make_test_hwpx(chapters=3, char_styles=[(1,1500,True),(2,1000,False)], para_styles=[(10,"JUSTIFY")])
+    Returns: pathlib.Path to the .hwpx file
+    """
+    def _make(chapters=3, char_styles=None, para_styles=None, extra_paragraphs=None):
+        import sys
+        scripts_path = (
+            Path(__file__).parent.parent / "scripts"
+        )
+        sys.path.insert(0, str(scripts_path))
+        from zip_surgery import make_paragraph, make_empty_paragraph
+        
+        # Default styles: ID 1 = H1 (fontSize=1500, bold), ID 2 = body (fontSize=1000)
+        if char_styles is None:
+            char_styles = [(1, 1500, True), (2, 1000, False)]
+        if para_styles is None:
+            para_styles = [(10, "JUSTIFY"), (20, "JUSTIFY")]
+        
+        paragraphs = []
+        
+        # Cover page paragraph (before first H1)
+        paragraphs.append(make_paragraph("100", "표지 내용", paraPrIDRef="10", charPrIDRef="2"))
+        
+        for ch_num in range(1, chapters + 1):
+            # H1 heading for this chapter
+            heading_text = f"{ch_num}. 챕터 {ch_num} 제목"
+            paragraphs.append(make_paragraph(
+                str(1000 + ch_num),
+                heading_text,
+                paraPrIDRef="20",
+                charPrIDRef="1",  # ID 1 = H1 style
+            ))
+            # Body paragraph
+            paragraphs.append(make_paragraph(
+                str(2000 + ch_num),
+                f"챕터 {ch_num}의 본문 내용입니다.",
+                paraPrIDRef="10",
+                charPrIDRef="2",
+            ))
+            if extra_paragraphs and ch_num in extra_paragraphs:
+                for ep in extra_paragraphs[ch_num]:
+                    paragraphs.append(ep)
+        
+        section_bytes = make_section_xml(paragraphs)
+        header_bytes = make_header_xml(char_styles, para_styles)
+        
+        # Build HWPX (ZIP)
+        hwpx_path = tmp_path / "test_synthetic.hwpx"
+        with zipfile.ZipFile(str(hwpx_path), 'w', zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr("Contents/section0.xml", section_bytes)
+            zf.writestr("Contents/header.xml", header_bytes)
+            zf.writestr("[Content_Types].xml", b'<?xml version="1.0"?><Types/>')
+        
+        return hwpx_path
+    return _make
