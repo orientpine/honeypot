@@ -114,3 +114,126 @@ def extract_chapter_ranges(
         ranges[chapter_num] = (start, end)
 
     return ranges
+
+
+@dataclass
+class CharStyle:
+    """Parsed charPr attributes from header.xml."""
+
+    id: str
+    font_size: int
+    bold: bool = False
+
+
+@dataclass
+class ParaStyle:
+    """Parsed paraPr attributes from header.xml."""
+
+    id: str
+    align: str = "JUSTIFY"
+
+
+@dataclass
+class StyleMap:
+    """Extracted style definitions from header.xml."""
+
+    char_styles: dict[str, CharStyle]
+    para_styles: dict[str, ParaStyle]
+
+
+def parse_header_styles(header_bytes: bytes) -> StyleMap:
+    """Extract charPr and paraPr definitions from header.xml bytes.
+
+    Uses regex only — no XML parser.
+    """
+    text = header_bytes.decode("utf-8", errors="replace")
+
+    char_styles: dict[str, CharStyle] = {}
+    para_styles: dict[str, ParaStyle] = {}
+
+    charpr_pattern = re.compile(
+        r'<hh:charPr\s+id="(\d+)"[^>]*>(.*?)</hh:charPr>', re.DOTALL
+    )
+    fontsize_pattern = re.compile(r'<hh:fontSize[^>]*\ssize="(\d+)"')
+    bold_pattern = re.compile(r'\bbold="1"')
+
+    for match in charpr_pattern.finditer(text):
+        cid = match.group(1)
+        block = match.group(2)
+        fs_match = fontsize_pattern.search(block)
+        font_size = int(fs_match.group(1)) if fs_match else 0
+        bold = bool(bold_pattern.search(block))
+        char_styles[cid] = CharStyle(id=cid, font_size=font_size, bold=bold)
+
+    parapr_pattern = re.compile(
+        r'<hh:paraPr\s+id="(\d+)"[^>]*>(.*?)</hh:paraPr>', re.DOTALL
+    )
+    align_pattern = re.compile(r'<hh:alignment[^>]*\stype="([^"]+)"')
+
+    for match in parapr_pattern.finditer(text):
+        pid = match.group(1)
+        block = match.group(2)
+        align_match = align_pattern.search(block)
+        align = align_match.group(1) if align_match else "JUSTIFY"
+        para_styles[pid] = ParaStyle(id=pid, align=align)
+
+    return StyleMap(char_styles=char_styles, para_styles=para_styles)
+
+
+def build_style_mapping(
+    source_styles: StyleMap,
+    target_styles: StyleMap,
+) -> dict[str, dict[str, str]]:
+    """Build {attr_type: {source_id: target_id}} mapping.
+
+    Matches charPr by (font_size, bold). ID "0" always maps to "0".
+    Unmatched source IDs keep their original value (with warning).
+    """
+    mapping: dict[str, dict[str, str]] = {
+        "charPrIDRef": {},
+        "paraPrIDRef": {},
+        "borderFillIDRef": {},
+        "styleIDRef": {},
+    }
+
+    mapping["charPrIDRef"]["0"] = "0"
+    mapping["paraPrIDRef"]["0"] = "0"
+    mapping["borderFillIDRef"]["0"] = "0"
+    mapping["styleIDRef"]["0"] = "0"
+
+    target_char_by_attrs: dict[tuple[int, bool], str] = {}
+    for tid, target_style in target_styles.char_styles.items():
+        key = (target_style.font_size, target_style.bold)
+        target_char_by_attrs[key] = tid
+
+    for sid, source_style in source_styles.char_styles.items():
+        if sid == "0":
+            continue
+        key = (source_style.font_size, source_style.bold)
+        if key in target_char_by_attrs:
+            mapping["charPrIDRef"][sid] = target_char_by_attrs[key]
+        else:
+            warnings.warn(
+                f"charPr id={sid} (size={source_style.font_size}, bold={source_style.bold}) has no match in target — keeping original ID",
+                stacklevel=2,
+            )
+            mapping["charPrIDRef"][sid] = sid
+
+    target_para_by_align: dict[str, str] = {}
+    for tid, target_style in target_styles.para_styles.items():
+        if target_style.align not in target_para_by_align:
+            target_para_by_align[target_style.align] = tid
+
+    for sid, source_style in source_styles.para_styles.items():
+        if sid == "0":
+            continue
+        if source_style.align in target_para_by_align:
+            mapping["paraPrIDRef"][sid] = target_para_by_align[source_style.align]
+        else:
+            warnings.warn(
+                f"paraPr id={sid} (align={source_style.align}) has no match in target — keeping original ID",
+                stacklevel=2,
+            )
+            mapping["paraPrIDRef"][sid] = sid
+
+    return mapping
