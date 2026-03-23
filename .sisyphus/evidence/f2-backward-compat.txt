@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 14 items
+
+tests/test_md_parser_complex.py::test_blockquote_preserves_inline_bold_segments PASSED [  7%]
+tests/test_md_parser_complex.py::test_heading_level4_keeps_circle_number_token PASSED [ 14%]
+tests/test_md_parser_complex.py::test_standalone_bold_bracket_line_becomes_bold_label PASSED [ 21%]
+tests/test_md_parser_complex.py::test_parse_chapter4_complex_patterns PASSED [ 28%]
+tests/test_md_parser_complex.py::test_bullet_multiline_continuation PASSED [ 35%]
+tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_next_bullet PASSED [ 42%]
+tests/test_md_parser_complex.py::test_bullet_multiline_stops_at_blank PASSED [ 50%]
+tests/test_md_parser_complex.py::test_blockquote_multiline_continuation PASSED [ 57%]
+tests/test_md_parser_complex.py::test_blockquote_multiline_stops_at_heading PASSED [ 64%]
+tests/test_md_parser_complex.py::test_bullet_korean_text_not_truncated PASSED [ 71%]
+tests/test_xml_writer_bullets.py::test_bullet_auto_strips_leading_bullet_prefix PASSED [ 78%]
+tests/test_xml_writer_bullets.py::test_bullet_prefix_always_stripped_even_when_not_auto PASSED [ 85%]
+tests/test_xml_writer_bullets.py::test_bullet_no_double_marker_korean_text PASSED [ 92%]
+tests/test_xml_writer_bullets.py::test_bullet_clean_content_not_stripped PASSED [100%]
+
+============================== 14 passed in 0.04s ==============================

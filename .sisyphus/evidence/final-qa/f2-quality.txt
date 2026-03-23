@@ -1,23 +1,86 @@
-F2: Code Quality Review
-=======================
+F2 — Code Quality Review (section_transplant)
+===============================================
+Date: 2026-03-23
+Reviewer: claude-opus-4-6
 
-TEST RESULTS:
-  Unit tests (excl. E2E/dev_data): 67 passed, 3 failed
-  ✅ 3 failures are pre-existing dev fixture missing (dev/3장.md, dev/4장.md)
-  ✅ All 4 new caption tests PASSED
-  ✅ All xml_writer, image_embedder, page_guard, proofread, bullet tests PASSED
+Lint [PASS]:
+  Forbidden imports (lxml/xml.etree/BeautifulSoup):
+    section_transplant.py: CLEAN
+    zip_surgery.py: CLEAN
+    (Other scripts in scripts/ use lxml — NOT under review)
+  Bare string replace on IDs: None found (CLEAN)
+  Empty/bare except blocks: None found (CLEAN)
+  Newline insertion in XML joins: None found (CLEAN)
+  Commented-out code: None found (CLEAN)
+  AI slop (excessive comments/over-abstraction): None found (CLEAN)
 
-CODE QUALITY:
-  ✅ No "type: ignore" or "noqa" added
-  ✅ No production print() statements outside __main__
-  ✅ caption logic uses paragraph_from_segments() — consistent with build_paragraph() pattern
-  ✅ image_counter += 1 correctly placed OUTSIDE if block (L516)
-  ✅ validate.py uses existing re and json imports (no new imports needed)
-  ✅ _caption_checks() signature follows plan spec exactly
+Tests [27 pass / 0 fail]:
+  test_zip_surgery_metadata.py: 3 pass
+  test_chapter_detection.py: 5 pass
+  test_style_remap.py: 7 pass
+  test_transplant_assembly.py: 5 pass
+  test_transplant_e2e.py: 7 pass
 
-DEAD CODE REMOVAL:
-  ✅ build_image_with_caption() (former L419-497) completely removed
-  ✅ test_build_image_with_caption_* (3 tests) removed from test file
-  ✅ sample_image_block() fixture removed (no longer needed)
+Files [7 clean / 0 issues]:
+
+  section_transplant.py: CLEAN
+    ✓ No forbidden imports
+    ✓ No stubs/TODOs/placeholders
+    ✓ Attribute-scoped regex correct:
+      pattern = re.compile(rf'({re.escape(attr)}=")(\d+)(")')
+      — matches only attribute values, not text content
+      — verified by test_remap_style_ids_attribute_scoped ("45명의 연구원" preserved)
+    ✓ secPr stripping correct: _SECPR_TAG check → continue (skips section props)
+    ✓ dry_run flow clean: early return with metadata dict, no file I/O
+    ✓ _make_sub closure factory avoids late-binding issue
+    ✓ hp:pic warning emitted via remap_chapters()
+    ✓ Module docstring lists all guardrails
+    Note: 5 public functions lack docstrings (detect_headings, extract_chapter_ranges,
+          remap_style_ids, remap_chapters, transplant_sections) — MINOR, names self-documenting
+
+  zip_surgery.py (new parts): CLEAN
+    ✓ ZipEntry: 10 new fields present with correct types:
+      date_time: tuple[int,int,int,int,int,int] (default factory)
+      external_attr: int = 0
+      create_system: int = 0
+      create_version: int = 20
+      extract_version: int = 20
+      flag_bits: int = 0
+      comment: bytes (default factory)
+      extra: bytes (default factory)
+      internal_attr: int = 0
+      volume: int = 0
+    ✓ read_zip() captures all 10 fields from ZipInfo
+    ✓ write_zip() copies all 10 fields to ZipInfo (volume excluded — acceptable, multi-volume ZIP unused)
+    ✓ transplant_from() implementation:
+      - Proper nested try/finally for temp file cleanup
+      - dry_run early return without output temp file
+      - Loads result section back into self._modified
+      - sys.path manipulation for cross-module import (by design)
+
+  test_zip_surgery_metadata.py: CLEAN
+    ✓ 3 well-structured tests
+    Note: Lines 80-81 duplicate assertions from 72-73 (external_attr, create_system) — harmless
+
+  test_chapter_detection.py: CLEAN
+    ✓ 5 tests covering heading detection, boundaries, empty chapters, preamble, nested hp:p
+
+  test_style_remap.py: CLEAN
+    ✓ 7 tests including critical attribute-scope test with Korean text "45명의 연구원"
+    ✓ ID 0 exclusion tested
+    ✓ Unmatched style warning tested
+
+  test_transplant_assembly.py: CLEAN
+    ✓ 5 tests covering basic transplant, text verification, preservation, dry_run, warnings
+
+  test_transplant_e2e.py: CLEAN
+    ✓ 7 tests with full synthetic HWPX files
+    ✓ Style ID remapping verified (source IDs absent in output)
+    ✓ ZIP metadata preservation tested
+    ✓ Image reference warning tested
+
+LSP Diagnostics:
+  section_transplant.py: reportImportCycles — pyright-only, runtime safe (lazy imports in functions)
+  zip_surgery.py:518: reportImplicitRelativeImport — by design (sys.path manipulation for dual-role scripts)
 
 VERDICT: APPROVE

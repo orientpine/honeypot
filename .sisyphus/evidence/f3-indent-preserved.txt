@@ -1,0 +1,15 @@
+Bullet count: 108
+Distinct indent_levels: [0, 1, 2]
+PASS: 2+ distinct indent_levels found
+
+=== F3 FULL PIPELINE SUMMARY ===
+Step 1: Fixtures exist — 5장.md ✓, 제안서_최종_포맷완료_v6.hwpx ✓
+Step 2: md_parser.py exit 0 ✓
+Step 3: Bullet count=108, indent_levels=[0,1,2] — 3 distinct ✓
+Step 4: analyze_template.py exit 0, style map generated ✓
+Step 5: bullet_level_0 found in style map ✓
+Step 6: xml_writer.py exit 0, leftMargin values=[0,1500,2500] — 3 distinct ✓
+Step 7: No numbered_item in 5장.md (expected, no numbered lists present) ✓
+Step 8: md_merger.py exit 0, merged 269 blocks ✓
+
+Scenarios [8/8 pass] | Pipeline [PASS] | indent_levels [3 distinct: 0,1,2] | leftMargin [3 distinct: 0,1500,2500] | VERDICT: APPROVE

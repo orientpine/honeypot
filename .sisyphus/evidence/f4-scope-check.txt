@@ -1,0 +1,48 @@
+=== Changed Files ===
+AGENTS.md
+.claude-plugin/marketplace.json
+plugins/hwpx-generator/agents/hwpx-builder.md
+plugins/hwpx-generator/.claude-plugin/plugin.json
+plugins/hwpx-generator/commands/hwpx-generate.md
+plugins/hwpx-generator/skills/hwpx-core/scripts/analyze_template.py
+plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py
+plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py
+plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py
+plugins/hwpx-generator/skills/hwpx-core/SKILL.md
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_indent.py
+plugins/hwpx-generator/skills/hwpx-core/tests/test_e2e_indent.py
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_merger.py
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_indent.py
+plugins/hwpx-generator/skills/hwpx-core/tests/test_md_parser_numbered.py
+plugins/hwpx-generator/skills/hwpx-core/tests/test_xml_writer_indent.py
+README.md
+.sisyphus/boulder.json
+.sisyphus/evidence/task-10-e2e.txt
+.sisyphus/evidence/task-10-full-regression.txt
+.sisyphus/evidence/task-11-docs-check.txt
+.sisyphus/evidence/task-1-red-phase.txt
+.sisyphus/evidence/task-2-red-phase.txt
+.sisyphus/evidence/task-3-red-phase.txt
+.sisyphus/evidence/task-4-red-phase.txt
+.sisyphus/evidence/task-5-red-phase.txt
+.sisyphus/evidence/task-6-5jang-parse.txt
+.sisyphus/evidence/task-6-green-phase.txt
+.sisyphus/evidence/task-6-regression.txt
+.sisyphus/evidence/task-7-constant-check.txt
+.sisyphus/evidence/task-7-green-phase.txt
+.sisyphus/evidence/task-8-green-phase.txt
+.sisyphus/evidence/task-9-green-phase.txt
+.sisyphus/evidence/task-9-real-template.txt
+.sisyphus/notepads/hwpx-indent-preserve/decisions.md
+.sisyphus/notepads/hwpx-indent-preserve/issues.md
+.sisyphus/notepads/hwpx-indent-preserve/learnings.md
+.sisyphus/plans/hwpx-indent-preserve.md
+
+=== Forbidden File Check ===
+cell_writer.py diff lines: 0
+build_hwpx.py diff lines: 0
+
+=== Determinism Check ===
+54:5.5. 여러 MD 파일을 통합할 경우 `md_merger.py`를 사용하여 heading offset 자동 계산 후 병합한다. 에이전트는 style_config 검토/보정만 담당한다 (indent_level 수동 계산 금지).
+97:- indent_level을 에이전트가 수동으로 계산하지 않는다 (md_parser.py가 결정적으로 처리).
+104:4. **indent_level 수동 계산**: md_parser.py/md_merger.py가 자동으로 결정하므로 에이전트가 직접 indent_level 값을 산출하거나 수정하는 것은 금지

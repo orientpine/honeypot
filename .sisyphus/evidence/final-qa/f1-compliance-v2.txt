@@ -1,0 +1,27 @@
+Must Have [4/4]:
+  ✅ borderFill extraction is implemented in `section_transplant.py` (`BorderFillStyle` at lines 141-144; `parse_header_styles()` extracts `<hh:borderFill>` via regex at lines 194-207; `StyleMap` stores `border_fill_styles` at lines 153 and 213-216)
+  ✅ `build_style_mapping()` initializes and populates `borderFillIDRef` alongside the other style maps (`charPrIDRef`, `paraPrIDRef`, `borderFillIDRef`, `styleIDRef`) at lines 229-239 and 276-292
+  ✅ `remap_style_ids()` remaps all 4 attribute types (`charPrIDRef`, `paraPrIDRef`, `borderFillIDRef`, `styleIDRef`) at lines 304-320
+  ✅ Full transplant verification suite passes: 27 tests across 5 files (`tests/test_zip_surgery_metadata.py`, `tests/test_chapter_detection.py`, `tests/test_style_remap.py`, `tests/test_transplant_assembly.py`, `tests/test_transplant_e2e.py`)
+
+Must NOT Have [2/2]:
+  ✅ Previous `borderFillIDRef/styleIDRef` failure is cleared: non-zero `borderFillIDRef` mappings now exist at lines 286-292, and all 4 attrs are remapped at lines 304-320
+  ✅ No in-scope overwrite regression exists: `transplant_sections()` requires `output_path` and raises `ValueError` when `dry_run=False` and `output_path is None` (lines 440-441); `zip_surgery.py save(output_path=None)` is pre-existing API behavior (`save()` at lines 489-491) and was not introduced by commit `d21ef52`
+
+Deliverables [2/2]:
+  ✅ plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py
+  ✅ plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py
+
+Tests [5/5 pass]:
+  ✅ tests/test_zip_surgery_metadata.py
+  ✅ tests/test_chapter_detection.py
+  ✅ tests/test_style_remap.py
+  ✅ tests/test_transplant_assembly.py
+  ✅ tests/test_transplant_e2e.py
+
+VERDICT: APPROVE
+
+Evidence notes:
+- `git log --oneline --follow -- plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` shows `zip_surgery.py` history as `523a949` (section_transplant feature), `d21ef52` (ZipInfo metadata preservation), `5a86dc8` (initial ZIP surgery feature).
+- `git show --stat d21ef52` touches only `zip_surgery.py` and `tests/test_zip_surgery_metadata.py`.
+- `git show --unified=0 d21ef52 -- plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` shows only ZipEntry metadata/read/write changes; no `save()` diff.

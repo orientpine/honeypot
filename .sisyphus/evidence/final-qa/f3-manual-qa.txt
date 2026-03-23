@@ -1,0 +1,64 @@
+F3 — Real Manual QA Evidence
+=============================
+Date: 2026-03-23
+Executor: Sisyphus-Junior (claude-opus-4-6)
+
+Scenarios [9/9 pass]:
+  ✅ T1: ZIP round-trip — "Mismatches: None" (external_attr + create_system preserved)
+  ✅ T2: Test fixtures — 5 collected in test_chapter_detection.py
+  ✅ T3: Chapter detection — 5/5 passed (H1 headings, boundaries, empty chapter, preamble, nested hp:p)
+  ✅ T4: Style map extraction — 2/2 passed (char styles extracted, ID 0 excluded from remapping)
+  ✅ T5: Attribute-scoped remapping — charPrIDRef 45→48, paraPrIDRef 34→38, text "45명의 연구원" preserved
+  ✅ T6: Full transplant — 5/5 passed (basic, source text, non-transplanted preserved, dry-run, missing chapter)
+  ✅ T7: CLI dry-run — exit 0 with mapping table; missing --output → exit 2 with usage error
+  ✅ T8: E2E test suite — 7/7 passed (full transplant, non-target, remap IDs, ZIP metadata, dry-run, missing chapter, image warning)
+  ✅ T9: Version sync — plugin.json=3.11.0, marketplace hwpx=3.11.0, meta=3.20.0, AGENTS.md has section_transplant entries (3 lines)
+
+Integration [2/2]:
+  ✅ All 24 transplant tests pass together (pytest collected 24, 24 passed in 0.07s)
+     Breakdown: 5 chapter_detection + 7 style_remap + 5 transplant_assembly + 7 transplant_e2e
+  ✅ CLI works end-to-end (--dry-run prints mapping table, missing --output rejects with exit 2)
+
+Edge Cases [4 tested]:
+  ✅ ID "0" not remapped — test_id_zero_excluded_from_remapping PASSED, test_remap_id_zero_not_changed PASSED
+  ✅ Missing chapter warning — test_transplant_missing_chapter_warns PASSED, test_missing_chapter_warning PASSED
+  ✅ hp:pic warning — test_image_reference_warning PASSED
+  ✅ dry_run no output — test_transplant_dry_run_no_output PASSED, test_dry_run_no_output PASSED
+
+Raw Test Output Summary:
+========================
+
+T1 ZIP round-trip:
+  Mismatches: None
+
+T2+T3 Chapter detection (--collect-only + -v):
+  5 collected, 5 passed
+
+T4 Style remap:
+  test_parse_header_styles_extracts_char_styles PASSED
+  test_id_zero_excluded_from_remapping PASSED
+
+T5 Attribute-scoped remapping:
+  Result: <hp:p paraPrIDRef="38"><hp:run charPrIDRef="48"><hp:t>45명의 연구원</hp:t></hp:run></hp:p>
+  PASS: attribute-scoped remapping works, text preserved
+
+T6 Transplant assembly:
+  5/5 passed
+
+T7 CLI:
+  --dry-run: Printed style mapping table + chapter ranges, exit 0
+  No --output: "error: --output is required unless --dry-run is specified", exit 2
+
+T8 E2E:
+  7/7 passed
+
+T9 Version sync:
+  plugin.json: "version": "3.11.0"
+  marketplace hwpx: 3.11.0
+  marketplace meta: 3.20.0
+  AGENTS.md: 3 references to section_transplant (WHERE TO LOOK table, COMMANDS section x2)
+
+Combined run (all transplant tests):
+  24 collected, 24 passed in 0.07s
+
+VERDICT: APPROVE

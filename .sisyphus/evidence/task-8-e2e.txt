@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 7 items
+
+tests/test_transplant_e2e.py::test_full_transplant_synthetic PASSED      [ 14%]
+tests/test_transplant_e2e.py::test_transplant_preserves_non_target PASSED [ 28%]
+tests/test_transplant_e2e.py::test_transplant_remaps_all_ids PASSED      [ 42%]
+tests/test_transplant_e2e.py::test_zip_metadata_preserved PASSED         [ 57%]
+tests/test_transplant_e2e.py::test_dry_run_no_output PASSED              [ 71%]
+tests/test_transplant_e2e.py::test_missing_chapter_warning PASSED        [ 85%]
+tests/test_transplant_e2e.py::test_image_reference_warning PASSED        [100%]
+
+============================== 7 passed in 0.04s ===============================

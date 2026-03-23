@@ -1,0 +1,30 @@
+=== Must Have Checks ===
+indent_level in md_parser.py: 4
+HWPUNIT_PER_LEVEL in xml_writer.py: 2
+build_numbered in xml_writer.py: 2
+md_merger.py: EXISTS
+md_merger in SKILL.md: 3
+indent_level in SKILL.md: 1
+md_merger in hwpx-builder.md: 2
+md_merger in hwpx-generate.md: 1
+bullet_level in analyze_template.py: 9
+plugin.json version:   "version": "3.10.0",
+
+=== Must NOT Have Checks ===
+lxml imports:
+CLEAN
+ElementTree imports:
+CLEAN
+cell_writer.py recent history:
+0ee013f feat(hwpx-generator): add cell_writer for linesegarray generation
+build_hwpx.py recent history:
+8fb92a5 feat(hwpx-generator): integrate cell_writer into build pipeline
+0340574 fix(hwpx-generator): strip stale linesegarray elements to prevent 'tampered' warning
+5d13a21 feat(hwpx-generator): add unified HWPX plugin replacing hwpx-converter
+magic number 800 outside constant:
+CLEAN
+
+=== Summary ===
+Must Have Score: 10/10
+Must NOT Have Score: 4/4
+Evidence Files: 66

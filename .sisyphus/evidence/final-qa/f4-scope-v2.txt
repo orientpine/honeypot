@@ -1,0 +1,15 @@
+Tasks [9/9 compliant]:
+  ✅ T1: BorderFillStyle dataclass exists in section_transplant.py
+  ✅ T2: parse_header_styles() extracts hh:borderFill (fillColor + border type) into border_fill_styles
+  ✅ T3: Dual validation logic matches plan intent (H1 by max fontSize/charPrIDRef; text regex only for chapter_num extraction, non-numeric H1 -> chapter_num=0)
+  ✅ T4: Full required test suite passes (24 passed)
+  ✅ T5: No forbidden patterns found (no import lxml/xml.etree, no numeric string replace pattern)
+  ✅ T6: Fix commit dab7788 scope is limited to section_transplant.py
+  ✅ T7: .sisyphus evidence/notepad inclusion is expected by plan context (not a contamination defect)
+  ✅ T8: LSP diagnostics for section_transplant.py reports no errors
+  ✅ T9: Final scope fidelity re-run completed with requested checks
+
+Contamination [CLEAN]:
+  - No scope contamination detected for dab7788 fix verification.
+
+VERDICT: APPROVE
