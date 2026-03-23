@@ -18,8 +18,11 @@ import sys
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable
 
 _ = (sys, warnings, field, Path)
+
+StyleIdMapping = dict[str, dict[str, str]]
 
 
 @dataclass
@@ -237,3 +240,45 @@ def build_style_mapping(
             mapping["paraPrIDRef"][sid] = sid
 
     return mapping
+
+
+_SECPR_TAG = "<hp:secPr"
+_PIC_TAG = "<hp:pic"
+
+
+def remap_style_ids(paragraph_xml: str, mapping: StyleIdMapping) -> str:
+    result = paragraph_xml
+
+    for attr in ("charPrIDRef", "paraPrIDRef", "borderFillIDRef", "styleIDRef"):
+        attr_map = mapping.get(attr, {})
+        if not attr_map:
+            continue
+
+        def _make_sub(m: dict[str, str]) -> Callable[[re.Match[str]], str]:
+            def _sub(match: re.Match[str]) -> str:
+                src_id = match.group(2)
+                if src_id == "0":
+                    return match.group(0)
+                target_id = m.get(src_id, src_id)
+                return f"{match.group(1)}{target_id}{match.group(3)}"
+
+            return _sub
+
+        pattern = re.compile(rf'({re.escape(attr)}=")(\d+)(")')
+        result = pattern.sub(_make_sub(attr_map), result)
+
+    return result
+
+
+def remap_chapters(chapters_xml: list[str], mapping: StyleIdMapping) -> list[str]:
+    result: list[str] = []
+    for para in chapters_xml:
+        if _SECPR_TAG in para:
+            continue
+        if _PIC_TAG in para:
+            warnings.warn(
+                "hp:pic found in transplanted chapter — image binary data is NOT transplanted; image reference may be broken.",
+                stacklevel=2,
+            )
+        result.append(remap_style_ids(para, mapping))
+    return result
