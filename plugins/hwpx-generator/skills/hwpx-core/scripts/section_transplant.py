@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import re
 import sys
+import importlib
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -282,3 +283,123 @@ def remap_chapters(chapters_xml: list[str], mapping: StyleIdMapping) -> list[str
             )
         result.append(remap_style_ids(para, mapping))
     return result
+
+
+def _import_zip_surgery():
+    try:
+        from . import zip_surgery as _zs  # type: ignore[reportRelativeImportUsage]
+
+        return _zs
+    except ImportError:
+        _scripts_dir = Path(__file__).parent
+        if str(_scripts_dir) not in sys.path:
+            sys.path.insert(0, str(_scripts_dir))
+        _zs = importlib.import_module("zip_surgery")
+
+        return _zs
+
+
+def transplant_sections(
+    source_hwpx: str | Path,
+    target_hwpx: str | Path,
+    chapter_nums: list[int],
+    output_path: str | Path | None = None,
+    style_map: StyleIdMapping | None = None,
+    dry_run: bool = False,
+) -> dict[str, object]:
+    zs = _import_zip_surgery()
+
+    source_hwpx = Path(source_hwpx)
+    target_hwpx = Path(target_hwpx)
+
+    source_entries, _source_order = zs.read_zip(source_hwpx)
+    target_entries, target_order = zs.read_zip(target_hwpx)
+
+    source_map = {e.filename: e for e in source_entries}
+    target_map = {e.filename: e for e in target_entries}
+
+    src_section = source_map["Contents/section0.xml"].data
+    tgt_section = target_map["Contents/section0.xml"].data
+    src_header = source_map.get("Contents/header.xml")
+    tgt_header = target_map.get("Contents/header.xml")
+
+    src_header_bytes = src_header.data if src_header else b""
+    tgt_header_bytes = tgt_header.data if tgt_header else b""
+
+    src_parts = zs.parse_section(src_section)
+    tgt_parts = zs.parse_section(tgt_section)
+    src_children = zs.extract_children(src_parts.body)
+    tgt_children = zs.extract_children(tgt_parts.body)
+
+    src_headings = detect_headings(src_children, src_header_bytes)
+    tgt_headings = detect_headings(tgt_children, tgt_header_bytes)
+    src_ranges = extract_chapter_ranges(src_children, src_headings)
+    tgt_ranges = extract_chapter_ranges(tgt_children, tgt_headings)
+
+    if style_map is None:
+        if src_header_bytes and tgt_header_bytes:
+            src_styles = parse_header_styles(src_header_bytes)
+            tgt_styles = parse_header_styles(tgt_header_bytes)
+            style_map = build_style_mapping(src_styles, tgt_styles)
+        else:
+            style_map = {
+                "charPrIDRef": {"0": "0"},
+                "paraPrIDRef": {"0": "0"},
+                "borderFillIDRef": {"0": "0"},
+                "styleIDRef": {"0": "0"},
+            }
+
+    if dry_run:
+        return {
+            "mapping": style_map,
+            "source_ranges": src_ranges,
+            "target_ranges": tgt_ranges,
+            "output_path": None,
+        }
+
+    new_tgt_children = list(tgt_children)
+
+    for ch_num in chapter_nums:
+        if ch_num not in src_ranges:
+            warnings.warn(
+                f"Chapter {ch_num} not found in source — skipping", stacklevel=2
+            )
+            continue
+        if ch_num not in tgt_ranges:
+            warnings.warn(
+                f"Chapter {ch_num} not found in target — cannot replace, appending",
+                stacklevel=2,
+            )
+            src_start, src_end = src_ranges[ch_num]
+            src_chapter = src_children[src_start : src_end + 1]
+            remapped = remap_chapters(src_chapter, style_map)
+            new_tgt_children.extend(remapped)
+            continue
+
+        src_start, src_end = src_ranges[ch_num]
+        tgt_start, tgt_end = tgt_ranges[ch_num]
+
+        src_chapter = src_children[src_start : src_end + 1]
+        remapped = remap_chapters(src_chapter, style_map)
+
+        new_tgt_children[tgt_start : tgt_end + 1] = remapped
+
+    new_section_bytes = zs.assemble_section(tgt_parts, new_tgt_children)
+
+    if output_path is None:
+        raise ValueError("output_path is required when dry_run=False")
+
+    output_path = Path(output_path)
+    zs.write_zip(
+        output_path,
+        target_entries,
+        target_order,
+        modified={"Contents/section0.xml": new_section_bytes},
+    )
+
+    return {
+        "mapping": style_map,
+        "source_ranges": src_ranges,
+        "target_ranges": tgt_ranges,
+        "output_path": output_path,
+    }
