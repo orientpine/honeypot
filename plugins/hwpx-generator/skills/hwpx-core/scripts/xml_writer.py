@@ -14,6 +14,9 @@ import re
 import sys
 from pathlib import Path
 
+
+HWPUNIT_PER_LEVEL = 800  # 1mm ≈ 283.46 HWPUNIT; indent step per bullet level
+
 try:
     from PIL import Image
 except Exception:  # pragma: no cover - graceful fallback when Pillow is unavailable
@@ -244,6 +247,48 @@ def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
         selected_style = styles["bullet"]
 
     bullet_style = dict(selected_style)
+
+    indent_level_raw = block.get("indent_level")
+    indent_level: int | None = None
+    if indent_level_raw is None and "bullet_level_0" in styles:
+        indent_level = 0
+    elif indent_level_raw is not None:
+        try:
+            indent_level = int(indent_level_raw)
+        except (TypeError, ValueError):
+            indent_level = 0
+
+    if indent_level is not None:
+        if indent_level < 0:
+            indent_level = 0
+        level_key = f"bullet_level_{indent_level}"
+        level_style = styles.get(level_key)
+        if isinstance(level_style, dict):
+            bullet_style.update(level_style)
+        else:
+            max_level = -1
+            for key in styles:
+                m = re.fullmatch(r"bullet_level_(\d+)", str(key))
+                if m is None:
+                    continue
+                try:
+                    n = int(m.group(1))
+                except (TypeError, ValueError):
+                    continue
+                if n > max_level:
+                    max_level = n
+
+            if max_level >= 0:
+                max_style = styles.get(f"bullet_level_{max_level}", {})
+                if isinstance(max_style, dict):
+                    bullet_style.update(max_style)
+                    base_left = int(
+                        max_style.get("left_margin", bullet_style.get("left_margin", 0))
+                    )
+                    bullet_style["left_margin"] = (
+                        base_left + (indent_level - max_level) * HWPUNIT_PER_LEVEL
+                    )
+
     for key in ("paraPrIDRef", "charPrIDRef", "left_margin", "indent"):
         if key in block and block[key] is not None:
             bullet_style[key] = block[key]
@@ -276,6 +321,36 @@ def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
         include_hanging_indent=True,
         left_margin=int(bullet_style.get("left_margin", 0)),
         indent=int(bullet_style.get("indent", 0)),
+    )
+
+
+def build_numbered(block: dict, ids: IdGenerator, styles: dict) -> str:
+    """Build HWPX paragraph XML for a numbered_item block."""
+    style = styles.get("bullet_level_0")
+    if not isinstance(style, dict):
+        style = styles.get("body", {"paraPrIDRef": "0", "charPrIDRef": "0"})
+
+    number = str(block.get("number") or "1")
+    marker = f"{number}."
+    content_segments = normalize_segments(block)
+    stripped_segments = [dict(seg) for seg in content_segments]
+    for seg in stripped_segments:
+        seg_text = str(seg.get("text", ""))
+        if seg_text.strip() == "":
+            continue
+        seg["text"] = strip_bullet_prefix(seg_text)
+        break
+
+    full_segments: list[dict] = [{"type": "plain", "text": marker}] + stripped_segments
+    return paragraph_from_segments(
+        pid=ids.next_paragraph_id(),
+        para_pr_id=str(style.get("paraPrIDRef", "0")),
+        default_char_pr_id=str(style.get("charPrIDRef", "0")),
+        bold_char_pr_id=str(styles["bold"]["charPrIDRef"]),
+        segments=full_segments,
+        include_hanging_indent=True,
+        left_margin=int(style.get("left_margin", 0)),
+        indent=int(style.get("indent", 0)),
     )
 
 
@@ -489,6 +564,8 @@ def build_fragment(parsed: dict, styles: dict, wrap_section: bool = False) -> st
             out.append(build_paragraph(block, ids, styles))
         elif btype == "bullet":
             out.append(build_bullet(block, ids, styles))
+        elif btype == "numbered_item":
+            out.append(build_numbered(block, ids, styles))
         elif btype == "table":
             out.append(build_table(block, ids, styles))
         elif btype == "image_ref":

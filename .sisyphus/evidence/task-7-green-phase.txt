@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 12 items
+
+tests/test_xml_writer_indent.py::test_indent_level_0_uses_bullet_level_0_parapr_idref PASSED [  8%]
+tests/test_xml_writer_indent.py::test_indent_level_1_left_margin_is_larger_than_level_0 PASSED [ 16%]
+tests/test_xml_writer_indent.py::test_indent_level_2_left_margin_is_larger_than_level_1 PASSED [ 25%]
+tests/test_xml_writer_indent.py::test_indent_level_3_fallback_uses_level_2_plus_hwpunit_per_level PASSED [ 33%]
+tests/test_xml_writer_indent.py::test_numbered_item_uses_build_numbered_and_emits_number_marker PASSED [ 41%]
+tests/test_xml_writer_indent.py::test_backward_compat_bullet_without_indent_level_behaves_like_level_0 PASSED [ 50%]
+tests/test_xml_writer_indent.py::test_backward_compat_existing_bullet_dict_without_indent_level_no_crash PASSED [ 58%]
+tests/test_xml_writer_indent.py::test_bullet_level_0_style_config_values_are_reflected_in_xml PASSED [ 66%]
+tests/test_xml_writer_bullets.py::test_bullet_auto_strips_leading_bullet_prefix PASSED [ 75%]
+tests/test_xml_writer_bullets.py::test_bullet_prefix_always_stripped_even_when_not_auto PASSED [ 83%]
+tests/test_xml_writer_bullets.py::test_bullet_no_double_marker_korean_text PASSED [ 91%]
+tests/test_xml_writer_bullets.py::test_bullet_clean_content_not_stripped PASSED [100%]
+
+============================== 12 passed in 0.03s ==============================

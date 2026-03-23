@@ -20,7 +20,7 @@ import argparse
 import json
 import warnings
 from collections import Counter, defaultdict
-import lxml.etree as etree
+import xml.etree.ElementTree as etree
 
 NS = {
     "hp": "http://www.hancom.co.kr/hwpml/2011/paragraph",
@@ -404,6 +404,8 @@ def extract_style_map(header_root, section_root):
         except (TypeError, ValueError):
             return default
 
+    HWPUNIT_PER_LEVEL = 800
+
     # --- Step 1: Parse charPr definitions from header.xml ---
     charpr_map = {}  # id -> {"fontSize_hu": int, "bold": bool, "textColor": str|None}
 
@@ -469,6 +471,7 @@ def extract_style_map(header_root, section_root):
         parapr_map[pid] = {"left_margin": left_margin, "indent": indent}
 
     bullet_auto_ids = sorted(pid for pid in set(bullet_auto_ids) if pid >= 0)
+    bullet_auto_id_set = {str(pid) for pid in bullet_auto_ids}
 
     style_defs = []
     for st in header_root.findall(".//hh:style", NS):
@@ -550,6 +553,7 @@ def extract_style_map(header_root, section_root):
 
     body_pairs = []  # [(charPrIDRef, paraPrIDRef), ...]
     bullet_pairs = []  # [(charPrIDRef, paraPrIDRef), ...]
+    bullet_auto_pairs = []  # [(charPrIDRef, paraPrIDRef), ...]
     heading_entries = []  # [{"fontSize_hu", "charPrIDRef", "paraPrIDRef"}, ...]
     tbl_header_entries = []
     tbl_cell_entries = []
@@ -617,6 +621,8 @@ def extract_style_map(header_root, section_root):
             body_pairs.append((cpr, ppr))
             if txt and any(c in txt for c in BULLET_CHARS):
                 bullet_pairs.append((cpr, ppr))
+            if ppr in bullet_auto_id_set:
+                bullet_auto_pairs.append((cpr, ppr))
             if cpr in charpr_map and charpr_map[cpr]["fontSize_hu"] > 1200:
                 heading_entries.append(
                     {
@@ -835,6 +841,56 @@ def extract_style_map(header_root, section_root):
             },
             "fallback",
         )
+
+    bullet_level_candidates = Counter(bullet_pairs + bullet_auto_pairs)
+    margin_to_best = {}
+    for (cpr, ppr), count in bullet_level_candidates.items():
+        pi = parapr_map.get(ppr, {"left_margin": 0, "indent": 0})
+        left_margin = pi.get("left_margin", 0)
+        prev = margin_to_best.get(left_margin)
+        if prev is None or count > prev["count"]:
+            margin_to_best[left_margin] = {
+                "paraPrIDRef": ppr,
+                "charPrIDRef": cpr,
+                "left_margin": left_margin,
+                "count": count,
+            }
+
+    bullet_base = result.get("bullet", {})
+    if margin_to_best:
+        bullet_levels = [margin_to_best[m] for m in sorted(margin_to_best.keys())]
+    else:
+        base_margin = _safe_int(bullet_base.get("left_margin", 0), 0)
+        bullet_levels = [
+            {
+                "paraPrIDRef": bullet_base.get("paraPrIDRef", "0"),
+                "charPrIDRef": bullet_base.get(
+                    "charPrIDRef", result.get("body", {}).get("charPrIDRef", "0")
+                ),
+                "left_margin": base_margin,
+                "count": 0,
+            }
+        ]
+
+    while len(bullet_levels) < 2:
+        prev = bullet_levels[-1]
+        bullet_levels.append(
+            {
+                "paraPrIDRef": prev["paraPrIDRef"],
+                "charPrIDRef": prev["charPrIDRef"],
+                "left_margin": prev["left_margin"] + HWPUNIT_PER_LEVEL,
+                "count": 0,
+            }
+        )
+
+    bullet_confidence = bullet_base.get("confidence", "estimated")
+    for idx, level in enumerate(bullet_levels):
+        result[f"bullet_level_{idx}"] = {
+            "paraPrIDRef": level["paraPrIDRef"],
+            "charPrIDRef": level["charPrIDRef"],
+            "left_margin": level["left_margin"],
+            "confidence": bullet_confidence,
+        }
 
     # Table header: first row of tables
     if tbl_header_entries:

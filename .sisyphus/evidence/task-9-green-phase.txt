@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 10 items
+
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_0_key PASSED [ 10%]
+tests/test_analyze_indent.py::test_extract_style_map_has_bullet_level_1_key PASSED [ 20%]
+tests/test_analyze_indent.py::test_bullet_levels_have_left_margin_and_increase PASSED [ 30%]
+tests/test_analyze_indent.py::test_bullet_levels_have_paraPrIDRef PASSED [ 40%]
+tests/test_analyze_indent.py::test_existing_keys_preserved_and_detects_at_least_two_bullet_levels PASSED [ 50%]
+tests/test_analyze_template.py::test_extract_style_map_detects_image_caption_and_bullet_auto PASSED [ 60%]
+tests/test_analyze_template.py::test_extract_style_map_uses_name_based_fallback PASSED [ 70%]
+tests/test_analyze_template.py::test_body_excludes_bold_and_colored PASSED [ 80%]
+tests/test_analyze_template.py::test_border_fill_excludes_colored_background PASSED [ 90%]
+tests/test_analyze_template.py::test_cascading_fallback_all_bold PASSED  [100%]
+
+=============================== warnings summary ===============================
+plugins/hwpx-generator/skills/hwpx-core/tests/test_analyze_template.py::test_cascading_fallback_all_bold
+  Warning: All body charPr candidates are bold - using most common
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 10 passed, 1 warning in 0.35s =========================

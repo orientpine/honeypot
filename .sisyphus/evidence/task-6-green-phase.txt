@@ -1,0 +1,29 @@
+Task 6 GREEN phase evidence
+Date: 2026-03-23
+
+Working dir:
+/home/cha/Documents/honeypot/plugins/hwpx-generator/skills/hwpx-core
+
+Command:
+python3 -m pytest tests/test_md_parser_indent.py -v
+Result:
+- collected 9 items
+- 9 passed
+
+Command:
+python3 -m pytest tests/test_md_parser_numbered.py -v
+Result:
+- collected 7 items
+- 7 passed
+
+Command:
+python3 -m pytest tests/test_md_parser_complex.py -v
+Result:
+- collected 10 items
+- 10 passed
+
+Combined verification command:
+python3 -m pytest tests/test_md_parser_indent.py tests/test_md_parser_numbered.py tests/test_md_parser_complex.py -v
+Result:
+- collected 26 items
+- 26 passed
