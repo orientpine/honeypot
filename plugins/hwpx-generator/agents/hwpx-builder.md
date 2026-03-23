@@ -1,7 +1,7 @@
 ---
 name: hwpx-builder
 description: "HWPX document creation specialist that selects the right generation path and executes a validated build pipeline. Use PROACTIVELY when creating HWPX documents from user requests or templates."
-model: sonnet
+model: opus
 ---
 
 # HWPX Builder Agent
