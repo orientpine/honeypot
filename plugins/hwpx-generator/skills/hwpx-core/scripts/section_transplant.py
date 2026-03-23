@@ -138,15 +138,23 @@ class ParaStyle:
 
 
 @dataclass
+class BorderFillStyle:
+    id: str
+    fill_color: str = ""
+    border_style: str = ""
+
+
+@dataclass
 class StyleMap:
     """Extracted style definitions from header.xml."""
 
     char_styles: dict[str, CharStyle]
     para_styles: dict[str, ParaStyle]
+    border_fill_styles: dict[str, BorderFillStyle] = field(default_factory=dict)
 
 
 def parse_header_styles(header_bytes: bytes) -> StyleMap:
-    """Extract charPr and paraPr definitions from header.xml bytes.
+    """Extract charPr, paraPr, and borderFill definitions from header.xml bytes.
 
     Uses regex only — no XML parser.
     """
@@ -181,7 +189,32 @@ def parse_header_styles(header_bytes: bytes) -> StyleMap:
         align = align_match.group(1) if align_match else "JUSTIFY"
         para_styles[pid] = ParaStyle(id=pid, align=align)
 
-    return StyleMap(char_styles=char_styles, para_styles=para_styles)
+    border_fill_styles: dict[str, BorderFillStyle] = {}
+
+    borderfill_pattern = re.compile(
+        r'<hh:borderFill\s+id="(\d+)"[^>]*>(.*?)</hh:borderFill>', re.DOTALL
+    )
+    fill_color_pattern = re.compile(r'<hh:fillColor[^>]*\svalue="([^"]+)"')
+    border_style_pattern = re.compile(r'<hh:border[^>]*\stype="([^"]+)"')
+
+    for match in borderfill_pattern.finditer(text):
+        bid = match.group(1)
+        block = match.group(2)
+        fill_color_match = fill_color_pattern.search(block)
+        border_style_match = border_style_pattern.search(block)
+        fill_color = fill_color_match.group(1) if fill_color_match else ""
+        border_style = border_style_match.group(1) if border_style_match else ""
+        border_fill_styles[bid] = BorderFillStyle(
+            id=bid,
+            fill_color=fill_color,
+            border_style=border_style,
+        )
+
+    return StyleMap(
+        char_styles=char_styles,
+        para_styles=para_styles,
+        border_fill_styles=border_fill_styles,
+    )
 
 
 def build_style_mapping(
@@ -240,6 +273,24 @@ def build_style_mapping(
             )
             mapping["paraPrIDRef"][sid] = sid
 
+    target_bf_by_attrs: dict[tuple[str, str], str] = {}
+    for tid, target_style in target_styles.border_fill_styles.items():
+        key = (target_style.fill_color, target_style.border_style)
+        target_bf_by_attrs.setdefault(key, tid)
+
+    for sid, source_style in source_styles.border_fill_styles.items():
+        if sid == "0":
+            continue
+        key = (source_style.fill_color, source_style.border_style)
+        if key in target_bf_by_attrs:
+            mapping["borderFillIDRef"][sid] = target_bf_by_attrs[key]
+        else:
+            warnings.warn(
+                f"borderFill id={sid} (fill={source_style.fill_color}, border={source_style.border_style}) has no match in target — keeping original ID",
+                stacklevel=2,
+            )
+            mapping["borderFillIDRef"][sid] = sid
+
     return mapping
 
 
@@ -286,17 +337,17 @@ def remap_chapters(chapters_xml: list[str], mapping: StyleIdMapping) -> list[str
 
 
 def _import_zip_surgery():
-    try:
-        from . import zip_surgery as _zs  # type: ignore[reportRelativeImportUsage]
+    package = __package__
+    if package:
+        try:
+            return importlib.import_module(f"{package}.zip_surgery")
+        except ImportError:
+            pass
 
-        return _zs
-    except ImportError:
-        _scripts_dir = Path(__file__).parent
-        if str(_scripts_dir) not in sys.path:
-            sys.path.insert(0, str(_scripts_dir))
-        _zs = importlib.import_module("zip_surgery")
-
-        return _zs
+    _scripts_dir = Path(__file__).parent
+    if str(_scripts_dir) not in sys.path:
+        sys.path.insert(0, str(_scripts_dir))
+    return importlib.import_module("zip_surgery")
 
 
 def transplant_sections(
@@ -416,11 +467,13 @@ def _parse_chapter_list(s: str) -> list[int]:
         return [int(x.strip()) for x in s.split(",") if x.strip()]
     except ValueError as e:
         import argparse
+
         raise argparse.ArgumentTypeError(f"Invalid chapter list: {s}") from e
 
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(
         description="HWPX Section Transplant — transplant chapters between HWPX files",
     )
@@ -455,6 +508,7 @@ def main() -> None:
     style_map = None
     if args.style_map:
         import json
+
         style_map = json.loads(Path(args.style_map).read_text())
 
     result = transplant_sections(
@@ -468,6 +522,7 @@ def main() -> None:
 
     if args.dry_run:
         import json
+
         print("=== DRY RUN: Style Mapping Table ===")
         print(json.dumps(result["mapping"], indent=2, ensure_ascii=False))
         print("\n=== Source Chapter Ranges ===")
