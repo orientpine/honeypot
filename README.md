@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.20.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.21.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -955,6 +955,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.21.0 | 2026-03-25 | visual-generator v3.4.0: JPEG 원본 직접 저장 — SDK 호환성 버그 수정(part.as_image() → inline_data.data 직접 사용), PNG 불필요 변환 제거로 파일 크기 47% 절감, RGBA 안전 변환 추가 |
 | 3.20.0 | 2026-03-23 | hwpx-generator v3.11.0: section_transplant.py 추가 — HWPX 챕터 이식 CLI + HwpxSurgeon.transplant_from(), zip_surgery.py ZipInfo 메타데이터 전체 보존 P0 수정 |
 | 3.19.0 | 2026-03-23 | hwpx-generator v3.10.0: MD 문서 구조(Indent) 보존 — md_parser.py indent_level 감지, xml_writer.py level→style 매평 + build_numbered(), analyze_template.py indent 스타일 추출, md_merger.py 다중 MD 병합 |
 | 3.18.0 | 2026-03-22 | hwpx-generator v3.9.0: 캡션 emit — 이미지 placeholder 뒤 캡션 문단 자동 생성(xml_writer.py), validate.py 캡션 개수 검증 추가 |
