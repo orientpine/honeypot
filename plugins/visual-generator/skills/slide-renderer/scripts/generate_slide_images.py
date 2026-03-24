@@ -13,7 +13,7 @@ Gemini API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 �
     - 고급 텍스트 렌더링: 활성화
 
 입력: slide-prompt-generator로 생성된 슬라이드 프롬프트 (.md)
-출력: 정부/공공기관 발표용 고해상도 슬라이드 이미지 (.png)
+출력: 정부/공공기관 발표용 고해상도 슬라이드 이미지 (.jpg)
 """
 
 import os
@@ -21,6 +21,7 @@ import sys
 import time
 import json
 import re
+import io
 import shutil
 import argparse
 from pathlib import Path
@@ -112,21 +113,24 @@ def generate_image(
                         if part.text:
                             print(f"  [사고 과정] {part.text[:100]}...")
 
-                # 이미지 저장 (Gemini가 JPEG을 반환할 수 있으므로 PNG로 명시적 변환)
+                # 이미지 저장 (원본 포맷 직접 저장)
                 for part in response.parts:
                     if part.inline_data is not None:
                         source_mime = getattr(
                             part.inline_data, "mime_type", "unknown"
                         )
-                        image = part.as_image()
-                        # CMYK/P 모드는 PNG 비호환 → RGB 변환
-                        if image.mode not in ("RGB", "RGBA", "L"):
-                            image = image.convert("RGB")
-                        image.save(save_path, format="PNG")
-                        if source_mime != "image/png":
-                            print(
-                                f"  [변환] {source_mime} → PNG"
-                            )
+                        if source_mime == "image/jpeg":
+                            # JPEG 원본 바이트 직접 저장 (디코딩/재인코딩 없음)
+                            with open(save_path, "wb") as img_f:
+                                img_f.write(part.inline_data.data)
+                            print(f"  [저장] JPEG 원본 직접 저장")
+                        else:
+                            # JPEG이 아닌 경우만 PIL 경유 변환
+                            pil_image = PILImage.open(io.BytesIO(part.inline_data.data))
+                            if pil_image.mode != "RGB":
+                                pil_image = pil_image.convert("RGB")
+                            pil_image.save(save_path, format="JPEG", quality=95)
+                            print(f"  [변환] {source_mime} → JPEG")
                         return True
 
                 print(
@@ -149,7 +153,7 @@ def generate_image(
         candidate_output_path = output_path
         if total_quality_attempts > 1:
             candidate_output_path = (
-                f"{output_path}.quality_attempt_{quality_attempt + 1}.png"
+                f"{output_path}.quality_attempt_{quality_attempt + 1}.jpg"
             )
 
         if not _request_image(current_prompt, candidate_output_path):
@@ -208,7 +212,7 @@ def generate_image(
         print(f"[품질 평가] 기준 미달, 최고 점수 이미지 채택 (평균 {best_score:.1f})")
 
     for cleanup_attempt in range(total_quality_attempts):
-        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.png")
+        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.jpg")
         if temp_path.exists():
             temp_path.unlink()
 
@@ -394,7 +398,7 @@ def process_prompts(prompts_dir: str, output_dir: str) -> dict:
     for i, prompt_file in enumerate(prompt_files, 1):
         # 파일명에서 슬라이드명 추출 (01_연구비전_최종목표.md -> 01_연구비전_최종목표)
         slide_name = prompt_file.stem
-        output_file = output_path / f"{slide_name}.png"
+        output_file = output_path / f"{slide_name}.jpg"
 
         print(f"[{i}/{len(prompt_files)}] {slide_name}")
 

@@ -259,8 +259,8 @@ done || echo "PASS"
 
 ```
 {output_path}/
-├── 01_비전_다이어그램.png       # 렌더링된 이미지
-├── 02_기술_스펙.png
+├── 01_비전_다이어그램.jpg       # 렌더링된 이미지
+├── 02_기술_스펙.jpg
 ├── ...
 └── generation_report.md         # 생성 보고서
 ```
@@ -286,8 +286,8 @@ done || echo "PASS"
 | 스킵 (기존) | {skipped} |
 
 ## 성공 목록
-- 01_비전_다이어그램.png
-- 02_기술_스펙.png
+- 01_비전_다이어그램.jpg
+- 02_기술_스펙.jpg
 - ...
 
 ## 실패 목록
@@ -353,7 +353,7 @@ Task(
 
 ```bash
 # 특정 이미지 삭제
-rm ./output/visuals/images/03_기술_스펙.png
+rm ./output/visuals/images/03_기술_스펙.jpg
 
 # 재실행 (삭제된 파일만 재생성)
 renderer-agent 에이전트로 이미지를 생성해줘.

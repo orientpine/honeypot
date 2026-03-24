@@ -5,7 +5,7 @@ description: "Gemini API를 사용한 슬라이드 이미지 렌더링 스킬. r
 
 # Slide Renderer
 
-Gemini API를 사용하여 프롬프트 파일(.md)을 4K 16:9 PNG 이미지로 변환하는 스크립트 실행 가이드.
+Gemini API를 사용하여 프롬프트 파일(.md)을 4K 16:9 JPEG 이미지로 변환하는 스크립트 실행 가이드.
 
 ## 스크립트 참조 및 실행 (CRITICAL)
 
@@ -43,7 +43,7 @@ Glob: **/generate_slide_images.py
 | 패키지 | google-genai, Pillow |
 | 환경변수 | `GEMINI_API_KEY` 필수 |
 | 모델 | gemini-3-pro-image-preview |
-| 출력 | 4K, 16:9 비율 PNG |
+| 출력 | 4K, 16:9 비율 JPEG |
 
 ## 스크립트 출력 해석
 
