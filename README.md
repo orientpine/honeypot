@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.21.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.22.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -50,6 +50,7 @@
 | 도구 | [**worktree-workflow**](#worktree-workflow) | Git worktree 기반 병렬 실행 |
 | 도구 | [**general-agents**](#general-agents) | 범용 에이전트 (심층 인터뷰 등) |
 | 도구 | [**obsidian-skills**](#obsidian-skills) | Obsidian vault 파일 작성 — Markdown, Bases, Canvas, CLI, Defuddle |
+| 학습 | [**accelerated-learner**](#accelerated-learner) | 48시간 가속 학습 — 소스 분석, 멘탈모델, 논쟁 매핑, 소크라틱 튜터링 |
 
 ---
 
@@ -782,6 +783,46 @@ Obsidian vault에서 작업할 때 자동 활성화됩니다. wikilinks, callout
 | 구성 | 항목 |
 |------|------|
 | Skills | obsidian-markdown, obsidian-bases, json-canvas, obsidian-cli, defuddle (5개 스킬) |
+
+---
+
+## accelerated-learner
+
+> 48시간 가속 학습 파이프라인 — 소스 자료를 분석하고 멘탈모델 추출, 논쟁 매핑, 판별 질문 설계, 소크라틱 튜터링을 통해 깊은 이해에 도달합니다.
+
+### 사용법
+
+```
+/accelerated-learner:accelerated-learn 학습을 시작해줘
+source_path: ./papers/
+subject_name: 강화학습
+auto_mode: false
+```
+
+### 주요 특징
+
+- **5단계 파이프라인**: 소스 종합 → 멘탈모델 추출 → 논쟁 매핑 → 판별 질문 → 소크라틱 튜터링
+- **대화형 학습**: AskUserQuestion 기반 소크라틱 튜터링으로 질문-응답-피드백 순환
+- **세션 로그**: 매 Q&A 교환 후 즉시 기록, `sessions/` 하위 디렉토리 관리
+- **가드레일**: 웹검색 보충 금지, 소스 기반 분석만, MCQ 금지, 개방형 질문만
+
+| 파라미터 | 필수 | 설명 |
+|---------|:----:|------|
+| `source_path` | O | 소스 자료 폴더/파일 경로 (.md, .txt, .pdf) |
+| `subject_name` | O | 학습 주제명 (출력 폴더명) |
+| `output_dir` | - | 출력 디렉토리 (기본값: `./output/`) |
+| `auto_mode` | - | true 시 튜터링 건너뜀, 지식베이스만 생성 |
+
+<details>
+<summary>구성 요소 (5 Agents · 1 Command · 1 Skill)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Agents | source-synthesizer, mental-model-extractor, controversy-mapper, question-architect, socratic-tutor |
+| Command | `accelerated-learn` (오케스트레이터) |
+| Skill | learning-methodology (48시간 학습 방법론) |
+
+</details>
 ---
 
 # 설치 & 설정
@@ -922,6 +963,10 @@ honeypot/
 │   │   └── skills/                   # 5 skills
 │   ├── general-agents/              # 범용 에이전트
 │   │   └── agents/                   # 1 agent
+│   ├── accelerated-learner/         # 48시간 가속 학습
+│   │   ├── agents/                   # 5 agents
+│   │   ├── commands/                 # accelerated-learn
+│   │   └── skills/                   # 1 skill
 │   ├── equity-research/             # 기관급 주식 분석
 │   │   └── agents/                   # 1 agent
 │   ├── worktree-workflow/           # Git worktree 워크플로우
@@ -955,6 +1000,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.22.0 | 2026-03-30 | accelerated-learner 플러그인 추가 — 48시간 가속 학습(소스 분석→멘탈모델→논쟁 매핑→판별 질문→소크라틱 튜터링), 5 agents + 1 command + 1 skill |
 | 3.21.0 | 2026-03-25 | visual-generator v3.4.0: JPEG 원본 직접 저장 — SDK 호환성 버그 수정(part.as_image() → inline_data.data 직접 사용), PNG 불필요 변환 제거로 파일 크기 47% 절감, RGBA 안전 변환 추가 |
 | 3.20.0 | 2026-03-23 | hwpx-generator v3.11.0: section_transplant.py 추가 — HWPX 챕터 이식 CLI + HwpxSurgeon.transplant_from(), zip_surgery.py ZipInfo 메타데이터 전체 보존 P0 수정 |
 | 3.19.0 | 2026-03-23 | hwpx-generator v3.10.0: MD 문서 구조(Indent) 보존 — md_parser.py indent_level 감지, xml_writer.py level→style 매평 + build_numbered(), analyze_template.py indent 스타일 추출, md_merger.py 다중 MD 병합 |
