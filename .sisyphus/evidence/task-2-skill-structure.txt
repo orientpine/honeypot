@@ -1,0 +1,6 @@
+name: learning-methodology
+## 48시간 가속 학습 프레임워크
+## 멘탈모델 추출 원칙
+## 소크라틱 튜터링 원칙
+## 가드레일
+139 plugins/accelerated-learner/skills/learning-methodology/SKILL.md
