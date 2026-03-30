@@ -1,0 +1,27 @@
+=== Validation: question-architect.md ===
+
+--- frontmatter name check ---
+name: question-architect
+
+--- MCQ/forbidden format mentions (should show prohibition lines) ---
+    └── "~이 맞는가 틀린가?" (O-X 변형)
+│   ├── MCQ (선택지 제공)
+│   ├── O-X 판별
+│   ├── 빈칸채우기
+- ❌ **MCQ/O-X/빈칸채우기 형식 절대 금지** — 개방형 질문만 생성한다. 선택지를 제공하지 않는다.
+
+--- open-ended keywords ---
+description: "판별 질문 설계. 멘탈모델과 논쟁 지형을 바탕으로, 깊은 이해와 단순 암기를 구별할 수 있는 개방형 질문을 5-10개 생성한다. Use when 튜터링용 판별 질문이 필요할 때."
+멘탈모델(`01-mental-models.md`)과 논쟁 지형(`02-controversies.md`)을 재료로, 표면적 암기와 깊은 이해를 구별하는 개방형 질문을 설계한다. 블룸 분류체계(Bloom's Taxonomy) 상위 3수준 — 분석(Analyze), 평가(Evaluate), 창조(Create) — 만을 타겟으로 하며, 각 질문에 3단계 답변 루브릭을 부여하여 `03-discriminating-questions.md`를 출력한다.
+| 항목 | 필수 | 설명 | 예시 |
+├── Analyze(분석): 구조 분해, 원인-결과 추적, 비교
+│   └── "~의 차이를 설명하세요", "~가 ~에 미치는 영향을 분석하세요"
+
+--- Bloom taxonomy references ---
+멘탈모델(`01-mental-models.md`)과 논쟁 지형(`02-controversies.md`)을 재료로, 표면적 암기와 깊은 이해를 구별하는 개방형 질문을 설계한다. 블룸 분류체계(Bloom's Taxonomy) 상위 3수준 — 분석(Analyze), 평가(Evaluate), 창조(Create) — 만을 타겟으로 하며, 각 질문에 3단계 답변 루브릭을 부여하여 `03-discriminating-questions.md`를 출력한다.
+Step 2-1. 블룸 분류체계 상위 3수준 타겟 설정
+├── 블룸 수준 분포 확인: Analyze, Evaluate, Create 각 최소 1개
+**타겟 수준**: Analyze / Evaluate / Create
+├── 분석 통계: 총 질문 수, 블룸 수준별 분포, 참조 소재 분포
+
+--- All checks passed ---
