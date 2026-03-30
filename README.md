@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.22.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.23.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -793,34 +793,75 @@ Obsidian vault에서 작업할 때 자동 활성화됩니다. wikilinks, callout
 ### 사용법
 
 ```
+# 기본 실행 (소크라틱 튜터링 포함)
 /accelerated-learner:accelerated-learn 학습을 시작해줘
 source_path: ./papers/
 subject_name: 강화학습
-auto_mode: false
+
+# 지식베이스만 생성 (튜터링 건너뜀)
+/accelerated-learner:accelerated-learn 학습 자료를 분석해줘
+source_path: ./lecture_notes/
+subject_name: 운영체제
+auto_mode: true
+```
+
+### 사전 준비
+
+분석할 소스 자료를 하나의 폴더에 모아 두세요:
+- **지원 형식**: `.md`, `.txt`, `.pdf`
+- **권장 분량**: 3~20개 파일 (논문, 강의노트, 교재 발췌 등)
+- **영어 자료 사용 가능** — 분석 결과는 항상 한국어로 출력됩니다
+
+### 워크플로우
+
+```
+소스 종합 (Phase 1)        모든 자료를 읽고 핵심을 통합
+      ↓
+멘탈모델 + 논쟁 (Phase 2)  전문가 사고체계 추출 + 학문적 논쟁 매핑  ← 병렬 실행
+      ↓
+판별 질문 (Phase 3)        깊은 이해를 검증하는 개방형 질문 설계
+      ↓
+소크라틱 튜터링 (Phase 4)   1:1 대화형 학습 세션  ← auto_mode=true 시 건너뜀
 ```
 
 ### 주요 특징
 
 - **5단계 파이프라인**: 소스 종합 → 멘탈모델 추출 → 논쟁 매핑 → 판별 질문 → 소크라틱 튜터링
-- **대화형 학습**: AskUserQuestion 기반 소크라틱 튜터링으로 질문-응답-피드백 순환
-- **세션 로그**: 매 Q&A 교환 후 즉시 기록, `sessions/` 하위 디렉토리 관리
-- **가드레일**: 웹검색 보충 금지, 소스 기반 분석만, MCQ 금지, 개방형 질문만
+- **대화형 학습**: 질문을 하나씩 제시하고 답변에 맞춤 피드백 (탐색적/교정적/확장적 3유형)
+- **조기 마스터리**: 5연속 우수 답변 시 자동 종료, 최대 15회 상호작용 제한
+- **세션 로그**: 매 Q&A 교환 후 즉시 기록, `sessions/` 하위 디렉토리로 다중 세션 관리
+- **가드레일**: 웹검색 보충 금지, 소스에 없는 정보 날조 금지, MCQ 금지 (개방형 질문만)
 
-| 파라미터 | 필수 | 설명 |
-|---------|:----:|------|
-| `source_path` | O | 소스 자료 폴더/파일 경로 (.md, .txt, .pdf) |
-| `subject_name` | O | 학습 주제명 (출력 폴더명) |
-| `output_dir` | - | 출력 디렉토리 (기본값: `./output/`) |
-| `auto_mode` | - | true 시 튜터링 건너뜀, 지식베이스만 생성 |
+| 파라미터 | 필수 | 기본값 | 설명 |
+|---------|:----:|-------|------|
+| `source_path` | O | - | 소스 자료 폴더 또는 파일 경로 (.md, .txt, .pdf) |
+| `subject_name` | O | - | 학습 주제명 (출력 폴더명으로 사용) |
+| `output_dir` | - | `./output/` | 출력 디렉토리 |
+| `auto_mode` | - | `false` | `true` 시 소크라틱 튜터링을 건너뛰고 지식베이스(00~03)만 생성 |
+
+### 출력물
+
+| 파일 | 생성 단계 | 내용 |
+|------|:--------:|------|
+| `00-source-synthesis.md` | Phase 1 | 모든 소스 자료의 종합 분석문 |
+| `01-mental-models.md` | Phase 2 | 전문가 사고체계 2~5개 (이름 + 정의 + 예측 테스트) |
+| `02-controversies.md` | Phase 2 | 학문적 논쟁 지형 0~3개 (없으면 "없음" 명시) |
+| `03-discriminating-questions.md` | Phase 3 | 블룸 상위 수준 개방형 질문 5~10개 + 답변 루브릭 |
+| `sessions/session-N.md` | Phase 4 | 소크라틱 튜터링 대화 기록 (매 교환 즉시 기록) |
+| `05-mastery-summary.md` | Phase 4 | 멘탈모델별 이해도 정성 평가 + 추가 학습 권장 |
 
 <details>
 <summary>구성 요소 (5 Agents · 1 Command · 1 Skill)</summary>
 
-| 유형 | 항목 |
-|------|------|
-| Agents | source-synthesizer, mental-model-extractor, controversy-mapper, question-architect, socratic-tutor |
-| Command | `accelerated-learn` (오케스트레이터) |
-| Skill | learning-methodology (48시간 학습 방법론) |
+| 유형 | 항목 | 역할 |
+|------|------|------|
+| Agent | source-synthesizer | 소스 자료 읽기 + 종합 분석문 생성 |
+| Agent | mental-model-extractor | 전문가 멘탈모델 2~5개 추출 |
+| Agent | controversy-mapper | 학문적 논쟁 지형 매핑 |
+| Agent | question-architect | 블룸 분류체계 기반 판별 질문 설계 |
+| Agent | socratic-tutor | 대화형 소크라틱 튜터링 진행 |
+| Command | `accelerated-learn` | 5개 에이전트 오케스트레이션 |
+| Skill | learning-methodology | 48시간 가속 학습 방법론 지침 |
 
 </details>
 ---
@@ -1000,6 +1041,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.23.0 | 2026-03-30 | investments-portfolio v1.1.0: fund-portfolio 에이전트 감사 기반 4대 개선 — [MUST] 데이터 정합성 교차검증 Gate(riskLevel↔riskAsset 모순감지), 전수비교 증적(Audit Trail) 의무화, UH/H 환헤지 비용 비교 의무화; [SHOULD] 안전자산 다각화 옵션 검토 |
 | 3.22.0 | 2026-03-30 | accelerated-learner 플러그인 추가 — 48시간 가속 학습(소스 분석→멘탈모델→논쟁 매핑→판별 질문→소크라틱 튜터링), 5 agents + 1 command + 1 skill |
 | 3.21.0 | 2026-03-25 | visual-generator v3.4.0: JPEG 원본 직접 저장 — SDK 호환성 버그 수정(part.as_image() → inline_data.data 직접 사용), PNG 불필요 변환 제거로 파일 크기 47% 절감, RGBA 안전 변환 추가 |
 | 3.20.0 | 2026-03-23 | hwpx-generator v3.11.0: section_transplant.py 추가 — HWPX 챕터 이식 CLI + HwpxSurgeon.transplant_from(), zip_surgery.py ZipInfo 메타데이터 전체 보존 P0 수정 |
