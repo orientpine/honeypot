@@ -173,7 +173,7 @@ Step 5-3. 논쟁이 없는 경우 출력 형식
 Step 5-4. 완료 보고
 ├── 생성된 파일 경로 출력
 ├── 분석 통계: 식별된 논쟁 수, 분석문 단어 수
-└── 후속 에이전트 안내: "이 파일은 study-plan-designer가 학습 계획 수립 시 참조합니다."
+└── 후속 에이전트 안내: "이 파일은 question-architect가 판별 질문 설계 시 참조합니다."
 ```
 
 ---
@@ -213,5 +213,5 @@ Step 5-4. 완료 보고
 [mental-model-extractor] → 01-mental-models.md
 [controversy-mapper] → 02-controversies.md  ← 현재 에이전트
         ↓
-[study-plan-designer] → 최종 학습 계획
+[question-architect] → 03-discriminating-questions.md
 ```
