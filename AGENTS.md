@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-25T00:00:00+09:00
-**Version:** 3.21.0
+**Generated:** 2026-03-30T00:00:00+09:00
+**Version:** 3.22.0
 **Branch:** main
 
 ## OVERVIEW
@@ -45,7 +45,9 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | JSON Canvas 작성 | `plugins/obsidian-skills/skills/json-canvas/SKILL.md` | .canvas 노드/엣지/그룹 |
 | Obsidian CLI | `plugins/obsidian-skills/skills/obsidian-cli/SKILL.md` | vault 조작, 플러그인 개발 |
 | 웹 페이지 클린 추출 | `plugins/obsidian-skills/skills/defuddle/SKILL.md` | Defuddle CLI 마크다운 추출 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 14 plugins listed |
+| 가속 학습 파이프라인 실행 | `plugins/accelerated-learner/commands/accelerated-learn.md` | 48시간 딥러닝 방법론 |
+| 소크라틱 튜터링 | `plugins/accelerated-learner/agents/socratic-tutor.md` | 대화형 학습 |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 15 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
