@@ -10,6 +10,21 @@
   },
   "plugins": [
     {
+      "name": "accelerated-learner",
+      "source": "./plugins/accelerated-learner",
+      "description": "48시간 가속 학습 — 소스 자료 분석, 멘탈모델 추출, 논쟁 매핑, 판별 질문, 소크라틱 튜터링",
+      "version": "1.0.0",
+      "strict": true,
+      "agents": [
+        "./agents/source-synthesizer.md",
+        "./agents/mental-model-extractor.md",
+        "./agents/controversy-mapper.md",
+        "./agents/question-architect.md",
+        "./agents/socratic-tutor.md"
+      ],
+      "skills": ["./skills"]
+    },
+    {
       "name": "isd-generator",
       "source": "./plugins/isd-generator",
       "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
