@@ -1,0 +1,24 @@
+=== Frontmatter Verification ===
+
+--- name check ---
+name: source-synthesizer
+
+--- model check ---
+model: sonnet
+
+--- skills check ---
+  - learning-methodology
+- `learning-methodology`: 학습 방법론 및 소스 자료 처리 지침 (청킹 전략, 분석 프레임워크)
+
+--- description check ---
+description: "소스 자료 종합 분석. 폴더/파일 경로의 모든 텍스트 자료를 읽고 핵심을 추출하여 종합 분석문을 생성한다. Use when 학습 소스 자료를 처음 분석할 때."
+
+--- tools check ---
+tools:
+  - Read
+  - Glob
+  - Grep
+  - Write
+  - Bash
+
+=== ALL FRONTMATTER CHECKS PASSED ===
