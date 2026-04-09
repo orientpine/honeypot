@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.23.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.24.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -51,6 +51,7 @@
 | 도구 | [**general-agents**](#general-agents) | 범용 에이전트 (심층 인터뷰 등) |
 | 도구 | [**obsidian-skills**](#obsidian-skills) | Obsidian vault 파일 작성 — Markdown, Bases, Canvas, CLI, Defuddle |
 | 학습 | [**accelerated-learner**](#accelerated-learner) | 48시간 가속 학습 — 소스 분석, 멘탈모델, 논쟁 매핑, 소크라틱 튜터링 |
+| 도구 | [**wiki-gen**](#wiki-gen) | 개인 일기/노트를 Wikipedia 스타일 지식 위키로 컴파일 [^3] |
 
 ---
 
@@ -864,6 +865,75 @@ auto_mode: true
 | Skill | learning-methodology | 48시간 가속 학습 방법론 지침 |
 
 </details>
+
+---
+
+## wiki-gen
+
+> 개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬입니다. [^3]
+
+### 사용 예시
+
+개인 일기/노트를 지식 위키로 컴파일할 때 자동 활성화됩니다. 'personal wiki', 'compile journal', 'ingest notes' 등의 키워드에 반응합니다.
+
+```
+# 원시 데이터를 raw markdown 엔트리로 변환
+@wiki-gen wiki ingest 를 실행해줌. ./data/ 에 있는 일기를 처리해줌.
+
+# 엔트리를 위키 아티클로 컴파일
+@wiki-gen wiki absorb all 을 실행해서 전체 엔트리를 흡수해줌.
+
+# 위키에 질문
+@wiki-gen wiki query "2026년에 작업한 프로젝트는?"
+
+# 기존 아티클 감사 및 재구조
+@wiki-gen wiki cleanup
+
+# 누락된 아티클 발굴 및 생성
+@wiki-gen wiki breakdown
+
+# 위키 상태 확인
+@wiki-gen wiki status
+```
+
+### 지원 데이터 포맷
+
+| 포맷 | 설명 |
+|------|------|
+| Day One JSON | `entries` 배열 기반 일기 앱 |
+| Apple Notes | HTML/TXT/MD 내보내기 |
+| Obsidian Vault | `.md` 폴더, frontmatter 보존 |
+| Notion Export | `.md` 또는 `.csv` 페이지 |
+| Plain Text / Markdown | 폴더 내 `.txt` / `.md` |
+| iMessage Export | `.csv` 또는 채팅 로그 |
+| CSV / Spreadsheet | `.csv`, `.tsv` |
+| Email Export | `.mbox`, `.eml` |
+| Twitter/X Archive | `tweet.js` 또는 아카이브 |
+
+### 8개 서브커맨드
+
+| 커맨드 | 역할 |
+|--------|------|
+| `wiki ingest` | 소스 데이터 → `raw/entries/`의 개별 `.md` 엔트리로 변환 |
+| `wiki absorb [date-range]` | 엔트리를 읽고 이해하여 위키 아티클로 작성/갱신 |
+| `wiki query <question>` | 위키 안을 탐색하여 질문에 답변 (read-only) |
+| `wiki cleanup` | 병렬 서브에이전트로 전체 아티클 감사 및 재구조 |
+| `wiki breakdown` | 누락된 아티클을 발굴하고 병렬로 생성 |
+| `wiki rebuild-index` | `_index.md`와 `_backlinks.json` 재구축 |
+| `wiki reorganize` | 위키 구조 재설계 (병합/분할/카테고리 재편성) |
+| `wiki status` | 결과물 통계 (흡수된 엔트리 수, 카테고리별 아티클 수 등) |
+
+### 주요 원칙
+
+- **Writer, not filing clerk**: 단순히 사실을 정리하는 것이 아니라 의미를 이해하고 내러티브로 짜내기
+- **Anti-Cramming**: 하나의 큰 아티클에 계속 추가하기보다 소주제로 새 아티클을 만들기
+- **Anti-Thinning**: 스텁 생성 금지, 매번 아티클을 더 풍성하게 만들기
+- **Wikipedia Tone, Not AI**: 평이하고 사실적인 문체. 감정은 직접 인용문으로만
+- **Concept Articles**: 패턴, 테마, 아크가 개별 아티클로 승격. 이것이 "mind map"의 핵심
+
+| 구성 | 항목 |
+|------|------|
+| Skill | wiki-gen (8개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards) |
 ---
 
 # 설치 & 설정
@@ -968,7 +1038,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (15개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (16개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -1020,8 +1090,10 @@ honeypot/
 │   │   ├── agents/                   # 3 agents
 │   │   ├── commands/                 # analyze-patents
 │   │   └── skills/                   # 5 skills
-│   └── pptx-design-styles/          # PPTX 디자인 스타일 가이드
-│       └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
+│   ├── pptx-design-styles/          # PPTX 디자인 스타일 가이드
+│   │   └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
+│   └── wiki-gen/                    # 개인 지식 위키 생성
+│       └── skills/                   # 1 skill (위키 컴파일 워크플로우)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -1041,6 +1113,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.24.0 | 2026-04-09 | wiki-gen 플러그인 추가 (farzaa/wiki-gen-skill 포팅, 개인 일기/노트 → Wikipedia 스타일 지식 위키 자동 컴파일 — ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드, 39종 디렉토리 택소노미, Writing Standards) |
 | 3.23.0 | 2026-03-30 | investments-portfolio v1.1.0: fund-portfolio 에이전트 감사 기반 4대 개선 — [MUST] 데이터 정합성 교차검증 Gate(riskLevel↔riskAsset 모순감지), 전수비교 증적(Audit Trail) 의무화, UH/H 환헤지 비용 비교 의무화; [SHOULD] 안전자산 다각화 옵션 검토 |
 | 3.22.0 | 2026-03-30 | accelerated-learner 플러그인 추가 — 48시간 가속 학습(소스 분석→멘탈모델→논쟁 매핑→판별 질문→소크라틱 튜터링), 5 agents + 1 command + 1 skill |
 | 3.21.0 | 2026-03-25 | visual-generator v3.4.0: JPEG 원본 직접 저장 — SDK 호환성 버그 수정(part.as_image() → inline_data.data 직접 사용), PNG 불필요 변환 제거로 파일 크기 47% 절감, RGBA 안전 변환 추가 |
@@ -1092,3 +1165,4 @@ honeypot/
 
 [^1]: [anthropics/claude-code `plugins/plugin-dev`](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev)의 내용을 참조하여 포팅하였습니다. 원본 저자: Daisy Hollman (daisy@anthropic.com), 라이선스: MIT.
 [^2]: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)의 내용을 포팅하였습니다. 원본 저자: Steph Ango (stephango.com), 라이선스: MIT.
+[^3]: [farzaa/wiki-gen-skill](https://gist.github.com/farzaa/c35ac0cfbeb957788650e36aabea836d)의 내용을 포팅하였습니다. 원본 저자: farzaa, 라이선스: MIT.
