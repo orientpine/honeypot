@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-30T00:00:00+09:00
-**Version:** 3.22.0
+**Generated:** 2026-04-09T00:00:00+09:00
+**Version:** 3.24.0
 **Branch:** main
 
 ## OVERVIEW
@@ -47,7 +47,8 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | 웹 페이지 클린 추출 | `plugins/obsidian-skills/skills/defuddle/SKILL.md` | Defuddle CLI 마크다운 추출 |
 | 가속 학습 파이프라인 실행 | `plugins/accelerated-learner/commands/accelerated-learn.md` | 48시간 딥러닝 방법론 |
 | 소크라틱 튜터링 | `plugins/accelerated-learner/agents/socratic-tutor.md` | 대화형 학습 |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 15 plugins listed |
+| 개인 지식 위키 생성 | `plugins/wiki-gen/skills/wiki-gen/SKILL.md` | 일기/노트 → Wikipedia 스타일 위키 컴파일 (ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 커맨드, 39종 디렉토리 택소노미) |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 17 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
@@ -261,6 +262,15 @@ Glob: **/{script-name}.py
   - Measurement formatting patterns
   - Citation style detection
   - Field characteristics from keywords
+
+### Personal Knowledge Wiki (wiki-gen)
+- **Source**: Port of `farzaa/wiki-gen-skill` gist (MIT)
+- **Commands (8)**: `wiki ingest` → `wiki absorb [date-range]` → `wiki query|cleanup|breakdown|status|rebuild-index|reorganize`
+- **Writing Standards**: Wikipedia tone (flat/factual/encyclopedic). Forbidden: em dashes, peacock words, editorial voice, progressive narrative, qualifiers. Direct quotes carry emotional weight; articles stay neutral.
+- **Anti-Patterns**: Anti-Cramming (3rd sub-topic paragraph → new page), Anti-Thinning (stubs are failures, every touch must enrich)
+- **39-Directory Emergent Taxonomy (7 groups)**: Core (6), Media/Culture (8), Inner Life (5), Narrative (5), Relationships (3), Work/Strategy (5), Other (7). Directories emerge from data; never pre-create.
+- **Absorption Loop**: Process entries chronologically, re-read articles before updating, checkpoint every 15 entries (rebuild index, audit article count, quality audit top 3 articles, split >150 lines)
+- **Concept Articles**: Recurring patterns/themes become pages (`philosophies/`, `patterns/`, `tensions/`, `identities/`) - where the wiki becomes "a map of a mind", not a contact list
 
 ## COMMANDS
 
