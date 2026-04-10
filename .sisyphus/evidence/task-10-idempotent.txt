@@ -1,0 +1,9 @@
+Wrote /tmp/sync_wiki/_index.md with 0 articles
+Wrote /tmp/sync_wiki/_backlinks.json with 0 targets
+Loaded 2 entries from ingest log
+Walked 0 articles
+Covered entries: 0 / 2
+Uncovered: 2
+Wrote /tmp/sync_wiki/_absorb_log.json
+Wrote /tmp/sync_wiki/_uncovered.md
+Sync complete: added=0, updated=0, unchanged=2, deleted=0
