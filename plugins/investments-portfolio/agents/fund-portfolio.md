@@ -84,7 +84,7 @@ model: opus
 | `funds/fund_data.json` | 펀드 수익률 데이터 | ✅ | **FAIL 반환, 작업 중단** |
 | `funds/fund_classification.json` | 위험/안전자산 분류 | ✅ | **FAIL 반환, 작업 중단** |
 | `funds/fund_fees.json` | 총보수 데이터 | ⚠️ | WARNING, 비용 분석 생략 |
-| `funds/deposit_rates.json` | 예금 금리 데이터 | ⚠️ | WARNING, 예금 비교 시 웹검색 |
+| `funds/deposit_rates.json` | 예금 금리 데이터 | ⚠️ | WARNING 후 Step 3 안전자산 Gate에서 FAIL |
 
 ### 3.0.2 검증 프로세스
 
@@ -113,7 +113,7 @@ Read("funds/fund_fees.json")
 Read("funds/deposit_rates.json")
      │
      ├─ 성공 → 계속
-     └─ 실패 → WARNING: "예금 금리 데이터 없음. 웹검색으로 대체."
+     └─ 실패 → WARNING: "예금 금리 데이터 없음. Step 3 안전자산 Gate에서 FAIL 예상."
      │
      ▼
 [Step 0 완료] → 분석 작업 진행
@@ -142,6 +142,66 @@ Read("funds/deposit_rates.json")
 | "파일이 없으니 이전 데이터로 추천" | **환각 포트폴리오** |
 
 ---
+
+## 3.5 데이터 정합성 교차 검증 Gate ⚠️ MANDATORY
+
+> **목적**: `fund_classification.json`의 자동 분류 데이터에서 `riskLevel`과 `riskAsset` 간 논리적 모순을 사전 감지하여 잘못된 의사결정을 방지합니다.
+> **실행 시점**: Step 0 (파일 존재 검증) 완료 직후, 펀드 검색 **이전에** 실행
+> **근본 원인**: `fund_classification.json`의 자동 분류(`source: "fund_data.json + keyword classification"`)가 일부 펀드를 잘못 분류할 수 있음 (예: 골드 펀드를 riskAsset=false로 분류하면서 riskLevel=1 부여)
+
+### 3.5.1 검증 규칙
+
+| # | 규칙 | 조건 | 위반 시 조치 |
+|:-:|------|------|-------------|
+| 1 | riskLevel ↔ riskAsset 일치 | riskLevel 1-3 → riskAsset=true 필수 | ⚠️ ALERT, 해당 펀드 수동 재판정 |
+| 2 | riskLevel ↔ riskAsset 일치 | riskLevel 4-6 → riskAsset=false 필수 | ⚠️ ALERT, 해당 펀드 수동 재판정 |
+| 3 | category ↔ riskAsset 일치 | category="주식형"/"해외주식형" → riskAsset=true | ⚠️ ALERT |
+| 4 | category ↔ riskAsset 일치 | category="채권형"/"MMF" → riskAsset=false | ⚠️ ALERT |
+
+### 3.5.2 검증 프로세스
+
+```
+Step A: fund_classification.json 전체 로드
+   └─ 모든 펀드의 riskLevel, riskAsset, category 추출
+
+Step B: 규칙 1-4 교차 검증
+   └─ 각 펀드에 대해 4개 규칙 검사
+   └─ 위반 펀드 목록 생성
+
+Step C: 위반 펀드 수동 재판정
+   └─ riskLevel 기준으로 riskAsset 재판정
+   └─ riskLevel은 원본 CSV에서 직접 추출, riskAsset은 키워드 자동분류
+   └─ → riskLevel이 신뢰도 높으므로 riskLevel 기준 우선
+
+Step D: 재판정 결과를 이후 모든 분석에 적용
+   └─ 안전자산 Gate, 펀드 선택 모두에 재판정 결과 사용
+   └─ 재판정된 펀드는 원래 분류와 재판정 결과를 모두 보고서에 기록
+```
+
+### 3.5.3 필수 출력 형식
+
+```markdown
+### ⚠️ 데이터 정합성 검증 결과
+
+**검증 범위**: fund_classification.json 전체 ({N}개 펀드)
+**위반 건수**: {M}건
+
+| 펀드명 | riskLevel | riskAsset(원본) | category | 위반 규칙 | 에이전트 재판정 |
+|--------|:---------:|:---------------:|:--------:|:---------:|:--------------:|
+| [펀드명] | 1 | false | 기타 | Rule 1: riskLevel 1-3인데 riskAsset=false | → riskAsset=**true** (위험자산) |
+
+**재판정 근거**: fund_data.json의 riskLevel이 fund_classification.json의 riskAsset보다 신뢰도 높음
+(riskLevel은 원본 CSV에서 직접 추출, riskAsset은 키워드 자동분류)
+```
+
+### 3.5.4 위반 시 처리 매트릭스
+
+| 오분류 유형 | 영향 범위 | 조치 |
+|-----------|----------|------|
+| 위험자산 → 안전자산 오분류 (riskLevel 1-3, riskAsset=false) | 안전자산 Gate에서 잘못 기각, 위험자산 후보에서 누락 | riskLevel 기준 재판정 → 위험자산 후보로 재검토 |
+| 안전자산 → 위험자산 오분류 (riskLevel 4-6, riskAsset=true) | DC 70% 한도 계산 오류, 안전자산 후보 누락 | riskLevel 기준 재판정 → 안전자산 후보로 재검토 |
+
+**⚠️ 정합성 검증 테이블이 출력에 없으면 → 포트폴리오 FAIL**
 
 ## 4. 펀드 검색 프로토콜 ⚠️ CRITICAL
 
@@ -426,12 +486,6 @@ IF macro-outlook 파일 없음 OR Read 실패:
 `00-macro-outlook.md` 섹션 8의 `### 포트폴리오 핵심 지침` 블록을 그대로 인용하고,
 각 펀드의 `selectionRationale`에 해당 지침이 어떻게 적용되었는지 연결합니다.
 
-#### 2.6 material-summary 활용 (옵셔널)
-
-- material-summary 포함 시 → 추가 컨텍스트로 활용
-- 사용자가 수집한 자료에서 언급된 섹터/종목 우선 검토
-- 긍정/부정 요인을 포트폴리오 분석에 반영
-
 ### Step 3: 안전자산 Gate (예금 vs 채권) ⚠️ MANDATORY - 선행 필수
 
 > **⚠️ CRITICAL**: 이 Step은 펀드 검색(Step 4) **이전에** 반드시 실행합니다.
@@ -445,6 +499,45 @@ IF macro-outlook 파일 없음 OR Read 실패:
    - 채권 실질 수익률 > 예금 + 0.5%p → `"채권"`
    - 그 외 → `"예금"` (**채권형 펀드 편입 금지**)
 5. 비교 테이블 출력 (섹션 3.6.3 형식) - **필수**
+
+#### Step 3.5: 안전자산 다각화 옵션 검토 (SHOULD)
+
+> **목적**: SAFE_ASSET_DECISION="예금"일 때, 안전자산 30% 전체를 예금으로 채우는 것이 최적인지 검토합니다.
+> **실행 시점**: Step 3 (안전자산 Gate) 완료 직후, Step 4 **이전에** 실행
+
+##### 검토 조건
+
+SAFE_ASSET_DECISION="예금"이더라도, fund_classification.json에서 **riskAsset=false**이면서 **예금보다 수익률이 높은 펀드**가 존재할 수 있습니다.
+
+```
+IF SAFE_ASSET_DECISION == "예금":
+    1. fund_classification.json에서 riskAsset=false 펀드 전체 추출
+    2. 단, Step 0.5 정합성 검증에서 재판정된 결과 반영
+       (riskLevel 1-3 → riskAsset=true로 재판정된 펀드 제외)
+    3. 남은 펀드의 실질 수익률(return1y - totalFee) 계산
+    4. 예금 금리보다 높은 펀드가 있으면 → 다각화 옵션 제시
+    5. 없으면 → "예금 100%가 최적" 확인
+```
+
+##### 다각화 옵션 출력 형식
+
+```markdown
+### 안전자산 다각화 검토 (옵셔널)
+
+| # | 상품 | 유형 | 수익률 | 총보수 | 실질수익 | riskLevel | 원금보장 |
+|:-:|------|:----:|------:|------:|--------:|:---------:|:-------:|
+| 1 | 과기공 예금 1년 | 예금 | 4.90% | 0% | 4.90% | - | O |
+| 2 | [안전자산 펀드] | 채권형 | X.X% | X.X% | X.X% | 5 | X |
+
+**권고**: [예금 100% 유지 / 예금 X% + [펀드] Y% 혼합 검토 가능]
+**주의**: 안전자산 펀드는 원금 보장이 되지 않으므로, 보수적 투자자는 예금 100% 유지 권장
+```
+
+##### 적용 규칙
+
+- 다각화 옵션은 **권고**이며, SAFE_ASSET_DECISION을 변경하지 않음
+- 투자자가 원금 보장을 원하면 → 예금 100% 유지
+- 다각화 시에도 안전자산 내 예금 비중은 **최소 50%** 유지 권장
 
 ### Step 4: 펀드 검색-검증-바인딩 (위험자산 중심)
 **섹션 4 프로토콜 준수 필수**
@@ -516,6 +609,106 @@ Step 4: 경고 출력
 | S&P500 20% + 나스닥 20% | 2개 인덱스 | 미국 대형주 40% | 지역 집중 |
 | 배당펀드 25% + 인컴펀드 20% | 2개 펀드 | 배당 스타일 45% | 스타일 집중 |
 
+### Step 4.7: 전수 비교 증적 (Audit Trail) ⚠️ MANDATORY
+
+> **목적**: 포트폴리오에 편입하는 모든 카테고리에 대해, 해당 카테고리의 **전체 경쟁 펀드 목록**을 제시하여 선택의 투명성을 보장합니다.
+> **실행 시점**: Step 4.6 (Sector Overlap) 완료 후, Step 5 (포트폴리오 구성) **이전에** 실행
+
+#### 4.7.1 비교 대상 식별 방법
+
+```
+Step A: fund_classification.json에서 해당 테마/카테고리 필터링
+   └─ themes, category 필드 기반
+
+Step B: fund_data.json에서 해당 펀드명 키워드 검색 (보조)
+   └─ "반도체", "AI", "헬스케어" 등 키워드
+
+Step C: 두 방법의 합집합을 비교 대상으로 설정
+   └─ **0개 펀드가 누락되어야 함** — 모든 경쟁 펀드가 테이블에 존재
+```
+
+#### 4.7.2 필수 출력 형식
+
+포트폴리오에 포함하는 **모든 카테고리**에 대해 아래 테이블을 01-fund-analysis.md에 포함:
+
+```markdown
+#### [카테고리명] 전수 비교 ({N}개 펀드)
+
+| # | 펀드명 | 1Y | 3Y | 6M | 총보수 | 환헤지 | 선택 | 미선택 사유 |
+|:-:|--------|---:|---:|---:|------:|:------:|:----:|------------|
+| 1 | [선택된 펀드] | X% | X% | X% | X% | H/UH | ✅ | — |
+| 2 | [경쟁 펀드A] | X% | X% | X% | X% | H/UH | — | 1Y 수익률 열위 (X% vs Y%) |
+| 3 | [경쟁 펀드B] | X% | X% | X% | X% | H/UH | — | 총보수 과다 (X% vs Y%) |
+```
+
+#### 4.7.3 미선택 사유 유형
+
+| 사유 유형 | 표기 형식 | 예시 |
+|----------|----------|------|
+| 수익률 열위 | "1Y 수익률 열위 (X% vs Y%)" | "1Y 수익률 열위 (17.15% vs 57.90%)" |
+| 비용 과다 | "총보수 과다 (X% vs Y%)" | "총보수 과다 (1.5% vs 0.7%)" |
+| 환헤지 불일치 | "환헤지 전략 불일치 (UH 필요)" | 포트폴리오 환헤지 전략과 맞지 않음 |
+| 위험등급 부적합 | "riskLevel X (투자성향 대비 과다)" | "riskLevel 1 (중립형 대비 과다)" |
+| 데이터 부족 | "3Y 수익률 없음 (신규 펀드)" | 장기 성과 검증 불가 |
+| UH/H 대안 존재 | "동일 펀드 H 버전 선택됨" | 환헤지 전략상 H 버전 우선 |
+
+#### 4.7.4 위반 시
+
+전수 비교 테이블이 없는 카테고리의 펀드는 포트폴리오에 편입할 수 없습니다.
+
+---
+
+### Step 4.8: UH/H 환헤지 비용 비교 ⚠️ MANDATORY
+
+> **목적**: 동일 펀드의 UH(환노출)/H(환헤지) 두 버전이 모두 존재할 경우, 환헤지로 인한 수익률 차이(암묵적 비용)를 명시적으로 비교합니다.
+> **실행 시점**: Step 4.7 (전수 비교) 완료 후, Step 5 (포트폴리오 구성) **이전에** 실행
+
+#### 4.8.1 적용 조건
+
+```
+IF 선택된 펀드 또는 경쟁 펀드 중 동일 운용사의 UH/H 쌍이 존재:
+    THEN 아래 비교 테이블 필수 출력
+```
+
+#### 4.8.2 필수 출력 형식
+
+```markdown
+#### [펀드명] 환헤지 비용 분석
+
+| 항목 | UH (환노출) | H (환헤지) | 차이 |
+|------|:----------:|:---------:|:----:|
+| 1Y 수익률 | X.XX% | X.XX% | X.XX%p |
+| 3Y 수익률 | X.XX% | X.XX% | X.XX%p |
+| 6M 수익률 | X.XX% | X.XX% | X.XX%p |
+| 총보수 | X.XX% | X.XX% | X.XX%p |
+| **선택** | [O/X] | [O/X] | — |
+| **선택 근거** | [구체적 사유] | [구체적 사유] | — |
+
+**환헤지 암묵적 비용**: 연 X.XX%p (1Y 기준)
+**판정**: [환헤지 비용이 연 3%p 미만으로 수용 가능 / ⚠️ 환헤지 비용이 연 3%p 이상으로 과다]
+```
+
+#### 4.8.3 의사결정 로직
+
+| 조건 | 판정 | 권고 |
+|------|------|------|
+| UH-H 차이 < 3%p | 환헤지 비용 수용 가능 | 환헤지 전략에 따라 H 선택 가능 |
+| UH-H 차이 ≥ 3%p | ⚠️ 환헤지 비용 과다 | 환노출(UH) 우선 검토, H 선택 시 근거 필수 |
+| UH-H 차이 ≥ 5%p | 🚨 환헤지 비용 매우 과다 | H 선택 시 명확한 환율 전망 근거 필수 |
+
+#### 4.8.4 포트폴리오 전체 환헤지 비용 요약
+
+모든 UH/H 쌍 비교 후, 포트폴리오 전체의 환헤지 전략 비용을 한 문장으로 요약:
+
+```markdown
+**환헤지 전략 요약**: 포트폴리오 내 H 펀드 {N}개, UH 펀드 {M}개.
+환헤지로 인한 총 수익률 희생: 가중평균 약 X.XX%p/년.
+[환율 변동 리스크 대비 수용 가능 / 환헤지 비중 재검토 권고]
+```
+
+#### 4.8.5 위반 시
+
+UH/H 쌍이 존재하는데 비교 테이블이 없으면 → 해당 펀드의 선택 근거 불충분으로 **FAIL**.
 ### Step 5: 포트폴리오 구성
 
 > ⚠️ **SAFE_ASSET_DECISION 적용 (Immutable - Step 3에서 결정됨)**
@@ -551,6 +744,10 @@ Step 4: 경고 출력
 - [ ] 편차 발생 시 **근거가 명시**되었는가?
 - [ ] **펀드 선택 근거 테이블**이 출력에 포함되었는가? (섹션 5.4)
 - [ ] **모든 펀드/예금에 selectionRationale + 참조 출처**가 있는가?
+- [ ] **데이터 정합성 검증 테이블**이 출력에 포함되었는가? (Step 0.5)
+- [ ] **전수 비교 증적 테이블**이 모든 카테고리에 포함되었는가? (Step 4.7)
+- [ ] **UH/H 환헤지 비용 비교 테이블**이 모든 UH/H 쌍에 포함되었는가? (Step 4.8)
+- [ ] **안전자산 다각화 검토**가 수행되었는가? (Step 3.5, SAFE_ASSET_DECISION="예금" 시)
 
 ### Step 5.5: 펀드 존재 검증 ⚠️ MANDATORY (환각 방지)
 
@@ -644,7 +841,7 @@ grep -c "\"name\": \"[정확한 펀드명]\"" funds/fund_data.json
 
 ### 5.3 출력 형식
 
-**경로**: `portfolios/YYYY-MM-DD-{profile}-{session}/99-fund-analysis.md`
+**경로**: `portfolios/YYYY-MM-DD-{profile}-{session}/01-fund-analysis.md`
 
 > **중요**: `portfolio` 배열에는 펀드뿐 아니라 **예금도 포함**될 수 있습니다.
 > - 예금 항목은 `category="예금"`으로 표기하고, sources에 `deposit_rates.json`을 포함합니다.
@@ -757,9 +954,14 @@ grep -c "\"name\": \"[정확한 펀드명]\"" funds/fund_data.json
 ## 6. 메타 정보
 
 ```yaml
-version: "4.5"
-updated: "2026-02-01"
+version: "5.0"
+updated: "2026-03-30"
 changelog:
+  - "5.0: [MUST] Step 0.5 데이터 정합성 교차 검증 Gate 추가 (riskLevel ↔ riskAsset 모순 감지)"
+  - "5.0: [MUST] Step 4.7 전수 비교 증적 (Audit Trail) 의무화 — 모든 카테고리 경쟁 펀드 전수 비교 테이블"
+  - "5.0: [MUST] Step 4.8 UH/H 환헤지 비용 비교 의무화 — 환헤지 암묵적 비용 정량화"
+  - "5.0: [SHOULD] Step 3.5 안전자산 다각화 옵션 검토 추가"
+  - "5.0: 최종 검증 체크리스트에 정합성 검증, 전수 비교, UH/H 비교, 안전자산 다각화 항목 추가"
   - "4.5: 섹션 5.4 펀드 선택 근거 출력 필수화 (selectionRationale + 참조 출처)"
   - "4.5: 펀드별 선택 근거 테이블 MANDATORY"
   - "4.5: 근거 없는 선택 Zero Tolerance 규칙 추가"
@@ -775,5 +977,5 @@ architecture: multi-agent
 coordinator: portfolio-orchestrator
 upstream: [macro-synthesizer]
 validators: [compliance-checker, output-critic]
-  output_file: "99-fund-analysis.md"
+  output_file: "01-fund-analysis.md"
 ```

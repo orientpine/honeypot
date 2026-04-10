@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.24.0",
+    "version": "3.25.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -68,13 +68,12 @@
       "name": "investments-portfolio",
       "source": "./plugins/investments-portfolio",
       "description": "DC 연금 포트폴리오 분석 멀티 에이전트 시스템. web-search-verifier 스킬로 환각 방지.",
-      "version": "1.0.1",
+      "version": "1.2.0",
       "strict": true,
       "agents": [
         "./agents/fund-portfolio.md",
         "./agents/compliance-checker.md",
-        "./agents/output-critic.md",
-        "./agents/material-organizer.md"
+        "./agents/output-critic.md"
       ],
       "skills": ["./skills"]
     },

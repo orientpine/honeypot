@@ -53,7 +53,9 @@ JSON 저장은 **항상 필수**이며, 사람이 읽기 위한 Markdown 요약�
 - MD는 JSON 내용을 요약/정리만 수행 (새 수치/새 출처 추가 금지)
 - 파일명은 **번호 접두어 고정**:
   - `{output_path}/{NN}-{base}.md` (base = JSON 파일명에서 `.json` 제거)
-  - 예: `00-index-data.md`
+  - `00-04`: 메인 파이프라인 산출물 (최종 리포트 순서)
+  - `99`: 보조 데이터 (macro sub-agent 중간 분석)
+  - 예: `00-macro-outlook.md` (메인), `99-index-data.md` (보조)
 
 ---
 
@@ -85,11 +87,15 @@ portfolios/{session_folder}/{filename}
 예시:
 portfolios/2026-01-14-aggressive-abc123/
 ├── index-data.json             # index-fetcher 출력
+├── 99-index-data.md            # index-fetcher 출력 (보조)
 ├── rate-analysis.json          # rate-analyst 출력
+├── 99-rate-analysis.md         # rate-analyst 출력 (보조)
 ├── sector-analysis.json        # sector-analyst 출력
+├── 99-sector-analysis.md       # sector-analyst 출력 (보조)
 ├── risk-analysis.json          # risk-analyst 출력
+├── 99-risk-analysis.md         # risk-analyst 출력 (보조)
 ├── leadership-analysis.json    # leadership-analyst 출력
-├── material-summary.md         # material-organizer 출력 (옵셔널)
+├── 99-leadership-analysis.md   # leadership-analyst 출력 (보조)
 ├── macro-outlook.json          # macro-synthesizer 출력
 ├── 00-macro-outlook.md         # macro-synthesizer 출력
 ├── 01-fund-analysis.md         # fund-portfolio 출력
@@ -102,12 +108,11 @@ portfolios/2026-01-14-aggressive-abc123/
 
 | 에이전트 | 출력 파일 | 필수 |
 |----------|----------|:----:|
-| index-fetcher | `index-data.json` | O |
-| rate-analyst | `rate-analysis.json` | O |
-| sector-analyst | `sector-analysis.json` | O |
-| risk-analyst | `risk-analysis.json` | O |
-| leadership-analyst | `leadership-analysis.json` | O |
-| material-organizer | `material-summary.md` | X (옵셔널) |
+| index-fetcher | `index-data.json`, `99-index-data.md` | O |
+| rate-analyst | `rate-analysis.json`, `99-rate-analysis.md` | O |
+| sector-analyst | `sector-analysis.json`, `99-sector-analysis.md` | O |
+| risk-analyst | `risk-analysis.json`, `99-risk-analysis.md` | O |
+| leadership-analyst | `leadership-analysis.json`, `99-leadership-analysis.md` | O |
 | macro-synthesizer | `macro-outlook.json`, `00-macro-outlook.md` | O |
 | fund-portfolio | `01-fund-analysis.md` | O |
 | compliance-checker | `02-compliance-report.md` | O |
@@ -283,7 +288,6 @@ consumers:
   - compliance-checker
   - fund-portfolio
   - output-critic
-  - material-organizer
 extracted_from:
   - "파일 저장 필수 섹션 (rate-analyst v4.2)"
   - "저장 프로세스 섹션"
