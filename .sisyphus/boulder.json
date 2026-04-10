@@ -1,9 +1,105 @@
 {
-  "active_plan": "/home/cha/Documents/honeypot/.sisyphus/plans/visual-gen-text-fix.md",
-  "started_at": "2026-03-26T01:40:29.393Z",
+  "active_plan": "/home/cha/Documents/honeypot/.sisyphus/plans/accelerated-learner.md",
+  "started_at": "2026-03-30T04:42:40.454Z",
   "session_ids": [
-    "ses_2dd5b3181ffeWjrWG7bC7cbl0r"
+    "ses_2c2f2ecb3ffehA9bzJ66stqaY1",
+    "ses_2c2b9b4cbffezD3Xkk3vHdKX3g",
+    "ses_2c2b557d5ffefcY0M3FZdhw8OY",
+    "ses_2c2afa4c9ffe2Av7dXvuh40Por",
+    "ses_2c2aca9cdffeP3vX9Thvi5Vmc0",
+    "ses_2c2aaf2cfffenZCvw0RnlMpG7p",
+    "ses_2c2a7da21ffeIfZR45Rm7L4ZEs",
+    "ses_2c2a3b0a4ffedx8yBl5YqATF7c",
+    "ses_2c29e85e1ffeh5XTEd8dd9yN7G",
+    "ses_2c2990076ffesZHTHUdtb26MiZ",
+    "ses_2c2941643ffeHVN6PhjfTvQ2Le",
+    "ses_2c290fed8ffewjFe8M42njGJ33",
+    "ses_2c28d4637ffey0TZFvE1tuBlWj",
+    "ses_2c28c4db8ffeV5sRzJS8WoZ0ZJ"
   ],
-  "plan_name": "visual-gen-text-fix",
-  "agent": "atlas"
+  "plan_name": "accelerated-learner",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "플러그인 스켈레톤 + plugin.json + marketplace.json 등록",
+      "session_id": "ses_2c2b9b4cbffezD3Xkk3vHdKX3g",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-03-30T05:48:04.747Z"
+    },
+    "todo:2": {
+      "task_key": "todo:2",
+      "task_label": "2",
+      "task_title": "learning-methodology 스킬 (SKILL.md + references)",
+      "session_id": "ses_2c2b557d5ffefcY0M3FZdhw8OY",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-03-30T05:54:40.034Z"
+    },
+    "todo:3": {
+      "task_key": "todo:3",
+      "task_label": "3",
+      "task_title": "source-synthesizer 에이전트",
+      "session_id": "ses_2c2aca9cdffeP3vX9Thvi5Vmc0",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-03-30T06:00:19.286Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "controversy-mapper 에이전트",
+      "session_id": "ses_2c2aaf2cfffenZCvw0RnlMpG7p",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-03-30T06:03:27.865Z"
+    },
+    "todo:6": {
+      "task_key": "todo:6",
+      "task_label": "6",
+      "task_title": "question-architect 에이전트",
+      "session_id": "ses_2c2a7da21ffeIfZR45Rm7L4ZEs",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-03-30T06:07:45.802Z"
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "socratic-tutor 에이전트 (핵심 컴포넌트)",
+      "session_id": "ses_2c2a3b0a4ffedx8yBl5YqATF7c",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-03-30T06:13:05.760Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "accelerated-learn.md 오케스트레이터 커맨드",
+      "session_id": "ses_2c29e85e1ffeh5XTEd8dd9yN7G",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-03-30T06:19:19.397Z"
+    },
+    "todo:9": {
+      "task_key": "todo:9",
+      "task_label": "9",
+      "task_title": "AGENTS.md + README.md 업데이트 + 버전 동기화",
+      "session_id": "ses_2c2990076ffesZHTHUdtb26MiZ",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-03-30T06:25:22.365Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_2c28c4db8ffeV5sRzJS8WoZ0ZJ",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-03-30T06:40:55.668Z"
+    }
+  }
 }

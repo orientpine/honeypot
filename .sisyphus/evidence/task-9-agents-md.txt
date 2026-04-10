@@ -1,0 +1,2 @@
+가속 학습 파이프라인 실행 | `plugins/accelerated-learner/commands/accelerated-learn.md` | 48시간 딥러닝 방법론
+소크라틱 튜터링 | `plugins/accelerated-learner/agents/socratic-tutor.md` | 대화형 학습

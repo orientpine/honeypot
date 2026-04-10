@@ -1,0 +1,6 @@
+File: plugins/accelerated-learner/.claude-plugin/plugin.json
+Status: created
+Required fields present:
+- name: accelerated-learner
+- version: 1.0.0
+- author.email: orientpine@gmail.com
