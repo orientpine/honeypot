@@ -88,7 +88,6 @@ consultations/2026-01-14-TSLA-abc123/
 ├── sector-analysis.json          # sector-analyst 출력
 ├── risk-analysis.json            # risk-analyst 출력
 ├── leadership-analysis.json      # leadership-analyst 출력
-├── material-summary.md           # material-organizer 출력 (옵셔널)
 ├── macro-outlook.json            # macro-synthesizer 출력
 ├── 00-macro-outlook.md           # macro-synthesizer 출력
 ├── 00-materials-summary.md       # 자료 정리 (materials_path 제공 시)
@@ -117,7 +116,6 @@ consultations/2026-01-14-TSLA-abc123/
 | sector-analyst | `sector-analysis.json` | O |
 | risk-analyst | `risk-analysis.json` | O |
 | leadership-analyst | `leadership-analysis.json` | O |
-| material-organizer | `material-summary.md` | X (옵셔널) |
 | macro-synthesizer | `macro-outlook.json`, `00-macro-outlook.md` | O |
 
 ---

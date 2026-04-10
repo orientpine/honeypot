@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.24.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.25.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -407,11 +407,11 @@ PDF 수집 → MinerU 변환 → 스타일 분석 → 플러그인 생성
 - **출력**: `portfolios/YYYY-MM-DD-{profile}-{session}/` 폴더에 5개 보고서
 
 <details>
-<summary>구성 요소 (4 Agents · 1 Command · 11 Skills)</summary>
+<summary>구성 요소 (3 Agents · 1 Command · 11 Skills)</summary>
 
 | 유형 | 항목 |
 |------|------|
-| Agents | fund-portfolio, compliance-checker, output-critic, material-organizer |
+| Agents | fund-portfolio, compliance-checker, output-critic |
 | Command | `portfolio-analyze` (오케스트레이터) |
 | Skills | analyst-common, bogle-principles, data-updater, dc-pension-rules, devil-advocate, file-save-protocol, fund-output-template, fund-selection-criteria, macro-output-template, perspective-balance, web-search-verifier |
 
@@ -1057,7 +1057,7 @@ honeypot/
 │   │   ├── commands/                 # report-generate
 │   │   └── skills/                   # 3 skills
 │   ├── investments-portfolio/        # DC 연금 포트폴리오
-│   │   ├── agents/                   # 4 agents
+│   │   ├── agents/                   # 3 agents
 │   │   ├── commands/                 # portfolio-analyze
 │   │   └── skills/                   # 11 skills
 │   ├── stock-consultation/           # 주식/ETF 투자 상담
@@ -1113,8 +1113,9 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.25.0 | 2026-04-10 | investments-portfolio v1.2.0: 출력물 명명 일관성 수정 — 03-risk-analysis.md → 99-risk-analysis.md (보조 데이터 접두어 통일), material-organizer 데드 에이전트 제거 (3 agents), file-save-protocol 접두어 규칙 문서화 + 99-*.md 보조파일 등록, deposit_rates.json 웹검색 fallback 모순 해소; macro-analysis v1.0.1, stock-consultation v1.0.1 동기화 |
 | 3.24.0 | 2026-04-09 | wiki-gen 플러그인 추가 (farzaa/wiki-gen-skill 포팅, 개인 일기/노트 → Wikipedia 스타일 지식 위키 자동 컴파일 — ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드, 39종 디렉토리 택소노미, Writing Standards) |
-| 3.23.0 | 2026-03-30 | investments-portfolio v1.1.0: fund-portfolio 에이전트 감사 기반 4대 개선 — [MUST] 데이터 정합성 교차검증 Gate(riskLevel↔riskAsset 모순감지), 전수비교 증적(Audit Trail) 의무화, UH/H 환헤지 비용 비교 의무화; [SHOULD] 안전자산 다각화 옵션 검토 |
+| 3.23.0 | 2026-03-30 | investments-portfolio v1.1.0: fund-portfolio 에이전트 감사 기반 4대 개선 — [MUST] 데이터 정합성 교차검증 Gate(riskLevel↔riskAsset 모순감지), 전수비교 증적(Audit Trail) 의무화, UH/H 환헤지 비용 비교 의무화; [SHOULD] 안전자산 다각화 옵션 검토; [FIX] 출력 파일명 99-fund-analysis.md → 01-fund-analysis.md 통일 (5개 파일) |
 | 3.22.0 | 2026-03-30 | accelerated-learner 플러그인 추가 — 48시간 가속 학습(소스 분석→멘탈모델→논쟁 매핑→판별 질문→소크라틱 튜터링), 5 agents + 1 command + 1 skill |
 | 3.21.0 | 2026-03-25 | visual-generator v3.4.0: JPEG 원본 직접 저장 — SDK 호환성 버그 수정(part.as_image() → inline_data.data 직접 사용), PNG 불필요 변환 제거로 파일 크기 47% 절감, RGBA 안전 변환 추가 |
 | 3.20.0 | 2026-03-23 | hwpx-generator v3.11.0: section_transplant.py 추가 — HWPX 챕터 이식 CLI + HwpxSurgeon.transplant_from(), zip_surgery.py ZipInfo 메타데이터 전체 보존 P0 수정 |
