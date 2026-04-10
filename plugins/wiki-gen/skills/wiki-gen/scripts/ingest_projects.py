@@ -1,74 +1,110 @@
 #!/usr/bin/env python3
 """Ingest a project's doc/ markdown files into raw/entries/ for wiki-gen."""
 
+# pyright: reportPrivateUsage=false, reportImplicitRelativeImport=false, reportUninitializedInstanceVariable=false, reportUnknownVariableType=false, reportUnknownMemberType=false, reportExplicitAny=false, reportUnusedCallResult=false
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import os
 import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from ingest_common import (
-    DEFAULT_SKIP_DIR_NAMES,
-    DATE_YYYYMMDD,
-    ISO_DATETIME,
-    Entry,
-    log,
-    parse_csv_set,
-    slugify,
-    parse_yaml_frontmatter,
-    extract_heading_title,
-    extract_tags,
-    _valid_date,
-    _extract_path_year,
-    parse_date_fields,
-    coerce_tag_list,
-    coerce_alias_list,
-    count_markdown_files,
-    format_breakdown,
-)
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from ingest_common import (
+        DEFAULT_SKIP_DIR_NAMES,
+        DATE_YYYYMMDD,
+        ISO_DATETIME,
+        Entry,
+        log,
+        parse_csv_set,
+        slugify,
+        parse_yaml_frontmatter,
+        extract_heading_title,
+        extract_tags,
+        _valid_date,
+        _extract_path_year,
+        parse_date_fields,
+        coerce_tag_list,
+        coerce_alias_list,
+        count_markdown_files,
+        format_breakdown,
+    )
+else:
+    from .ingest_common import (
+        DEFAULT_SKIP_DIR_NAMES,
+        DATE_YYYYMMDD,
+        ISO_DATETIME,
+        Entry,
+        log,
+        parse_csv_set,
+        slugify,
+        parse_yaml_frontmatter,
+        extract_heading_title,
+        extract_tags,
+        _valid_date,
+        _extract_path_year,
+        parse_date_fields,
+        coerce_tag_list,
+        coerce_alias_list,
+        count_markdown_files,
+        format_breakdown,
+    )
 
 
 _SHARED_IMPORT_GUARD = (DATE_YYYYMMDD, ISO_DATETIME, _valid_date, _extract_path_year)
 
 
-def parse_args() -> argparse.Namespace:
+class CLIArgs(argparse.Namespace):
+    source_root: Path
+    wiki_root: Path
+    source_name: str
+    source_top: str
+    source_category: str
+    source_commit: str | None
+    ingest_log: Path | None
+    skip_dirs: str | None
+
+
+def parse_args() -> CLIArgs:
     parser = argparse.ArgumentParser(
         description=__doc__.split("\n")[0] if __doc__ else ""
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--source-root", type=Path, required=True, help="Path to project doc/ directory"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--wiki-root", type=Path, required=True, help="Path to wiki/ directory"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--source-name", required=True, help="Source identifier, e.g. my_project"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--source-top", default="External", help="Top-level source category"
     )
-    parser.add_argument("--source-category", default="Project", help="Source category")
-    parser.add_argument(
+    _ = parser.add_argument(
+        "--source-category", default="Project", help="Source category"
+    )
+    _ = parser.add_argument(
         "--source-commit", default=None, help="Git commit SHA for tracking"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--ingest-log",
         type=Path,
         default=None,
         help="Path to raw/ingest_log.json (default: <wiki-root>/../raw/ingest_log.json)",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--skip-dirs",
         default=None,
         help="Comma-separated directory names to skip anywhere in the tree (default: standard exclusion list)",
     )
-    return parser.parse_args()
+    return parser.parse_args(namespace=CLIArgs())
 
 
 def walk_project_docs(
@@ -157,7 +193,7 @@ def ingest_file(
     )
 
 
-def main(args: argparse.Namespace) -> int:
+def main(args: CLIArgs) -> int:
     source_root = args.source_root.resolve()
     wiki_root = args.wiki_root.resolve()
     raw_root = wiki_root.parent / "raw"
@@ -267,11 +303,9 @@ def main(args: argparse.Namespace) -> int:
         encoding="utf-8",
     )
 
-    combined_breakdown = skip_breakdown + ingest_skip_counts
+    combined_breakdown: Counter[str] = skip_breakdown + ingest_skip_counts
     log(
-        f"Scanned: {len(md_files)} files. "
-        f"Skipped: {total_skipped} ({format_breakdown(combined_breakdown)}). "
-        f"Ingested: {written} entries."
+        f"Scanned: {len(md_files)} files. Skipped: {total_skipped} ({format_breakdown(combined_breakdown)}). Ingested: {written} entries."
     )
     log(f"Log: {ingest_log}")
     return 0
