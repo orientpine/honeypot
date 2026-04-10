@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.26.0",
+    "version": "3.27.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -216,8 +216,8 @@
     {
       "name": "wiki-gen",
       "source": "./plugins/wiki-gen",
-      "description": "개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬. v1.1.0 대규모 개선: 1826-entry 실사용 경험 기반. C1 wikilink [[filename|Title]] 형식, C4 Anti-Dump Rule, C5 Scale Mode (Partitioned Parallel), Citation Discipline, Filename Convention, Aliases Discipline, wiki remediate 명령, 에이전트 프롬프트 템플릿, 포터블 헬퍼 스크립트. Day One, Obsidian, Notion, Apple Notes, iMessage 등 다양한 포맷 지원. 9개 서브커맨드 + 39종 디렉토리 택소노미. 원본: farzaa/wiki-gen-skill (gist)",
-      "version": "1.1.0",
+      "description": "개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬. v1.2.0 확장: 1826-entry 실사용 경험 기반. C1 wikilink [[filename|Title]] 형식, C4 Anti-Dump Rule, C5 Scale Mode (Partitioned Parallel), Citation Discipline, Filename Convention, Aliases Discipline, wiki remediate 및 wiki sync 명령, 에이전트 프롬프트 템플릿, 포터블 헬퍼 스크립트. Day One, Obsidian, Notion, Apple Notes, iMessage 등 다양한 포맷 지원. 10개 서브커맨드 + 39종 디렉토리 택소노미. 원본: farzaa/wiki-gen-skill (gist)",
+      "version": "1.2.0",
       "strict": true,
       "skills": ["./skills"],
       "license": "MIT",
