@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 7 items
+
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_help PASSED [ 14%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_basic_entry_creation PASSED [ 28%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_source_prefixed_id PASSED [ 42%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_file_field_has_source_prefix PASSED [ 57%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_empty_doc_dir PASSED [ 71%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_id_no_collision_different_sources PASSED [ 85%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_projects.py::test_multiple_files PASSED [100%]
+
+============================== 7 passed in 0.39s ===============================
