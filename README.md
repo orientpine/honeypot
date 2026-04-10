@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.25.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.26.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -910,30 +910,39 @@ auto_mode: true
 | Email Export | `.mbox`, `.eml` |
 | Twitter/X Archive | `tweet.js` 또는 아카이브 |
 
-### 8개 서브커맨드
+### 9개 서브커맨드 (v1.1.0)
 
 | 커맨드 | 역할 |
 |--------|------|
-| `wiki ingest` | 소스 데이터 → `raw/entries/`의 개별 `.md` 엔트리로 변환 |
-| `wiki absorb [date-range]` | 엔트리를 읽고 이해하여 위키 아티클로 작성/갱신 |
-| `wiki query <question>` | 위키 안을 탐색하여 질문에 답변 (read-only) |
-| `wiki cleanup` | 병렬 서브에이전트로 전체 아티클 감사 및 재구조 |
+| `wiki ingest` | 소스 데이터 → `raw/entries/`의 개별 `.md` 엔트리로 변환 (C7 표준 제외 목록, C6 날짜 추출 우선순위) |
+| `wiki absorb [date-range]` | 엔트리를 읽고 이해하여 위키 아티클로 작성/갱신 (C4 Anti-Dump, 150-line cap, 5:1 compression) |
+| `wiki remediate` | **v1.1.0 신규** — citation coverage gap을 병렬 에이전트로 보완하여 100%를 달성 (I3) |
+| `wiki query <question>` | 위키 안을 탐색하여 질문에 답변 (read-only, N5: type: frontmatter 기반) |
+| `wiki cleanup` | 병렬 서브에이전트로 전체 아티클 감사 및 재구조, I6 orphan 정책 적용 |
 | `wiki breakdown` | 누락된 아티클을 발굴하고 병렬로 생성 |
-| `wiki rebuild-index` | `_index.md`와 `_backlinks.json` 재구축 |
+| `wiki rebuild-index` | `_index.md`와 `_backlinks.json` 재구축 (C1 `[[filename_stem\|Title]]` 형식 강제) |
 | `wiki reorganize` | 위키 구조 재설계 (병합/분할/카테고리 재편성) |
-| `wiki status` | 결과물 통계 (흡수된 엔트리 수, 카테고리별 아티클 수 등) |
+| `wiki status` | 결과물 통계 (N2 표준 출력 포맷: Ingestion/Articles/Coverage/Quality) |
 
-### 주요 원칙
+### 주요 원칙 (v1.1.0 강화)
 
 - **Writer, not filing clerk**: 단순히 사실을 정리하는 것이 아니라 의미를 이해하고 내러티브로 짜내기
 - **Anti-Cramming**: 하나의 큰 아티클에 계속 추가하기보다 소주제로 새 아티클을 만들기
 - **Anti-Thinning**: 스텁 생성 금지, 매번 아티클을 더 풍성하게 만들기
+- **Anti-Dump (v1.1.0)**: 원본 엔트리 텍스트 verbatim paste 절대 금지, 150-line cap, 5:1 압축비 유지
+- **Citation Discipline (v1.1.0)**: frontmatter `sources:` (canonical) + body `## References` (human-readable) 이중 인용
 - **Wikipedia Tone, Not AI**: 평이하고 사실적인 문체. 감정은 직접 인용문으로만
 - **Concept Articles**: 패턴, 테마, 아크가 개별 아티클로 승격. 이것이 "mind map"의 핵심
 
+### 번들된 리소스 (v1.1.0 신규)
+
+- **`assets/`**: 4개 에이전트 프롬프트 템플릿 (absorb, remediation, cleanup, breakdown) + README
+- **`scripts/`**: 포터블 Python 헬퍼 스크립트 (rebuild_index, check_coverage, verify_content, consolidate_analyze, ingest_obsidian, diag_wikilink_resolution, diag_uncovered, finalize 등)
+- **Migration Guide**: `## Migration from v1.0.0` 섹션으로 기존 사용자 호환성 보장
+
 | 구성 | 항목 |
 |------|------|
-| Skill | wiki-gen (8개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards) |
+| Skill | wiki-gen v1.1.0 (9개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards + `assets/` templates + `scripts/` helpers) |
 ---
 
 # 설치 & 설정
@@ -1038,7 +1047,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (16개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (17개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -1092,8 +1101,8 @@ honeypot/
 │   │   └── skills/                   # 5 skills
 │   ├── pptx-design-styles/          # PPTX 디자인 스타일 가이드
 │   │   └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
-│   └── wiki-gen/                    # 개인 지식 위키 생성
-│       └── skills/                   # 1 skill (위키 컴파일 워크플로우)
+│   └── wiki-gen/                    # 개인 지식 위키 생성 v1.1.0
+│       └── skills/                   # 1 skill (9개 서브커맨드 + assets/ templates + scripts/ helpers)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -1113,6 +1122,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.26.0 | 2026-04-10 | wiki-gen v1.1.0: 1826-entry 실사용 경험 기반 18개 항목 대규모 개선 — [P0] C1 `[[filename_stem\|Title]]` wikilink 구문 (Obsidian 파일명 resolution), C2 ASCII snake_case filename convention, C3 Citation Discipline (`sources:` canonical + `## References` human-readable dual traceability), C4 Anti-Dump Rule (150-line cap, 5:1 compression, max 3 consecutive raw lines); [P1] C5 Scale Mode (Partitioned Parallel for 500+ vaults with safer canonical entity rule), C6 Date Extraction 8-tier priority (datetime validation, mtime warning threshold), C7 Standard Exclusions (.git/.obsidian/node_modules/etc), I1 Aliases Discipline, I3 `wiki remediate` 신규 명령 (citation gap closure, 9번째 서브커맨드); [P2] I2 Agent Prompt Templates (`assets/`: absorb/remediation/cleanup/breakdown), I5 rebuild-index exclusions, I6 Orphan policy (max 8 wikilinks/article); [P3] N1 checkpoint cadence by scale, N2 `wiki status` 표준 출력 포맷, N3 Frontmatter schema (legacy 관대), N4 Citation vs Content coverage, N5 type 기반 query taxonomy; [I4] `scripts/` 포터블 Python 헬퍼 스크립트; + `## Migration from v1.0.0` 섹션 (backward compatibility lint warnings) |
 | 3.25.0 | 2026-04-10 | investments-portfolio v1.2.0: 출력물 명명 일관성 수정 — 03-risk-analysis.md → 99-risk-analysis.md (보조 데이터 접두어 통일), material-organizer 데드 에이전트 제거 (3 agents), file-save-protocol 접두어 규칙 문서화 + 99-*.md 보조파일 등록, deposit_rates.json 웹검색 fallback 모순 해소; macro-analysis v1.0.1, stock-consultation v1.0.1 동기화 |
 | 3.24.0 | 2026-04-09 | wiki-gen 플러그인 추가 (farzaa/wiki-gen-skill 포팅, 개인 일기/노트 → Wikipedia 스타일 지식 위키 자동 컴파일 — ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드, 39종 디렉토리 택소노미, Writing Standards) |
 | 3.23.0 | 2026-03-30 | investments-portfolio v1.1.0: fund-portfolio 에이전트 감사 기반 4대 개선 — [MUST] 데이터 정합성 교차검증 Gate(riskLevel↔riskAsset 모순감지), 전수비교 증적(Audit Trail) 의무화, UH/H 환헤지 비용 비교 의무화; [SHOULD] 안전자산 다각화 옵션 검토; [FIX] 출력 파일명 99-fund-analysis.md → 01-fund-analysis.md 통일 (5개 파일) |

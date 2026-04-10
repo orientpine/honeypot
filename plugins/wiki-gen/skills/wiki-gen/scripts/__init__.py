@@ -1,0 +1,1 @@
+"""wiki-gen helper scripts."""

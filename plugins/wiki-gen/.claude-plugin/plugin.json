@@ -1,7 +1,7 @@
 {
   "name": "wiki-gen",
-  "version": "1.0.0",
-  "description": "개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬. Day One, Obsidian, Notion, Apple Notes, iMessage 등 다양한 포맷 지원. ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드 제공. 39종 디렉토리 택소노미. 원본: farzaa/wiki-gen-skill (gist)",
+  "version": "1.1.0",
+  "description": "개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬. 1826-entry 실사용 경험 기반 v1.1.0 대규모 개선: C1 wikilink [[filename|Title]] 형식, Scale Mode (Partitioned Parallel), Anti-Dump Rule, Citation Discipline, wiki remediate 명령, 에이전트 프롬프트 템플릿, 포터블 헬퍼 스크립트. Day One, Obsidian, Notion, Apple Notes, iMessage 등 다양한 포맷 지원. 9개 서브커맨드 (ingest/absorb/remediate/query/cleanup/breakdown/status/rebuild-index/reorganize). 원본: farzaa/wiki-gen-skill (gist)",
   "author": {
     "name": "Baekdong Cha",
     "email": "orientpine@gmail.com"
