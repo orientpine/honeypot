@@ -1102,8 +1102,8 @@ honeypot/
 │   │   └── skills/                   # 5 skills
 │   ├── pptx-design-styles/          # PPTX 디자인 스타일 가이드
 │   │   └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
-│   └── wiki-gen/                    # 개인 지식 위키 생성 v1.1.0
-│       └── skills/                   # 1 skill (9개 서브커맨드 + assets/ templates + scripts/ helpers)
+│   └── wiki-gen/                    # 개인 지식 위키 생성 v1.2.0
+│       └── skills/                   # 1 skill (10개 서브커맨드 + assets/ templates + scripts/ helpers)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
