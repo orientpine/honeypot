@@ -1,0 +1,4 @@
+python3 -c "import ast; ast.parse(open('plugins/wiki-gen/skills/wiki-gen/tests/conftest.py').read()); print('VALID')"
+
+Result: VALID
+Status: PASS
