@@ -1,0 +1,7 @@
+[Phase 2: 멘탈모델 + 논쟁 (병렬 실행)]
+    +-- Step 2-1. Task(subagent_type="accelerated-learner::mental-model-extractor") // 병렬
+    +-- Step 2-2. Task(subagent_type="accelerated-learner::controversy-mapper")     // 병렬
+| `auto_mode` | - | `false` | true 시 튜터링 건너뜀 |
+[Phase 4: 소크라틱 튜터링] (auto_mode=true 시 건너뜀)
+| `auto_mode` | - | `false` | true 시 튜터링 건너뜀 |
+[Phase 4: 소크라틱 튜터링] (auto_mode=true 시 건너뜀)

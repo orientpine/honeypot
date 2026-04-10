@@ -1,0 +1,11 @@
+10
+    +-- Step 1-1. Task(subagent_type="accelerated-learner::source-synthesizer")
+Use the Task tool with subagent_type="accelerated-learner::source-synthesizer"
+    +-- Step 2-1. Task(subagent_type="accelerated-learner::mental-model-extractor") // 병렬
+첫 번째: subagent_type="accelerated-learner::mental-model-extractor"
+    +-- Step 2-2. Task(subagent_type="accelerated-learner::controversy-mapper")     // 병렬
+두 번째: subagent_type="accelerated-learner::controversy-mapper"
+    +-- Step 3-1. Task(subagent_type="accelerated-learner::question-architect")
+Use the Task tool with subagent_type="accelerated-learner::question-architect"
+    +-- Step 4-1. Task(subagent_type="accelerated-learner::socratic-tutor")
+Use the Task tool with subagent_type="accelerated-learner::socratic-tutor"

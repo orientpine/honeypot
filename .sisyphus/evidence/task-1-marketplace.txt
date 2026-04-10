@@ -1,0 +1,8 @@
+File: .claude-plugin/marketplace.json
+Status: updated
+Registration fields present:
+- name: accelerated-learner
+- source: ./plugins/accelerated-learner
+- strict: true
+- skills: ["./skills"]
+- agents: 5 registered paths
