@@ -1,0 +1,4 @@
+python3 -m pytest plugins/wiki-gen/skills/wiki-gen/tests/ --collect-only
+
+Result: collected 0 items
+Status: PASS
