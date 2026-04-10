@@ -52,6 +52,23 @@ python finalize.py --wiki-root /path/to/project/wiki
 python plan_batches.py --entries-dir /path/to/project/raw/entries --ingest-log /path/to/project/raw/ingest_log.json
 ```
 
+### Multi-source sync
+
+**ingest_common.py** — Shared utility functions for wiki-gen ingest scripts (Entry dataclass, slugify, date parsing, etc.).
+```bash
+# No CLI — imported as a module by ingest_obsidian.py and ingest_projects.py
+```
+
+**sync_sources.py** — Orchestrate multi-source sync from `sources.yaml`.
+```bash
+python sync_sources.py --config sources.yaml --wiki-root /path/to/wiki
+```
+
+**ingest_projects.py** — Ingest a project's `doc/` folder into `raw/entries/{source}/`.
+```bash
+python ingest_projects.py --source-root /path/to/project/doc --wiki-root /path/to/wiki --source-name my_project
+```
+
 ### Diagnostics / remediation helpers
 
 **diag_wikilink_resolution.py** — Diagnose whether `_index.md` wikilinks resolve by filename, alias, title-only, or not at all.

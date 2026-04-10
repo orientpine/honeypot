@@ -194,6 +194,92 @@ See `references/writing-standards.md` for the full tone rules, frontmatter schem
 
 ---
 
+## Command: `wiki sync`
+
+Pull documentation from multiple source projects and update `raw/entries/`.
+This is the **collection layer** — it gathers source documents but does NOT
+run LLM absorption. Think of it as "wiki ingest, but for many sources at once."
+
+### Quick Start
+
+1. Create `sources.yaml` in the project root (see `references/sources-schema.md`).
+2. Run:
+
+```bash
+python scripts/sync_sources.py --config sources.yaml --wiki-root wiki/
+```
+
+3. Review new entries in `raw/entries/{source_name}/`.
+4. Run `wiki absorb` (manually) to integrate new entries into wiki articles.
+
+### What It Does
+
+1. Reads `sources.yaml` for the list of source projects.
+2. For each source:
+   - `type: git` → sparse-clone to `.sync_cache/`, checkout only `doc_path`
+   - `type: local` → read from local path directly
+   - `type: obsidian` → delegate to `ingest_obsidian.py` (existing behavior)
+3. Runs the appropriate ingest helper for each source:
+   - `ingest_obsidian.py` for Obsidian vaults
+   - `ingest_projects.py` for project `doc/` folders
+4. Writes entries to `raw/entries/{source_name}/`.
+5. Merges all per-source ingest logs into unified `raw/ingest_log.json`.
+6. Runs `rebuild_index.py` and `check_coverage.py` automatically.
+7. Reports sync summary with added/updated/unchanged/deleted counts.
+
+### Incremental Sync
+
+After the first run, `sync_log.json` tracks each file's content hash.
+Subsequent runs only process changed files, skipping unchanged ones.
+
+- Use `--force` to ignore the cache and re-process everything.
+- Use `--dry-run` to preview changes without writing files.
+- Use `--source <name>` to sync only one specific source.
+
+### Automation Levels
+
+This command handles **Level 1 (Source → Entries)** automation:
+
+| Level | What | Cost | Trigger |
+|---|---|---|---|
+| **Level 1** | Source docs → `raw/entries/` + index + backlinks | Seconds to minutes, no LLM | `wiki sync` (cron/timer/manual) |
+| **Level 2** | New entries → wiki article text | LLM cost per entry | `wiki absorb` (manual) |
+
+Level 2 requires manual `wiki absorb` — see Phase 3 in the implementation plan.
+
+### ID Strategy
+
+Project sources use **source-prefixed IDs** to prevent collisions:
+
+```
+sha1(f"{source_name}:{relative_path}")[:12]
+```
+
+Obsidian sources keep the original ID strategy (`sha1(rel_path)[:12]`)
+to preserve backward compatibility with existing article citations.
+
+### Deletion Handling
+
+When a source file is deleted:
+- The corresponding entry in `raw/entries/{source}/` is removed.
+- The entry is removed from `sync_log.json` and `ingest_log.json`.
+- Wiki articles that cited the deleted entry are NOT automatically modified.
+- Run `check_coverage.py` to identify orphaned citations.
+
+### When to Run
+
+- After adding new docs to any source project's `doc/` folder
+- On a schedule (daily cron, systemd timer, GitHub Actions)
+- Before `wiki absorb` to ensure entries are up to date
+- After changing `sources.yaml` (adding/removing sources)
+
+### See Also
+
+- `references/sources-schema.md` — Full `sources.yaml` schema documentation
+- `references/automation-guide.md` — GitHub Actions and systemd timer setup
+
+---
+
 ## Command: `wiki rebuild-index`
 
 Rebuild `_index.md` and `_backlinks.json` from current wiki state. Exclude meta files, `README.md`, and optional `.wikiignore` entries. Generate index entries with `[[filename_stem|Display Title]]`, preserve aliases in the index line, and verify that every wikilink resolves through a filename or alias.
