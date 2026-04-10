@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.26.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.27.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -910,7 +910,7 @@ auto_mode: true
 | Email Export | `.mbox`, `.eml` |
 | Twitter/X Archive | `tweet.js` 또는 아카이브 |
 
-### 9개 서브커맨드 (v1.1.0)
+### 10개 서브커맨드 (v1.2.0)
 
 | 커맨드 | 역할 |
 |--------|------|
@@ -922,6 +922,7 @@ auto_mode: true
 | `wiki breakdown` | 누락된 아티클을 발굴하고 병렬로 생성 |
 | `wiki rebuild-index` | `_index.md`와 `_backlinks.json` 재구축 (C1 `[[filename_stem\|Title]]` 형식 강제) |
 | `wiki reorganize` | 위키 구조 재설계 (병합/분할/카테고리 재편성) |
+| `wiki sync` | sources.yaml 기반 다중 소스 동기화 및 ingest (멀티소스 수집 파이프라인) |
 | `wiki status` | 결과물 통계 (N2 표준 출력 포맷: Ingestion/Articles/Coverage/Quality) |
 
 ### 주요 원칙 (v1.1.0 강화)
@@ -942,7 +943,7 @@ auto_mode: true
 
 | 구성 | 항목 |
 |------|------|
-| Skill | wiki-gen v1.1.0 (9개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards + `assets/` templates + `scripts/` helpers) |
+| Skill | wiki-gen v1.2.0 (10개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards + `assets/` templates + `scripts/` helpers) |
 ---
 
 # 설치 & 설정
@@ -1122,6 +1123,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
 | 3.26.0 | 2026-04-10 | wiki-gen v1.1.0: 1826-entry 실사용 경험 기반 18개 항목 대규모 개선 — [P0] C1 `[[filename_stem\|Title]]` wikilink 구문 (Obsidian 파일명 resolution), C2 ASCII snake_case filename convention, C3 Citation Discipline (`sources:` canonical + `## References` human-readable dual traceability), C4 Anti-Dump Rule (150-line cap, 5:1 compression, max 3 consecutive raw lines); [P1] C5 Scale Mode (Partitioned Parallel for 500+ vaults with safer canonical entity rule), C6 Date Extraction 8-tier priority (datetime validation, mtime warning threshold), C7 Standard Exclusions (.git/.obsidian/node_modules/etc), I1 Aliases Discipline, I3 `wiki remediate` 신규 명령 (citation gap closure, 9번째 서브커맨드); [P2] I2 Agent Prompt Templates (`assets/`: absorb/remediation/cleanup/breakdown), I5 rebuild-index exclusions, I6 Orphan policy (max 8 wikilinks/article); [P3] N1 checkpoint cadence by scale, N2 `wiki status` 표준 출력 포맷, N3 Frontmatter schema (legacy 관대), N4 Citation vs Content coverage, N5 type 기반 query taxonomy; [I4] `scripts/` 포터블 Python 헬퍼 스크립트; + `## Migration from v1.0.0` 섹션 (backward compatibility lint warnings) |
 | 3.25.0 | 2026-04-10 | investments-portfolio v1.2.0: 출력물 명명 일관성 수정 — 03-risk-analysis.md → 99-risk-analysis.md (보조 데이터 접두어 통일), material-organizer 데드 에이전트 제거 (3 agents), file-save-protocol 접두어 규칙 문서화 + 99-*.md 보조파일 등록, deposit_rates.json 웹검색 fallback 모순 해소; macro-analysis v1.0.1, stock-consultation v1.0.1 동기화 |
 | 3.24.0 | 2026-04-09 | wiki-gen 플러그인 추가 (farzaa/wiki-gen-skill 포팅, 개인 일기/노트 → Wikipedia 스타일 지식 위키 자동 컴파일 — ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드, 39종 디렉토리 택소노미, Writing Standards) |

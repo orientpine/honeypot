@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-10T12:00:00+09:00
-**Version:** 3.26.0
+**Generated:** 2026-04-10
+**Version:** 3.27.0
 **Branch:** main
 
 ## OVERVIEW
@@ -47,7 +47,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | 웹 페이지 클린 추출 | `plugins/obsidian-skills/skills/defuddle/SKILL.md` | Defuddle CLI 마크다운 추출 |
 | 가속 학습 파이프라인 실행 | `plugins/accelerated-learner/commands/accelerated-learn.md` | 48시간 딥러닝 방법론 |
 | 소크라틱 튜터링 | `plugins/accelerated-learner/agents/socratic-tutor.md` | 대화형 학습 |
-| 개인 지식 위키 생성 | `plugins/wiki-gen/skills/wiki-gen/SKILL.md` | 일기/노트 → Wikipedia 스타일 위키 컴파일 (v1.1.0: 9개 커맨드 ingest/absorb/remediate/query/cleanup/breakdown/status/rebuild-index/reorganize, Scale Mode 파티션 병렬, Anti-Dump Rule, Citation Discipline, 에이전트 프롬프트 템플릿 assets/, 포터블 헬퍼 스크립트 scripts/) |
+| 개인 지식 위키 생성 | `plugins/wiki-gen/skills/wiki-gen/SKILL.md` | 일기/노트 → Wikipedia 스타일 위키 컴파일 (v1.2.0: 10개 커맨드 ingest/absorb/remediate/query/cleanup/breakdown/status/rebuild-index/reorganize/sync, Scale Mode 파티션 병렬, Anti-Dump Rule, Citation Discipline, 에이전트 프롬프트 템플릿 assets/, 포터블 헬퍼 스크립트 scripts/) |
 | Plugin registry | `.claude-plugin/marketplace.json` | All 17 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
@@ -263,16 +263,16 @@ Glob: **/{script-name}.py
   - Citation style detection
   - Field characteristics from keywords
 
-### Personal Knowledge Wiki (wiki-gen v1.1.0)
-- **Source**: Port of `farzaa/wiki-gen-skill` gist (MIT) + 1826-entry 실사용 경험 기반 v1.1.0 대규모 개선
-- **Commands (9)**: `wiki ingest` → `wiki absorb [date-range]` → `wiki remediate` → `wiki query|cleanup|breakdown|status|rebuild-index|reorganize`
-- **New in v1.1.0**: C1 Wikilink Syntax `[[filename_stem|Title]]` (Obsidian 파일명 기반 resolution), C2 Filename Convention (ASCII snake_case 필수), C3 Citation Discipline (frontmatter `sources:` canonical + body `## References` human-readable), C4 Anti-Dump Rule (verbatim paste 금지, 150-line cap, 5:1 compression), C5 Scale Mode (Partitioned Parallel for 500+ entry vaults), C6 Date Extraction priority order (8-tier fallback, datetime validation, mtime warning), C7 Standard Exclusions (.git/.obsidian/.claude/node_modules/etc), I1 Aliases Discipline, I2 Agent Prompt Templates (assets/), I3 wiki remediate command (citation gap closure), N1-N5 (checkpoint cadence, status format, schema, coverage vs content, query by type)
+-### Personal Knowledge Wiki (wiki-gen v1.2.0)
+- **Source**: Port of `farzaa/wiki-gen-skill` gist (MIT) + 1826-entry 실사용 경험 기반 v1.2.0 확장
+- **Commands (10)**: `wiki ingest` → `wiki absorb [date-range]` → `wiki remediate` → `wiki query|cleanup|breakdown|status|rebuild-index|reorganize|sync`
+- **New in v1.2.0**: C1 Wikilink Syntax `[[filename_stem|Title]]` (Obsidian 파일명 기반 resolution), C2 Filename Convention (ASCII snake_case 필수), C3 Citation Discipline (frontmatter `sources:` canonical + body `## References` human-readable), C4 Anti-Dump Rule (verbatim paste 금지, 150-line cap, 5:1 compression), C5 Scale Mode (Partitioned Parallel for 500+ entry vaults), C6 Date Extraction priority order (8-tier fallback, datetime validation, mtime warning), C7 Standard Exclusions (.git/.obsidian/.claude/node_modules/etc), I1 Aliases Discipline, I2 Agent Prompt Templates (assets/), I3 wiki remediate command (citation gap closure), I4 wiki sync command (multi-source sources.yaml orchestration), N1-N5 (checkpoint cadence, status format, schema, coverage vs content, query by type)
 - **Writing Standards**: Wikipedia tone (flat/factual/encyclopedic). Forbidden: em dashes, peacock words, editorial voice, progressive narrative, qualifiers. Direct quotes carry emotional weight; articles stay neutral.
 - **Anti-Patterns**: Anti-Cramming (3rd sub-topic paragraph → new page), Anti-Thinning (stubs are failures, every touch must enrich), Anti-Dump (never paste raw entry text verbatim — C4)
 - **39-Directory Emergent Taxonomy (7 groups)**: Core (6), Media/Culture (8), Inner Life (5), Narrative (5), Relationships (3), Work/Strategy (5), Other (7). Directories emerge from data; never pre-create.
 - **Absorption Loop**: Small vaults process chronologically; 500+ entry vaults use partitioned parallel (Scale Mode). Checkpoint cadence varies by mode (15/30-50/per-batch).
 - **Concept Articles**: Recurring patterns/themes become pages (`philosophies/`, `patterns/`, `tensions/`, `identities/`) - where the wiki becomes "a map of a mind", not a contact list
-- **Bundled resources**: `assets/` (4 agent prompt templates + README), `scripts/` (10 portable Python helpers with argparse CLI)
+- **Bundled resources**: `assets/` (4 agent prompt templates + README), `scripts/` (13 portable Python helpers with argparse CLI)
 - **Backward compatibility**: v1.0.0 wikis work without migration; C1/C2/N3 enforced only on new/edited articles, legacy gaps become lint warnings (see `## Migration from v1.0.0` in SKILL.md)
 
 ## COMMANDS
@@ -370,6 +370,17 @@ python plugins/wiki-gen/skills/wiki-gen/scripts/diag_uncovered.py \
 # wiki-gen: Plan batch distribution from ingest log (summary before generate_batches)
 python plugins/wiki-gen/skills/wiki-gen/scripts/plan_batches.py \
   --entries-dir [project]/raw/entries --ingest-log [project]/raw/ingest_log.json
+
+# wiki-gen: Multi-source sync
+python plugins/wiki-gen/skills/wiki-gen/scripts/sync_sources.py \
+  --config sources.yaml --wiki-root /path/to/wiki
+
+# wiki-gen: Ingest project doc/ folder
+python plugins/wiki-gen/skills/wiki-gen/scripts/ingest_projects.py \
+  --source-root /path/to/project/doc --wiki-root /path/to/wiki --source-name my_project
+
+# wiki-gen: Shared ingest helpers
+python plugins/wiki-gen/skills/wiki-gen/scripts/ingest_common.py
 ```
 
 ## CLAUDE CODE MARKETPLACE RULES
