@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.27.0",
+    "version": "3.28.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -231,6 +231,20 @@
           "url": "https://gist.github.com/farzaa/c35ac0cfbeb957788650e36aabea836d"
         }
       ]
+    }
+    ,
+    {
+      "name": "link-curator",
+      "source": "./plugins/link-curator",
+      "description": "URL → Korean markdown summary notes (link-summarizer) + HoneyCombo submission (honeycombo-submit). URL fetch/classify, structured Korean md generation, single/bulk GitHub Issue submission.",
+      "version": "1.0.0",
+      "strict": true,
+      "skills": ["./skills"],
+      "license": "MIT",
+      "author": {
+        "name": "Baekdong Cha",
+        "email": "orientpine@gmail.com"
+      }
     }
   ]
 }
