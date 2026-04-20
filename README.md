@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.27.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.28.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -52,6 +52,7 @@
 | 도구 | [**obsidian-skills**](#obsidian-skills) | Obsidian vault 파일 작성 — Markdown, Bases, Canvas, CLI, Defuddle |
 | 학습 | [**accelerated-learner**](#accelerated-learner) | 48시간 가속 학습 — 소스 분석, 멘탈모델, 논쟁 매핑, 소크라틱 튜터링 |
 | 도구 | [**wiki-gen**](#wiki-gen) | 개인 일기/노트를 Wikipedia 스타일 지식 위키로 컴파일 [^3] |
+| 도구 | [**link-curator**](#link-curator) | URL → Korean MD summary + HoneyCombo 제출 |
 
 ---
 
@@ -946,6 +947,56 @@ auto_mode: true
 | Skill | wiki-gen v1.2.0 (10개 서브커맨드 + 39종 카테고리 택소노미 + Writing Standards + `assets/` templates + `scripts/` helpers) |
 ---
 
+## link-curator
+
+> URL 목록을 입력하면 한국어 요약 마크다운 노트를 생성하고, 선택적으로 HoneyCombo에 gh CLI로 제출합니다.
+
+### 사용법
+
+```bash
+# MD 노트만 생성
+/link-curator:curate-links 아래 URL들을 정리해줘
+https://blog.example.com/ai-agents-guide
+https://youtube.com/watch?v=abc123
+output_dir: ./output/links/
+```
+
+```bash
+# HoneyCombo 제출까지
+/link-curator:curate-links 아래 링크들 정리하고 허니콤보에 올려줘
+https://blog.example.com/mcp-tutorial
+output_dir: ./output/links/
+```
+
+### 주요 특징
+
+- **2단계 워크플로우**: URL fetch → Korean MD 생성 (Phase 1) + HoneyCombo 제출 (Phase 2, opt-in)
+- **병렬 fetch**: 소스별 최적 전략 (webfetch, web search, fallback placeholder)
+- **HoneyCombo 한국어 요약**: 제출 시 `## 개요`, `## 주요 내용`, `## 시사점` 3섹션 구조화 (≤5000자), MD 노트는 콘텐츠에 맞는 유연한 섹션 사용
+- **Single/Bulk 제출**: 1-5개 단건, 6-20개 대량, 20개 초과 분할
+- **Dry Run**: `--dry-run` 플래그로 실행 전 미리보기
+- **Tags 영어, Summary 한국어**: HoneyCombo 자동 검증 규격 준수
+
+| 파라미터 | 필수 | 설명 | 예시 |
+|----------|:----:|------|------|
+| URLs | O | HTTP(S) URL 목록 | 인라인 입력 |
+| `output_dir` | O | MD 파일 저장 경로 | `./output/links/` |
+| `submit` | - | HoneyCombo 제출 여부 | `submit: true` |
+| `dry_run` | - | 제출 미리보기 | `dry_run: true` |
+
+<details>
+<summary>구성 요소 (1 Command · 2 Skills)</summary>
+
+| 유형 | 항목 |
+|------|------|
+| Command | `curate-links` (오케스트레이터) |
+| Skill | link-summarizer (URL fetch, MD 생성) |
+| Skill | honeycombo-submit (gh CLI 제출 프로토콜, 2개 bash 스크립트) |
+
+</details>
+
+---
+
 # 설치 & 설정
 
 ---
@@ -1048,7 +1099,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (17개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (18개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -1102,8 +1153,11 @@ honeypot/
 │   │   └── skills/                   # 5 skills
 │   ├── pptx-design-styles/          # PPTX 디자인 스타일 가이드
 │   │   └── skills/                   # 1 skill (30가지 모던 디자인 스타일)
-│   └── wiki-gen/                    # 개인 지식 위키 생성 v1.2.0
-│       └── skills/                   # 1 skill (10개 서브커맨드 + assets/ templates + scripts/ helpers)
+│   ├── wiki-gen/                    # 개인 지식 위키 생성 v1.2.0
+│   │   └── skills/                   # 1 skill (10개 서브커맨드 + assets/ templates + scripts/ helpers)
+│   └── link-curator/                 # URL → Korean MD + HoneyCombo 제출
+│       ├── commands/                 # curate-links
+│       └── skills/                   # 2 skills (link-summarizer, honeycombo-submit)
 ├── AGENTS.md                         # 프로젝트 상세 지식 베이스
 └── README.md                         # 이 문서
 ```
@@ -1124,6 +1178,7 @@ honeypot/
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
 | 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
+| 3.28.0 | 2026-04-20 | link-curator 플러그인 추가 — URL fetch → Korean MD summary notes 생성 (link-summarizer) + gh CLI HoneyCombo submission (honeycombo-submit), single/bulk 제출, `--dry-run` 지원 |
 | 3.26.0 | 2026-04-10 | wiki-gen v1.1.0: 1826-entry 실사용 경험 기반 18개 항목 대규모 개선 — [P0] C1 `[[filename_stem\|Title]]` wikilink 구문 (Obsidian 파일명 resolution), C2 ASCII snake_case filename convention, C3 Citation Discipline (`sources:` canonical + `## References` human-readable dual traceability), C4 Anti-Dump Rule (150-line cap, 5:1 compression, max 3 consecutive raw lines); [P1] C5 Scale Mode (Partitioned Parallel for 500+ vaults with safer canonical entity rule), C6 Date Extraction 8-tier priority (datetime validation, mtime warning threshold), C7 Standard Exclusions (.git/.obsidian/node_modules/etc), I1 Aliases Discipline, I3 `wiki remediate` 신규 명령 (citation gap closure, 9번째 서브커맨드); [P2] I2 Agent Prompt Templates (`assets/`: absorb/remediation/cleanup/breakdown), I5 rebuild-index exclusions, I6 Orphan policy (max 8 wikilinks/article); [P3] N1 checkpoint cadence by scale, N2 `wiki status` 표준 출력 포맷, N3 Frontmatter schema (legacy 관대), N4 Citation vs Content coverage, N5 type 기반 query taxonomy; [I4] `scripts/` 포터블 Python 헬퍼 스크립트; + `## Migration from v1.0.0` 섹션 (backward compatibility lint warnings) |
 | 3.25.0 | 2026-04-10 | investments-portfolio v1.2.0: 출력물 명명 일관성 수정 — 03-risk-analysis.md → 99-risk-analysis.md (보조 데이터 접두어 통일), material-organizer 데드 에이전트 제거 (3 agents), file-save-protocol 접두어 규칙 문서화 + 99-*.md 보조파일 등록, deposit_rates.json 웹검색 fallback 모순 해소; macro-analysis v1.0.1, stock-consultation v1.0.1 동기화 |
 | 3.24.0 | 2026-04-09 | wiki-gen 플러그인 추가 (farzaa/wiki-gen-skill 포팅, 개인 일기/노트 → Wikipedia 스타일 지식 위키 자동 컴파일 — ingest/absorb/query/cleanup/breakdown/status/rebuild-index/reorganize 8개 서브커맨드, 39종 디렉토리 택소노미, Writing Standards) |

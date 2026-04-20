@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-10
-**Version:** 3.27.0
+**Generated:** 2026-04-20
+**Version:** 3.28.0
 **Branch:** main
 
 ## OVERVIEW
@@ -48,7 +48,8 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | 가속 학습 파이프라인 실행 | `plugins/accelerated-learner/commands/accelerated-learn.md` | 48시간 딥러닝 방법론 |
 | 소크라틱 튜터링 | `plugins/accelerated-learner/agents/socratic-tutor.md` | 대화형 학습 |
 | 개인 지식 위키 생성 | `plugins/wiki-gen/skills/wiki-gen/SKILL.md` | 일기/노트 → Wikipedia 스타일 위키 컴파일 (v1.2.0: 10개 커맨드 ingest/absorb/remediate/query/cleanup/breakdown/status/rebuild-index/reorganize/sync, Scale Mode 파티션 병렬, Anti-Dump Rule, Citation Discipline, 에이전트 프롬프트 템플릿 assets/, 포터블 헬퍼 스크립트 scripts/) |
-| Plugin registry | `.claude-plugin/marketplace.json` | All 17 plugins listed |
+| HoneyCombo URL 제출 | `plugins/link-curator/commands/curate-links.md` | URL→MD (link-summarizer) + gh CLI submit (honeycombo-submit) |
+| Plugin registry | `.claude-plugin/marketplace.json` | All 18 plugins listed |
 
 **Note**: Original `examples/` folder with real company names archived in local branch `archive/examples-backup` (not pushed to public repository).
 
