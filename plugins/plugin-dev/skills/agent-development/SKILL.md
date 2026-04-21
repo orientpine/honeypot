@@ -1,7 +1,6 @@
 ---
-name: Agent Development
-description: This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when to use description", "agent examples", "agent tools", "agent colors", "autonomous agent", or needs guidance on agent structure, system prompts, triggering conditions, or agent development best practices for Claude Code plugins.
-version: 0.1.0
+name: agent-development
+description: "Generates agent YAML frontmatter, writes system prompts, configures tool permissions, and sets triggering conditions for Claude Code plugin agents. Use when creating, editing, or reviewing agent files — covers name/description/model/color/tools fields, example blocks, system prompt structure, validation rules, and testing workflows."
 ---
 
 # Agent Development for Claude Code Plugins
@@ -116,13 +115,9 @@ assistant: "[How Claude should respond]"
 
 Which model the agent should use.
 
-**Options:**
-- `inherit` - Use same model as parent (recommended)
-- `sonnet` - Claude Sonnet (balanced)
-- `opus` - Claude Opus (most capable, expensive)
-- `haiku` - Claude Haiku (fast, cheap)
+**Options:** `inherit` (recommended), `sonnet`, `opus`, `haiku`
 
-**Recommendation:** Use `inherit` unless agent needs specific model capabilities.
+Use `inherit` unless the agent needs specific model capabilities.
 
 ### color (required)
 
@@ -130,14 +125,7 @@ Visual identifier for agent in UI.
 
 **Options:** `blue`, `cyan`, `green`, `yellow`, `magenta`, `red`
 
-**Guidelines:**
-- Choose distinct colors for different agents in same plugin
-- Use consistent colors for similar agent types
-- Blue/cyan: Analysis, review
-- Green: Success-oriented tasks
-- Yellow: Caution, validation
-- Red: Critical, security
-- Magenta: Creative, generation
+Choose distinct colors for different agents in the same plugin.
 
 ### tools (optional)
 
@@ -161,58 +149,7 @@ tools: ["Read", "Write", "Grep", "Bash"]
 
 ## System Prompt Design
 
-The markdown body becomes the agent's system prompt. Write in second person, addressing the agent directly.
-
-### Structure
-
-**Standard template:**
-```markdown
-You are [role] specializing in [domain].
-
-**Your Core Responsibilities:**
-1. [Primary responsibility]
-2. [Secondary responsibility]
-3. [Additional responsibilities...]
-
-**Analysis Process:**
-1. [Step one]
-2. [Step two]
-3. [Step three]
-[...]
-
-**Quality Standards:**
-- [Standard 1]
-- [Standard 2]
-
-**Output Format:**
-Provide results in this format:
-- [What to include]
-- [How to structure]
-
-**Edge Cases:**
-Handle these situations:
-- [Edge case 1]: [How to handle]
-- [Edge case 2]: [How to handle]
-```
-
-### Best Practices
-
-✅ **DO:**
-- Write in second person ("You are...", "You will...")
-- Be specific about responsibilities
-- Provide step-by-step process
-- Define output format
-- Include quality standards
-- Address edge cases
-- Keep under 10,000 characters
-
-❌ **DON'T:**
-- Write in first person ("I am...", "I will...")
-- Be vague or generic
-- Omit process steps
-- Leave output format undefined
-- Skip quality guidance
-- Ignore error cases
+The markdown body after frontmatter becomes the agent's system prompt. Write in second person ("You are..."). Include: role definition, core responsibilities, step-by-step process, output format, and edge case handling. Keep under 10,000 characters.
 
 ## Creating Agents
 
@@ -256,33 +193,6 @@ See `examples/agent-creation-prompt.md` for complete template.
 5. Define tools (if restricting access)
 6. Write system prompt with structure above
 7. Save as `agents/agent-name.md`
-
-## Validation Rules
-
-### Identifier Validation
-
-```
-✅ Valid: code-reviewer, test-gen, api-analyzer-v2
-❌ Invalid: ag (too short), -start (starts with hyphen), my_agent (underscore)
-```
-
-**Rules:**
-- 3-50 characters
-- Lowercase letters, numbers, hyphens only
-- Must start and end with alphanumeric
-- No underscores, spaces, or special characters
-
-### Description Validation
-
-**Length:** 10-5,000 characters
-**Must include:** Triggering conditions and examples
-**Best:** 200-1,000 characters with 2-4 examples
-
-### System Prompt Validation
-
-**Length:** 20-10,000 characters
-**Best:** 500-3,000 characters
-**Structure:** Clear responsibilities, process, output format
 
 ## Agent Organization
 

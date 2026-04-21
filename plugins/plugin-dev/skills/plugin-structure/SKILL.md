@@ -1,7 +1,6 @@
 ---
-name: Plugin Structure
-description: This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize plugin components", "set up plugin.json", "use ${CLAUDE_PLUGIN_ROOT}", "add commands/agents/skills/hooks", "configure auto-discovery", or needs guidance on plugin directory layout, manifest configuration, component organization, file naming conventions, or Claude Code plugin architecture best practices.
-version: 0.1.0
+name: plugin-structure
+description: "Scaffold and organize Claude Code plugins with the correct directory layout, plugin.json manifest, component types (commands, agents, skills, hooks, MCP servers), portable path references, and auto-discovery conventions. Use when creating a plugin, setting up plugin.json, organizing plugin components, configuring auto-discovery, or using ${CLAUDE_PLUGIN_ROOT}."
 ---
 
 # Plugin Structure for Claude Code
@@ -55,11 +54,7 @@ The manifest defines plugin metadata and configuration. Located at `.claude-plug
 }
 ```
 
-**Name requirements:**
-- Use kebab-case format (lowercase with hyphens)
-- Must be unique across installed plugins
-- No spaces or special characters
-- Example: `code-review-assistant`, `test-runner`, `api-docs`
+**Name requirements:** kebab-case, unique across installed plugins (e.g. `code-review-assistant`, `test-runner`).
 
 ### Recommended Metadata
 
@@ -80,9 +75,6 @@ The manifest defines plugin metadata and configuration. Located at `.claude-plug
 }
 ```
 
-**Version format**: Follow semantic versioning (MAJOR.MINOR.PATCH)
-**Keywords**: Use for plugin discovery and categorization
-
 ### Component Path Configuration
 
 Specify custom paths for components (supplements default directories):
@@ -97,13 +89,7 @@ Specify custom paths for components (supplements default directories):
 }
 ```
 
-**Important**: Custom paths supplement defaults—they don't replace them. Components in both default directories and custom paths will load.
-
-**Path rules:**
-- Must be relative to plugin root
-- Must start with `./`
-- Cannot use absolute paths
-- Support arrays for multiple locations
+**Important**: Custom paths supplement defaults—they don't replace them. Paths must be relative (start with `./`) and support arrays for multiple locations.
 
 ## Component Organization
 
@@ -265,21 +251,13 @@ Use `${CLAUDE_PLUGIN_ROOT}` environment variable for all intra-plugin path refer
 }
 ```
 
-**Why it matters**: Plugins install in different locations depending on:
-- User installation method (marketplace, local, npm)
-- Operating system conventions
-- User preferences
-
 **Where to use it**:
 - Hook command paths
 - MCP server command arguments
 - Script execution references
 - Resource file paths
 
-**Never use**:
-- Hardcoded absolute paths (`/Users/name/plugins/...`)
-- Relative paths from working directory (`./scripts/...` in commands)
-- Home directory shortcuts (`~/plugins/...`)
+**Never use**: hardcoded absolute paths, relative paths from working directory, or home directory shortcuts (`~/`).
 
 ### Path Resolution Rules
 
@@ -319,87 +297,18 @@ source "${CLAUDE_PLUGIN_ROOT}/lib/common.sh"
 - `database-migrations/`
 - `error-handling/`
 
-### Supporting Files
-
-**Scripts**: Use descriptive kebab-case names with appropriate extensions
-- `validate-input.sh`
-- `generate-report.py`
-- `process-data.js`
-
-**Documentation**: Use kebab-case markdown files
-- `api-reference.md`
-- `migration-guide.md`
-- `best-practices.md`
-
-**Configuration**: Use standard names
-- `hooks.json`
-- `.mcp.json`
-- `plugin.json`
+All supporting files (scripts, docs, config) should also use kebab-case naming.
 
 ## Auto-Discovery Mechanism
 
-Claude Code automatically discovers and loads components:
-
-1. **Plugin manifest**: Reads `.claude-plugin/plugin.json` when plugin enables
-2. **Commands**: Scans `commands/` directory for `.md` files
-3. **Agents**: Scans `agents/` directory for `.md` files
-4. **Skills**: Scans `skills/` for subdirectories containing `SKILL.md`
-5. **Hooks**: Loads configuration from `hooks/hooks.json` or manifest
-6. **MCP servers**: Loads configuration from `.mcp.json` or manifest
-
-**Discovery timing**:
-- Plugin installation: Components register with Claude Code
-- Plugin enable: Components become available for use
-- No restart required: Changes take effect on next Claude Code session
-
-**Override behavior**: Custom paths in `plugin.json` supplement (not replace) default directories
+Claude Code automatically discovers components when a plugin is enabled — no restart required, changes take effect on next session. Custom paths in `plugin.json` supplement (not replace) default directories.
 
 ## Best Practices
 
-### Organization
-
-1. **Logical grouping**: Group related components together
-   - Put test-related commands, agents, and skills together
-   - Create subdirectories in `scripts/` for different purposes
-
-2. **Minimal manifest**: Keep `plugin.json` lean
-   - Only specify custom paths when necessary
-   - Rely on auto-discovery for standard layouts
-   - Use inline configuration only for simple cases
-
-3. **Documentation**: Include README files
-   - Plugin root: Overall purpose and usage
-   - Component directories: Specific guidance
-   - Script directories: Usage and requirements
-
-### Naming
-
-1. **Consistency**: Use consistent naming across components
-   - If command is `test-runner`, name related agent `test-runner-agent`
-   - Match skill directory names to their purpose
-
-2. **Clarity**: Use descriptive names that indicate purpose
-   - Good: `api-integration-testing/`, `code-quality-checker.md`
-   - Avoid: `utils/`, `misc.md`, `temp.sh`
-
-3. **Length**: Balance brevity with clarity
-   - Commands: 2-3 words (`review-pr`, `run-ci`)
-   - Agents: Describe role clearly (`code-reviewer`, `test-generator`)
-   - Skills: Topic-focused (`error-handling`, `api-design`)
-
-### Portability
-
-1. **Always use ${CLAUDE_PLUGIN_ROOT}**: Never hardcode paths
-2. **Test on multiple systems**: Verify on macOS, Linux, Windows
-3. **Document dependencies**: List required tools and versions
-4. **Avoid system-specific features**: Use portable bash/Python constructs
-
-### Maintenance
-
-1. **Version consistently**: Update version in plugin.json for releases
-2. **Deprecate gracefully**: Mark old components clearly before removal
-3. **Document breaking changes**: Note changes affecting existing users
-4. **Test thoroughly**: Verify all components work after changes
+- **Minimal manifest**: Rely on auto-discovery for standard layouts; only specify custom paths when necessary.
+- **Consistent naming**: If a command is `test-runner`, name the related agent `test-runner-agent`. Match skill directory names to their purpose.
+- **Descriptive names**: Good: `api-integration-testing/`, `code-quality-checker.md`. Avoid: `utils/`, `misc.md`.
+- **Always use `${CLAUDE_PLUGIN_ROOT}`**: Never hardcode paths. Document external dependencies.
 
 ## Common Patterns
 
