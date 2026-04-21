@@ -4,7 +4,7 @@
 
 > KIPRIS API 기반 특허 동향 분석 플러그인 — 키워드 최적화, 검색, 다축 분류, 시각화 대시보드 생성
 
-**Version**: 1.3.0  
+**Version**: 1.3.1  
 **License**: MIT
 
 ---
@@ -429,3 +429,10 @@ sudo apt-get install fonts-nanum
 # 폰트 캐시 갱신
 python -c "import matplotlib; matplotlib.font_manager._load_fontmanager(try_read_cache=False)"
 ```
+
+---
+
+## Contributors
+
+- Baekdong Cha (author, orientpine@gmail.com)
+- Gunju Park (uio88890@gmail.com)

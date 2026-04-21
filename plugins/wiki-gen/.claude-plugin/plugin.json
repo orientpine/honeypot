@@ -1,16 +1,10 @@
 {
   "name": "wiki-gen",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "개인 데이터(일기, 노트, 메시지 등)를 Wikipedia 스타일 개인 지식 위키로 컴파일하는 스킬. 1826-entry 실사용 경험 기반 v1.2.0 확장: C1 wikilink [[filename|Title]] 형식, Scale Mode (Partitioned Parallel), Anti-Dump Rule, Citation Discipline, wiki remediate 및 wiki sync 명령, 에이전트 프롬프트 템플릿, 포터블 헬퍼 스크립트. Day One, Obsidian, Notion, Apple Notes, iMessage 등 다양한 포맷 지원. 10개 서브커맨드 (ingest/absorb/remediate/query/cleanup/breakdown/status/rebuild-index/reorganize/sync). 원본: farzaa/wiki-gen-skill (gist)",
   "author": {
     "name": "Baekdong Cha",
     "email": "orientpine@gmail.com"
   },
-  "contributors": [
-    {
-      "name": "farzaa",
-      "url": "https://gist.github.com/farzaa/c35ac0cfbeb957788650e36aabea836d"
-    }
-  ],
   "license": "MIT"
 }

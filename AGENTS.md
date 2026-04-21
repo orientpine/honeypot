@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-20
-**Version:** 3.28.0
+**Generated:** 2026-04-21
+**Version:** 3.28.1
 **Branch:** main
 
 ## OVERVIEW
@@ -553,25 +553,105 @@ SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 �
 - Every `plugins/{plugin}/.claude-plugin/plugin.json` MUST include `author.email`.
 - In this repository, set `author.email` to `orientpine@gmail.com`.
 
+### Plugin.json Schema Compliance (CRITICAL)
+
+> **배경 (2026-04-21 실제 사례)**: 4개 플러그인(wiki-gen, pptx-design-styles, patent-trend-analyzer, obsidian-skills)과 root marketplace.json에 **비표준 `contributors` 필드**가 포함되어 Claude Code marketplace 등록이 `"Unrecognized keys"` 검증 에러로 실패했음. Claude Code는 **Zod strict validation**을 사용하므로 공식 스키마에 정의되지 않은 필드는 등록을 거부함.
+
+> **출처**: [공식 Anthropic docs — plugins-reference](https://docs.anthropic.com/en/docs/claude-code/plugins-reference), [wshobson/agents](https://github.com/wshobson/agents) 78개 프로덕션 플러그인 전수 조사 결과 `contributors` 사용 0건.
+
+#### plugin.json 허용 필드 (OFFICIAL WHITELIST)
+
+**메타데이터:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | 플러그인 식별자 (kebab-case) |
+| `version` | string | No | 시맨틱 버전 (SemVer) |
+| `description` | string | No | 플러그인 설명 |
+| `author` | object\|string | No | `{name, email?, url?}` 또는 문자열 |
+| `homepage` | string | No | 문서 URL |
+| `repository` | string | No | 소스 코드 URL |
+| `license` | string | No | SPDX 라이선스 식별자 |
+| `keywords` | array | No | 검색 태그 |
+
+**컴포넌트 경로 (기본 경로 오버라이드 시에만 사용):**
+`skills`, `commands`, `agents`, `hooks`, `mcpServers`, `lspServers`, `outputStyles`, `monitors`, `userConfig`, `channels`, `dependencies`
+
+**위 목록에 없는 모든 필드는 INVALID.**
+
+#### 절대 금지 필드 (Zod validation이 `Unrecognized keys` 에러로 거부함)
+
+| Forbidden Field | 이유 | 대체 방안 |
+|-----------------|------|-----------|
+| `contributor` / `contributors` | 스키마에 없음, 2026-04-21 실제 등록 실패 원인 | README 각주(`[^N]`) 또는 플러그인 README `## Contributors` 섹션 |
+| `maintainer` / `maintainers` | 스키마에 없음 | README 각주 |
+| `funding` / `sponsor` | 스키마에 없음 | README에 기록 |
+| `category` (plugin.json에서) | marketplace.json 엔트리 전용 | marketplace entry의 `category` |
+| `source` (plugin.json에서) | marketplace.json 엔트리 전용 | marketplace entry의 `source` |
+| 그 외 임의 필드 | 스키마에 없음 | 허용 필드만 사용 |
+
+#### Attribution 보존 4가지 방안
+
+`contributors` 배열이 없으므로 다음 방법으로 기여자를 표기:
+
+| 방법 | 예시 | 권장 용도 |
+|------|------|-----------|
+| README 각주 | `[^1]: 원본 저자 X, MIT 라이선스` | 외부 upstream 포팅 (기본) |
+| `author.url` | `"author": {"name": "Lead", "url": "https://github.com/team"}` | 단일 팀/저자 URL 연결 |
+| 플러그인 내부 README | `plugins/{name}/README.md`의 `## Contributors` | 플러그인별 세부 기여자 |
+| `description` 내 출처 | `"description": "... 원본: upstream/repo (MIT)"` | 간략 출처 표기 |
+
+**이 프로젝트 정책**: Upstream 포팅은 메인 README.md `[^N]` 각주로, plugin-specific 기여자는 해당 플러그인 README의 `## Contributors` 섹션으로 기록.
+
+#### 검증 명령 (plugin.json 작성/수정 시 MANDATORY)
+
+```powershell
+# Step 1. JSON syntax 검증
+python -c "import json, glob; [json.load(open(f, encoding='utf-8')) for f in glob.glob('plugins/*/.claude-plugin/plugin.json') + ['.claude-plugin/marketplace.json']]; print('OK')"
+
+# Step 2. 허용 필드 화이트리스트 검사 (plugin.json)
+python -c "import json, glob; A = {'name','version','description','author','homepage','repository','license','keywords','skills','commands','agents','hooks','mcpServers','lspServers','outputStyles','monitors','userConfig','channels','dependencies'}; [print(f, '->', set(json.load(open(f,encoding='utf-8')).keys()) - A) for f in glob.glob('plugins/*/.claude-plugin/plugin.json')]"
+# 각 파일 뒤 빈 set() 출력 = 정상 / 항목 존재 = 스키마 위반 (해당 필드 제거 필요)
+
+# Step 3. 허용 필드 화이트리스트 검사 (marketplace.json 각 플러그인 엔트리)
+python -c "import json; mp = json.load(open('.claude-plugin/marketplace.json', encoding='utf-8')); M = {'name','source','description','strict','agents','skills','version','author','license','category','homepage','keywords','tags','commands','hooks','mcpServers','lspServers','outputStyles','monitors','userConfig','channels','dependencies','repository'}; [print(p['name'], '->', set(p.keys()) - M) for p in mp['plugins']]"
+# 각 엔트리 뒤 빈 set() 출력 = 정상 / 항목 존재 = 스키마 위반
+```
+
+#### 실패 에러 패턴
+
+다음 에러가 발생하면 즉시 허용 필드 화이트리스트 검사를 실행:
+
+```
+Plugin {name} has an invalid manifest file at .claude-plugin/plugin.json.
+Validation errors: Unrecognized keys: "contributors"
+```
+
+**조치 절차**:
+
+1. 해당 `plugin.json`과 root `marketplace.json` 엔트리에서 허용 필드 목록에 없는 **모든 키** 제거
+2. 제거된 attribution 정보는 README.md 각주 또는 플러그인 README `## Contributors` 섹션으로 이동
+3. 플러그인/마켓플레이스 버전을 PATCH 수준으로 올림 (`Version Management & Registry Updates` 섹션 참조)
+4. 캐시 클리어 후 재등록 (`After Any Changes` 섹션 참조)
+
 ### Root Marketplace.json Format
 
-`marketplace.json` plugin 항목 필드:
+`marketplace.json` 엔트리는 **plugin.json의 모든 필드** + **마켓플레이스 전용 필드**를 포함할 수 있습니다 ([공식 Anthropic plugins-reference](https://docs.anthropic.com/en/docs/claude-code/plugins-reference) 기준).
+
+**마켓플레이스 전용 필드:**
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `name` | Yes | 플러그인 식별자 |
-| `source` | Yes | 플러그인 소스 경로 (상대 경로) |
-| `description` | Yes | 플러그인 설명 |
-| `strict` | Yes | 항상 `true` |
-| `agents` | No | 에이전트 파일 경로 배열 |
-| `skills` | No | 스킬 디렉토리 경로 배열 |
-| `version` | No | 시맨틱 버전 |
-| `author` | No | 저자 정보 |
-| `license` | No | 라이선스 |
-| `category` | No | 카테고리 |
-| `homepage` | No | 홈페이지 URL |
+| `source` | Yes | 플러그인 소스 (`"./plugins/name"` 문자열 또는 `{"source":"github","repo":"..."}`/`{"source":"npm",...}` 객체) |
+| `strict` | Recommended | 컴포넌트 권한 제어 (이 프로젝트는 항상 `true`) |
+| `category` | No | 플러그인 카테고리 (조직화 용도) |
+| `tags` | No | 검색 태그 배열 |
 
-실제 형식은 `.claude-plugin/marketplace.json`을 참조하세요.
+**plugin.json에서 상속되는 필드 (엔트리에 삽입 가능):**
+- 메타데이터: `name` (Yes), `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`
+- 컴포넌트 경로: `agents`, `skills`, `commands`, `hooks`, `mcpServers`, `lspServers`, `outputStyles`, `monitors`, `userConfig`, `channels`, `dependencies`
+
+**중요**: 위 두 그룹에 없는 임의 필드(`contributor`/`contributors`, `maintainer`, `funding` 등)는 plugin.json과 동일하게 **Zod validation이 거부**합니다. 실제 형식은 `.claude-plugin/marketplace.json`을 참조하세요.
 
 ### Forbidden Patterns
 
@@ -588,6 +668,9 @@ SKILL.md는 **500줄 이하** 권장. 상세 참조 자료는 별도 파일로 �
 | `"strict": false` | Manifest conflicts | 항상 `"strict": true` |
 | 대문자 스킬 이름 | Agent Skills Spec 위반 | 소문자 + 하이픈만 사용 |
 | 스킬 이름 ≠ 디렉토리명 | 스킬 매칭 실패 | 반드시 일치시킬 것 |
+| plugin.json/marketplace.json에 `contributors`/`contributor` 필드 | Zod strict validation `Unrecognized keys` 에러로 등록 실패 (2026-04-21 실제 사례) | 필드 제거 후 README 각주/플러그인 README로 이동 (자세한 내용: `Plugin.json Schema Compliance` 섹션) |
+| plugin.json에 `maintainer`/`funding`/임의 필드 | 공식 스키마에 없는 필드 = 등록 실패 | 허용 필드 화이트리스트만 사용 |
+| plugin.json에 marketplace 전용 필드(`source`, `category`) | plugin.json 스키마에 없음 | marketplace.json 엔트리에만 사용 |
 
 ### After Any Changes
 
@@ -632,6 +715,8 @@ Created 6 new agents but forgot to update marketplace.json → Agents invisible 
 - [ ] SKILL.md/Agent.md의 description이 큰따옴표로 감싸져 있음
 - [ ] 모든 .md 파일이 LF 줄바꿈 사용 (CRLF 금지)
 - [ ] 플러그인 캐시 클리어 후 재등록
+- [ ] **plugin.json/marketplace.json 엔트리에 허용되지 않은 필드(`contributors`/`contributor`/`maintainer` 등) 없음** (검증: `Plugin.json Schema Compliance` 섹션의 Python 화이트리스트 스크립트 실행)
+- [ ] Attribution은 README.md 각주(`[^N]`) 또는 플러그인 README `## Contributors` 섹션에 기록됨
 
 ### MANDATORY: Version Management & Registry Updates
 
