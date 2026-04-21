@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.28.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.29.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -1177,6 +1177,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.29.0 | 2026-04-21 | link-curator v1.1.0: bulk TSV 선택적 TITLE 컬럼(5컬럼) 지원 추가 — YouTube 채널처럼 metadata가 빈약한 URL 제출 시 HoneyCombo 서버가 title과 description을 동일하게 fallback하는 문제 예방. `submit_bulk.sh` 배열 기반 파싱으로 4컬럼(legacy)·5컬럼(v2) 자동 감지, TITLE/SUMMARY 필드에 `|`, 탭, CR/LF 문자 금지(서버 컬럼 정렬 보호), Unix 라인엔딩 일관성을 위한 `.gitattributes` 추가(`*.sh text eol=lf`). `honeycombo-submission.md`와 `SKILL.md`에 v2 포맷 사용법·금지 문자 문서화. (연결 서버 PR: orientpine/honeycombo#169 — `deriveShortTitle`/`resolveSubmissionTitle` fallback chain + 5컬럼 파서 + bulk 실패 URL 상세 댓글 upsert) |
 | 3.28.1 | 2026-04-21 | 4개 플러그인(wiki-gen, pptx-design-styles, patent-trend-analyzer, obsidian-skills)과 root marketplace.json의 **plugin.json/marketplace.json 스키마 준수 수정** — Claude Code Zod strict validation이 `Unrecognized keys` 에러로 거부하던 비표준 `contributors` 필드 전량 제거로 마켓플레이스 등록 실패 해결. AGENTS.md에 `Plugin.json Schema Compliance (CRITICAL)` 섹션 신설(공식 허용 필드 화이트리스트, 금지 필드 목록, Attribution 보존 4가지 방안, 검증 Python 스크립트, 실패 에러 패턴/조치 절차). patent-trend-analyzer README에 Gunju Park contributor attribution 이동. 개별 플러그인 PATCH 버전 업(wiki-gen 1.2.0→1.2.1, pptx-design-styles 1.0.0→1.0.1, patent-trend-analyzer 1.3.0→1.3.1, obsidian-skills 1.0.0→1.0.1). |
 | 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
 | 3.28.0 | 2026-04-20 | link-curator 플러그인 추가 — URL fetch → Korean MD summary notes 생성 (link-summarizer) + gh CLI HoneyCombo submission (honeycombo-submit), single/bulk 제출, `--dry-run` 지원 |

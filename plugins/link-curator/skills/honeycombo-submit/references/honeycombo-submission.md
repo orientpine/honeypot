@@ -151,28 +151,44 @@ bash scripts/submit_single.sh \
 
 단일 Issue에 `### Link List` **하나만** 사용 (단건의 4개 헤더와 다름).
 
-각 줄 포맷: `URL | Type | Tags | 한국어 요약`
+각 줄은 다음 두 포맷 중 하나로 작성한다 (서버는 `|` 개수로 자동 감지):
+
+### v1 (legacy, 4컬럼)
+
+`URL | Type | Tags | 한국어 요약`
+
+### v2 (제목 포함, 5컬럼) — 권장
+
+`URL | Type | 제목 | Tags | 한국어 요약`
+
+YouTube 채널처럼 metadata가 빈약한 URL에서 HoneyCombo 서버가 title을 description과 동일하게 fallback하는 문제를 방지하기 위해 **가능하면 5컬럼을 사용하라**. 제목은 한국어/영어 모두 허용, `<=` 200자.
+
+### 공통 규칙
+
 - 구분자: ` | ` (공백+파이프+공백)
 - 쉼표는 Tags 내부에서만 (파이프 구분자와 충돌 주의)
-- 한국어 요약에 ` | ` 포함 금지
+- 제목·요약에 **`|`, 탭, CR/LF 포함 금지** (서버 파서가 컬럼 정렬 실패)
 - 한국어 요약은 **단일 행**, ≤500자
 
 ```bash
 gh issue create --repo orientpine/honeycombo --title "📦 Bulk Submit" --body "### Link List
 
 https://blog.com/post-1 | Article | AI, LLM | AI 에이전트를 프로덕션 환경에서 활용하는 실전 분석 기사
-https://blog.com/post-2 | Article | MCP, agents | MCP 서버를 활용한 AI 에이전트 구축 가이드
-https://youtube.com/watch?v=abc | YouTube | AI, tutorial | Claude Code 개발 환경 설정 튜토리얼 영상
+https://blog.com/post-2 | Article | MCP 서버 구축 가이드 | MCP, agents | MCP 서버를 활용한 AI 에이전트 구축 가이드
+https://youtube.com/watch?v=abc | YouTube | Claude Code 튜토리얼 | AI, tutorial | Claude Code 개발 환경 설정 튜토리얼 영상
 "
 ```
 
-래퍼 스크립트:
+### 래퍼 스크립트
 
 ```bash
 bash scripts/submit_bulk.sh /tmp/links.tsv
 ```
 
-`/tmp/links.tsv`는 탭 구분 `URL<TAB>Type<TAB>Tags<TAB>한국어 요약` 포맷.
+TSV 포맷은 줄 단위로 4컬럼 또는 5컬럼을 혼용할 수 있으며 스크립트가 탭 개수로 자동 감지한다.
+
+- 4컬럼: `URL<TAB>Type<TAB>Tags<TAB>한국어 요약`
+- 5컬럼 (권장): `URL<TAB>Type<TAB>제목<TAB>Tags<TAB>한국어 요약`
 
 ---
 
@@ -232,7 +248,7 @@ gh run list --repo orientpine/honeycombo --limit 5
 
 ### 중복 URL
 
-HoneyCombo가 자동 거부. 사전에 기존 글 검색 불가능하므로 그냥 제출하고 결과 확인.
+HoneyCombo가 자동 거부하고 Issue에 상세 댓글을 남긴다 (동일 Issue 재처리 시에도 댓글이 upsert되므로 중복 생성 없음). 사전에 기존 글 검색 불가능하므로 그냥 제출하고 결과 Issue 댓글을 확인한다.
 
 ---
 
