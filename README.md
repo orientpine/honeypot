@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.28.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.28.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -1177,6 +1177,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.28.1 | 2026-04-21 | 4개 플러그인(wiki-gen, pptx-design-styles, patent-trend-analyzer, obsidian-skills)과 root marketplace.json의 **plugin.json/marketplace.json 스키마 준수 수정** — Claude Code Zod strict validation이 `Unrecognized keys` 에러로 거부하던 비표준 `contributors` 필드 전량 제거로 마켓플레이스 등록 실패 해결. AGENTS.md에 `Plugin.json Schema Compliance (CRITICAL)` 섹션 신설(공식 허용 필드 화이트리스트, 금지 필드 목록, Attribution 보존 4가지 방안, 검증 Python 스크립트, 실패 에러 패턴/조치 절차). patent-trend-analyzer README에 Gunju Park contributor attribution 이동. 개별 플러그인 PATCH 버전 업(wiki-gen 1.2.0→1.2.1, pptx-design-styles 1.0.0→1.0.1, patent-trend-analyzer 1.3.0→1.3.1, obsidian-skills 1.0.0→1.0.1). |
 | 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
 | 3.28.0 | 2026-04-20 | link-curator 플러그인 추가 — URL fetch → Korean MD summary notes 생성 (link-summarizer) + gh CLI HoneyCombo submission (honeycombo-submit), single/bulk 제출, `--dry-run` 지원 |
 | 3.26.0 | 2026-04-10 | wiki-gen v1.1.0: 1826-entry 실사용 경험 기반 18개 항목 대규모 개선 — [P0] C1 `[[filename_stem\|Title]]` wikilink 구문 (Obsidian 파일명 resolution), C2 ASCII snake_case filename convention, C3 Citation Discipline (`sources:` canonical + `## References` human-readable dual traceability), C4 Anti-Dump Rule (150-line cap, 5:1 compression, max 3 consecutive raw lines); [P1] C5 Scale Mode (Partitioned Parallel for 500+ vaults with safer canonical entity rule), C6 Date Extraction 8-tier priority (datetime validation, mtime warning threshold), C7 Standard Exclusions (.git/.obsidian/node_modules/etc), I1 Aliases Discipline, I3 `wiki remediate` 신규 명령 (citation gap closure, 9번째 서브커맨드); [P2] I2 Agent Prompt Templates (`assets/`: absorb/remediation/cleanup/breakdown), I5 rebuild-index exclusions, I6 Orphan policy (max 8 wikilinks/article); [P3] N1 checkpoint cadence by scale, N2 `wiki status` 표준 출력 포맷, N3 Frontmatter schema (legacy 관대), N4 Citation vs Content coverage, N5 type 기반 query taxonomy; [I4] `scripts/` 포터블 Python 헬퍼 스크립트; + `## Migration from v1.0.0` 섹션 (backward compatibility lint warnings) |

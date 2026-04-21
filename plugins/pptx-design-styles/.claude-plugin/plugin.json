@@ -1,16 +1,10 @@
 {
   "name": "pptx-design-styles",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "30가지 모던 PPTX 디자인 스타일 가이드. HEX 색상, 폰트 조합, 레이아웃 규칙, 시그니처 요소 포함. 원본: corazzon/pptx-design-styles (MIT)",
   "author": {
     "name": "Baekdong Cha",
     "email": "orientpine@gmail.com"
   },
-  "contributors": [
-    {
-      "name": "TodayCode (오늘코드)",
-      "url": "https://github.com/corazzon/pptx-design-styles"
-    }
-  ],
   "license": "MIT"
 }
