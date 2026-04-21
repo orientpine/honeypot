@@ -25,6 +25,7 @@ Trigger phrases: "허니콤보에 올려줘", "submit to honeycombo", "제출해
 For each submittable URL, derive:
 
 - **Type**: `Article` (default) | `YouTube` | `X Thread` | `Threads` | `Other`. See [references/honeycombo-submission.md](references/honeycombo-submission.md) for URL-pattern mapping.
+- **Title** (optional but RECOMMENDED for bulk): short Korean/English title (<=200 chars, no `|`, tab, CR, or LF). For URLs with weak metadata (e.g., YouTube channel pages), providing an explicit title prevents the server from falling back to using the summary as both title and description. Skip for single submit — single-submit body does not carry a title field.
 - **Tags**: 1-5 English tags, comma+space separated. Extract from md content. No Korean.
 - **Summary**: Korean structured summary (≤5000 chars for single, ≤500 chars for bulk) with `## 개요`, `## 주요 내용`, `## 시사점` sections.
 
@@ -32,6 +33,9 @@ For each submittable URL, derive:
 
 - **1-5 URLs → single submit, ONE Issue per URL.** Write summary to a temp file, then call `scripts/submit_single.sh`.
 - **6-20 URLs → one bulk Issue.** Write a TSV with single-line Korean summaries, then call `scripts/submit_bulk.sh`.
+  - TSV 포맷: 4컬럼 `URL<TAB>TYPE<TAB>TAGS<TAB>SUMMARY` (legacy) 또는 5컬럼 `URL<TAB>TYPE<TAB>TITLE<TAB>TAGS<TAB>SUMMARY` (권장). 각 줄마다 자율 선택—스크립트가 탭 개수로 자동 감지한다.
+  - YouTube 채널·약한 metadata URL의 title≐description 중복을 방지하려면 5컬럼 사용 필수.
+  - TITLE/SUMMARY 필드에 `|`, 탭, CR/LF 문자 금지 (서버 파서가 행을 드롭).
 - **>20 URLs → split into ≤20-entry bulk Issues** (`📦 Bulk Submit (1/N)`, `(2/N)`, ...).
 - Add `--dry-run` flag to preview commands without executing.
 

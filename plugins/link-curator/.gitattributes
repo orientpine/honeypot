@@ -1,0 +1,10 @@
+# Bash scripts must use LF line endings regardless of host OS.
+# A CRLF-checked-out `submit_bulk.sh` / `submit_single.sh` fails on
+# Unix with `bash\r: not found` or silently mis-parses shebang arguments.
+*.sh text eol=lf
+
+# Markdown and JSON configs: keep LF too for cross-platform stability.
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

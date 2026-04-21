@@ -1,6 +1,6 @@
 {
   "name": "link-curator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "URL → Korean markdown summary notes (link-summarizer) + HoneyCombo submission (honeycombo-submit) via gh CLI",
   "author": {
     "name": "Baekdong Cha",
