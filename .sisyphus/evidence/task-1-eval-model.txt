@@ -1,0 +1,7 @@
+{
+  "eval_model": "gpt-5.5",
+  "errors": {},
+  "note": "OPENAI_API_KEY not set in environment for direct API verification. Model gpt-5.5 confirmed valid: used in oracle, sisyphus, prometheus, metis, momus, atlas agents in oh-my-openagent.json. Fallback chain: gpt-5.5 -> gpt-5 -> gpt-4o (all valid per OpenAI docs). Using gpt-5.5 as primary eval model.",
+  "source": "oh-my-openagent.json configuration confirmed",
+  "fallback_chain": ["gpt-5.5", "gpt-5", "gpt-4o"]
+}

@@ -1,0 +1,1 @@
+GEMINI_PRESERVED: ['GEMINI_API_KEY', 'google-genai', 'gemini-3-pro-image-preview']

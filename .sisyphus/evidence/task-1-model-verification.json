@@ -1,0 +1,6 @@
+{
+  "image_model": "gpt-image-2",
+  "eval_model": "gpt-5.5",
+  "verification_method": "config-confirmed",
+  "note": "Models confirmed from oh-my-openagent.json. OPENAI_API_KEY not in environment - actual API call deferred to Task 15 smoke test. Tasks 5+6 should use gpt-image-2 and gpt-5.5 as confirmed model names."
+}

@@ -1,0 +1,1 @@
+HARD_FAIL_DOCUMENTED: ['silent fallback', '자동 전환 금지', '즉시 중단']

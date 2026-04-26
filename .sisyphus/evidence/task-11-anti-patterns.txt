@@ -1,0 +1,1 @@
+ANTI_PATTERNS_OK: ['Modifying Gemini path while building OpenAI', 'silent.*fallback']

