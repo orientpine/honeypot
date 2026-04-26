@@ -121,3 +121,88 @@ generate_slide_images.py는 3중 방어 체계의 inference 계층을 담당한�
 
 자세한 규칙은 `plugins/visual-generator/agents/prompt-designer.md` → `## Korean Text Safety Rules` 참조.
 빈 공간 처리 가이드는 `references/scene-richness-spec.md` → `## 11. Space-Filling Prevention` 참조.
+
+---
+
+## OpenAI gpt-image-2 Rendering Path
+
+gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일(.md)을 1536x1024 JPEG 이미지로 변환하는 스크립트 실행 가이드.
+
+### 스크립트 참조 및 실행 (CRITICAL)
+
+스크립트는 이 스킬의 상대경로에 위치합니다:
+
+scripts/generate_slide_images_openai.py
+
+**실행 순서:**
+
+**Step 1. 상대경로로 실행** (최우선)
+```bash
+python scripts/generate_slide_images_openai.py \
+  --prompts-dir [프롬프트 폴더 경로] \
+  --output-dir [이미지 출력 폴더 경로] \
+  [--max-images N]
+```
+
+**Step 2. 상대경로 실패 시 Glob 폴백**
+```
+Glob: **/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py
+```
+
+**Step 3. Glob도 실패 시 확장 탐색**
+```
+Glob: **/generate_slide_images_openai.py
+```
+
+**절대 금지**: 스크립트를 찾지 못했을 때 자체적으로 Python 코드를 작성하지 마세요.
+
+### 환경 요구사항
+
+| 항목 | 설명 |
+|------|------|
+| Python | 3.8+ |
+| 패키지 | openai>=1.0, Pillow |
+| 환경변수 | `OPENAI_API_KEY` 필수 |
+| 모델 (생성) | gpt-image-2 |
+| 모델 (평가) | gpt-5.5 (폴백: gpt-5 → gpt-4o) |
+| 출력 | 1536x1024 JPEG (quality=high) |
+
+### CLI
+
+```bash
+python scripts/generate_slide_images_openai.py \
+  --prompts-dir [경로] \
+  --output-dir [경로] \
+  [--max-images N]   # 기본 30, 초과 시 확인 필요
+  [--yes]            # 확인 없이 자동 진행
+```
+
+### 비용 안내
+
+| 항목 | 비용 |
+|------|------|
+| 이미지 생성 (high 1536x1024) | ~$0.165/image |
+| 평가 호출 | ~$0.05/image |
+| 30장 기준 합계 | 약 $6.6 |
+
+**`--max-images` (기본 30)**: 초과 시 사용자 확인 또는 `--yes` 필요.
+
+### API 사전 체크
+
+- **Organization Verification**: gpt-image-2 사용 시 OpenAI Organization 검증 필요 (developer console → Usage → Verification)
+- **403 에러**: 조직 미검증 상태 → 검증 페이지 안내 후 중단
+
+### 에러 처리
+
+| 에러 유형 | 처리 방법 |
+|-----------|-----------|
+| OPENAI_API_KEY 미설정 | 즉시 중단, 한국어 안내 |
+| API 타임아웃 | 5초 후 재시도 (최대 3회) |
+| 429 (rate limit) | 5s/15s/45s exponential backoff |
+| 400 (content policy) | 사유 기록 후 다음 prompt 진행 |
+| 403 (Org 미검증) | 검증 페이지 안내 후 중단 |
+
+### 5D 품질 평가
+
+5D 평가 기준 및 Schema → `references/openai-quality-rubric.md` 참조.
+PASS: overall_score ≥ 7.0 AND korean_text_readability ≥ 5.0 AND korean_hallucination_detection ≥ 5.0
