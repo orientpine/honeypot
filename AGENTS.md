@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-21
-**Version:** 3.29.0
+**Generated:** 2026-04-26
+**Version:** 3.30.0
 **Branch:** main
 
 ## OVERVIEW
@@ -16,6 +16,9 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | Generate single ISD chapter | `plugins/isd-generator/agents/chapter{N}.md` | Chapter 3 first, then 1→2→4→5 |
 | Generate figures from `<caption>` | `plugins/isd-generator/agents/figure.md` | Gemini API required |
 | Generate visual materials | `plugins/visual-generator/commands/visual-generate.md` | Multi-agent pipeline. 4-block 마크다운(INSTRUCTION/CONFIGURATION/CONTENT/FORBIDDEN) 기반 |
+| OpenAI gpt-image-2 렌더링 | `plugins/visual-generator/agents/renderer-agent-openai.md` | 별도 에이전트 + 신규 스크립트, OPENAI_API_KEY 필요 |
+| OpenAI 렌더링 스크립트 | `plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py` | gpt-image-2 + Structured Outputs 평가 |
+| OpenAI 평가 rubric | `plugins/visual-generator/skills/slide-renderer/references/openai-quality-rubric.md` | 5D 평가 schema (Gemini와 호환) |
 | Visual generator scene richness spec | `plugins/visual-generator/skills/slide-renderer/references/scene-richness-spec.md` | Scene complexity validation rules |
 | Visual generator validation rules | `plugins/visual-generator/skills/slide-renderer/references/validation-rules-map.md` | Prompt validation checklist |
 | Visual generator Korean typography | `plugins/visual-generator/skills/slide-renderer/references/korean-typography-spec.md` | Korean text rendering guidelines |
@@ -225,6 +228,8 @@ Glob: **/{script-name}.py
 | Placeholder text `[내용]` in prompts | Gemini will render literally |
 | Rendering hints in ASCII `(24pt)` | Will appear in generated image |
 | Generating Chapter 1 before Chapter 3 | Dependency: Ch1 derives from Ch3 |
+| Modifying Gemini path while building OpenAI path | Cross-task contamination, Gemini 회귀 위험 (보호 파일 allowlist 준수 필수) |
+| OpenAI 실패 시 silent Gemini fallback | 사용자 의도 위반, 명시적 OpenAI 선택을 무시함 (반드시 hard-fail with 한국어 에러) |
 
 ## UNIQUE STYLES
 
@@ -284,9 +289,13 @@ python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
   --prompts-dir [path]/prompts/ \
   --output-dir [path]/figures/
 
-# Generate slide images
+# Generate slide images (Gemini)
 python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py \
   --prompts-dir [path] --output-dir [path]
+
+# Generate slide images (OpenAI gpt-image-2)
+python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py \
+  --prompts-dir [path] --output-dir [path] [--max-images 30] [--yes]
 
 # Paper Style Generator: Convert PDFs to Markdown (requires MinerU)
 python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/mineru_converter.py \

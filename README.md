@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.29.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.30.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -38,7 +38,7 @@
 | 문서 | [**isd-generator**](#isd-generator) | ISD 연구계획서 5개 Chapter 자동 생성 |
 | 문서 | [**report-generator**](#report-generator) | 연구 노트 → 국가기관 제출용 보고서 |
 | 문서 | [**hwpx-generator**](#hwpx-generator) | HWPX 한글 문서 생성/편집/분석 |
-| 시각 | [**visual-generator**](#visual-generator) | 6개 테마 시각자료 프롬프트 생성 + Gemini 렌더링 |
+| 시각 | [**visual-generator**](#visual-generator) | 6개 테마 시각자료 프롬프트 생성 + Gemini/OpenAI gpt-image-2 렌더링 |
 | 시각 | [**pptx-design-styles**](#pptx-design-styles) | 30가지 모던 PPTX 디자인 스타일 가이드 (HEX, 폰트, 레이아웃) |
 | 논문 | [**paper-style-generator**](#paper-style-generator) | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 |
 | 투자 | [**investments-portfolio**](#investments-portfolio) | DC형 퇴직연금 포트폴리오 멀티 에이전트 분석 |
@@ -198,7 +198,7 @@ images_dir: ./images/
 
 ## visual-generator
 
-> 입력 문서를 분석하여 6개 테마 시각자료 프롬프트를 생성하고 Gemini API로 렌더링합니다.
+> 입력 문서를 분석하여 6개 테마 시각자료 프롬프트를 생성하고 Gemini 또는 OpenAI gpt-image-2로 렌더링합니다.
 
 ### 사용법
 
@@ -217,6 +217,11 @@ images_dir: ./images/
 | `mood` | - | 무드 선택 (9종) | `clarity` |
 | `layout` | - | 레이아웃 유형 (24종) | 자동 선택 |
 | `output_folder` | O | 출력 폴더 경로 | - |
+| `renderer` | - | 렌더링 엔진 (`gemini`, `openai`) | `gemini` |
+| `renderer_choice_timing` | - | 렌더러 선택 시점 (`pre`, `post`, `none`) | `none` |
+| `max_images` | - | OpenAI 경로 비용 cap (정수) | `30` |
+
+> **OpenAI 경로 사용 시**: gpt-image-2 high 1536x1024 ≈ $0.165/image + 평가 비용 ~$0.05/image. 기본 30장 cap (`max_images`로 조절). `OPENAI_API_KEY` 환경변수 + `pip install openai>=1.0` 필요.
 
 > **테마**: `concept` · `gov` · `seminar` · `whatif` · `pitch` · `comparison`
 >
@@ -225,7 +230,7 @@ images_dir: ./images/
 ### 에이전트 파이프라인
 
 ```
-content-organizer → content-reviewer → prompt-designer → prompt-validator → renderer-agent
+content-organizer → content-reviewer → prompt-designer → prompt-validator → renderer-agent | renderer-agent-openai (사용자 선택)
 ```
 
 ### 테마 갤러리
@@ -296,11 +301,11 @@ IMAX 분할 화면처럼 좌우 풀블리드 이미지
 </table>
 
 <details>
-<summary>구성 요소 (5 Agents · 1 Command · 8 Skills)</summary>
+<summary>구성 요소 (6 Agents · 1 Command · 8 Skills)</summary>
 
 | 유형 | 항목 |
 |------|------|
-| Agents | content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent |
+| Agents | content-organizer, content-reviewer, prompt-designer, prompt-validator, renderer-agent, renderer-agent-openai |
 | Command | `visual-generate` (오케스트레이터) |
 | Skills | layout-types, theme-concept, theme-gov, theme-seminar, theme-whatif, theme-pitch, theme-comparison, slide-renderer |
 
@@ -1106,7 +1111,7 @@ honeypot/
 │   │   ├── commands/                 # isd-generate
 │   │   └── skills/                   # 11 skills
 │   ├── visual-generator/             # 시각자료 생성
-│   │   ├── agents/                   # 5 agents
+│   │   ├── agents/                   # 6 agents
 │   │   ├── commands/                 # visual-generate
 │   │   └── skills/                   # 8 skills
 │   ├── paper-style-generator/        # 논문 스타일 스킬 생성
@@ -1177,6 +1182,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.30.0 | 2026-04-26 | visual-generator v3.5.0: OpenAI gpt-image-2 기반 렌더링 경로 추가 — `renderer` (gemini\|openai) + `renderer_choice_timing` (pre\|post\|none) 파라미터로 사용자 선택, 별도 에이전트 (renderer-agent-openai) + 별도 스크립트 (generate_slide_images_openai.py), 5D 평가 (Structured Outputs json_schema strict, gpt-5.5), 1536x1024 quality=high JPEG 출력, --max-images 비용 cap (기본 30), OPENAI_API_KEY 미설정 hard-fail. 기존 Gemini 경로 byte-identical 보존 (백워드 호환). |
 | 3.29.0 | 2026-04-21 | link-curator v1.1.0: bulk TSV 선택적 TITLE 컬럼(5컬럼) 지원 추가 — YouTube 채널처럼 metadata가 빈약한 URL 제출 시 HoneyCombo 서버가 title과 description을 동일하게 fallback하는 문제 예방. `submit_bulk.sh` 배열 기반 파싱으로 4컬럼(legacy)·5컬럼(v2) 자동 감지, TITLE/SUMMARY 필드에 `|`, 탭, CR/LF 문자 금지(서버 컬럼 정렬 보호), Unix 라인엔딩 일관성을 위한 `.gitattributes` 추가(`*.sh text eol=lf`). `honeycombo-submission.md`와 `SKILL.md`에 v2 포맷 사용법·금지 문자 문서화. (연결 서버 PR: orientpine/honeycombo#169 — `deriveShortTitle`/`resolveSubmissionTitle` fallback chain + 5컬럼 파서 + bulk 실패 URL 상세 댓글 upsert) |
 | 3.28.1 | 2026-04-21 | 4개 플러그인(wiki-gen, pptx-design-styles, patent-trend-analyzer, obsidian-skills)과 root marketplace.json의 **plugin.json/marketplace.json 스키마 준수 수정** — Claude Code Zod strict validation이 `Unrecognized keys` 에러로 거부하던 비표준 `contributors` 필드 전량 제거로 마켓플레이스 등록 실패 해결. AGENTS.md에 `Plugin.json Schema Compliance (CRITICAL)` 섹션 신설(공식 허용 필드 화이트리스트, 금지 필드 목록, Attribution 보존 4가지 방안, 검증 Python 스크립트, 실패 에러 패턴/조치 절차). patent-trend-analyzer README에 Gunju Park contributor attribution 이동. 개별 플러그인 PATCH 버전 업(wiki-gen 1.2.0→1.2.1, pptx-design-styles 1.0.0→1.0.1, patent-trend-analyzer 1.3.0→1.3.1, obsidian-skills 1.0.0→1.0.1). |
 | 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
