@@ -1,0 +1,10 @@
+.claude-plugin/marketplace.json
+.sisyphus/boulder.json
+AGENTS.md
+README.md
+plugins/visual-generator/.claude-plugin/plugin.json
+plugins/visual-generator/agents/renderer-agent-openai.md
+plugins/visual-generator/commands/visual-generate.md
+plugins/visual-generator/skills/slide-renderer/SKILL.md
+plugins/visual-generator/skills/slide-renderer/references/openai-quality-rubric.md
+plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py

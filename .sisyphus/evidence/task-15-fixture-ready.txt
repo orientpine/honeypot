@@ -1,0 +1,1 @@
+FIXTURE_READY: 1962 bytes

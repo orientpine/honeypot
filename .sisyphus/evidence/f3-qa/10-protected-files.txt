@@ -1,0 +1,3 @@
+PROTECTED_FILES_OK
+git diff HEAD~3 -- (renderer-agent.md / prompt-designer.md / generate_slide_images.py) returned empty output.
+This confirms protected Gemini-path files were NOT modified in the last 3 commits (T12/T13 compliance verified).
