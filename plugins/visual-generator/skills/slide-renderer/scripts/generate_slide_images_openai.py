@@ -1,0 +1,504 @@
+#!/usr/bin/env python3
+"""
+OpenAI gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 생성하는 스크립트
+
+사용법:
+    python generate_slide_images_openai.py --prompts-dir [프롬프트 폴더] --output-dir [출력 폴더]
+
+설정:
+    - 생성 모델: gpt-image-2
+    - 평가 모델: gpt-5.5 (Structured Outputs json_schema strict)
+    - 해상도: 1536x1024
+    - 품질: high
+    - 출력 형식: JPEG
+
+입력: slide-prompt-generator로 생성된 슬라이드 프롬프트 (.md)
+출력: 발표용 고해상도 슬라이드 이미지 (.jpg)
+"""
+
+import os
+import sys
+import time
+import json
+import re
+import io
+import base64
+import shutil
+import argparse
+from pathlib import Path
+
+from openai import OpenAI
+from PIL import Image as PILImage
+
+# API 설정
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+IMAGE_MODEL = "gpt-image-2"
+EVAL_MODEL = "gpt-5.5"
+IMAGE_SIZE = "1536x1024"
+IMAGE_QUALITY = "high"   # gpt-image-2 parameters: quality="high", size="1536x1024"
+OUTPUT_FORMAT = "jpeg"
+QUALITY_THRESHOLD = 7.0
+KOREAN_MIN_THRESHOLD = 5.0
+MAX_QUALITY_RETRIES = 2
+API_RETRY_COUNT = 3
+API_RETRY_DELAY = 5
+INTER_CALL_DELAY = 2
+DEFAULT_MAX_IMAGES = 30
+
+SYSTEM_INSTRUCTION = """You are an expert visual designer creating high-quality presentation slides. Follow these quality requirements strictly:
+
+Korean Typography: All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts (Bold/ExtraBold weight 700+). Each Korean syllable block must be complete and legible. Never use thin or light Korean serif fonts.
+
+Visual Composition: Maintain clear visual hierarchy with distinct foreground, midground, and background depth layers. Apply rule of thirds for focal point placement. Ensure primary information elements capture immediate attention.
+
+Negative Rendering Constraints: Never render watermarks, blurry text, numbered lists as visual elements, placeholder text, artifacts, meta-labels like 'Data:' or 'Note:', or any decorative elements not specified in the prompt. Never render hex color codes (e.g., #1E3A5F, #FFFFFF) as visible text in the image. Color codes are configuration-only and must never appear as text elements.
+
+White Space: Maintain 30-40% negative space for visual breathing room and readability. Do not overcrowd the composition with excessive elements.
+
+Text Contrast: All text placed over images must have sufficient contrast for legibility. Use text-shadow, outline, or semi-transparent backing when text overlaps complex or busy backgrounds. Ensure WCAG-level contrast aesthetically.
+
+Zero-Text Rendering: If the prompt specifies a Kurzgesagt-style illustration or explicitly requests zero text rendering, render NO text elements whatsoever in the image. Treat any text-like strings in the prompt as visual element descriptions, not as text to render.
+
+Korean Text Hallucination Prevention: Never generate gibberish or randomly formed Korean characters to fill empty space in the image. If a content area appears empty, fill it with flat icons, isometric illustrations, or decorative visual elements rather than fabricated Korean text. Every Korean character rendered in the final image must correspond to a specific text item from the prompt's CONTENT section. Do not infer, translate, or generate any Korean text beyond what is explicitly provided in the prompt.
+"""
+
+EVALUATION_SCHEMA = {
+    "format": {
+        "type": "json_schema",
+        "strict": True,
+        "json_schema": {
+            "name": "ImageQualityEvaluation",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "korean_text_readability": {"type": "number"},
+                    "korean_hallucination_detection": {"type": "number"},
+                    "content_reference_accuracy": {"type": "number"},
+                    "layout_suitability": {"type": "number"},
+                    "color_palette_compliance": {"type": "number"},
+                    "overall_score": {"type": "number"},
+                    "feedback": {"type": "string"},
+                },
+                "required": [
+                    "korean_text_readability",
+                    "korean_hallucination_detection",
+                    "content_reference_accuracy",
+                    "layout_suitability",
+                    "color_palette_compliance",
+                    "overall_score",
+                    "feedback",
+                ],
+                "additionalProperties": False,
+            },
+        },
+    }
+}
+
+def _check_api_key():
+    """OPENAI_API_KEY 환경변수 확인 (hard fail)"""
+    if not OPENAI_API_KEY:
+        print("[에러] OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
+        print("  $env:OPENAI_API_KEY='your-api-key' 또는 .env 파일에 설정하세요.")
+        sys.exit(1)
+
+
+def evaluate_image_quality(client: OpenAI, image_path: str, prompt_text: str = "") -> dict:
+    """
+    gpt-5.5 비전 모델로 생성된 이미지 품질 평가 (5차원, Structured Outputs)
+    Returns: {"score": float, "feedback": str, "criteria": dict}
+    """
+    is_concept = (
+        "concept" in prompt_text.lower()
+        or "zero text rendering" in prompt_text.lower()
+        or "zero-text rendering" in prompt_text.lower()
+    )
+
+    evaluation_prompt = """아래 이미지를 엄격하게 평가하세요.
+
+평가 기준(각 0~10, 소수점 허용):
+1) korean_text_readability: 한글 텍스트의 선명도, 자모 결합 정확성, 가독성 (글자 깨짐/뭉개짐 감점)
+2) korean_hallucination_detection: CONTENT에 없는 한글이 이미지에 존재하는지 여부 (10=깨끗, 0=심각한 hallucination)
+3) content_reference_accuracy: CONTENT에 명시된 텍스트가 이미지에 정확히 렌더링되었는지
+4) layout_suitability: 레이아웃 구성 적합성 (계층, 공간 균형, 시각 흐름)
+5) color_palette_compliance: 지정 팔레트 준수 여부
+6) overall_score: 위 5차원의 종합 가중 평균
+
+feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)"""
+
+    try:
+        image_bytes = Path(image_path).read_bytes()
+        image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+
+        response = client.responses.create(
+            model=EVAL_MODEL,
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": evaluation_prompt},
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/jpeg;base64,{image_b64}",
+                            "detail": "original",
+                        },
+                    ],
+                }
+            ],
+            text=EVALUATION_SCHEMA,
+        )
+
+        payload = json.loads(response.output_text)
+
+        def _score(value):
+            try:
+                return max(0.0, min(10.0, float(value)))
+            except (TypeError, ValueError):
+                return 0.0
+
+        criteria = {
+            "korean_text_readability": _score(payload.get("korean_text_readability", 0)),
+            "korean_hallucination_detection": _score(payload.get("korean_hallucination_detection", 0)),
+            "content_reference_accuracy": _score(payload.get("content_reference_accuracy", 0)),
+            "layout_suitability": _score(payload.get("layout_suitability", 0)),
+            "color_palette_compliance": _score(payload.get("color_palette_compliance", 0)),
+        }
+
+        if is_concept:
+            criteria["korean_text_readability"] = 10.0
+            criteria["korean_hallucination_detection"] = 10.0
+
+        avg_score = _score(payload.get("overall_score", sum(criteria.values()) / 5.0))
+        feedback = str(payload.get("feedback", ""))[:200]
+
+        return {"score": avg_score, "feedback": feedback, "criteria": criteria}
+
+    except Exception as e:
+        base_criteria = {
+            "korean_text_readability": 0.0,
+            "korean_hallucination_detection": 0.0,
+            "content_reference_accuracy": 0.0,
+            "layout_suitability": 0.0,
+            "color_palette_compliance": 0.0,
+        }
+        if is_concept:
+            base_criteria["korean_text_readability"] = 10.0
+            base_criteria["korean_hallucination_detection"] = 10.0
+        return {
+            "score": 0.0,
+            "feedback": f"품질 평가 실패: {e}",
+            "criteria": base_criteria,
+        }
+
+
+def generate_image(client: OpenAI, prompt_text: str, output_path: str, max_retries: int = 3) -> bool:
+    """
+    OpenAI gpt-image-2 API를 호출하여 슬라이드 이미지 생성 (5D 품질 평가 루프 포함)
+
+    Args:
+        client: OpenAI API 클라이언트
+        prompt_text: 슬라이드 이미지 생성용 프롬프트
+        output_path: 이미지 저장 경로
+        max_retries: API 호출 최대 재시도 횟수
+
+    Returns:
+        bool: 생성 성공 여부
+    """
+
+    def _request_image(current_prompt: str, save_path: str) -> bool:
+        combined_prompt = SYSTEM_INSTRUCTION + "\n\n" + current_prompt
+        backoff_delays = [API_RETRY_DELAY, API_RETRY_DELAY * 3, API_RETRY_DELAY * 9]
+
+        for attempt in range(max_retries):
+            try:
+                response = client.images.generate(
+                    model=IMAGE_MODEL,
+                    prompt=combined_prompt,
+                    size=IMAGE_SIZE,
+                    quality=IMAGE_QUALITY,
+                    output_format=OUTPUT_FORMAT,
+                    n=1,
+                )
+
+                image_b64 = response.data[0].b64_json
+                if not image_b64:
+                    print(f"  [경고] 이미지 데이터 없음, 재시도 {attempt + 1}/{max_retries}")
+                    if attempt < max_retries - 1:
+                        time.sleep(API_RETRY_DELAY)
+                    continue
+
+                image_bytes = base64.b64decode(image_b64)
+
+                # JPEG 직접 저장 (output_format=jpeg이면 JPEG 바이트)
+                try:
+                    pil_image = PILImage.open(io.BytesIO(image_bytes))
+                    if pil_image.format == "JPEG" or OUTPUT_FORMAT == "jpeg":
+                        with open(save_path, "wb") as img_f:
+                            img_f.write(image_bytes)
+                        print(f"  [저장] JPEG 직접 저장")
+                    else:
+                        if pil_image.mode not in ("RGB", "RGBA"):
+                            pil_image = pil_image.convert("RGB")
+                        elif pil_image.mode == "RGBA":
+                            pil_image = pil_image.convert("RGB")
+                        pil_image.save(save_path, format="JPEG", quality=95)
+                        print(f"  [변환] {pil_image.format} → JPEG")
+                except Exception:
+                    with open(save_path, "wb") as img_f:
+                        img_f.write(image_bytes)
+
+                return True
+
+            except Exception as e:
+                error_str = str(e)
+                if "403" in error_str or "organization" in error_str.lower() or "verification" in error_str.lower():
+                    print(f"  [에러] OpenAI Organization 검증 필요 (HTTP 403)")
+                    print(f"  → 검증 페이지: https://platform.openai.com/settings/organization/general")
+                    sys.exit(1)
+                elif "429" in error_str:
+                    delay = backoff_delays[min(attempt, len(backoff_delays) - 1)]
+                    print(f"  [에러] Rate limit (429), {delay}초 대기 후 재시도")
+                    time.sleep(delay)
+                else:
+                    print(f"  [에러] {error_str[:100]}, 재시도 {attempt + 1}/{max_retries}")
+                    if attempt < max_retries - 1:
+                        time.sleep(API_RETRY_DELAY)
+
+        return False
+
+    total_quality_attempts = MAX_QUALITY_RETRIES + 1
+    best_score = -1.0
+    best_image_path = None
+    current_prompt = prompt_text
+
+    for quality_attempt in range(total_quality_attempts):
+        candidate_output_path = output_path
+        if total_quality_attempts > 1:
+            candidate_output_path = f"{output_path}.quality_attempt_{quality_attempt + 1}.jpg"
+
+        if not _request_image(current_prompt, candidate_output_path):
+            return False
+
+        quality_result = evaluate_image_quality(client, candidate_output_path, prompt_text=current_prompt)
+        criteria = quality_result.get("criteria", {})
+        score = float(quality_result.get("score", 0.0))
+        feedback = quality_result.get("feedback", "")
+
+        korean_score = int(round(criteria.get("korean_text_readability", 0)))
+        korean_hallu_score = int(round(criteria.get("korean_hallucination_detection", 0)))
+        content_acc_score = int(round(criteria.get("content_reference_accuracy", 0)))
+        layout_score = int(round(criteria.get("layout_suitability", 0)))
+        color_score = int(round(criteria.get("color_palette_compliance", 0)))
+
+        if score > best_score:
+            best_score = score
+            best_image_path = candidate_output_path
+
+        korean_readability = criteria.get("korean_text_readability", 0)
+        korean_hallu = criteria.get("korean_hallucination_detection", 0)
+        passed = (
+            score >= QUALITY_THRESHOLD
+            and korean_readability >= KOREAN_MIN_THRESHOLD
+            and korean_hallu >= KOREAN_MIN_THRESHOLD
+        )
+
+        if passed:
+            print(
+                f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
+                f"평균 {score:.1f} (한글:{korean_score}, 환각:{korean_hallu_score}, 정확도:{content_acc_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 통과"
+            )
+            if candidate_output_path != output_path:
+                shutil.copyfile(candidate_output_path, output_path)
+            break
+
+        print(
+            f"[품질 평가] 시도 {quality_attempt + 1}/{total_quality_attempts}: "
+            f"평균 {score:.1f} (한글:{korean_score}, 환각:{korean_hallu_score}, 정확도:{content_acc_score}, 레이아웃:{layout_score}, 색상:{color_score}) → 재시도"
+        )
+
+        if quality_attempt < MAX_QUALITY_RETRIES:
+            current_prompt = f"{prompt_text}\n\n[품질 보정 힌트] {feedback}"
+
+    if best_image_path is None:
+        return False
+
+    if best_score < QUALITY_THRESHOLD:
+        if best_image_path != output_path:
+            shutil.copyfile(best_image_path, output_path)
+        print(f"[품질 평가] 기준 미달, 최고 점수 이미지 채택 (평균 {best_score:.1f})")
+
+    for cleanup_attempt in range(total_quality_attempts):
+        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.jpg")
+        if temp_path.exists():
+            temp_path.unlink()
+
+    return True
+
+
+def process_prompts(
+    prompts_dir: str,
+    output_dir: str,
+    max_images: int = DEFAULT_MAX_IMAGES,
+    auto_confirm: bool = False,
+) -> dict:
+    """
+    슬라이드 프롬프트 폴더의 모든 .md 파일을 처리하여 이미지 생성
+
+    Args:
+        prompts_dir: 슬라이드 프롬프트 파일이 있는 폴더 경로
+        output_dir: 생성된 이미지를 저장할 폴더 경로
+        max_images: 최대 처리 이미지 수 (비용 cap)
+        auto_confirm: True이면 max_images 초과 시 자동 확인 없이 중단
+
+    Returns:
+        dict: {"success": [...], "failed": [...]} 형태의 결과
+    """
+    prompts_path = Path(prompts_dir)
+    output_path = Path(output_dir)
+
+    # 출력 폴더 생성
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # 프롬프트 파일 목록 (메타/인덱스 파일 제외)
+    exclude_files = [
+        "prompt_index.md",
+        "공통및특화작업구조설명.md",
+        "style_sheet.md",
+        "validation_result.md",
+    ]
+    # 화이트리스트 방식: 숫자로 시작하는 파일만 렌더링 대상 (01_, 02_, 10_, 11_ 등)
+    prompt_files = sorted(
+        [
+            f
+            for f in prompts_path.glob("*.md")
+            if re.match(r"^\d+_", f.name) and f.name not in exclude_files
+        ]
+    )
+
+    if not prompt_files:
+        print(f"[에러] 슬라이드 프롬프트 파일이 없습니다: {prompts_dir}")
+        return {"success": [], "failed": []}
+
+    # 비용 cap 확인
+    total_prompts = len(prompt_files)
+    if total_prompts > max_images:
+        cost_estimate = total_prompts * (0.165 + 0.05)
+        print(f"[경고] 프롬프트 수({total_prompts})가 --max-images({max_images})를 초과합니다.")
+        print(f"  예상 비용: ${cost_estimate:.2f} ({total_prompts}장 × $0.215/장)")
+        if auto_confirm:
+            print(f"  [자동 중단] --yes 없이 max_images 초과 불가. 처음 {max_images}장만 처리합니다.")
+            prompt_files = prompt_files[:max_images]
+        else:
+            try:
+                answer = input(f"  계속하려면 'yes'를 입력하세요 (처음 {max_images}장만 처리하려면 Enter): ").strip().lower()
+                if answer != "yes":
+                    prompt_files = prompt_files[:max_images]
+                    print(f"  처음 {max_images}장만 처리합니다.")
+            except EOFError:
+                prompt_files = prompt_files[:max_images]
+
+    print(f"[시작] {len(prompt_files)}개 슬라이드 프롬프트 처리")
+    print(f"  - 프롬프트 폴더: {prompts_dir}")
+    print(f"  - 출력 폴더: {output_dir}")
+    print(f"  - 생성 모델: {IMAGE_MODEL}")
+    print(f"  - 평가 모델: {EVAL_MODEL}")
+    print(f"  - 출력 사양: {IMAGE_SIZE} quality={IMAGE_QUALITY} format={OUTPUT_FORMAT}")
+    print(f"  - 예상 비용: ${len(prompt_files) * 0.165:.2f} (생성) + ${len(prompt_files) * 0.05:.2f} (평가)")
+    print()
+
+    # API 클라이언트 초기화
+    client = OpenAI(api_key=OPENAI_API_KEY)
+
+    results = {"success": [], "failed": []}
+
+    for i, prompt_file in enumerate(prompt_files, 1):
+        # 파일명에서 슬라이드명 추출
+        slide_name = prompt_file.stem
+        output_file = output_path / f"{slide_name}.jpg"
+
+        print(f"[{i}/{len(prompt_files)}] {slide_name}")
+
+        # 이미 생성된 파일이 있으면 스킵
+        if output_file.exists():
+            print(f"  [SKIP] Already exists: {output_file}")
+            results["success"].append(slide_name)
+            continue
+
+        # 프롬프트 내용 추출 (전체 사용)
+        with open(str(prompt_file), "r", encoding="utf-8") as f:
+            prompt_content = f.read().strip()
+
+        # 이미지 생성 (개별 파일 실패 시 해당 파일만 스킵하고 계속 진행)
+        try:
+            if generate_image(client, prompt_content, str(output_file)):
+                print(f"  [OK] Saved: {output_file}")
+                results["success"].append(slide_name)
+            else:
+                print(f"  [FAIL] {slide_name}: 생성 실패")
+                results["failed"].append(slide_name)
+        except Exception as e:
+            print(f"  [FAIL] {slide_name}: {e}")
+            results["failed"].append(slide_name)
+
+        # API 호출 간 대기 (rate limit 방지)
+        if i < len(prompt_files):
+            time.sleep(INTER_CALL_DELAY)
+
+    # 결과 요약
+    print()
+    print("=" * 50)
+    print(f"[완료] 성공: {len(results['success'])}, 실패: {len(results['failed'])}")
+    if results["failed"]:
+        print(f"[실패 목록] {', '.join(results['failed'])}")
+
+    return results
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="OpenAI gpt-image-2 API를 사용하여 슬라이드 프롬프트에서 이미지 생성"
+    )
+    parser.add_argument(
+        "--prompts-dir",
+        "-p",
+        required=True,
+        help="슬라이드 프롬프트 파일이 있는 폴더 경로",
+    )
+    parser.add_argument(
+        "--output-dir",
+        "-o",
+        required=True,
+        help="생성된 슬라이드 이미지를 저장할 폴더 경로",
+    )
+    parser.add_argument(
+        "--max-images",
+        type=int,
+        default=DEFAULT_MAX_IMAGES,
+        help=f"최대 처리 이미지 수 비용 cap (기본값: {DEFAULT_MAX_IMAGES})",
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="max-images 초과 시 자동으로 처음 N장만 처리 (확인 없이)",
+    )
+
+    args = parser.parse_args()
+
+    _check_api_key()
+
+    if not os.path.isdir(args.prompts_dir):
+        print(f"[에러] 프롬프트 폴더가 존재하지 않습니다: {args.prompts_dir}")
+        sys.exit(1)
+
+    results = process_prompts(
+        args.prompts_dir,
+        args.output_dir,
+        max_images=args.max_images,
+        auto_confirm=args.yes,
+    )
+
+    # 실패가 있으면 exit code 1
+    sys.exit(1 if results["failed"] else 0)
+
+
+if __name__ == "__main__":
+    main()
