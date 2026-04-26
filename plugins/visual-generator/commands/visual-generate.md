@@ -6,7 +6,7 @@
 
 **에이전트 파이프라인:**
 ```
-content-organizer → content-reviewer → prompt-designer → renderer-agent
+content-organizer → content-reviewer → prompt-designer → renderer-agent | renderer-agent-openai (사용자 선택)
 ```
 
 ## Input Schema
@@ -19,6 +19,9 @@ content-organizer → content-reviewer → prompt-designer → renderer-agent
 | `output_folder` | 출력 폴더 경로 | ✓ | - |
 | `auto_mode` | 자동 파이프라인 실행 여부 | - | true |
 | `theme` | 테마 유형 (concept, gov, seminar, whatif, pitch, comparison) | - | gov |
+| `renderer` | 렌더링 엔진 선택 (`gemini`, `openai`) | - | gemini (기본값: gemini, 백워드 호환) |
+| `renderer_choice_timing` | 렌더러 선택 시점 (`pre`, `post`, `none`) | - | none (기본값: none, 백워드 호환) |
+| `max_images` | OpenAI 경로 비용 cap (정수) — `renderer="openai"` 시 적용 | - | 30 |
 
 ### 입력 예시
 
@@ -37,6 +40,8 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
 [Phase 0: 입력 검증 및 초기화]
     |
     +-- Step 0-1. 입력 파라미터 검증
+    |   (renderer 값 검증: "gemini" 또는 "openai"만 허용. 잘못된 값 → 즉시 중단 + 한국어 에러)
+    |   (renderer_choice_timing 검증: "pre", "post", "none"만 허용)
     |   +-- input_document 파일 존재 여부 확인
     |   +-- mood 유효성 검증 (9종 중 하나)
     |   +-- layout 유효성 검증 (24종 참조: layout-types 스킬)
@@ -45,6 +50,21 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
     +-- Step 0-2. 출력 디렉토리 구조 생성 (Bash 도구 사용, Read/Glob으로 디렉토리를 확인하지 말 것)
         +-- Bash: mkdir -p {output_folder}/analysis {output_folder}/prompts {output_folder}/images {output_folder}/reports
         +-- 주의: 디렉토리 존재 여부를 Read로 확인하지 않음. mkdir -p는 이미 존재해도 안전함.
+
+[Phase 0.5: 렌더러 선택 (renderer_choice_timing == "pre"인 경우만 활성화)]
+    |
+    +-- 조건: renderer_choice_timing == "pre" AND renderer 미지정
+    |   +-- Question 도구로 사용자에게 렌더러 선택 요청:
+    |   |   "렌더링 엔진을 선택해 주세요:
+    |   |    1. Gemini (기본값, 4K 16:9)
+    |   |    2. OpenAI gpt-image-2 (가장 좋은 품질, 1536x1024, $0.165/장)"
+    |   +-- 선택 1 또는 미응답 → renderer = "gemini"
+    |   +-- 선택 2 → renderer = "openai"
+    |   +-- renderer = "openai" 시 OPENAI_API_KEY 설정 여부 확인 → 미설정 시 즉시 중단
+    |
+    +-- 예외: auto_mode == true AND renderer_choice_timing == "pre"
+        +-- 자동 해결: renderer = "gemini" (기본값) + 경고 로그
+        +-- "[경고] auto_mode=true 에서 renderer_choice_timing='pre'는 지원하지 않습니다. renderer='gemini'로 자동 설정합니다."
 
 [Phase 1: 문서 분석 - content-organizer]
     |
@@ -108,9 +128,34 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
         +-- 4-block 구조 검증 (INSTRUCTION, CONFIGURATION, CONTENT, FORBIDDEN)
         +-- 미달 시 재생성 요청 (최대 2회)
 
-[Phase 4: 이미지 렌더링 - renderer-agent]
+[Phase 3.5: 렌더러 선택 (renderer_choice_timing == "post"인 경우만 활성화)]
     |
-    +-- Step 4-1. renderer-agent 호출
+    +-- 조건: renderer_choice_timing == "post" AND renderer 미지정
+    |   +-- 프롬프트 폴더 경로 + 프롬프트 수 표시
+    |   +-- Question 도구로 사용자에게 렌더러 선택 요청:
+    |   |   "프롬프트 {N}개가 준비되었습니다. 렌더링 엔진을 선택해 주세요:
+    |   |    1. Gemini (기본값, 4K 16:9)
+    |   |    2. OpenAI gpt-image-2 (가장 좋은 품질, 1536x1024, ~${N*0.215:.2f} 예상)"
+    |   +-- 선택 1 또는 미응답 → renderer = "gemini"
+    |   +-- 선택 2 → renderer = "openai"
+    |
+    +-- 예외: auto_mode == true AND renderer_choice_timing == "post"
+        +-- 자동 해결: renderer = "gemini" (기본값) + 경고 로그
+
+[Phase 4: 이미지 렌더링 - renderer-agent 또는 renderer-agent-openai]
+    |
+    +-- 렌더러 분기:
+    |   +-- renderer == "gemini" (기본값):
+    |   |   Step 4-1. Task(subagent_type="visual-generator:renderer-agent") 호출
+    |   |
+    |   +-- renderer == "openai":
+    |   |   Step 4-1. OPENAI_API_KEY 설정 확인 → 미설정 시 즉시 중단 (silent fallback 절대 금지)
+    |   |   Step 4-2. Task(subagent_type="visual-generator:renderer-agent-openai") 호출
+    |   |             max_images: {max_images} 전달
+    |   |
+    |   +-- 잘못된 renderer 값 → "[에러] renderer는 'gemini' 또는 'openai'만 허용됩니다." + 즉시 중단
+    |
+    +-- Step 4-1. renderer-agent 호출 (renderer == "gemini")
     |   +-- Task(subagent_type="visual-generator:renderer-agent") 호출
     |   +-- 전달 파라미터:
     |       - prompts_path: {output_folder}/prompts/
@@ -241,7 +286,8 @@ visual-generator-orchestrator 에이전트로 이어서 생성해줘.
 | content-organizer | 문서 분석, 핵심 개념 추출, 테마/레이아웃 선택 | `Task(subagent_type="visual-generator:content-organizer")` |
 | content-reviewer | content-organizer 출력 검토 및 피드백 | `Task(subagent_type="visual-generator:content-reviewer")` |
 | prompt-designer | 4-block 프롬프트 생성 | `Task(subagent_type="visual-generator:prompt-designer")` |
-| renderer-agent | 최종 검증 및 이미지 렌더링 | `Task(subagent_type="visual-generator:renderer-agent")` |
+| renderer-agent | 최종 검증 및 이미지 렌더링 (Gemini) | `Task(subagent_type="visual-generator:renderer-agent")` |
+| renderer-agent-openai | 최종 검증 및 이미지 렌더링 (OpenAI gpt-image-2) | `Task(subagent_type="visual-generator:renderer-agent-openai")` |
 
 ## Resources
 
@@ -273,6 +319,9 @@ visual-generator-orchestrator 에이전트로 이어서 생성해줘.
 
 ## MUST DO
 
+- [ ] renderer 값 검증 ("gemini" 또는 "openai"만 허용, 다른 값 → 즉시 중단)
+- [ ] renderer="openai" 시 OPENAI_API_KEY 환경변수 설정 확인 (미설정 시 즉시 중단)
+- [ ] max_images로 OpenAI 경로 비용 사전 안내 (renderer="openai" 시)
 - [ ] 입력 파라미터 검증 후 워크플로우 시작
 - [ ] 각 Phase 완료 후 출력 파일 존재 확인
 - [ ] content-reviewer 검토 결과에 따라 재시도 또는 진행 결정
@@ -282,6 +331,9 @@ visual-generator-orchestrator 에이전트로 이어서 생성해줘.
 
 ## MUST NOT DO
 
+- [ ] silent fallback — OpenAI 실패 시 Gemini로 자동 전환 금지 (즉시 중단 + 한국어 에러)
+- [ ] renderer_choice_timing 기본값을 "pre" 또는 "post"로 변경 금지 (백워드 호환)
+- [ ] 단일 명령에서 두 렌더러 동시 실행 금지 (renderer="both" 모드 없음)
 - [ ] 검증 없이 다음 Phase로 진행하지 않음
 - [ ] 재시도 횟수 초과 시 무한 루프 방지
 - [ ] 중간 파일 없이 최종 결과만 생성하지 않음
