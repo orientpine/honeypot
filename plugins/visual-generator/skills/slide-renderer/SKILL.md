@@ -1,6 +1,6 @@
 ---
 name: slide-renderer
-description: "Gemini API를 사용한 슬라이드 이미지 렌더링 스킬. renderer-agent가 프롬프트 파일을 이미지로 변환할 때 사용. generate_slide_images.py 스크립트 실행 가이드, 환경 요구사항, 출력 해석, 에러 처리 방법을 포함합니다."
+description: "Gemini와 OpenAI gpt-image-2를 사용한 슬라이드 이미지 렌더링 스킬. renderer-agent / renderer-agent-openai가 프롬프트 파일을 이미지로 변환할 때 사용. generate_slide_images.py / generate_slide_images_openai.py 실행 가이드, 환경 요구사항, 출력 해석, 에러 처리 방법을 포함합니다."
 ---
 
 # Slide Renderer
@@ -126,7 +126,7 @@ generate_slide_images.py는 3중 방어 체계의 inference 계층을 담당한�
 
 ## OpenAI gpt-image-2 Rendering Path
 
-gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일(.md)을 1536x1024 JPEG 이미지로 변환하는 스크립트 실행 가이드.
+gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일(.md)을 4K(3840x2160) JPEG 이미지로 변환하는 스크립트 실행 가이드. `--size` 플래그로 다른 해상도 지정 가능 (제약: 양변 16배수, max edge 3840px, total pixels ≤ 8,294,400).
 
 ### 스크립트 참조 및 실행 (CRITICAL)
 
@@ -141,7 +141,8 @@ scripts/generate_slide_images_openai.py
 python scripts/generate_slide_images_openai.py \
   --prompts-dir [프롬프트 폴더 경로] \
   --output-dir [이미지 출력 폴더 경로] \
-  [--max-images N]
+  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.5]
+  [--max-images N] [--yes]
 ```
 
 **Step 2. 상대경로 실패 시 Glob 폴백**
@@ -165,7 +166,7 @@ Glob: **/generate_slide_images_openai.py
 | 환경변수 | `OPENAI_API_KEY` 필수 |
 | 모델 (생성) | gpt-image-2 |
 | 모델 (평가) | gpt-5.5 (폴백: gpt-5 → gpt-4o) |
-| 출력 | 1536x1024 JPEG (quality=high) |
+| 출력 (default) | 3840x2160 JPEG (quality=high), `--size`로 변경 가능 |
 
 ### CLI
 
@@ -173,19 +174,19 @@ Glob: **/generate_slide_images_openai.py
 python scripts/generate_slide_images_openai.py \
   --prompts-dir [경로] \
   --output-dir [경로] \
-  [--max-images N]   # 기본 30, 초과 시 확인 필요
-  [--yes]            # 확인 없이 자동 진행
+  [--size 3840x2160]      # 기본 4K, gpt-image-2 제약 내에서 자유 지정
+  [--quality high]        # low|medium|high|auto
+  [--model gpt-image-2]   # 생성 모델
+  [--eval-model gpt-5.5]  # 평가 모델 (런타임 fallback: gpt-5.5 → gpt-5 → gpt-4o)
+  [--max-images N]        # 기본 30, 초과 시 확인 필요
+  [--yes]                 # 확인 없이 자동 진행
 ```
 
-### 비용 안내
+### 비용
 
-| 항목 | 비용 |
-|------|------|
-| 이미지 생성 (high 1536x1024) | ~$0.165/image |
-| 평가 호출 | ~$0.05/image |
-| 30장 기준 합계 | 약 $6.6 |
+비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 
-**`--max-images` (기본 30)**: 초과 시 사용자 확인 또는 `--yes` 필요.
+**`--max-images` (기본 30)**: sanity cap. 초과 시 사용자 확인 또는 `--yes` 필요.
 
 ### API 사전 체크
 

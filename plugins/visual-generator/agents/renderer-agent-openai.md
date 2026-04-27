@@ -9,7 +9,7 @@ model: sonnet
 
 ## Overview
 
-프롬프트 파일의 최종 검증을 수행하고 OpenAI gpt-image-2 API를 통해 이미지를 렌더링하는 에이전트. 4-block 구조, pt/px 패턴, 언어 병기, 플레이스홀더 등 렌더링 전 품질 검증을 담당한다. 생성 모델: gpt-image-2 (1536x1024, quality=high, JPEG).
+프롬프트 파일의 최종 검증을 수행하고 OpenAI gpt-image-2 API를 통해 이미지를 렌더링하는 에이전트. 4-block 구조, pt/px 패턴, 언어 병기, 플레이스홀더 등 렌더링 전 품질 검증을 담당한다. 생성 모델: gpt-image-2 (default 3840x2160 4K, quality=high, JPEG; `--size`로 변경 가능).
 
 **파이프라인 위치:**
 ```
@@ -36,7 +36,7 @@ content-organizer → content-reviewer → prompt-designer → [renderer-agent-o
 | `prompts_path` | 프롬프트 파일 폴더 경로 | ✓ | - |
 | `output_path` | 이미지 출력 폴더 경로 | ✓ | - |
 | `auto_mode` | 자동 실행 여부 (검증 실패 시 처리 방식) | - | true |
-| `max_images` | 최대 처리 이미지 수 (비용 cap) | - | 30 |
+| `max_images` | 최대 처리 이미지 수 (sanity cap) | - | 30 |
 
 ### 입력 예시
 
@@ -128,8 +128,8 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
         +-- 경로: {output_path}/generation_report.md
         +-- 사용 모델: gpt-image-2
         +-- 평가 모델: gpt-5.5
-        +-- 출력 사양: 1536x1024 quality=high JPEG
-        +-- 비용 추정: (총 prompts 수 × $0.165) + (총 prompts 수 × $0.05)
+        +-- 출력 사양: 3840x2160 quality=high JPEG (default; `--size`로 변경 가능)
+        +-- 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 ```
 
 ## Script & Error Handling
@@ -153,7 +153,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 |------|-----|------|
 | 패키지 | `openai>=1.0` | OpenAI Python SDK |
 | 생성 모델 | `gpt-image-2` | |
-| 해상도 | `size="1536x1024"` | 반드시 포함 |
+| 해상도 (default) | `size="3840x2160"` (4K) | `--size`로 변경 가능 |
 | 품질 | `quality="high"` | |
 | 출력 형식 | `output_format="jpeg"` | |
 
@@ -163,10 +163,10 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 
 ```
 {output_path}/
-├── 01_비전_다이어그램.jpg       # 렌더링된 이미지 (1536x1024, JPEG)
+├── 01_비전_다이어그램.jpg       # 렌더링된 이미지 (3840x2160 default, JPEG)
 ├── 02_기술_스펙.jpg
 ├── ...
-└── generation_report.md         # 생성 보고서 (모델 정보 + 비용 추정 포함)
+└── generation_report.md         # 생성 보고서 (모델 정보 포함)
 ```
 
 ### generation_report.md 형식
@@ -180,13 +180,10 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 - 출력 폴더: {output_path}
 - 사용 모델 (생성): gpt-image-2
 - 사용 모델 (평가): gpt-5.5
-- 출력 사양: 1536x1024 quality=high JPEG
+- 출력 사양: 3840x2160 quality=high JPEG (default; `--size`로 변경 가능)
 
-## 비용 추정
-- 처리 이미지 수: {total}장
-- 생성 비용: {total} × $0.165 = ${total*0.165:.2f}
-- 평가 비용: {total} × $0.05 = ${total*0.05:.2f}
-- 합계: ~${total*0.215:.2f}
+## 비용
+비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 
 ## 실행 결과 요약
 | 항목 | 수량 |

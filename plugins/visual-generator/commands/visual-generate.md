@@ -57,7 +57,7 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
     |   +-- Question 도구로 사용자에게 렌더러 선택 요청:
     |   |   "렌더링 엔진을 선택해 주세요:
     |   |    1. Gemini (기본값, 4K 16:9)
-    |   |    2. OpenAI gpt-image-2 (가장 좋은 품질, 1536x1024, $0.165/장)"
+    |   |    2. OpenAI gpt-image-2 (default 4K 3840x2160, quality=high; 비용은 OpenAI 콘솔에서 확인)"
     |   +-- 선택 1 또는 미응답 → renderer = "gemini"
     |   +-- 선택 2 → renderer = "openai"
     |   +-- renderer = "openai" 시 OPENAI_API_KEY 설정 여부 확인 → 미설정 시 즉시 중단
@@ -135,7 +135,7 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
     |   +-- Question 도구로 사용자에게 렌더러 선택 요청:
     |   |   "프롬프트 {N}개가 준비되었습니다. 렌더링 엔진을 선택해 주세요:
     |   |    1. Gemini (기본값, 4K 16:9)
-    |   |    2. OpenAI gpt-image-2 (가장 좋은 품질, 1536x1024, ~${N*0.215:.2f} 예상)"
+    |   |    2. OpenAI gpt-image-2 (default 4K 3840x2160, quality=high; 비용은 OpenAI 콘솔에서 확인)"
     |   +-- 선택 1 또는 미응답 → renderer = "gemini"
     |   +-- 선택 2 → renderer = "openai"
     |
