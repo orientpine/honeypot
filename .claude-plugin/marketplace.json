@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.30.0",
+    "version": "3.31.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -44,7 +44,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (4-block v3.0.0, Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison + Renderer)",
-      "version": "3.5.0",
+      "version": "3.6.0",
       "strict": true,
       "agents": [
         "./agents/content-organizer.md",
