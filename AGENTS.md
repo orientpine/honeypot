@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-04-26
-**Version:** 3.30.0
+**Generated:** 2026-04-28
+**Version:** 3.31.0
 **Branch:** main
 
 ## OVERVIEW
@@ -295,7 +295,9 @@ python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_ima
 
 # Generate slide images (OpenAI gpt-image-2)
 python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py \
-  --prompts-dir [path] --output-dir [path] [--max-images 30] [--yes]
+  --prompts-dir [path] --output-dir [path] \
+  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.5] \
+  [--max-images 30] [--yes]
 
 # Paper Style Generator: Convert PDFs to Markdown (requires MinerU)
 python plugins/paper-style-generator/skills/paper-style-toolkit/scripts/mineru_converter.py \
