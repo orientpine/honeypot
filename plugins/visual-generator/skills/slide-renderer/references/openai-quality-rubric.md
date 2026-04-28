@@ -24,8 +24,13 @@ PASS: overall_score >= 7.0 AND korean_text_readability >= 5.0 AND korean_halluci
 veto: 한글 차원 하나라도 5.0 미만 → 평균 무관 자동 FAIL.
 
 ## Concept Theme Exemption
-prompt_text에 "concept" / "zero text rendering" / "zero-text rendering" 포함 시 한글 평가 면제:
-`korean_text_readability = 10.0`, `korean_hallucination_detection = 10.0` 자동 설정.
+concept 테마에는 한글 차원(`korean_text_readability`, `korean_hallucination_detection`)을 자동으로 10.0으로 면제하는 규칙이 있으며, 우선순위는 다음과 같다:
+
+1. **explicit `theme="concept"`** 인수 (`evaluate_image_quality()` / `generate_image()` / `process_prompts(default_theme=...)`).
+2. **파일명 컨벤션** `NN_theme_<NAME>.md` (`process_prompts`가 자동 추출).
+3. **키워드 fallback** prompt_text에 `concept` / `zero text rendering` / `zero-text rendering` / `kurzgesagt` 포함 시.
+
+평가 프롬프트에도 concept 면제 조건을 명시해 모델이 한글이 없는 상황에서 다른 차원을 교차 감점하지 않도록 돕는다.
 
 ## Structured Outputs Schema (json_schema strict)
 6개 숫자 필드 + feedback 문자열, 모두 required, additionalProperties: false.
