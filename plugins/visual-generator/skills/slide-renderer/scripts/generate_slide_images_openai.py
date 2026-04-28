@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: reportMissingImports=false
 """
 OpenAI gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 생성하는 스크립트
 
@@ -42,6 +43,10 @@ OUTPUT_FORMAT = "jpeg"
 # 평가 모델 fallback chain (intra-OpenAI only — AGENTS.md anti-pattern: no Gemini fallback)
 EVAL_FALLBACK_TAIL = ["gpt-5", "gpt-4o"]
 
+# 알려진 테마 화이트리스트 (concept만 한글 면제 자격이 있음)
+KNOWN_THEMES = ("concept", "gov", "seminar", "whatif", "pitch", "comparison")
+VALID_THEME_VALUES = KNOWN_THEMES + ("auto",)
+
 QUALITY_THRESHOLD = 7.0
 KOREAN_MIN_THRESHOLD = 5.0
 MAX_QUALITY_RETRIES = 2
@@ -78,31 +83,29 @@ Korean Text Hallucination Prevention: Never generate gibberish or randomly forme
 EVALUATION_SCHEMA = {
     "format": {
         "type": "json_schema",
+        "name": "ImageQualityEvaluation",
         "strict": True,
-        "json_schema": {
-            "name": "ImageQualityEvaluation",
-            "schema": {
-                "type": "object",
-                "properties": {
-                    "korean_text_readability": {"type": "number"},
-                    "korean_hallucination_detection": {"type": "number"},
-                    "content_reference_accuracy": {"type": "number"},
-                    "layout_suitability": {"type": "number"},
-                    "color_palette_compliance": {"type": "number"},
-                    "overall_score": {"type": "number"},
-                    "feedback": {"type": "string"},
-                },
-                "required": [
-                    "korean_text_readability",
-                    "korean_hallucination_detection",
-                    "content_reference_accuracy",
-                    "layout_suitability",
-                    "color_palette_compliance",
-                    "overall_score",
-                    "feedback",
-                ],
-                "additionalProperties": False,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "korean_text_readability": {"type": "number"},
+                "korean_hallucination_detection": {"type": "number"},
+                "content_reference_accuracy": {"type": "number"},
+                "layout_suitability": {"type": "number"},
+                "color_palette_compliance": {"type": "number"},
+                "overall_score": {"type": "number"},
+                "feedback": {"type": "string"},
             },
+            "required": [
+                "korean_text_readability",
+                "korean_hallucination_detection",
+                "content_reference_accuracy",
+                "layout_suitability",
+                "color_palette_compliance",
+                "overall_score",
+                "feedback",
+            ],
+            "additionalProperties": False,
         },
     }
 }
@@ -163,6 +166,88 @@ def _make_client(api_key: str):
 
 # 모듈 캐시: 한 번 해결된 평가 모델은 이후 호출에서 재사용
 _resolved_eval_model: str | None = None
+_eval_first_success_logged = False
+
+
+def _preview_text(value: object, limit: int = 120) -> str:
+    text = str(value).replace("\n", " ").replace("\r", " ").strip()
+    return text[:limit]
+
+
+def _zero_score_result(feedback: str, *, is_concept: bool) -> dict[str, object]:
+    base_criteria = {
+        "korean_text_readability": 0.0,
+        "korean_hallucination_detection": 0.0,
+        "content_reference_accuracy": 0.0,
+        "layout_suitability": 0.0,
+        "color_palette_compliance": 0.0,
+    }
+    if is_concept:
+        base_criteria["korean_text_readability"] = 10.0
+        base_criteria["korean_hallucination_detection"] = 10.0
+    return {
+        "score": 0.0,
+        "feedback": feedback[:200],
+        "criteria": base_criteria,
+    }
+
+
+_THEME_FROM_FILENAME_RE = re.compile(r"^\d+_theme_([a-zA-Z]+)")
+
+
+def _normalize_theme(value: str | None) -> str | None:
+    """입력 문자열을 알려진 테마 6종 중 하나로 정규화."""
+    if value is None:
+        return None
+    candidate = str(value).strip().lower()
+    if not candidate or candidate == "auto":
+        return None
+    if candidate in KNOWN_THEMES:
+        return candidate
+    return None
+
+
+def _extract_theme_from_filename(name: str) -> str | None:
+    """`01_theme_concept.md` 같은 표준 파일명에서 테마 추출."""
+    if not name:
+        return None
+    stem = Path(name).stem
+    match = _THEME_FROM_FILENAME_RE.match(stem)
+    if not match:
+        return None
+    return _normalize_theme(match.group(1))
+
+
+def _resolve_theme(
+    *,
+    explicit_theme: str | None,
+    prompt_filename: str | None,
+    prompt_text: str,
+    default_theme: str | None = None,
+) -> str | None:
+    """우선순위 기반 테마 결정.
+
+    1) explicit_theme (가장 강함, 호출자가 명시적으로 지정)
+    2) prompt_filename (`01_theme_concept.md` 컨벤션)
+    3) default_theme (CLI `--theme` 등에서 들어온 기본값)
+    4) prompt_text 키워드 매칭은 _is_concept_via_keywords()에서 별도로 다룸
+    """
+    for value in (explicit_theme, _extract_theme_from_filename(prompt_filename or ""), default_theme):
+        normalized = _normalize_theme(value)
+        if normalized:
+            return normalized
+    return None
+
+
+def _is_concept_via_keywords(prompt_text: str) -> bool:
+    """prompt_text 키워드 기반 보조 판정 (테마 정보가 없을 때만 사용)."""
+    lowered = (prompt_text or "").lower()
+    return (
+        "concept" in lowered
+        or "zero text rendering" in lowered
+        or "zero-text rendering" in lowered
+        or "kurzgesagt" in lowered
+    )
 
 
 def _resolve_eval_model(client, preferred: str) -> str:
@@ -225,36 +310,61 @@ def _resolve_eval_model(client, preferred: str) -> str:
 
 
 def evaluate_image_quality(
-    client, image_path: str, prompt_text: str = "", eval_model: str = DEFAULT_EVAL_MODEL
-) -> dict:
+    client,
+    image_path: str,
+    prompt_text: str = "",
+    eval_model: str = DEFAULT_EVAL_MODEL,
+    *,
+    theme: str | None = None,
+) -> dict[str, object]:
     """OpenAI 비전 모델로 생성된 이미지 품질 평가 (5차원, Structured Outputs).
 
     Returns: {"score": float, "feedback": str, "criteria": dict}
+
+    Concept 면제 (한글 차원 자동 10점) 우선순위:
+    1) theme == "concept" (가장 강함, 명시적 지정)
+    2) prompt_text 키워드 매칭 (concept / zero-text / kurzgesagt)
     """
-    is_concept = (
-        "concept" in prompt_text.lower()
-        or "zero text rendering" in prompt_text.lower()
-        or "zero-text rendering" in prompt_text.lower()
+    normalized_theme = _normalize_theme(theme)
+    is_concept = normalized_theme == "concept" or (
+        normalized_theme is None and _is_concept_via_keywords(prompt_text)
     )
 
-    evaluation_prompt = """아래 이미지를 엄격하게 평가하세요.
+    concept_clause = (
+        "\n\n[테마: concept (zero-text 일러스트)] 이미지에 한국어 텍스트가 의도적으로 없습니다. "
+        "korean_text_readability와 korean_hallucination_detection은 평가하지 말고 모두 10점으로 채점하세요. "
+        "한글 부재로 다른 차원을 감점하지 마세요."
+        if is_concept
+        else ""
+    )
 
-평가 기준(각 0~10, 소수점 허용):
-1) korean_text_readability: 한글 텍스트의 선명도, 자모 결합 정확성, 가독성 (글자 깨짐/뭉개짐 감점)
-2) korean_hallucination_detection: CONTENT에 없는 한글이 이미지에 존재하는지 여부 (10=깨끗, 0=심각한 hallucination)
-3) content_reference_accuracy: CONTENT에 명시된 텍스트가 이미지에 정확히 렌더링되었는지
-4) layout_suitability: 레이아웃 구성 적합성 (계층, 공간 균형, 시각 흐름)
-5) color_palette_compliance: 지정 팔레트 준수 여부
-6) overall_score: 위 5차원의 종합 가중 평균
+    evaluation_prompt = (
+        "아래 이미지를 엄격하게 평가하세요.\n\n"
+        "평가 기준(각 0~10, 소수점 허용):\n"
+        "1) korean_text_readability: 한글 텍스트의 선명도, 자모 결합 정확성, 가독성 (글자 깨짐/뭉개짐 감점)\n"
+        "2) korean_hallucination_detection: CONTENT에 없는 한글이 이미지에 존재하는지 여부 (10=깨끗, 0=심각한 hallucination)\n"
+        "3) content_reference_accuracy: CONTENT에 명시된 텍스트가 이미지에 정확히 렌더링되었는지\n"
+        "4) layout_suitability: 레이아웃 구성 적합성 (계층, 공간 균형, 시각 흐름)\n"
+        "5) color_palette_compliance: 지정 팔레트 준수 여부\n"
+        "6) overall_score: 위 5차원의 종합 가중 평균\n\n"
+        "feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)"
+        + concept_clause
+    )
 
-feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)"""
+    global _eval_first_success_logged
 
     try:
         active_model = _resolve_eval_model(client, eval_model)
-
         image_bytes = Path(image_path).read_bytes()
         image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+    except Exception as e:
+        print(f"[eval-error] prepare failed: {_preview_text(e, limit=160)}")
+        return _zero_score_result(
+            f"품질 평가 준비 실패 ({type(e).__name__}): {_preview_text(e, limit=160)}",
+            is_concept=is_concept,
+        )
 
+    try:
         response = client.responses.create(
             model=active_model,
             input=[
@@ -272,56 +382,57 @@ feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)"
             ],
             text=EVALUATION_SCHEMA,
         )
-
-        payload = json.loads(response.output_text)
-
-        def _score(value):
-            try:
-                return max(0.0, min(10.0, float(value)))
-            except (TypeError, ValueError):
-                return 0.0
-
-        criteria = {
-            "korean_text_readability": _score(
-                payload.get("korean_text_readability", 0)
-            ),
-            "korean_hallucination_detection": _score(
-                payload.get("korean_hallucination_detection", 0)
-            ),
-            "content_reference_accuracy": _score(
-                payload.get("content_reference_accuracy", 0)
-            ),
-            "layout_suitability": _score(payload.get("layout_suitability", 0)),
-            "color_palette_compliance": _score(
-                payload.get("color_palette_compliance", 0)
-            ),
-        }
-
-        if is_concept:
-            criteria["korean_text_readability"] = 10.0
-            criteria["korean_hallucination_detection"] = 10.0
-
-        avg_score = _score(payload.get("overall_score", sum(criteria.values()) / 5.0))
-        feedback = str(payload.get("feedback", ""))[:200]
-
-        return {"score": avg_score, "feedback": feedback, "criteria": criteria}
-
     except Exception as e:
-        base_criteria = {
-            "korean_text_readability": 0.0,
-            "korean_hallucination_detection": 0.0,
-            "content_reference_accuracy": 0.0,
-            "layout_suitability": 0.0,
-            "color_palette_compliance": 0.0,
-        }
-        if is_concept:
-            base_criteria["korean_text_readability"] = 10.0
-            base_criteria["korean_hallucination_detection"] = 10.0
-        return {
-            "score": 0.0,
-            "feedback": f"품질 평가 실패: {e}",
-            "criteria": base_criteria,
-        }
+        print(f"[eval-error] model={active_model}: {_preview_text(e, limit=160)}")
+        return _zero_score_result(
+            f"품질 평가 API 오류 ({type(e).__name__}): {_preview_text(e, limit=160)}",
+            is_concept=is_concept,
+        )
+
+    raw_output = getattr(response, "output_text", "")
+
+    try:
+        payload = json.loads(raw_output)
+    except (TypeError, json.JSONDecodeError) as e:
+        preview = _preview_text(raw_output)
+        print(
+            f"[eval-error] model={active_model}: structured output parse failed: {preview!r}"
+        )
+        return _zero_score_result(
+            f"품질 평가 응답 파싱 실패 ({type(e).__name__}): {preview}",
+            is_concept=is_concept,
+        )
+
+    def _score(value):
+        try:
+            return max(0.0, min(10.0, float(value)))
+        except (TypeError, ValueError):
+            return 0.0
+
+    criteria = {
+        "korean_text_readability": _score(payload.get("korean_text_readability", 0)),
+        "korean_hallucination_detection": _score(
+            payload.get("korean_hallucination_detection", 0)
+        ),
+        "content_reference_accuracy": _score(
+            payload.get("content_reference_accuracy", 0)
+        ),
+        "layout_suitability": _score(payload.get("layout_suitability", 0)),
+        "color_palette_compliance": _score(payload.get("color_palette_compliance", 0)),
+    }
+
+    if is_concept:
+        criteria["korean_text_readability"] = 10.0
+        criteria["korean_hallucination_detection"] = 10.0
+
+    avg_score = _score(payload.get("overall_score", sum(criteria.values()) / 5.0))
+    feedback = _preview_text(payload.get("feedback", ""), limit=200)
+
+    if not _eval_first_success_logged:
+        print(f"[eval-ok] model={active_model} score={avg_score:.1f}")
+        _eval_first_success_logged = True
+
+    return {"score": avg_score, "feedback": feedback, "criteria": criteria}
 
 
 def generate_image(
@@ -334,6 +445,7 @@ def generate_image(
     image_quality: str = DEFAULT_IMAGE_QUALITY,
     eval_model: str = DEFAULT_EVAL_MODEL,
     max_retries: int = API_RETRY_COUNT,
+    theme: str | None = None,
 ) -> bool:
     """OpenAI gpt-image-2 API를 호출하여 슬라이드 이미지 생성 (5D 품질 평가 루프 포함).
 
@@ -423,10 +535,16 @@ def generate_image(
             candidate_output_path,
             prompt_text=current_prompt,
             eval_model=eval_model,
+            theme=theme,
         )
-        criteria = quality_result.get("criteria", {})
-        score = float(quality_result.get("score", 0.0))
-        feedback = quality_result.get("feedback", "")
+        raw_criteria = quality_result.get("criteria", {})
+        criteria: dict[str, object] = (
+            raw_criteria if isinstance(raw_criteria, dict) else {}
+        )
+        raw_score = quality_result.get("score", 0.0)
+        score = float(raw_score) if isinstance(raw_score, (int, float, str)) else 0.0
+        raw_feedback = quality_result.get("feedback", "")
+        feedback = raw_feedback if isinstance(raw_feedback, str) else str(raw_feedback)
 
         korean_score = int(round(criteria.get("korean_text_readability", 0)))
         korean_hallu_score = int(
@@ -491,7 +609,8 @@ def process_prompts(
     eval_model: str = DEFAULT_EVAL_MODEL,
     max_images: int = DEFAULT_MAX_IMAGES,
     auto_confirm: bool = False,
-) -> dict:
+    default_theme: str | None = None,
+) -> dict[str, list[str]]:
     """슬라이드 프롬프트 폴더의 모든 .md 파일을 처리하여 이미지 생성.
 
     Returns: {"success": [...], "failed": [...]}
@@ -556,6 +675,8 @@ def process_prompts(
     print(f"  - 평가 모델: {eval_model} (필요 시 fallback chain)")
     print(f"  - 출력 사양: {image_size} quality={image_quality} format={OUTPUT_FORMAT}")
     print(f"  - 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.")
+    if default_theme:
+        print(f"  - 기본 테마: {default_theme} (파일명에서 테마를 추출할 수 없을 때 적용)")
     print()
 
     # API 클라이언트 초기화
@@ -580,6 +701,14 @@ def process_prompts(
             prompt_content = f.read().strip()
 
         try:
+            resolved_theme = _resolve_theme(
+                explicit_theme=None,
+                prompt_filename=prompt_file.name,
+                prompt_text=prompt_content,
+                default_theme=default_theme,
+            )
+            if resolved_theme:
+                print(f"  [테마] {resolved_theme}")
             ok = generate_image(
                 client,
                 prompt_content,
@@ -588,6 +717,7 @@ def process_prompts(
                 image_size=image_size,
                 image_quality=image_quality,
                 eval_model=eval_model,
+                theme=resolved_theme,
             )
             if ok:
                 print(f"  [OK] Saved: {output_file}")
@@ -666,6 +796,15 @@ def main():
         action="store_true",
         help="max-images 초과 시 자동으로 처음 N장만 처리 (확인 없이)",
     )
+    parser.add_argument(
+        "--theme",
+        default=None,
+        help=(
+            "이미지가 속한 테마 (선택, fallback 용). "
+            "우선순위: 파일명 (`NN_theme_<NAME>.md`) > --theme. "
+            "유효값: " + ", ".join(KNOWN_THEMES)
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -682,6 +821,7 @@ def main():
         eval_model=args.eval_model,
         max_images=args.max_images,
         auto_confirm=args.yes,
+        default_theme=_normalize_theme(args.theme),
     )
 
     sys.exit(1 if results["failed"] else 0)
