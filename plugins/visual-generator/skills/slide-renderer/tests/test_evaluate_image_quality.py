@@ -7,17 +7,17 @@ from pathlib import Path
 from types import SimpleNamespace
 
 
-def _write_test_jpeg(module, tmp_path: Path) -> Path:
-    path = tmp_path / "sample.jpg"
+def _write_test_image(module, tmp_path: Path) -> Path:
+    path = tmp_path / "sample.png"
     image = module.PILImage.new("RGB", (16, 16), color="navy")
-    image.save(path, format="JPEG")
+    image.save(path, format="PNG")
     return path
 
 
 def test_evaluate_image_quality_reports_api_errors(
     openai_renderer_module, monkeypatch, tmp_path, capsys
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -40,7 +40,7 @@ def test_evaluate_image_quality_reports_api_errors(
 def test_evaluate_image_quality_reports_parse_failures(
     openai_renderer_module, monkeypatch, tmp_path, capsys
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -62,7 +62,7 @@ def test_evaluate_image_quality_reports_parse_failures(
 def test_evaluate_image_quality_preserves_concept_exemption(
     openai_renderer_module, monkeypatch, tmp_path
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -97,7 +97,7 @@ def test_evaluate_image_quality_preserves_concept_exemption(
 def test_eval_ok_logs_only_once_per_module_session(
     openai_renderer_module, monkeypatch, tmp_path, capsys
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -128,7 +128,7 @@ def test_eval_ok_logs_only_once_per_module_session(
 def test_explicit_theme_concept_overrides_low_korean_scores(
     openai_renderer_module, monkeypatch, tmp_path
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -167,7 +167,7 @@ def test_explicit_theme_concept_overrides_low_korean_scores(
 def test_explicit_theme_gov_does_not_inflate_korean_scores(
     openai_renderer_module, monkeypatch, tmp_path
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )
@@ -216,31 +216,43 @@ def test_resolve_theme_priority_explicit_then_filename_then_default(
 ):
     resolve = openai_renderer_module._resolve_theme
     # explicit이 파일명보다 우선
-    assert resolve(
-        explicit_theme="gov",
-        prompt_filename="01_theme_concept.md",
-        prompt_text="",
-    ) == "gov"
+    assert (
+        resolve(
+            explicit_theme="gov",
+            prompt_filename="01_theme_concept.md",
+            prompt_text="",
+        )
+        == "gov"
+    )
     # 파일명이 default보다 우선
-    assert resolve(
-        explicit_theme=None,
-        prompt_filename="02_theme_seminar.md",
-        prompt_text="",
-        default_theme="gov",
-    ) == "seminar"
+    assert (
+        resolve(
+            explicit_theme=None,
+            prompt_filename="02_theme_seminar.md",
+            prompt_text="",
+            default_theme="gov",
+        )
+        == "seminar"
+    )
     # 둘 다 없으면 default
-    assert resolve(
-        explicit_theme=None,
-        prompt_filename="random.md",
-        prompt_text="",
-        default_theme="comparison",
-    ) == "comparison"
+    assert (
+        resolve(
+            explicit_theme=None,
+            prompt_filename="random.md",
+            prompt_text="",
+            default_theme="comparison",
+        )
+        == "comparison"
+    )
     # 아무것도 없으면 None
-    assert resolve(
-        explicit_theme=None,
-        prompt_filename=None,
-        prompt_text="",
-    ) is None
+    assert (
+        resolve(
+            explicit_theme=None,
+            prompt_filename=None,
+            prompt_text="",
+        )
+        is None
+    )
 
 
 def test_normalize_theme_rejects_unknown_and_auto(openai_renderer_module):

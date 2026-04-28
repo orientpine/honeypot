@@ -9,7 +9,7 @@ model: sonnet
 
 ## Overview
 
-프롬프트 파일의 최종 검증을 수행하고 OpenAI gpt-image-2 API를 통해 이미지를 렌더링하는 에이전트. 4-block 구조, pt/px 패턴, 언어 병기, 플레이스홀더 등 렌더링 전 품질 검증을 담당한다. 생성 모델: gpt-image-2 (default 3840x2160 4K, quality=high, JPEG; `--size`로 변경 가능).
+프롬프트 파일의 최종 검증을 수행하고 OpenAI gpt-image-2 API를 통해 이미지를 렌더링하는 에이전트. 4-block 구조, pt/px 패턴, 언어 병기, 플레이스홀더 등 렌더링 전 품질 검증을 담당한다. 생성 모델: gpt-image-2 (default 3840x2160 4K, quality=high, PNG; `--size`로 변경 가능).
 
 **파이프라인 위치:**
 ```
@@ -128,7 +128,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
         +-- 경로: {output_path}/generation_report.md
         +-- 사용 모델: gpt-image-2
         +-- 평가 모델: gpt-5.5
-        +-- 출력 사양: 3840x2160 quality=high JPEG (default; `--size`로 변경 가능)
+        +-- 출력 사양: 3840x2160 quality=high PNG (default; `--size`로 변경 가능)
         +-- 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 ```
 
@@ -155,7 +155,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 | 생성 모델 | `gpt-image-2` | |
 | 해상도 (default) | `size="3840x2160"` (4K) | `--size`로 변경 가능 |
 | 품질 | `quality="high"` | |
-| 출력 형식 | `output_format="jpeg"` | |
+| 출력 형식 | `output_format="png"` | |
 
 환경 요구사항, 출력 해석, 에러 처리, 5D 품질 평가 상세는 `/visual-generator:slide-renderer` 스킬 참조.
 
@@ -163,8 +163,8 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 
 ```
 {output_path}/
-├── 01_비전_다이어그램.jpg       # 렌더링된 이미지 (3840x2160 default, JPEG)
-├── 02_기술_스펙.jpg
+├── 01_비전_다이어그램.png       # 렌더링된 이미지 (3840x2160 default, PNG)
+├── 02_기술_스펙.png
 ├── ...
 └── generation_report.md         # 생성 보고서 (모델 정보 포함)
 ```
@@ -180,7 +180,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 - 출력 폴더: {output_path}
 - 사용 모델 (생성): gpt-image-2
 - 사용 모델 (평가): gpt-5.5
-- 출력 사양: 3840x2160 quality=high JPEG (default; `--size`로 변경 가능)
+- 출력 사양: 3840x2160 quality=high PNG (default; `--size`로 변경 가능)
 
 ## 비용
 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
