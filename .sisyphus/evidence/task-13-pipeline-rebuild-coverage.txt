@@ -1,0 +1,3 @@
+rebuild_index.py: exit 0 - Wrote _index.md with 0 articles, _backlinks.json with 0 targets
+check_coverage.py: exit 0 - Loaded 2 entries, 0 articles, 2 uncovered (expected: no articles written yet)
+PASS: rebuild_index and check_coverage both exit 0

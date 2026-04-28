@@ -1,0 +1,15 @@
+PASS: ingest_projects QA
+command_returncode=0
+entry_count=2
+entry_files=['2026-04-05_Crawler_Guide_4d61ae901743.md', '2026-04-10_Field_Notes_c291bf3ce714.md']
+logged_files=['test_proj/guide.md', 'test_proj/notes.md']
+entry_ids=['4d61ae901743', 'c291bf3ce714']
+
+[stdout]
+Walking source: /tmp/test_proj/doc
+Found 2 markdown files after directory filtering
+Scanned: 2 files. Skipped: 0 (none). Ingested: 2 entries.
+Log: /tmp/raw/ingest_log.json
+
+[stderr]
+
