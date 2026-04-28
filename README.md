@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.30.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.31.3 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -233,72 +233,102 @@ images_dir: ./images/
 content-organizer → content-reviewer → prompt-designer → prompt-validator → renderer-agent | renderer-agent-openai (사용자 선택)
 ```
 
-### 테마 갤러리
+### 테마 갤러리 — Gemini vs OpenAI gpt-image-2
 
-동일한 주제(스마트 팩토리)를 6개 테마로 시각화한 예시:
+동일한 프롬프트(스마트 팩토리, 6개 테마)를 두 렌더링 엔진으로 비교한 결과입니다. 좌측은 **Gemini** (`gemini-3-pro-image-preview`, 5504×3072 PNG), 우측은 **OpenAI gpt-image-2** (3840×2160 JPEG, quality=high).
 
 <table>
+<thead>
 <tr>
-<td width="50%">
-
-**concept** — Kurzgesagt 풍 시각 스토리텔링
-
-텍스트 없이 장면과 시각적 메타포만으로 개념을 전달
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/01_theme_concept.png" width="100%" alt="Concept Theme">
-
-</td>
-<td width="50%">
-
-**gov** — 정부/공공기관 PPT
-
-굵은 테두리 박스에 번호가 매겨진 체계적 격자
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/02_theme_gov.png" width="100%" alt="Gov Theme">
-
-</td>
+  <th width="22%">테마</th>
+  <th width="39%">Gemini</th>
+  <th width="39%">OpenAI gpt-image-2</th>
 </tr>
+</thead>
+<tbody>
+
 <tr>
 <td>
 
-**seminar** — 세미나/학술 발표
+**concept**
 
-에디토리얼 매거진 × 아이소메트릭 3D
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/03_theme_seminar.png" width="100%" alt="Seminar Theme">
-
-</td>
-<td>
-
-**whatif** — 미래 비전 스냅샷
-
-공상과학 영화 UI처럼 빛나는 HUD
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/04_theme_whatif.png" width="100%" alt="What-If Theme">
+Kurzgesagt 풍 시각 스토리텔링.<br>
+텍스트 없이 장면과 시각적 메타포만으로 개념을 전달.
 
 </td>
+<td><img src="./assets/theme-examples/images/01_theme_concept.png" width="100%" alt="concept (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/01_theme_concept.jpg" width="100%" alt="concept (OpenAI)"></td>
 </tr>
+
 <tr>
 <td>
 
-**pitch** — 피치덱
+**gov**
 
-Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/05_theme_pitch.png" width="100%" alt="Pitch Theme">
+정부/공공기관 PPT.<br>
+굵은 테두리 박스에 번호가 매겨진 체계적 격자.
 
 </td>
+<td><img src="./assets/theme-examples/images/02_theme_gov.png" width="100%" alt="gov (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/02_theme_gov.jpg" width="100%" alt="gov (OpenAI)"></td>
+</tr>
+
+<tr>
 <td>
 
-**comparison** — Before/After 비교
+**seminar**
 
-IMAX 분할 화면처럼 좌우 풀블리드 이미지
-
-<img src="https://raw.githubusercontent.com/orientpine/honeypot/058be21/assets/theme-examples/images/06_theme_comparison.png" width="100%" alt="Comparison Theme">
+세미나/학술 발표.<br>
+에디토리얼 매거진 × 아이소메트릭 3D.
 
 </td>
+<td><img src="./assets/theme-examples/images/03_theme_seminar.png" width="100%" alt="seminar (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/03_theme_seminar.jpg" width="100%" alt="seminar (OpenAI)"></td>
 </tr>
+
+<tr>
+<td>
+
+**whatif**
+
+미래 비전 스냅샷.<br>
+공상과학 영화 UI처럼 빛나는 HUD.
+
+</td>
+<td><img src="./assets/theme-examples/images/04_theme_whatif.png" width="100%" alt="whatif (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/04_theme_whatif.jpg" width="100%" alt="whatif (OpenAI)"></td>
+</tr>
+
+<tr>
+<td>
+
+**pitch**
+
+피치덱.<br>
+Apple 키노트처럼 어두운 그래디언트 위의 거대한 숫자.
+
+</td>
+<td><img src="./assets/theme-examples/images/05_theme_pitch.png" width="100%" alt="pitch (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/05_theme_pitch.jpg" width="100%" alt="pitch (OpenAI)"></td>
+</tr>
+
+<tr>
+<td>
+
+**comparison**
+
+Before/After 비교.<br>
+IMAX 분할 화면처럼 좌우 풀블리드 이미지.
+
+</td>
+<td><img src="./assets/theme-examples/images/06_theme_comparison.png" width="100%" alt="comparison (Gemini)"></td>
+<td><img src="./assets/theme-examples/images-openai/06_theme_comparison.jpg" width="100%" alt="comparison (OpenAI)"></td>
+</tr>
+
+</tbody>
 </table>
+
+> 두 엔진 모두 동일한 4-block 마크다운 프롬프트(`assets/theme-examples/prompts/0[1-6]_theme_*.md`)로 렌더링되었습니다. 좌측 6장은 `generate_slide_images.py`(Gemini), 우측 6장은 `generate_slide_images_openai.py`(OpenAI gpt-image-2 + gpt-5.5 5D 평가)로 생성되었습니다.
 
 <details>
 <summary>구성 요소 (6 Agents · 1 Command · 8 Skills)</summary>
@@ -1182,8 +1212,12 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
-| 3.30.0 | 2026-04-26 | visual-generator v3.5.0: OpenAI gpt-image-2 기반 렌더링 경로 추가 — `renderer` (gemini\|openai) + `renderer_choice_timing` (pre\|post\|none) 파라미터로 사용자 선택, 별도 에이전트 (renderer-agent-openai) + 별도 스크립트 (generate_slide_images_openai.py), 5D 평가 (Structured Outputs json_schema strict, gpt-5.5), 1536x1024 quality=high JPEG 출력, --max-images 비용 cap (기본 30), OPENAI_API_KEY 미설정 hard-fail. 기존 Gemini 경로 byte-identical 보존 (백워드 호환). |
+| 3.31.3 | 2026-04-28 | README 테마 갤러리에 OpenAI gpt-image-2 렌더링 결과 6장 추가 — 기존 Gemini 6장과 좌우 비교 테이블 형태로 재구성, 동일 프롬프트(스마트 팩토리 6테마)를 양쪽 엔진으로 렌더링한 산출물을 `assets/theme-examples/images-openai/0[1-6]_theme_*.jpg`(3840×2160, quality=high, JPEG)로 저장. 평가 결과 1차 시도부터 6/6 통과(평균 8.2~9.6, 한글 8~10, 환각 8~10). 이미지 src 경로를 절대 raw URL(`058be21` 커밋 해시)에서 저장소 상대경로(`./assets/...`)로 통일하여 submodule/체크아웃에서도 정상 표시. |
+| 3.31.2 | 2026-04-28 | visual-generator v3.6.2: concept 테마 면제 로직을 `theme` 명시적 인자 기반으로 강화 — `evaluate_image_quality(..., theme=...)` 추가, `process_prompts(..., default_theme=...)` 및 CLI `--theme` 옵션 추가, 파일명(`NN_theme_<NAME>.md`) 자동 추출(`_extract_theme_from_filename`)과 `_resolve_theme()` 우선순위(explicit > filename > default > keyword fallback) 도입, 평가 시스템 프롬프트에 concept 면제 조건 명시, rubric 문서 갱신, 관련 단위 테스트 5종 추가. 라이브 검증: 1차 시도부터 한글 차원 10/10, 평균 9.3 통과(이전 5.5→재시도 패턴 해소), 이미지 생성 1회로 retry/비용 ~50% 절감. |
+
+| 3.31.1 | 2026-04-28 | visual-generator v3.6.1: OpenAI Responses API Structured Outputs schema 수정 — `text.format`에 `name`/`schema`를 직접 배치하여 gpt-5.5 이미지 평가가 실제로 동작하도록 수정, 평가 API/파싱 실패를 `[eval-error]`로 명시 로그화, 첫 성공 평가를 `[eval-ok]`로 1회 로깅, `slide-renderer` pytest 추가 및 root `pytest.ini` discovery 등록. 기존 gpt-image-2 생성 경로와 Gemini 경로는 유지. |
 | 3.31.0 | 2026-04-28 | visual-generator v3.6.0: OpenAI 경로 4K default 전환 및 운영 개선 — `IMAGE_SIZE` 1536x1024 → 3840x2160 (공식 gpt-image-2 제약 준수: 양변 16배수, max edge 3840px, total pixels ≤ 8,294,400), CLI 옵션 4종 추가(`--size --quality --model --eval-model`), 평가 모델 런타임 fallback chain(`gpt-5.5 → gpt-5 → gpt-4o`, intra-OpenAI only AGENTS.md anti-pattern 준수), 비용 추정 라인/테이블 전량 제거 후 OpenAI 콘솔 안내 교체, `OUTPUT_FORMAT == "jpeg"` 타웰톨로지 제거 + PIL 검증 단계는 유지, openai SDK lazy-load로 `--help`가 패키지 없이 동작. Gemini 경로 byte-identical 보존 (`generate_slide_images.py` / `renderer-agent.md` / theme-* SKILL.md 변경 없음). |
+| 3.30.0 | 2026-04-26 | visual-generator v3.5.0: OpenAI gpt-image-2 기반 렌더링 경로 추가 — `renderer` (gemini\|openai) + `renderer_choice_timing` (pre\|post\|none) 파라미터로 사용자 선택, 별도 에이전트 (renderer-agent-openai) + 별도 스크립트 (generate_slide_images_openai.py), 5D 평가 (Structured Outputs json_schema strict, gpt-5.5), 1536x1024 quality=high JPEG 출력, --max-images 비용 cap (기본 30), OPENAI_API_KEY 미설정 hard-fail. 기존 Gemini 경로 byte-identical 보존 (백워드 호환). |
 | 3.29.0 | 2026-04-21 | link-curator v1.1.0: bulk TSV 선택적 TITLE 컬럼(5컬럼) 지원 추가 — YouTube 채널처럼 metadata가 빈약한 URL 제출 시 HoneyCombo 서버가 title과 description을 동일하게 fallback하는 문제 예방. `submit_bulk.sh` 배열 기반 파싱으로 4컬럼(legacy)·5컬럼(v2) 자동 감지, TITLE/SUMMARY 필드에 `|`, 탭, CR/LF 문자 금지(서버 컬럼 정렬 보호), Unix 라인엔딩 일관성을 위한 `.gitattributes` 추가(`*.sh text eol=lf`). `honeycombo-submission.md`와 `SKILL.md`에 v2 포맷 사용법·금지 문자 문서화. (연결 서버 PR: orientpine/honeycombo#169 — `deriveShortTitle`/`resolveSubmissionTitle` fallback chain + 5컬럼 파서 + bulk 실패 URL 상세 댓글 upsert) |
 | 3.28.1 | 2026-04-21 | 4개 플러그인(wiki-gen, pptx-design-styles, patent-trend-analyzer, obsidian-skills)과 root marketplace.json의 **plugin.json/marketplace.json 스키마 준수 수정** — Claude Code Zod strict validation이 `Unrecognized keys` 에러로 거부하던 비표준 `contributors` 필드 전량 제거로 마켓플레이스 등록 실패 해결. AGENTS.md에 `Plugin.json Schema Compliance (CRITICAL)` 섹션 신설(공식 허용 필드 화이트리스트, 금지 필드 목록, Attribution 보존 4가지 방안, 검증 Python 스크립트, 실패 에러 패턴/조치 절차). patent-trend-analyzer README에 Gunju Park contributor attribution 이동. 개별 플러그인 PATCH 버전 업(wiki-gen 1.2.0→1.2.1, pptx-design-styles 1.0.0→1.0.1, patent-trend-analyzer 1.3.0→1.3.1, obsidian-skills 1.0.0→1.0.1). |
 | 3.27.0 | 2026-04-10 | wiki-gen v1.2.0: wiki sync 서브커맨드 추가 — sources.yaml 기반 멀티소스 수집 파이프라인 (sync_sources.py, ingest_projects.py, ingest_common.py), pytest 인프라 + 27개 자동화 테스트 |
