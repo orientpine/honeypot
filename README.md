@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.31.3 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.32.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -1212,6 +1212,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.32.0 | 2026-04-28 | visual-generator v3.7.0: 두 렌더링 경로(Gemini, OpenAI gpt-image-2) 모두 출력 포맷을 JPEG → **PNG**로 통일. Gemini 스크립트는 응답 mime이 PNG이면 raw bytes 직접 저장, 그 외(JPEG/WEBP)는 PIL로 PNG 재인코딩 + RGBA 알파 채널 보존; OpenAI 스크립트는 `OUTPUT_FORMAT="png"` 강제 + 평가 data URL `image/png` 동기화. 출력 파일명/임시 파일/문서(`renderer-agent.md`, `renderer-agent-openai.md`, `visual-generate.md`, `slide-renderer/SKILL.md`) 및 테스트 픽스처(JPEG → PNG) 일괄 동기화. pytest 11/11 통과. |
 | 3.31.3 | 2026-04-28 | README 테마 갤러리에 OpenAI gpt-image-2 렌더링 결과 6장 추가 — 기존 Gemini 6장과 좌우 비교 테이블 형태로 재구성, 동일 프롬프트(스마트 팩토리 6테마)를 양쪽 엔진으로 렌더링한 산출물을 `assets/theme-examples/images-openai/0[1-6]_theme_*.jpg`(3840×2160, quality=high, JPEG)로 저장. 평가 결과 1차 시도부터 6/6 통과(평균 8.2~9.6, 한글 8~10, 환각 8~10). 이미지 src 경로를 절대 raw URL(`058be21` 커밋 해시)에서 저장소 상대경로(`./assets/...`)로 통일하여 submodule/체크아웃에서도 정상 표시. |
 | 3.31.2 | 2026-04-28 | visual-generator v3.6.2: concept 테마 면제 로직을 `theme` 명시적 인자 기반으로 강화 — `evaluate_image_quality(..., theme=...)` 추가, `process_prompts(..., default_theme=...)` 및 CLI `--theme` 옵션 추가, 파일명(`NN_theme_<NAME>.md`) 자동 추출(`_extract_theme_from_filename`)과 `_resolve_theme()` 우선순위(explicit > filename > default > keyword fallback) 도입, 평가 시스템 프롬프트에 concept 면제 조건 명시, rubric 문서 갱신, 관련 단위 테스트 5종 추가. 라이브 검증: 1차 시도부터 한글 차원 10/10, 평균 9.3 통과(이전 5.5→재시도 패턴 해소), 이미지 생성 1회로 retry/비용 ~50% 절감. |
 

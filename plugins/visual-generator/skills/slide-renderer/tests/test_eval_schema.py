@@ -7,10 +7,10 @@ from pathlib import Path
 from types import SimpleNamespace
 
 
-def _write_test_jpeg(module, tmp_path: Path) -> Path:
-    path = tmp_path / "sample.jpg"
+def _write_test_image(module, tmp_path: Path) -> Path:
+    path = tmp_path / "sample.png"
     image = module.PILImage.new("RGB", (8, 8), color="white")
-    image.save(path, format="JPEG")
+    image.save(path, format="PNG")
     return path
 
 
@@ -36,7 +36,7 @@ def test_evaluation_schema_matches_responses_text_format(openai_renderer_module)
 def test_evaluate_image_quality_sends_schema_via_text_parameter(
     openai_renderer_module, monkeypatch, tmp_path
 ):
-    image_path = _write_test_jpeg(openai_renderer_module, tmp_path)
+    image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
         openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
     )

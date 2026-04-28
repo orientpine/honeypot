@@ -5,7 +5,7 @@ description: "Gemini와 OpenAI gpt-image-2를 사용한 슬라이드 이미지 �
 
 # Slide Renderer
 
-Gemini API를 사용하여 프롬프트 파일(.md)을 4K 16:9 JPEG 이미지로 변환하는 스크립트 실행 가이드.
+Gemini API를 사용하여 프롬프트 파일(.md)을 4K 16:9 PNG 이미지로 변환하는 스크립트 실행 가이드.
 
 ## 스크립트 참조 및 실행 (CRITICAL)
 
@@ -43,7 +43,7 @@ Glob: **/generate_slide_images.py
 | 패키지 | google-genai, Pillow |
 | 환경변수 | `GEMINI_API_KEY` 필수 |
 | 모델 | gemini-3-pro-image-preview |
-| 출력 | 4K, 16:9 비율 JPEG |
+| 출력 | 4K, 16:9 비율 PNG |
 
 ## 스크립트 출력 해석
 
@@ -126,7 +126,7 @@ generate_slide_images.py는 3중 방어 체계의 inference 계층을 담당한�
 
 ## OpenAI gpt-image-2 Rendering Path
 
-gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일(.md)을 4K(3840x2160) JPEG 이미지로 변환하는 스크립트 실행 가이드. `--size` 플래그로 다른 해상도 지정 가능 (제약: 양변 16배수, max edge 3840px, total pixels ≤ 8,294,400).
+gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일(.md)을 4K(3840x2160) PNG 이미지로 변환하는 스크립트 실행 가이드. `--size` 플래그로 다른 해상도 지정 가능 (제약: 양변 16배수, max edge 3840px, total pixels ≤ 8,294,400).
 
 ### 스크립트 참조 및 실행 (CRITICAL)
 
@@ -166,7 +166,7 @@ Glob: **/generate_slide_images_openai.py
 | 환경변수 | `OPENAI_API_KEY` 필수 |
 | 모델 (생성) | gpt-image-2 |
 | 모델 (평가) | gpt-5.5 (폴백: gpt-5 → gpt-4o) |
-| 출력 (default) | 3840x2160 JPEG (quality=high), `--size`로 변경 가능 |
+| 출력 (default) | 3840x2160 PNG (quality=high), `--size`로 변경 가능 |
 
 ### CLI
 

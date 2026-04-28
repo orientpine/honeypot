@@ -163,8 +163,8 @@ visual-generator-orchestrator 에이전트를 사용해서 시각자료를 생�
     |       - auto_mode: true
     |
     +-- Step 4-2. 출력 확인
-    |   +-- {output_folder}/images/01_*.jpg
-    |   +-- {output_folder}/images/02_*.jpg
+    |   +-- {output_folder}/images/01_*.png
+    |   +-- {output_folder}/images/02_*.png
     |   +-- ...
     |   +-- {output_folder}/images/generation_report.md
     |
@@ -269,8 +269,8 @@ visual-generator-orchestrator 에이전트로 이어서 생성해줘.
 │   ├── ...
 │   └── prompt_index.md           # 프롬프트 인덱스
 ├── images/
-│   ├── 01_비전_다이어그램.jpg
-│   ├── 02_기술_스펙.jpg
+│   ├── 01_비전_다이어그램.png
+│   ├── 02_기술_스펙.png
 │   ├── ...
 │   └── generation_report.md      # 이미지 생성 보고서
 └── reports/

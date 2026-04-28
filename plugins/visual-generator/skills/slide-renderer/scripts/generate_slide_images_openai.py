@@ -11,10 +11,10 @@ OpenAI gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일에서 �
     - 평가 모델: gpt-5.5 → gpt-5 → gpt-4o (런타임 fallback chain, --eval-model)
     - 해상도: 3840x2160 (4K, --size)
     - 품질: high (--quality)
-    - 출력 형식: JPEG
+    - 출력 형식: PNG
 
 입력: slide-prompt-generator로 생성된 슬라이드 프롬프트 (.md)
-출력: 발표용 고해상도 슬라이드 이미지 (.jpg)
+출력: 발표용 고해상도 슬라이드 이미지 (.png)
 
 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 """
@@ -38,7 +38,7 @@ DEFAULT_IMAGE_MODEL = "gpt-image-2"
 DEFAULT_EVAL_MODEL = "gpt-5.5"
 DEFAULT_IMAGE_SIZE = "3840x2160"
 DEFAULT_IMAGE_QUALITY = "high"
-OUTPUT_FORMAT = "jpeg"
+OUTPUT_FORMAT = "png"
 
 # 평가 모델 fallback chain (intra-OpenAI only — AGENTS.md anti-pattern: no Gemini fallback)
 EVAL_FALLBACK_TAIL = ["gpt-5", "gpt-4o"]
@@ -232,7 +232,11 @@ def _resolve_theme(
     3) default_theme (CLI `--theme` 등에서 들어온 기본값)
     4) prompt_text 키워드 매칭은 _is_concept_via_keywords()에서 별도로 다룸
     """
-    for value in (explicit_theme, _extract_theme_from_filename(prompt_filename or ""), default_theme):
+    for value in (
+        explicit_theme,
+        _extract_theme_from_filename(prompt_filename or ""),
+        default_theme,
+    ):
         normalized = _normalize_theme(value)
         if normalized:
             return normalized
@@ -347,8 +351,7 @@ def evaluate_image_quality(
         "4) layout_suitability: 레이아웃 구성 적합성 (계층, 공간 균형, 시각 흐름)\n"
         "5) color_palette_compliance: 지정 팔레트 준수 여부\n"
         "6) overall_score: 위 5차원의 종합 가중 평균\n\n"
-        "feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)"
-        + concept_clause
+        "feedback: 재생성을 위한 구체적 개선 지침 1~3문장 (200자 이내)" + concept_clause
     )
 
     global _eval_first_success_logged
@@ -374,7 +377,7 @@ def evaluate_image_quality(
                         {"type": "input_text", "text": evaluation_prompt},
                         {
                             "type": "input_image",
-                            "image_url": f"data:image/jpeg;base64,{image_b64}",
+                            "image_url": f"data:image/png;base64,{image_b64}",
                             "detail": "original",
                         },
                     ],
@@ -478,7 +481,7 @@ def generate_image(
 
                 image_bytes = base64.b64decode(image_b64)
 
-                # OUTPUT_FORMAT=jpeg이므로 응답 바이트는 JPEG. PIL은 검증 용도로만 사용.
+                # OUTPUT_FORMAT=png이므로 응답 바이트는 PNG. PIL은 검증 용도로만 사용.
                 try:
                     PILImage.open(io.BytesIO(image_bytes)).verify()
                 except Exception as exc:
@@ -486,7 +489,7 @@ def generate_image(
 
                 with open(save_path, "wb") as img_f:
                     img_f.write(image_bytes)
-                print(f"  [저장] JPEG 직접 저장 ({len(image_bytes):,} bytes)")
+                print(f"  [저장] PNG 직접 저장 ({len(image_bytes):,} bytes)")
 
                 return True
 
@@ -524,7 +527,7 @@ def generate_image(
         candidate_output_path = output_path
         if total_quality_attempts > 1:
             candidate_output_path = (
-                f"{output_path}.quality_attempt_{quality_attempt + 1}.jpg"
+                f"{output_path}.quality_attempt_{quality_attempt + 1}.png"
             )
 
         if not _request_image(current_prompt, candidate_output_path):
@@ -592,7 +595,7 @@ def generate_image(
         print(f"[품질 평가] 기준 미달, 최고 점수 이미지 채택 (평균 {best_score:.1f})")
 
     for cleanup_attempt in range(total_quality_attempts):
-        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.jpg")
+        temp_path = Path(f"{output_path}.quality_attempt_{cleanup_attempt + 1}.png")
         if temp_path.exists():
             temp_path.unlink()
 
@@ -676,7 +679,9 @@ def process_prompts(
     print(f"  - 출력 사양: {image_size} quality={image_quality} format={OUTPUT_FORMAT}")
     print(f"  - 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.")
     if default_theme:
-        print(f"  - 기본 테마: {default_theme} (파일명에서 테마를 추출할 수 없을 때 적용)")
+        print(
+            f"  - 기본 테마: {default_theme} (파일명에서 테마를 추출할 수 없을 때 적용)"
+        )
     print()
 
     # API 클라이언트 초기화
@@ -687,7 +692,7 @@ def process_prompts(
 
     for i, prompt_file in enumerate(prompt_files, 1):
         slide_name = prompt_file.stem
-        output_file = output_path / f"{slide_name}.jpg"
+        output_file = output_path / f"{slide_name}.png"
 
         print(f"[{i}/{len(prompt_files)}] {slide_name}")
 
