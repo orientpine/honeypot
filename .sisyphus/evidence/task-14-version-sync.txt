@@ -1,0 +1,3 @@
+PASS: versions synced
+PASS: wiki sync in AGENTS.md
+PASS: sync_sources in AGENTS.md

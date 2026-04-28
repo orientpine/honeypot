@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.4, ament-lint-0.17.4, ament-pep257-0.17.4, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-flake8-0.17.4, ament-copyright-0.17.4, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1
+collecting ... collected 13 items
+
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_entry_to_markdown PASSED [  7%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_slugify_basic PASSED [ 15%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_slugify_korean PASSED [ 23%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_slugify_edge_cases PASSED [ 30%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_parse_yaml_frontmatter_valid PASSED [ 38%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_parse_yaml_frontmatter_none PASSED [ 46%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_parse_yaml_frontmatter_malformed PASSED [ 53%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_coerce_tag_list PASSED [ 61%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_coerce_alias_list PASSED [ 69%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_extract_heading_title PASSED [ 76%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_extract_heading_title_no_heading PASSED [ 84%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_extract_tags PASSED [ 92%]
+plugins/wiki-gen/skills/wiki-gen/tests/test_ingest_common.py::test_ingest_obsidian_regression PASSED [100%]
+
+============================== 13 passed in 0.09s ==============================

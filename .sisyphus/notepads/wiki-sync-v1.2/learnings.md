@@ -65,3 +65,20 @@ subprocess.run([sys.executable, str(script_dir / 'xxx.py'), ...], check=True)
 - `pytest.ini` now includes both hwpx core tests and wiki-gen tests in `testpaths`.
 - `python3 -m pytest plugins/wiki-gen/skills/wiki-gen/tests/ --collect-only` completed successfully with 0 collected items.
 - `python3 -c "import ast; ..."` validated `conftest.py` syntax as `VALID`.
+
+## [2026-04-10] Task 2 extraction
+
+- Gold-output regression stayed stable after moving shared constants, Entry dataclass, and utility helpers into `scripts/ingest_common.py`.
+- `ingest_obsidian.py` can keep script-mode compatibility with a top-level `from ingest_common import ...` because Python adds the script directory to `sys.path` when executed by path.
+
+## [2026-04-10] Task 8 ingest_projects
+
+- `ingest_projects.py` writes project-source entries under `raw/entries/{source_name}/`, keeping multi-source raw entries partitioned by source.
+- `ingest_log.json` `entries[].file` must stay in `{source_name}/{base_name}` form; downstream `verify_content.py` resolves entry bodies from that prefixed path.
+- Source-prefixed IDs via `sha1(f"{source_name}:{rel_path}")[:12]` avoid collisions when different project sources reuse the same relative doc path.
+
+## [2026-04-10] Task 10 sync_sources
+
+- `sync_sources.py` can stay idempotent by diffing `sync_log.json` content hashes first and skipping subprocess ingest when a source has no added/updated/deleted files.
+- For project/local sources, backing up `raw/entries/{source_name}/` before re-running `ingest_projects.py` avoids stale filenames when titles or dates change and still lets the script restore state on ingest failure.
+- `--dry-run` verification should check both `raw/ingest_log.json` and `sync_log.json`; they live at `wiki_root.parent`, not inside `wiki/`.
