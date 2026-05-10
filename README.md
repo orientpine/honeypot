@@ -1193,7 +1193,9 @@ honeypot/
 │   └── link-curator/                 # URL → Korean MD + HoneyCombo 제출
 │       ├── commands/                 # curate-links
 │       └── skills/                   # 2 skills (link-summarizer, honeycombo-submit)
-├── AGENTS.md                         # 프로젝트 상세 지식 베이스
+├── docs/
+│   └── agents/                       # AGENTS.md 상황별 상세 지침 (필요 시 로드)
+├── AGENTS.md                         # 프로젝트 지식 베이스 (상황별 인덱스 포함)
 └── README.md                         # 이 문서
 ```
 
