@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-05-10
-**Version:** 3.32.0
+**Version:** 3.33.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -28,7 +28,12 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | Portfolio analysis | `plugins/investments-portfolio/commands/portfolio-analyze.md` | Korean DC pension multi-agent |
 | Generate research report | `plugins/report-generator/commands/report-generate.md` | 연구노트 → 보고서 자동 생성 |
 | Stock/ETF consultation | `plugins/stock-consultation/commands/stock-consult.md` | Bogle/Vanguard 철학 기반 |
-| General interview agent | `plugins/general-agents/agents/interview.md` | Deep interview + execution |
+| 한국어 심층 인터뷰 (명령어 진입점) | `plugins/general-agents/commands/interview.md` | `/general-agents:interview --quick\|--standard\|--deep` 슬래시 진입점 (v2.0.0) |
+| 한국어 심층 인터뷰 (스킬, 방법론) | `plugins/general-agents/skills/deep-interview/SKILL.md` | 7-단계 상태 머신 + 5개 게이트 + 버킷 채점 + 인라인 매트릭스. oh-my-codex deep-interview 적응 (MIT) |
+| 인터뷰 한국어 질문 은행 (24개) | `plugins/general-agents/skills/deep-interview/references/question-banks-ko.md` | 4개 도메인 렌즈 × 6개 질문 유형. 행(차원) → 열(렌즈) 적용 가능성 lookup |
+| 인터뷰 핸드오프 계약 | `plugins/general-agents/skills/deep-interview/references/handoff-contracts.md` | 5개 옵션: plan-only / refine / execute / delegate / terminate-with-risks |
+| 인터뷰 상태 사이드카 스키마 | `plugins/general-agents/skills/deep-interview/references/state-schema.md` | `.claude/plans/*.state.json` JSON Schema, 원자적 rename G3 가드 |
+| 인터뷰 wrapper 에이전트 (하위 호환) | `plugins/general-agents/agents/interview.md` | `@general-agents 의 interview` 호출 패턴 보존, deep-interview 스킬로 위임 (v2.0.0) |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
 | HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py + cell_writer.py 기반, 레퍼런스 복원 우선 |
