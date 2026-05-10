@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "3.32.0",
+    "version": "3.33.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, DC연금 포트폴리오 분석을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -96,9 +96,12 @@
     {
       "name": "general-agents",
       "source": "./plugins/general-agents",
-      "description": "범용 에이전트 모음",
+      "description": "범용 에이전트 모음 — 한국어 심층 인터뷰 스킬 + 명령어 + wrapper 에이전트. 가중치 기반 모호성 게이팅 + 5개 readiness 게이트 + 7-단계 상태 머신 + 4개 도메인 렌즈. omo/Claude Code 양 환경 호환",
+      "version": "2.0.0",
       "strict": true,
-      "agents": ["./agents/interview.md"]
+      "agents": ["./agents/interview.md"],
+      "skills": ["./skills"],
+      "commands": ["./commands/interview.md"]
     },
     {
       "name": "paper-style-generator",

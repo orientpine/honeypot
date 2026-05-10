@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.32.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.33.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -715,25 +715,48 @@ L1 Planning ──→ L2 Search ──→ L3 Analysis
 
 ## general-agents
 
-> 범용 에이전트 모음입니다.
+> 범용 에이전트 모음입니다. v2.0.0부터 한국어 **심층 인터뷰**가 `agent + skill + command` 3계층으로 분리되었으며, [`Yeachan-Heo/oh-my-codex`](https://github.com/Yeachan-Heo/oh-my-codex)의 [`deep-interview`](https://github.com/Yeachan-Heo/oh-my-codex/blob/09d6fd05cd10e66eca1e1a9e3e50d60ca4d94362/skills/deep-interview/SKILL.md) SKILL을 적응(MIT License)했습니다. omo와 표준 Claude Code 양 환경에서 동일하게 동작합니다.[^4]
 
 ### 사용법
 
 ```
-# 심층 인터뷰
+# 슬래시 명령어 진입점 (권장)
+/general-agents:interview --standard 새 알림 시스템 설계
+
+# 깊이 프로파일 명시
+/general-agents:interview --quick 결제 모듈에 PG사 추가
+/general-agents:interview --deep 사내 LLM 게이트웨이 분리 검토
+
+# 하위 호환 — 기존 호출 패턴
 @general-agents 의 interview 에이전트를 사용해서 프로젝트 요구사항을 인터뷰해줘
 ```
 
-### interview 에이전트
+### 핵심 특징 (v2.0.0)
 
-사용자의 요청에 대해 심층 인터뷰를 진행하여 숨겨진 요구사항을 발굴한 후, 계획을 수립하고 직접 실행합니다.
+- **7-단계 상태 머신**: S1 사전 컨텍스트 → S2 초기화 → S3 인터뷰 라운드 → S4 채점 + 게이트 → S5 압력 패스 → S6 종결 감사 → S7 결정화
+- **5개 readiness 게이트**: `non_goals_explicit` / `decision_boundaries_explicit` / `pressure_pass_complete` / `closure_audit_pass` / `contradiction_audit_pass` — 모두 트랜스크립트로부터 결정적 검증
+- **가중치 기반 모호성 채점**: 버킷 입력 `{0, 0.25, 0.50, 0.75, 1.0}` × deep-interview 원본 가중치 공식. 게임 방지 캡 적용. 게이트가 점수보다 우선
+- **3개 깊이 프로파일**: `--quick` (≤0.30/5라운드) / `--standard` (≤0.20/12라운드) / `--deep` (≤0.15/20라운드)
+- **4개 한국어 도메인 렌즈** (24개 질문 은행 보존): 기술 구현 / UI/UX / 우려사항 / 트레이드오프
+- **인라인 매트릭스 분류 체계**: 행 = 클러리티 차원 (intent/outcome/scope/non_goals/decision_boundaries/constraints/success/context), 열 = 4개 한국어 lens. 적용 가능성 lookup (per-cell scoring 아님)
+- **시도-후-폴백 질문 패턴**: `AskUserQuestion` → 평문 질문 (재시도 없음). 양 환경 호환
+- **계획-only 기본 동작**: S7 결정화 후 5개 핸드오프 옵션 제시 (계획만 / 더 논의 / 직접 실행 / 다른 에이전트로 / 잔존 위험과 함께 종료)
+- **명세 불변성**: 결정화된 명세는 immutable. 후속 변경은 새 revision (race condition 방지)
 
-- **4개 축 인터뷰**: 기술 구현, UI/UX, 우려사항, 트레이드오프
-- **계획 → 실행**: 인터뷰 결과를 바탕으로 계획 문서 작성 후 직접 구현
+### 산출물 경로
+
+- 결정화된 명세: `.claude/plans/interview-{slug}-{ts}.md`
+- (선택) 상태 사이드카: `.claude/plans/interview-{slug}-{ts}.state.json` (트랜스크립트로부터 재구성 가능)
+
+### 구성 (v2.0.0)
 
 | 구성 | 항목 |
 |------|------|
-| Agent | interview (단일 에이전트) |
+| Command | `interview` (`commands/interview.md`) — 슬래시 진입점, 깊이 플래그 파싱 |
+| Skill | `deep-interview` (`skills/deep-interview/SKILL.md`) — 인터뷰 방법론, 상태 머신, 채점 시스템 |
+| Skill References | `question-banks-ko.md` (24개 한국어 질문) / `state-schema.md` (JSON 사이드카) / `handoff-contracts.md` (5개 핸드오프) |
+| Agent | `interview` (`agents/interview.md`) — 하위 호환 wrapper, `@general-agents 의 interview` 호출 보존 |
+| Notice | `NOTICE.md` — oh-my-codex MIT License 저작자 표시 (commit `09d6fd05`) |
 
 ---
 
@@ -1214,6 +1237,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.33.0 | 2026-05-10 | general-agents v2.0.0: 단일 monolithic `interview` 에이전트(346 lines)를 `agent + skill + command` 3계층 구조로 분리. [oh-my-codex `deep-interview` SKILL](https://github.com/Yeachan-Heo/oh-my-codex/blob/09d6fd05cd10e66eca1e1a9e3e50d60ca4d94362/skills/deep-interview/SKILL.md)을 적응(MIT, commit `09d6fd05`). 7-단계 상태 머신(S1–S7), 5개 readiness 게이트(non-goals/decision-boundaries/pressure-pass/closure-audit/contradiction-audit), 가중치 기반 모호성 채점(버킷 입력 + 게임 방지 캡), 3개 깊이 프로파일(`--quick/--standard/--deep`), 인라인 매트릭스 분류 체계(클러리티 차원 × 한국어 도메인 렌즈)를 도입. 모든 OMX 전용 메커니즘(`state_write`, `omx question`, `.omx/*` 경로, `$ralplan/$autopilot/$ralph/$team` 핸드오프, autoresearch 모드, tmux 페인 라우팅) 제거하고 omo와 표준 Claude Code 양 환경 호환으로 재작성. 질문 도구는 시도-후-폴백 지시 패턴(`AskUserQuestion` → 평문 질문, 재시도 없음). 산출물 경로 `.claude/plans/interview-{slug}-{ts}.md` (slug 추가, 하위 호환). 기본 동작 변경: 인터뷰 후 자동 실행 → **계획-only** + 5개 명시적 핸드오프 옵션(plan-only/refine/execute/delegate/terminate-with-risks). 24개 한국어 질문 은행 보존. `@general-agents 의 interview` 호출 패턴 보존(thin wrapper 에이전트). 신규 파일: `commands/interview.md`, `skills/deep-interview/SKILL.md`(411 lines, 인라인 매트릭스), `references/{question-banks-ko,state-schema,handoff-contracts}.md`, `NOTICE.md`. 수정: `agents/interview.md`(346→97 lines wrapper), `plugin.json`(2.0.0), `marketplace.json`(version+skills+commands 추가). hyperplan + plan agent 워크플로우 산출. |
 | 3.32.0 | 2026-04-28 | visual-generator v3.7.0: 두 렌더링 경로(Gemini, OpenAI gpt-image-2) 모두 출력 포맷을 JPEG → **PNG**로 통일. Gemini 스크립트는 응답 mime이 PNG이면 raw bytes 직접 저장, 그 외(JPEG/WEBP)는 PIL로 PNG 재인코딩 + RGBA 알파 채널 보존; OpenAI 스크립트는 `OUTPUT_FORMAT="png"` 강제 + 평가 data URL `image/png` 동기화. 출력 파일명/임시 파일/문서(`renderer-agent.md`, `renderer-agent-openai.md`, `visual-generate.md`, `slide-renderer/SKILL.md`) 및 테스트 픽스처(JPEG → PNG) 일괄 동기화. pytest 11/11 통과. |
 | 3.31.3 | 2026-04-28 | README 테마 갤러리에 OpenAI gpt-image-2 렌더링 결과 6장 추가 — 기존 Gemini 6장과 좌우 비교 테이블 형태로 재구성, 동일 프롬프트(스마트 팩토리 6테마)를 양쪽 엔진으로 렌더링한 산출물을 `assets/theme-examples/images-openai/0[1-6]_theme_*.jpg`(3840×2160, quality=high, JPEG)로 저장. 평가 결과 1차 시도부터 6/6 통과(평균 8.2~9.6, 한글 8~10, 환각 8~10). 이미지 src 경로를 절대 raw URL(`058be21` 커밋 해시)에서 저장소 상대경로(`./assets/...`)로 통일하여 submodule/체크아웃에서도 정상 표시. |
 | 3.31.2 | 2026-04-28 | visual-generator v3.6.2: concept 테마 면제 로직을 `theme` 명시적 인자 기반으로 강화 — `evaluate_image_quality(..., theme=...)` 추가, `process_prompts(..., default_theme=...)` 및 CLI `--theme` 옵션 추가, 파일명(`NN_theme_<NAME>.md`) 자동 추출(`_extract_theme_from_filename`)과 `_resolve_theme()` 우선순위(explicit > filename > default > keyword fallback) 도입, 평가 시스템 프롬프트에 concept 면제 조건 명시, rubric 문서 갱신, 관련 단위 테스트 5종 추가. 라이브 검증: 1차 시도부터 한글 차원 10/10, 평균 9.3 통과(이전 5.5→재시도 패턴 해소), 이미지 생성 1회로 retry/비용 ~50% 절감. |
@@ -1280,3 +1304,4 @@ honeypot/
 [^1]: [anthropics/claude-code `plugins/plugin-dev`](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev)의 내용을 참조하여 포팅하였습니다. 원본 저자: Daisy Hollman (daisy@anthropic.com), 라이선스: MIT.
 [^2]: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)의 내용을 포팅하였습니다. 원본 저자: Steph Ango (stephango.com), 라이선스: MIT.
 [^3]: [farzaa/wiki-gen-skill](https://gist.github.com/farzaa/c35ac0cfbeb957788650e36aabea836d)의 내용을 포팅하였습니다. 원본 저자: farzaa, 라이선스: MIT.
+[^4]: [Yeachan-Heo/oh-my-codex `skills/deep-interview/SKILL.md`](https://github.com/Yeachan-Heo/oh-my-codex/blob/09d6fd05cd10e66eca1e1a9e3e50d60ca4d94362/skills/deep-interview/SKILL.md)의 방법론(7-단계 상태 머신, 모호성 채점, readiness 게이트, 압력 사다리, 챌린지 모드)을 cross-platform 환경(omo + 표준 Claude Code)에 맞게 적응하였습니다. 원본 저자: Yeachan Heo and contributors, 라이선스: MIT, 고정 commit: `09d6fd05cd10e66eca1e1a9e3e50d60ca4d94362`. 자세한 변경 내역과 라이선스 전문은 [`plugins/general-agents/NOTICE.md`](./plugins/general-agents/NOTICE.md) 참조.

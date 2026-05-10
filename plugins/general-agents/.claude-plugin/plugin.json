@@ -1,7 +1,7 @@
 {
   "name": "general-agents",
-  "version": "1.0.0",
-  "description": "범용 에이전트 모음",
+  "version": "2.0.0",
+  "description": "범용 에이전트 모음 — 한국어 심층 인터뷰 (deep-interview 스킬 + interview 명령어 + 하위 호환 wrapper 에이전트). omo와 표준 Claude Code 양 환경 호환.",
   "author": {
     "name": "Baekdong Cha",
     "email": "orientpine@gmail.com"
