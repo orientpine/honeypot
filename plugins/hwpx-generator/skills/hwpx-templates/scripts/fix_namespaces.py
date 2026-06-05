@@ -19,7 +19,8 @@ import sys
 import zipfile
 
 _LINESEG_RE = re.compile(
-    r"\s*<[^>]*:linesegarray>.*?</[^>]*:linesegarray>",
+    r"\s*<(?P<prefix>[A-Za-z_][\w.-]*):linesegarray\b[^>]*?"
+    r"(?:/>|>.*?</(?P=prefix):linesegarray\s*>)",
     re.DOTALL,
 )
 
