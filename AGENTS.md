@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-05-10
-**Version:** 3.33.0
+**Generated:** 2026-06-05
+**Version:** 3.34.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -36,10 +36,10 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | 인터뷰 wrapper 에이전트 (하위 호환) | `plugins/general-agents/agents/interview.md` | `@general-agents 의 interview` 호출 패턴 보존, deep-interview 스킬로 위임 (v2.0.0) |
 | Equity research analysis | `plugins/equity-research/agents/equity-research-analyst.md` | 기관급 주식 분석 |
 | HWPX 문서 생성 | `plugins/hwpx-generator/commands/hwpx-generate.md` | XML-first + ZIP치환 |
-| HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py + cell_writer.py 기반, 레퍼런스 복원 우선 |
+| HWPX XML-first 빌드 | `plugins/hwpx-generator/skills/hwpx-core/SKILL.md` | build_hwpx.py 기반 (cell_writer.py는 linesegarray 제거 strip-only), 레퍼런스 복원 우선 |
 | HWPX ZIP-level surgery | `plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` | 안전한 ZIP-level 편집 (stdlib only, lxml 불필요), HwpxSurgeon 클래스 |
 | HWPX surgery 가이드 | `plugins/hwpx-generator/skills/hwpx-core/references/zip-surgery-guide.md` | 10가지 안전 규칙 명세 |
-| HWPX linesegarray 생성 | `plugins/hwpx-generator/skills/hwpx-core/scripts/cell_writer.py` | build_hwpx/pack 파이프라인 통합, 실패 시 strip 폴백 |
+| HWPX linesegarray 제거 (strip-only) | `plugins/hwpx-generator/skills/hwpx-core/scripts/cell_writer.py` | stale linesegarray 제거 유틸리티 (build_hwpx/pack은 기본적으로 제거, 생성 안 함) |
 | HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수, ZIP surgery 후 cell_writer 금지 |
 | HWPX 마크다운 파싱 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py` | Markdown → JSON blocks (Workflow 7) |

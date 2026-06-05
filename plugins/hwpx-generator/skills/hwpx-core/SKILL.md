@@ -103,7 +103,7 @@ Glob: **/build_hwpx.py
 |---|---|
 | `scripts/build_hwpx.py` | 템플릿 + XML 오버라이드로 `.hwpx` 조립 |
 | `scripts/zip_surgery.py` | 기존 HWPX 안전 편집 (ZIP-level surgery, 바이트 레벨 보존) |
-| `scripts/cell_writer.py` | linesegarray 생성 + 셀/테이블 높이 자동 조정 (XML-first/pack 전용) |
+| `scripts/cell_writer.py` | stale linesegarray 제거 유틸리티 (생성 안 함) |
 | `scripts/analyze_template.py` | 레퍼런스 HWPX 구조/스타일 분석 |
 | `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | 본문/표 텍스트 추출 |
@@ -896,7 +896,7 @@ HWPX 파일이 한글에서 열리지 않을 때:
 2. **단일 요소 테스트**: 간단한 `<hp:p>` 1개만 추가해서 열리는지 확인
 3. **테이블 테스트**: 간단한 `<hp:tbl>` 1개 추가해서 열리는지 확인
 4. **전체 삽입 테스트**: 모든 내용 삽입
-5. **cell_writer 테스트**: cell_writer 실행 전후 비교
+5. **linesegarray 제거 테스트**: linesegarray 제거 전후 비교
 
 각 단계에서 실패하면, 해당 단계의 변경 내용이 원인이다.
 
@@ -921,7 +921,7 @@ HWPX 파일이 한글에서 열리지 않을 때:
 15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
 16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
 17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
-18. **linesegarray 자동 생성**: `<hp:linesegarray>`는 라인 레이아웃 캐시로, 텍스트 수정 후 실제 내용과 불일치하면 '문서 변조' 경고 및 비-한글 뷰어에서 표시 오류를 유발한다. `build_hwpx.py`와 `pack.py`는 패키징 시 `cell_writer.py`를 호출하여 올바른 linesegarray를 자동 생성한다. 생성 실패 시 기존 방식(자동 제거)으로 폴백한다. section0.xml 작성 시 linesegarray를 포함할 필요 없다 — 빌드 파이프라인이 자동 생성한다. **단, ZIP-level surgery 편집 후에는 cell_writer를 절대 실행하지 않는다** (한글이 자동 재계산).
+18. **linesegarray 제거**: linesegarray는 한/글이 소유하는 라인 레이아웃 캐시이므로 생성 파이프라인은 이를 **생성하지 않고 제거**한다. build_hwpx.py·pack.py·fix_namespaces.py 모두 패키징 시 `<hp:linesegarray>`를 제거하여 한/글이 문서를 열 때 정확한 레이아웃을 재계산하도록 한다. 휴리스틱 자동 생성은 실제 글리프 메트릭과 불일치하여 자간이 좁아지고 한 줄에 뭉치는 렌더링 버그를 유발하므로 **금지**한다. section0.xml 작성 시 linesegarray를 포함하지 않는다.
 19. **ZIP-level surgery 규칙**: 기존 HWPX 편집 시 `zip_surgery.py`를 사용하고, 상세 규칙은 `$SKILL_DIR/references/zip-surgery-guide.md` 준수. ET.tostring()/tree.write() 사용 금지, 개행 삽입 금지, standalone='no' 보존 필수.
 20. **표 속성 필수**: `noAdjust="0"` (행 높이 자동 조절) + `pageBreak="CELL"` (페이지 넘김 허용)
 21. **validate.py --strict**: ZIP-level surgery 결과물은 `validate.py --strict`로 추가 검증 (standalone, xmlns, newlines, 표 속성)

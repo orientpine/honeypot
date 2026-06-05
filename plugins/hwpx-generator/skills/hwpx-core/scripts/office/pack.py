@@ -2,9 +2,9 @@
 """Pack a directory back into an HWPX (ZIP) file.
 
 The mimetype file is stored as the first entry with ZIP_STORED (no compression),
-per OPC packaging conventions.  Section XMLs are post-processed with
-cell_writer to generate correct <hp:linesegarray> elements.  Falls back to
-regex-based stripping if cell_writer is unavailable.
+per OPC packaging conventions.  Section XMLs are stripped of stale
+<hp:linesegarray> line-layout cache (no generation) so Hangul Office
+recomputes accurate layout on open.
 
 Usage:
     python pack.py input_dir/ output.hwpx
@@ -18,7 +18,8 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
 _LINESEG_RE = re.compile(
-    r"\s*<[^>]*:linesegarray>.*?</[^>]*:linesegarray>",
+    r"\s*<(?P<prefix>[A-Za-z_][\w.-]*):linesegarray\b[^>]*?"
+    r"(?:/>|>.*?</(?P=prefix):linesegarray\s*>)",
     re.DOTALL,
 )
 
@@ -46,44 +47,15 @@ def pack(input_dir: str, hwpx_path: str) -> None:
                 continue  # Already written
             full_path = root / rel_path
 
-            # Generate linesegarray for section XMLs (with regex-strip fallback).
             if (
                 rel_path.startswith("Contents/")
                 and rel_path.endswith(".xml")
                 and "section" in rel_path
             ):
-                header_path = root / "Contents" / "header.xml"
-                generated = False
-                if header_path.is_file():
-                    try:
-                        # cell_writer lives one level up from office/
-                        import importlib.util
-                        _cw_path = Path(__file__).resolve().parent.parent / "cell_writer.py"
-                        if _cw_path.is_file():
-                            spec = importlib.util.spec_from_file_location("cell_writer", _cw_path)
-                            cw = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
-                            spec.loader.exec_module(cw)  # type: ignore[union-attr]
-                            from lxml import etree as _et
-                            sec_tree = _et.parse(str(full_path))
-                            hdr_tree = _et.parse(str(header_path))
-                            cw.process_section(sec_tree.getroot(), hdr_tree.getroot())
-                            sec_data = _et.tostring(
-                                sec_tree, pretty_print=True,
-                                xml_declaration=True, encoding="UTF-8",
-                            )
-                            zf.writestr(rel_path, sec_data)
-                            generated = True
-                    except Exception:
-                        pass  # Fall through to regex fallback.
-
-                if not generated:
-                    # Regex fallback: strip stale linesegarray.
-                    data = full_path.read_bytes()
-                    text = data.decode("utf-8")
-                    cleaned = _LINESEG_RE.sub("", text)
-                    if cleaned != text:
-                        zf.writestr(rel_path, cleaned.encode("utf-8"))
-                        continue
+                text = full_path.read_bytes().decode("utf-8")
+                cleaned = _LINESEG_RE.sub("", text)
+                zf.writestr(rel_path, cleaned.encode("utf-8"))
+                continue
 
             zf.write(full_path, rel_path, compress_type=ZIP_DEFLATED)
 
