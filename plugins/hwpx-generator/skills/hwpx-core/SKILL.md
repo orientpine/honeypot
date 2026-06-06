@@ -115,6 +115,8 @@ Glob: **/build_hwpx.py
 | `scripts/image_embedder.py` | HWPX에 이미지 ZIP-level 임베딩 (`python3 image_embedder.py --hwpx <.hwpx> --images-dir <dir> --mapping <map.json> --max-width <int> --quality <int> --output <out.hwpx>`) |
 | `scripts/proofread.py` | 이중 불릿, 줄바꿈 오류, 스타일 미적용 문단 자동 교정 |
 | `scripts/md_merger.py` | 다중 MD 파일 병합, heading offset 자동 계산 | CLI: `python3 md_merger.py files --target-level N --output merged.json` |
+| `scripts/form_mapper.py` | HWPX 양식 파악 — 빈 셀/placeholder/라벨 후보 결정적 추출 → partial form_map.json |
+| `scripts/slot_filler.py` | paragraph-id 기반 슬롯 채우기 — id-scoped string surgery (zip_surgery 불변식 준수) |
 
 ## 단위 변환 (HWP Units)
 
@@ -741,11 +743,12 @@ python3 "$SKILL_DIR/scripts/zip_surgery.py" validate document.hwpx result.hwpx
    - md_parser.py가 numbered list를 `numbered_item` 타입으로 파싱하여 번호 마커를 보존함
    - **indent_level**: 들여쓰기 레벨 (2-space 기준, 0=최상위). bullet/numbered_item 블록에 자동 추가됨.
    - **bullet_level_N**: style_config의 레벨별 스타일 키 (analyze_template.py --style-map에서 자동 추출)
-3. **매핑 결정** — 에이전트가 MD 섹션 ↔ 템플릿 영역 매핑 결정
+3. **양식 파악** (Phase 2.5) — `form_mapper.py`로 partial form_map 추출 → `hwpx-form-analyzer` 에이전트가 의미 매핑(slot_type/zone/confidence) 완성 → 최종 `form_map.json` 산출
 4. **XML 생성** — `xml_writer.py --input parsed.json --style-config styles.json --output fragment.xml`
-5. **삽입** — `zip_surgery.py replace template.hwpx -s fragment.xml -o result.hwpx`
-6. **이미지 임베딩** — `image_embedder.py --hwpx result.hwpx --images-dir <dir> --mapping map.json --output final.hwpx`
-7. **검증** — `validate.py final.hwpx` + `page_guard.py --reference template.hwpx --output final.hwpx`
+5. (form_map 경로) **슬롯 채우기** — `slot_filler.py --hwpx {template} --fills {content_per_slot} --output {result}` ; 즉흥 매핑 없이 form_map 슬롯에만 삽입
+6. **삽입** — `zip_surgery.py replace template.hwpx -s fragment.xml -o result.hwpx`
+7. **이미지 임베딩** — `image_embedder.py --hwpx result.hwpx --images-dir <dir> --mapping map.json --output final.hwpx`
+8. **검증** — `validate.py final.hwpx` + `page_guard.py --reference template.hwpx --output final.hwpx`
 
 ### CLI 예시
 
@@ -930,6 +933,8 @@ HWPX 파일이 한글에서 열리지 않을 때:
 24. **이미지 2곳 등록**: 이미지를 HWPX에 임베딩할 때는 `BinData/` + `content.hpf` 2곳에만 등록한다. header.xml binDataList 추가 금지. 기존 binDataList가 있으면 제거. `image_embedder.py`가 자동 처리하므로 직접 등록 로직을 작성하지 않는다.
 25. **이미지 포맷 검증**: `.png` 확장자 파일의 실제 포맷이 JPEG일 수 있다 (Gemini API 등). `image_embedder.py`가 PIL로 자동 감지/변환하므로 별도 처리 불필요.
 26. **hp:pic 구조 직접 작성 금지**: hp:pic XML을 에이전트가 직접 작성하지 않는다. 반드시 `image_embedder.py`의 `make_pic_xml()`을 사용한다. 검증된 구조(pypandoc-hwpx/HwpForge)를 사용하며, 요소 순서가 중요하다.
+27. **템플릿 채우기 시 form_map.json 기반 슬롯 삽입 필수**: Workflow 7 / template-fill 경로에서 콘텐츠 삽입은 반드시 `form_mapper.py` + `hwpx-form-analyzer`가 산출한 `form_map.json`의 슬롯에만 수행한다. MD↔템플릿 영역의 즉흥적 매핑 결정은 금지한다.
+28. **빈 셀 전역 치환 금지**: `<hp:t/>` 또는 빈 런을 global `str.replace()`로 치환하지 않는다. 여러 빈 셀이 바이트-동일하므로 전역 치환은 모든 셀을 손상시킨다. 반드시 `slot_filler.py`의 paragraph-id 스코프 치환을 사용한다.
 
 ## 빠른 실행 예시
 

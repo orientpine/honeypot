@@ -43,11 +43,27 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
    - Expected output: 스타일 ID 맵, 표 구조 규칙, 레이아웃 재현 지침.
 3. Merge selected format strategy with analysis report (if any) into one build input package.
 
+## Phase 2.5: 양식 파악 (Form Comprehension — MANDATORY for template-fill)
+
+**활성 조건**: `template_hwpx` 존재 OR `content_md` + template (Workflow 7). XML-first(템플릿 없음) → SKIP.
+
+1. Run `form_mapper.py` to extract structural slot map (partial form_map):
+   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/form_mapper.py "{template_hwpx}" --output /tmp/form_map.partial.json`
+   - Output: partial form_map.json with `slot_type: null`, `zone: null`, `confidence: null`
+2. Use Task tool with subagent_type="hwpx-generator::hwpx-form-analyzer"
+   - Prompt: "Enrich the partial form_map at /tmp/form_map.partial.json with semantic fields (slot_type, label_association, zone, confidence). Do NOT modify addressing fields. auto_mode={auto_mode}. Output final form_map.json."
+   - Expected output: final form_map.json with all semantic fields filled
+3. auto_mode branch:
+   - `auto_mode=true` (default): log slot summary, proceed automatically
+   - `auto_mode=false`: present slot mapping table (slot_id | label | slot_type | zone | confidence) and await confirmation before proceeding
+4. Pass `form_map.json` path to Phase 3 build input package.
+
 ## Phase 3: 문서 생성 (delegate to hwpx-builder via Task tool)
 
 1. Use Task tool with subagent_type="hwpx-generator::hwpx-builder"
    - Prompt: "Generate a production-ready `.hwpx` using this request `$ARGUMENTS`, selected format strategy (user template > default template > XML-first), and analyzer report if present. Return output path and generation path used."
    - **MD 채우기 모드 시**: hwpx-builder에게 md_parser, xml_writer, image_embedder 사용을 명시적으로 위임. `content_md`와 `images_dir` 파라미터를 전달하여 Workflow 7 실행.
+   - **form_map 기반 슬롯 삽입 (Phase 2.5 수행 시 필수)**: 빌더 위임 프롬프트에 다음을 추가한다 — "Use `slot_filler.py` to insert content ONLY into slots declared in `form_map.json`. Do NOT perform ad-hoc MD↔template mapping. For each slot: use `addressing.paragraph_id` to target the exact `<hp:p>`, fill via `fill_slots_by_paragraph_id()`. Unresolved slots: SKIP and report. The `form_map.json` is located at: `{form_map_path}`."
    - 입력 콘텐츠가 Markdown이고 템플릿에 이미 섹션 헤더가 존재하는 경우, Template-Aware Markdown Insertion 절차를 적용하여 헤더 중복을 방지할 것.
    - 마크다운 heading(`#`, `##`, `###`)을 템플릿 sub-header와 매칭하고, 매칭된 heading은 skip하며 body만 해당 위치에 삽입할 것.
    - **XML 생성 규칙 (필수 전달)**: 모든 XML 생성(표, 문단, 불릿 포함)은 반드시 기존 `xml_writer.py`의 `build_table()`, `build_paragraph()` 등을 사용할 것. 에이전트가 직접 XML을 작성하거나 `generate_content.py` 등 자체 스크립트를 생성하는 것은 금지. lxml/ElementTree를 사용한 section XML 직렬화도 금지(개행 삽입으로 한/글에서 파일이 깨짐).
@@ -107,6 +123,7 @@ Orchestrate end-to-end HWPX document generation from user intent and inputs in `
 - [ ] 레퍼런스 기반 작업 시 `page_guard.py` 통과 전 결과를 완료 처리하지 않는다.
 - [ ] 입력 콘텐츠에 Markdown 서식 기호(`**`, `*`, `~~` 등)가 포함된 경우, HWPX 변환 전 인라인 서식을 multi-run으로 분할하거나 순수 텍스트로 정제한다.
 - [ ] 템플릿에 이중 삽입 지점(요약 표 셀 + 본문 상세 섹션)이 존재하면, hwpx-builder에게 요약/상세 구분 삽입을 명시적으로 지시한다.
+- [ ] 템플릿 채우기 경로에서 Phase 2.5 (양식 파악) 없이 완료 처리하지 않는다.
 
 ## MUST NOT DO
 

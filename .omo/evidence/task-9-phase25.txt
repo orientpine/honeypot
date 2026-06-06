@@ -1,0 +1,9 @@
+46:## Phase 2.5: 양식 파악 (Form Comprehension — MANDATORY for template-fill)
+50:1. Run `form_mapper.py` to extract structural slot map (partial form_map):
+51:   - Bash: `python plugins/hwpx-generator/skills/hwpx-core/scripts/form_mapper.py "{template_hwpx}" --output /tmp/form_map.partial.json`
+52:   - Output: partial form_map.json with `slot_type: null`, `zone: null`, `confidence: null`
+54:   - Prompt: "Enrich the partial form_map at /tmp/form_map.partial.json with semantic fields (slot_type, label_association, zone, confidence). Do NOT modify addressing fields. auto_mode={auto_mode}. Output final form_map.json."
+55:   - Expected output: final form_map.json with all semantic fields filled
+59:4. Pass `form_map.json` path to Phase 3 build input package.
+66:   - **form_map 기반 슬롯 삽입 (Phase 2.5 수행 시 필수)**: 빌더 위임 프롬프트에 다음을 추가한다 — "Use `slot_filler.py` to insert content ONLY into slots declared in `form_map.json`. Do NOT perform ad-hoc MD↔template mapping. For each slot: use `addressing.paragraph_id` to target the exact `<hp:p>`, fill via `fill_slots_by_paragraph_id()`. Unresolved slots: SKIP and report. The `form_map.json` is located at: `{form_map_path}`."
+126:- [ ] 템플릿 채우기 경로에서 Phase 2.5 (양식 파악) 없이 완료 처리하지 않는다.
