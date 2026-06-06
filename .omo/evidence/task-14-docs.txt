@@ -1,0 +1,4 @@
+5
+- **양식 파악 (Phase 2.5)**: 정부 양식 HWPX에서 빈 슬롯/라벨 인접 관계를 자동 분석하여 form_map.json을 생성하고 정확한 위치에 내용을 삽입합니다.
+| Agents | hwpx-builder, hwpx-analyzer, hwpx-form-analyzer |
+| 3.13.0 | 2026-06-06 | hwpx-generator v3.13.0: 양식 파악(Form Comprehension) Phase 2.5 추가 — form_mapper.py(결정적 슬롯 추출) + hwpx-form-analyzer 에이전트(의미 매핑) + slot_filler.py(paragraph-id 기반 치환)로 정부 양식 HWPX에서 올바른 삽입 위치를 자동 파악. |

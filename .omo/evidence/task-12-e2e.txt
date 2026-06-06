@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/cha/Documents/honeypot
+configfile: pytest.ini
+plugins: ament-xmllint-0.17.5, ament-flake8-0.17.5, launch-testing-ros-0.26.11, launch-testing-3.4.10, ament-lint-0.17.5, ament-copyright-0.17.5, ament-pep257-0.17.5, anyio-4.12.1, cov-4.1.0, colcon-core-0.20.1, typeguard-4.1.5
+collecting ... collected 5 items
+
+plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py::test_e2e_pipeline_form_simple PASSED [ 20%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py::test_e2e_content_in_declared_cell_only PASSED [ 40%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py::test_e2e_xml_first_regression_lock PASSED [ 60%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py::test_e2e_unresolved_not_silently_filled PASSED [ 80%]
+plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py::test_e2e_validate_surgery_invariants PASSED [100%]
+
+============================== 5 passed in 0.27s ===============================

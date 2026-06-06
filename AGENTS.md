@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-06-05
-**Version:** 3.34.0
+**Version:** 3.13.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -47,6 +47,10 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX 이미지 임베딩 | `plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py` | PNG embedding into HWPX (Workflow 7) |
 | HWPX 다중 MD 병합 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py` | heading offset 자동계산, --target-level 옵션 |
 | HWPX 챕터 이식 (section transplant) | `plugins/hwpx-generator/skills/hwpx-core/scripts/section_transplant.py` | 범용 CLI + HwpxSurgeon.transplant_from() |
+| HWPX 양식 파악 슬롯 추출 | `plugins/hwpx-generator/skills/hwpx-core/scripts/form_mapper.py` | analyze_template 재사용, 빈 셀/라벨 인접 결정적 추출 |
+| HWPX 슬롯 채우기 (paragraph-id 치환) | `plugins/hwpx-generator/skills/hwpx-core/scripts/slot_filler.py` | id-scoped string surgery, zip_surgery 불변식 준수 |
+| HWPX 슬롯 의미 매핑 에이전트 | `plugins/hwpx-generator/agents/hwpx-form-analyzer.md` | slot_type/zone/confidence 결정, addressing read-only |
+| form_map.json 스키마 계약 | `plugins/hwpx-generator/skills/hwpx-core/references/form-map-schema.md` | 슬롯 JSON 계약 v1.0.0, style-map.json과 구분 |
 | Plugin development toolkit | `plugins/plugin-dev/commands/create-plugin.md` | Hook, MCP, 구조, 설정, 커맨드/에이전트/스킬 개발 |
 | Patent trend analysis | `plugins/patent-trend-analyzer/commands/analyze-patents.md` | KIPRIS API 기반 계획→검색→분석 파이프라인 |
 | PPTX design styles (30 styles) | `plugins/pptx-design-styles/skills/pptx-design-styles/SKILL.md` | Glassmorphism, Neo-Brutalism 등 30가지 디자인 스타일 가이드 |
@@ -129,6 +133,8 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | Generating Chapter 1 before Chapter 3 | Dependency: Ch1 derives from Ch3 |
 | Modifying Gemini path while building OpenAI path | Cross-task contamination, Gemini 회귀 위험 (보호 파일 allowlist 준수 필수) |
 | OpenAI 실패 시 silent Gemini fallback | 사용자 의도 위반, 명시적 OpenAI 선택을 무시함 (반드시 hard-fail with 한국어 에러) |
+| 템플릿 채우기 시 form_map 없이 즉흥 삽입 위치 결정 | Must NOT — Phase 2.5 양식 파악 없이 MD↔영역 매핑 불가 |
+| 빈 셀 전역 `str.replace()` 치환 | Must NOT — 바이트-동일 빈 셀 전부 변경됨. slot_filler.py의 paragraph-id 스코프 치환 사용 |
 
 ---
 
