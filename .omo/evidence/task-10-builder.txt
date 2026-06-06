@@ -1,0 +1,9 @@
+33:5. **Workflow 7 템플릿 채우기**: `form_mapper.py` → `hwpx-form-analyzer`(Phase 2.5) → **`slot_filler.py` 기반 삽입** — form_map.json의 슬롯 ID에만 콘텐츠 삽입. 즉흥 MD↔영역 매핑 금지.
+37:1. **요약표 셀 (`zone: 'summary'`)**: 200자 이내 핵심 요약만 삽입 (form_map의 zone 필드로 결정)
+56:5.6. 템플릿 채우기 경로에서 Phase 2.5가 form_map.json을 산출한 경우:
+57:   - `slot_filler.py`의 `fill_slots_by_paragraph_id(section_bytes, fills)` 호출
+58:   - fills = {paragraph_id: [(charPrIDRef, text), ...]} — form_map의 슬롯별 콘텐츠
+60:     * `paragraph_id`: 정상 치환 (fill_slots_by_paragraph_id)
+62:     * `unresolved`: SKIP + 보고 (silent 오배치 금지)
+108:## ABSOLUTE FORBIDDEN (금지 3개)
+114:5. **form_map 없이 즉흥 삽입 위치 결정**: 템플릿 채우기 경로에서 Phase 2.5 form_map.json 없이 MD↔영역 매핑을 임의로 결정하는 것 금지. 반드시 slot_filler.py로 form_map 슬롯에만 삽입.

@@ -1,0 +1,6 @@
+118:| `scripts/form_mapper.py` | HWPX 양식 파악 — 빈 셀/placeholder/라벨 후보 결정적 추출 → partial form_map.json |
+119:| `scripts/slot_filler.py` | paragraph-id 기반 슬롯 채우기 — id-scoped string surgery (zip_surgery 불변식 준수) |
+746:3. **양식 파악** (Phase 2.5) — `form_mapper.py`로 partial form_map 추출 → `hwpx-form-analyzer` 에이전트가 의미 매핑(slot_type/zone/confidence) 완성 → 최종 `form_map.json` 산출
+748:5. (form_map 경로) **슬롯 채우기** — `slot_filler.py --hwpx {template} --fills {content_per_slot} --output {result}` ; 즉흥 매핑 없이 form_map 슬롯에만 삽입
+936:27. **템플릿 채우기 시 form_map.json 기반 슬롯 삽입 필수**: Workflow 7 / template-fill 경로에서 콘텐츠 삽입은 반드시 `form_mapper.py` + `hwpx-form-analyzer`가 산출한 `form_map.json`의 슬롯에만 수행한다. MD↔템플릿 영역의 즉흥적 매핑 결정은 금지한다.
+937:28. **빈 셀 전역 치환 금지**: `<hp:t/>` 또는 빈 런을 global `str.replace()`로 치환하지 않는다. 여러 빈 셀이 바이트-동일하므로 전역 치환은 모든 셀을 손상시킨다. 반드시 `slot_filler.py`의 paragraph-id 스코프 치환을 사용한다.

@@ -49,3 +49,8 @@ model: opus
 - 표 복제 시 `rowSpan`/`colSpan`/셀 여백 등 구조 패턴을 원본 기준으로 유지합니다.
 - **쪽수 동일 필수**: 레퍼런스 기반 작업에서 최종 결과의 쪽수는 레퍼런스와 동일해야 합니다.
 - **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리.
+
+## Role Boundary with hwpx-form-analyzer
+- `hwpx-analyzer`: 기존 HWPX의 스타일/구조 역분석 (charPr/paraPr/borderFill IDs, 표 레이아웃, 쪽수 가드). 새 문서 생성/편집의 레퍼런스 분석.
+- `hwpx-form-analyzer`: 정부 양식 HWPX의 빈 슬롯 의미 매핑 (slot_type/zone/confidence). form_mapper.py 결과의 semantic enrichment 전담.
+두 에이전트의 역할은 겹치지 않는다.

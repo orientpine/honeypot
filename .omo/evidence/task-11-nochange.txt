@@ -1,0 +1,5 @@
+--- a/plugins/hwpx-generator/skills/hwpx-core/SKILL.md
+-3. **매핑 결정** — 에이전트가 MD 섹션 ↔ 템플릿 영역 매핑 결정
+-5. **삽입** — `zip_surgery.py replace template.hwpx -s fragment.xml -o result.hwpx`
+-6. **이미지 임베딩** — `image_embedder.py --hwpx result.hwpx --images-dir <dir> --mapping map.json --output final.hwpx`
+-7. **검증** — `validate.py final.hwpx` + `page_guard.py --reference template.hwpx --output final.hwpx`

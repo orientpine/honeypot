@@ -1,0 +1,7 @@
+22:## Phase 1: 요구사항 파악 (문서 유형, 내용, 양식)
+33:## Phase 2: 양식 선택 (사용자 업로드 > 기본 양식 > XML-first)
+46:## Phase 2.5: 양식 파악 (Form Comprehension — MANDATORY for template-fill)
+61:## Phase 3: 문서 생성 (delegate to hwpx-builder via Task tool)
+77:## Phase 3.5: 교정 (Proofreading)
+82:## Phase 4: 검증 (validate.py + page_guard.py)
+106:## Phase 5: 결과 전달

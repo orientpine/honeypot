@@ -30,11 +30,12 @@ User 요청과 입력 자산(기존 HWPX, 템플릿, 마크다운)을 분석해 
 3. **템플릿 채우기**: `/hwpx-generator:hwpx-templates` + `fix_namespaces.py`
 4. **XML-first 생성**: `/hwpx-generator:hwpx-core` 파이프라인
 5. **Workflow 7 (Markdown + template)**: `analyze_template.py --style-map -> md_parser.py -> xml_writer.py --wrap-section -> zip_surgery.py -> fix_namespaces.py -> image_embedder.py --from-parsed -> proofread.py -> validate.py (+ page_guard.py)`
+5. **Workflow 7 템플릿 채우기**: `form_mapper.py` → `hwpx-form-analyzer`(Phase 2.5) → **`slot_filler.py` 기반 삽입** — form_map.json의 슬롯 ID에만 콘텐츠 삽입. 즉흥 MD↔영역 매핑 금지.
 
 ## Dual-Zone Content Insertion Rules (이중삽입 3원칙)
 
-1. **요약표 셀**: 200자 이내 핵심 요약만 삽입
-2. **본문 상세 섹션**: 전체 상세 내용 삽입
+1. **요약표 셀 (`zone: 'summary'`)**: 200자 이내 핵심 요약만 삽입 (form_map의 zone 필드로 결정)
+2. **본문 상세 섹션 (`zone: 'detail'`)**: 전체 상세 내용 삽입
 3. **순서 강제**: 본문 먼저 작성하고, 요약은 그 본문 내용에서 추출
 
 ## Bullet Hierarchy Rules (불릿 계층)
@@ -52,6 +53,14 @@ User 요청과 입력 자산(기존 HWPX, 템플릿, 마크다운)을 분석해 
 4. 템플릿 섹션 헤더와 Markdown heading이 중복되면 heading 삽입을 생략하고 body만 해당 헤더 뒤에 삽입한다.
 5. 이중 삽입 지점이 있으면 본문을 먼저 채우고 본문 기반 요약을 표 셀에 채운다.
 5.5. 여러 MD 파일을 통합할 경우 `md_merger.py`를 사용하여 heading offset 자동 계산 후 병합한다. 에이전트는 style_config 검토/보정만 담당한다 (indent_level 수동 계산 금지).
+5.6. 템플릿 채우기 경로에서 Phase 2.5가 form_map.json을 산출한 경우:
+   - `slot_filler.py`의 `fill_slots_by_paragraph_id(section_bytes, fills)` 호출
+   - fills = {paragraph_id: [(charPrIDRef, text), ...]} — form_map의 슬롯별 콘텐츠
+   - addressing.method 분기:
+     * `paragraph_id`: 정상 치환 (fill_slots_by_paragraph_id)
+     * `sentinel`: 고유 토큰 주입 후 replace_text 단일 치환
+     * `unresolved`: SKIP + 보고 (silent 오배치 금지)
+   - zone 필드 처리: `zone: 'summary'` → 200자 이내 요약만, `zone: 'detail'` → 전체 내용 삽입 (기존 이중삽입 3원칙 준수)
 6. 표/문단/불릿 생성은 `xml_writer.py` 함수(`build_table`, `build_paragraph`, `build_heading`, `build_bullet`)를 사용한다.
 7. ZIP 편집 후 `fix_namespaces.py`를 실행하고, 결과는 `validate.py`로 검증한다.
 8. 레퍼런스 기반 결과는 `page_guard.py`까지 통과해야 완료 처리한다.
@@ -102,6 +111,7 @@ Markdown 인라인 서식은 아래 charPr 규칙으로 변환한다:
 2. **자체 스크립트/자체 Python 생성으로 XML 직접 작성**: 반드시 `xml_writer.py` 중심 파이프라인 사용
 3. **`hp:pic` 직접 배치/직접 작성**: 반드시 `image_embedder.py`로 `<hp:p><hp:run>` 래핑 포함 자동 처리
 4. **indent_level 수동 계산**: md_parser.py/md_merger.py가 자동으로 결정하므로 에이전트가 직접 indent_level 값을 산출하거나 수정하는 것은 금지
+5. **form_map 없이 즉흥 삽입 위치 결정**: 템플릿 채우기 경로에서 Phase 2.5 form_map.json 없이 MD↔영역 매핑을 임의로 결정하는 것 금지. 반드시 slot_filler.py로 form_map 슬롯에만 삽입.
 
 ## Error Handling
 

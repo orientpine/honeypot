@@ -1,0 +1,3 @@
+110:1. **`lxml` 사용**: XML 선언 뒤 개행 삽입으로 한/글 파일 손상 위험 (`ElementTree` 직렬화 포함)
+111:2. **자체 스크립트/자체 Python 생성으로 XML 직접 작성**: 반드시 `xml_writer.py` 중심 파이프라인 사용
+112:3. **`hp:pic` 직접 배치/직접 작성**: 반드시 `image_embedder.py`로 `<hp:p><hp:run>` 래핑 포함 자동 처리
