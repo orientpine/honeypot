@@ -1,0 +1,3 @@
+plugin: 3.13.0
+marketplace: 3.13.0
+agents: ['./agents/hwpx-builder.md', './agents/hwpx-analyzer.md', './agents/hwpx-form-analyzer.md']

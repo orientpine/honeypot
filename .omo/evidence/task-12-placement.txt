@@ -1,0 +1,20 @@
+task-12 placement evidence
+
+Test file created:
+- plugins/hwpx-generator/skills/hwpx-core/tests/test_form_fill_e2e.py
+
+Acceptance coverage:
+- AC4: test_e2e_content_in_declared_cell_only verifies filled text appears exactly once and SLOT_B remains empty.
+- AC5: test_e2e_pipeline_form_simple and test_e2e_validate_surgery_invariants assert validate_surgery(original, result) == [].
+- AC5 invariants: test_e2e_validate_surgery_invariants asserts standalone='no', >=10 root xmlns declarations, 0 body xmlns declarations, and exactly 1 section newline.
+- AC6: test_e2e_xml_first_regression_lock builds base XML-first HWPX twice and asserts byte-identical outputs.
+- AC7: test_e2e_unresolved_not_silently_filled asserts unresolved slot_id is reported and content is not inserted.
+
+Pipeline lock:
+- form_mapper.build_form_map(form_simple.hwpx) discovers static known paragraph slots: 1000000004, 1000000006, 1000000008, 1000000009.
+- The final form_map is statically enriched in-test with slot_type=empty_input, zone=detail, confidence=high; no LLM agent is called.
+- slot_filler.fill_slots_by_paragraph_id writes only declared paragraph_id slots.
+- HwpxSurgeon.save() writes the resulting HWPX before validate_surgery().
+
+Targeted run evidence:
+- .omo/evidence/task-12-e2e.txt
