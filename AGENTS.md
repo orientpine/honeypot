@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-06-05
-**Version:** 3.13.0
+**Version:** 3.35.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
