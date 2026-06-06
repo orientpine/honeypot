@@ -1,0 +1,15 @@
+PASS: surgery validation
+  standalone, xmlns, newlines, byte-identical, compression — all OK
+PASS: surgery validation
+  standalone, xmlns, newlines, byte-identical, compression — all OK
+text_extract.py --include-tables output:
+입력 A
+값A
+입력 B
+{{BODY_PLACEHOLDER}}
+
+id-scoped proof:
+original inner runs 1000000004 == 1000000006: True
+filled 1000000004 text: 값A
+filled 1000000006 text: <EMPTY>
+1000000006 paragraph unchanged: True

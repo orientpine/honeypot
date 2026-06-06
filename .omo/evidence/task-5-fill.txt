@@ -1,0 +1,4 @@
+PASS: surgery validation
+  standalone, xmlns, newlines, byte-identical, compression — all OK
+PASS: surgery validation
+  standalone, xmlns, newlines, byte-identical, compression — all OK

@@ -1,0 +1,21 @@
+=== CONTRACT: fields agent FILLS (Responsibilities / WHAT THIS AGENT FILLS section) ===
+15:## Responsibilities (WHAT THIS AGENT FILLS)
+17:이 에이전트가 소유하고 채우는 필드는 정확히 4개입니다: `slot_type`, `label_association`, `zone`, `confidence` (+ 선택적 `expected_content_hint`).
+19:### 1. `slot_type` 분류
+26:### 2. `label_association` 확정/정제
+32:### 3. `zone` 설정 (Dual-Zone 3원칙 reconcile)
+44:### 4. `confidence` 설정
+
+=== CONTRACT: addressing is READ-ONLY / MUST NOT TOUCH ===
+13:이 에이전트는 "이 슬롯이 무엇을 의미하는가(what)"와 "어느 zone에 속하는가"를 추론하는 역할만 담당하며, 슬롯이 문서의 "어디에 있는가(where)"를 정의하는 `addressing` 페이로드는 **읽기 전용(read-only)**으로 취급합니다.
+54:- **MUST NOT** modify `addressing.method`, `addressing.paragraph_id`, `addressing.cell` — `addressing` 페이로드는 `form_mapper.py`의 소유이며 이 에이전트에게는 **read-only**다.
+105:1. **partial form_map.json 수신**: `form_mapper.py`가 생성한 입력을 읽는다. `addressing`은 절대 건드리지 않는다.
+
+=== CONTRACT: dual-zone reconcile (not reinvented) ===
+32:### 3. `zone` 설정 (Dual-Zone 3원칙 reconcile)
+34:`summary` | `detail` | `none` 중 하나를 설정합니다. 이 값은 **기존 `hwpx-builder`의 이중삽입 3원칙(Dual-Zone Content Insertion Rules)에 매핑**되는 것이며, 새 규칙을 만드는 것이 아닙니다.
+37:  → builder는 이 슬롯에 **200자 이내 핵심 요약**을 삽입한다 (3원칙 #1).
+39:  → builder는 이 슬롯에 **전체 상세 내용**을 삽입한다 (3원칙 #2).
+42:> **순서 강제 (3원칙 #3)** 는 builder의 삽입 단계 책임이다: 본문(detail)을 먼저 작성하고, 요약(summary)은 그 본문 내용에서 추출한다. 이 에이전트는 zone을 **표시(label)** 만 하고 삽입 순서를 직접 실행하지 않는다.
+57:- **MUST NOT** change the dual-zone rules — 기존 builder의 이중삽입 3원칙을 재정의하지 않고, `zone` 필드로 reconcile만 한다.
+108:4. **zone 설정**: Dual-Zone 3원칙 reconcile (summary/detail/none).
