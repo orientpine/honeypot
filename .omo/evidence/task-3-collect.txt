@@ -1,0 +1,5 @@
+    <Function test_read_zip_entries_expose_metadata_fields>
+    <Function test_round_trip_preserves_zipinfo_metadata>
+    <Function test_write_zip_passes_all_metadata_to_zipinfo>
+
+========================= 166 tests collected in 0.07s =========================
