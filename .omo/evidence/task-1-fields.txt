@@ -1,0 +1,41 @@
+      "slot_id": "research_goal",
+      "slot_type": "empty_input",
+      "addressing": {
+      "label_association": "연구 목표",
+      "zone": "detail",
+      "confidence": "high",
+  "confidence": "high"
+- `confidence` (enum): Overall confidence in the mapping.
+- `slot_id` (string): Unique identifier for the slot (usually derived from the label).
+- `slot_type` (enum): The semantic role of the slot.
+- `addressing` (object): Technical location of the slot.
+- `label_association` (string): The text of the nearest label or header associated with this slot.
+- `zone` (enum): Mapping to builder's Dual-Zone behavior.
+  - `none`: No specific zone behavior applied.
+- `confidence` (enum): `high` | `medium` | `low`.
+| `form_mapper.py` | `addressing` payloads | Deterministic extraction of paragraph IDs and table structures. |
+| `HWPX-form-analyzer` (Agent) | `slot_type`, `label_association`, `zone`, `confidence` | Semantic reasoning to determine what a slot represents and which zone it belongs to. |
+The `zone` field reconciles with the existing `hwpx-builder` Dual-Zone 3 rules:
+1. **Summary Zone**: If `zone: "summary"`, the filler extracts a 200-character summary from the source markdown section.
+2. **Detail Zone**: If `zone: "detail"`, the filler inserts the full markdown content.
+3. **Order**: Detail zones are processed first to provide context for summary extraction.
+- **form_map.json**: Defines **where** content goes (addressing) and **what** it represents (semantics).
+      "slot_id": "summary_table_goal",
+      "slot_type": "summary",
+      "addressing": {
+      "label_association": "연구개발 목표",
+      "zone": "summary",
+      "confidence": "high"
+      "slot_id": "main_content_tech",
+      "slot_type": "empty_input",
+      "addressing": {
+      "label_association": "2. 기술개발 내용",
+      "zone": "detail",
+      "confidence": "medium",
+      "slot_id": "unknown_placeholder",
+      "slot_type": "empty_input",
+      "addressing": {
+      "label_association": null,
+      "zone": "none",
+      "confidence": "low"
+  "confidence": "medium"

@@ -1,0 +1,110 @@
+================================================================
+  HWPX 심층 분석: form_merged.hwpx
+================================================================
+
+▶ 폰트 정의
+  hangul/0: 함초롬돋움
+  hangul/1: 함초롬바탕
+
+▶ borderFill (테두리/배경)
+  [1] left=NONE, right=NONE, top=NONE, bottom=NONE
+  [2] left=NONE, right=NONE, top=NONE, bottom=NONE
+
+▶ charPr (글자 스타일)
+  [0] 10.0pt 함초롬바탕 #000000
+       fontRef=hangul:1 borderFillIDRef=2
+  [1] 10.0pt 함초롬돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=2
+  [2] 9.0pt 함초롬돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=2
+  [3] 9.0pt 함초롬바탕 #000000
+       fontRef=hangul:1 borderFillIDRef=2
+  [4] 9.0pt 함초롬돋움 #000000 spacing=-5
+       fontRef=hangul:0 borderFillIDRef=2
+  [5] 16.0pt 함초롬돋움 #2E74B5
+       fontRef=hangul:0 borderFillIDRef=2
+  [6] 11.0pt 함초롬돋움 #000000
+       fontRef=hangul:0 borderFillIDRef=2
+  [30] 10.0pt 함초롬돋움 #000000 볼드
+       fontRef=hangul:0 borderFillIDRef=2
+  [31] 10.0pt 함초롬돋움 #000000 이탤릭
+       fontRef=hangul:0 borderFillIDRef=2
+  [32] 10.0pt 함초롬돋움 #000000 볼드 이탤릭
+       fontRef=hangul:0 borderFillIDRef=2
+  [33] 10.0pt 함초롬돋움 #000000 밑줄(SOLID)
+       fontRef=hangul:0 borderFillIDRef=2
+  [34] 10.0pt 함초롬돋움 #000000 취소선
+       fontRef=hangul:0 borderFillIDRef=2
+
+▶ paraPr (문단 스타일)
+  [0] JUSTIFY lineSpacing=160PERCENT
+       여백(없음) borderFillIDRef=2
+  [1] JUSTIFY lineSpacing=160PERCENT
+       여백(left=1500) borderFillIDRef=2
+  [2] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=0
+       여백(left=1000) borderFillIDRef=2
+  [3] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=1
+       여백(left=2000) borderFillIDRef=2
+  [4] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=2
+       여백(left=3000) borderFillIDRef=2
+  [5] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=3
+       여백(left=4000) borderFillIDRef=2
+  [6] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=4
+       여백(left=5000) borderFillIDRef=2
+  [7] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=5
+       여백(left=6000) borderFillIDRef=2
+  [8] JUSTIFY lineSpacing=160PERCENT heading=OUTLINE level=6
+       여백(left=7000) borderFillIDRef=2
+  [9] JUSTIFY lineSpacing=150PERCENT
+       여백(없음) borderFillIDRef=2
+  [10] JUSTIFY lineSpacing=130PERCENT
+       여백(intent=-1310) borderFillIDRef=2
+  [11] LEFT lineSpacing=130PERCENT
+       여백(없음) borderFillIDRef=2
+  [12] LEFT lineSpacing=160PERCENT
+       여백(prev=1200, next=300) borderFillIDRef=2
+  [13] LEFT lineSpacing=160PERCENT
+       여백(next=700) borderFillIDRef=2
+  [14] LEFT lineSpacing=160PERCENT
+       여백(left=1100, next=700) borderFillIDRef=2
+  [15] LEFT lineSpacing=160PERCENT
+       여백(left=2200, next=700) borderFillIDRef=2
+  [16] JUSTIFY lineSpacing=160PERCENT
+       여백(left=9000) borderFillIDRef=2
+  [17] JUSTIFY lineSpacing=160PERCENT
+       여백(left=10000) borderFillIDRef=2
+  [18] JUSTIFY lineSpacing=160PERCENT
+       여백(left=8000) borderFillIDRef=2
+  [19] JUSTIFY lineSpacing=150PERCENT
+       여백(next=800) borderFillIDRef=2
+
+▶ 문서 구조
+  페이지: 59528 × 84186 (WIDELY)
+  여백: 좌=8504 우=8504 상=5668 하=4252
+  머리말=4252 꼬리말=4252
+  본문폭: 42520 (59528-8504-8504)
+  페이지테두리: borderFill=1 textBorder=PAPER offset=[1417,1417,1417,1417]
+
+  ════════ 본문 ════════
+
+  P id=1000000001 paraPr=0 [secPr] charPr=0:(빈)
+  ┌─ TABLE id=2002 3행×2열 w=42520 h=5400
+  │  borderFill=3 treatAsChar=1 horzAlign=LEFT
+  │  열너비: [21260, 21260]
+  │  합계: 42520
+  │
+  │  ── Row 0
+  │     Cell(0,0) w=42520 h=1800 colSpan=2 borderFill=3 cellMargin=[0,0,0,0]
+  │       P paraPr=22 charPr=0:"통합 정보"
+  │  ── Row 1
+  │     Cell(0,1) w=21260 h=1800 borderFill=3 cellMargin=[0,0,0,0]
+  │       P paraPr=22 charPr=0:"기관명"
+  │     Cell(1,1) w=21260 h=1800 borderFill=3 cellMargin=[0,0,0,0]
+  │       P paraPr=22 charPr=0:(빈)
+  │  ── Row 2
+  │     Cell(0,2) w=21260 h=1800 borderFill=3 cellMargin=[0,0,0,0]
+  │       P paraPr=22 charPr=0:"담당자"
+  │     Cell(1,2) w=21260 h=1800 borderFill=3 cellMargin=[0,0,0,0]
+  │       P paraPr=22 charPr=0:(빈)
+  └─────
+

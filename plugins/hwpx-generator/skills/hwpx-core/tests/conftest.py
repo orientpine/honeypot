@@ -265,3 +265,52 @@ def make_test_hwpx(make_section_xml, make_header_xml, tmp_path):
         
         return hwpx_path
     return _make
+
+
+@pytest.fixture
+def fixtures_dir():
+    """Return the tests/fixtures/ directory for form-comprehension test fixtures."""
+    return (
+        PROJECT_ROOT / "plugins" / "hwpx-generator" / "skills" / "hwpx-core" / "tests" / "fixtures"
+    )
+
+
+@pytest.fixture
+def form_simple_path(fixtures_dir):
+    """Path to form_simple.hwpx fixture (3 label-input pairs)."""
+    return fixtures_dir / "form_simple.hwpx"
+
+
+@pytest.fixture
+def form_merged_path(fixtures_dir):
+    """Path to form_merged.hwpx fixture (merged cells)."""
+    return fixtures_dir / "form_merged.hwpx"
+
+
+@pytest.fixture
+def form_edge_path(fixtures_dir):
+    """Path to form_edge.hwpx fixture (byte-identical empty cells edge case)."""
+    return fixtures_dir / "form_edge.hwpx"
+
+
+@pytest.fixture
+def load_form_map():
+    """
+    Helper fixture to load and parse a form_map.json file.
+
+    Usage:
+        def test_something(load_form_map, tmp_path):
+            fm = load_form_map(tmp_path / "form_map.json")
+            assert fm["schema_version"] == "1.0.0"
+    """
+
+    def _load(path):
+        import json
+        from pathlib import Path
+
+        if isinstance(path, str):
+            path = Path(path)
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+
+    return _load
