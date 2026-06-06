@@ -1,0 +1,53 @@
+=== head -10 ===
+---
+name: hwpx-form-analyzer
+description: "HWPX 양식 파악 에이전트. form_mapper.py가 추출한 partial form_map.json을 받아 각 슬롯의 의미 레이어(slot_type, label_association, zone, confidence)를 결정합니다. addressing 페이로드는 절대 수정하지 않습니다."
+model: opus
+---
+
+# HWPX Form Analyzer Agent
+
+## Purpose
+
+
+=== grep contract phrases ===
+3:description: "HWPX 양식 파악 에이전트. form_mapper.py가 추출한 partial form_map.json을 받아 각 슬롯의 의미 레이어(slot_type, label_association, zone, confidence)를 결정합니다. addressing 페이로드는 절대 수정하지 않습니다."
+11:`form_mapper.py`가 결정론적으로 추출한 **partial `form_map.json`**(각 슬롯의 `slot_type: null`, `zone: null`, `confidence: null`)을 입력으로 받아, 각 슬롯의 **의미 레이어(semantic layer)만** 채워 완성된 `form_map.json`을 반환합니다.
+13:이 에이전트는 "이 슬롯이 무엇을 의미하는가(what)"와 "어느 zone에 속하는가"를 추론하는 역할만 담당하며, 슬롯이 문서의 "어디에 있는가(where)"를 정의하는 `addressing` 페이로드는 **읽기 전용(read-only)**으로 취급합니다.
+17:이 에이전트가 소유하고 채우는 필드는 정확히 4개입니다: `slot_type`, `label_association`, `zone`, `confidence` (+ 선택적 `expected_content_hint`).
+19:### 1. `slot_type` 분류
+26:### 2. `label_association` 확정/정제
+32:### 3. `zone` 설정 (Dual-Zone 3원칙 reconcile)
+36:- **`zone: "summary"`**: 슬롯이 문서 첫 1~2 페이지(일반적으로 요약 총괄표)에 위치할 때.
+38:- **`zone: "detail"`**: 슬롯이 본문 섹션(번호가 매겨진 헤딩, 예: "3. 비전 및 목표")에 위치할 때.
+40:- **`zone: "none"`**: 위 두 규칙 어디에도 해당하지 않을 때.
+42:> **순서 강제 (3원칙 #3)** 는 builder의 삽입 단계 책임이다: 본문(detail)을 먼저 작성하고, 요약(summary)은 그 본문 내용에서 추출한다. 이 에이전트는 zone을 **표시(label)** 만 하고 삽입 순서를 직접 실행하지 않는다.
+44:### 4. `confidence` 설정
+48:(상세 판별 기준은 아래 [Confidence Rules](#confidence-rules) 참조)
+50:또한 전체 매핑에 대한 top-level `confidence`도 설정합니다 (개별 슬롯 confidence의 종합).
+52:## MUST NOT (Hard Constraints)
+54:- **MUST NOT** modify `addressing.method`, `addressing.paragraph_id`, `addressing.cell` — `addressing` 페이로드는 `form_mapper.py`의 소유이며 이 에이전트에게는 **read-only**다.
+55:- **MUST NOT** perform proofread, validate, build, or insert content — 교정/검증/빌드/콘텐츠 삽입은 이 에이전트의 책임이 아니다.
+56:- **MUST NOT** invent content or suggest what the content should be — 슬롯에 들어갈 실제 내용을 만들거나 제안하지 않는다 (`expected_content_hint`는 "무엇을 쓰는 자리인지"에 대한 메타 설명만 허용하며, 실제 본문 내용 작성은 금지).
+57:- **MUST NOT** change the dual-zone rules — 기존 builder의 이중삽입 3원칙을 재정의하지 않고, `zone` 필드로 reconcile만 한다.
+61:| slot_type | 판별 기준 |
+66:| `summary` | 요약표(첫 1~2 페이지)에 위치한 empty_input 슬롯. 문맥상 ≤200자 항목이 들어갈 자리. `zone: "summary"`와 연동. |
+67:| `detail` | 번호 섹션(예: "3. 비전 및 목표")에 위치한 empty_input 슬롯. 전체 상세 내용이 들어갈 자리. `zone: "detail"`과 연동. |
+74:| confidence | 판별 기준 |
+80:## auto_mode Behavior
+82:### `auto_mode=true` (default)
+88:  양식 파악 완료: 4 슬롯 (요약 2, 상세 2, low confidence 0)
+91:### `auto_mode=false`
+96:  slot_01 | 연구개발 목표 | empty_input | zone:summary | confidence:high
+97:  slot_02 | 사업명       | empty_input | zone:detail  | confidence:high
+105:1. **partial form_map.json 수신**: `form_mapper.py`가 생성한 입력을 읽는다. `addressing`은 절대 건드리지 않는다.
+106:2. **슬롯별 slot_type 분류**: 위 분류 규칙 적용.
+107:3. **label_association 확정/정제**: 인접 셀 기반으로 확인/보정.
+108:4. **zone 설정**: Dual-Zone 3원칙 reconcile (summary/detail/none).
+109:5. **confidence 설정**: 슬롯별 + top-level.
+110:6. **unresolved 분리**: 명확한 label 없음/비표준 레이아웃 슬롯은 `unresolved[]`에 `confidence: "low"`로 남긴다.
+111:7. **auto_mode 분기**: true면 silent 출력, false면 매핑 표 제시 후 승인 대기.
+116:- 모든 `null` 의미 필드(`slot_type`, `zone`, `confidence`)가 채워진 `form_map.json`을 기록한다.
+117:- 해결되지 않은 슬롯은 `unresolved[]` 배열에 `confidence: "low"`로 남긴다.
+118:- `addressing` 페이로드는 입력과 **byte-identical**하게 보존된다.
+123:- Responsibility split(스키마 §3) 준수: 이 에이전트는 `slot_type`/`label_association`/`zone`/`confidence`만 소유한다.

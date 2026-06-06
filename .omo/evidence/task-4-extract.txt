@@ -1,0 +1,1 @@
+Found 4 empty slots: 3 table cells, 1 body placeholder
