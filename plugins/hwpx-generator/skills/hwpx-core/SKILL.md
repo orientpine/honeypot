@@ -454,7 +454,7 @@ hanging indent = paraPr의 `left` margin + 음수 `indent` (첫 줄이 왼쪽으
 - paraPr 87: ◦ 상위 불릿 (left=1500)
 - paraPr 88: - 하위 불릿 (left=2500)
 
-**탭/공백 들여쓰기 → 계층 (글머리 문양·숫자 공통)**: 마크다운에서 `-`/`*`/`◦` 글머리든 `1.`/`a.`/`(1)`/`①` 번호든, 앞에 붙은 들여쓰기로 계층(`indent_level`)이 결정된다. `md_parser.py`가 `expandtabs(2)` 후 2칸당 1단계로 계산하므로 **탭 1번 = 1단계**(공백 2칸과 동일)다. `xml_writer.py`의 `resolve_indent_style()`가 단계별 `bullet_level_N` 스타일을 적용하고, 정의된 최대 레벨을 넘으면 `HWPUNIT_PER_LEVEL`(800)만큼 `left_margin`을 가산해 문단 전체를 우측으로 민다. 번호 항목(`build_numbered`)도 글머리와 동일하게 `indent_level`을 반영한다.
+**탭/공백 들여쓰기 → 계층 (글머리 문양·숫자 공통)**: 마크다운에서 `-`/`*`/`◦` 글머리든 `1.`/`a.`/`(1)`/`①` 번호든, 앞에 붙은 들여쓰기로 계층(`indent_level`)이 결정된다. `md_parser.py`의 `detect_indent_unit()`이 문서별 최소 들여쓰기 단위(공백 2칸/4칸·탭)를 자동 감지하고 `expandtabs(4)` 후 그 단위로 나눠 단계를 계산하므로, **탭 1번 = 1단계**이며 공백 2칸·4칸 어느 들여쓰기 폭이든 1단계로 일관 처리된다. `xml_writer.py`의 `resolve_indent_style()`가 단계별 `bullet_level_N` 스타일을 적용하고, 정의된 최대 레벨을 넘으면 `HWPUNIT_PER_LEVEL`(800)만큼 `left_margin`을 가산해 문단 전체를 우측으로 민다. 글머리 마커는 `LEVEL_MARKERS`(`■□●○▪▫∙∘`, 8단계 순환)로 단계마다 자동 교체되어 문서 전체에서 같은 단계=같은 마커로 일관된다. 번호 항목(`build_numbered`)도 글머리와 동일하게 `indent_level`을 반영한다.
 
 ### 표 작성법 (참조 형식 — 프로그래밍 생성 시 xml_writer.py 사용 필수)
 

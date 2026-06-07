@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
 
-**Version**: 3.35.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 3.36.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 ---
 
@@ -1238,6 +1238,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 3.36.0 | 2026-06-07 | hwpx-generator v3.14.0: 마크다운 다단계 리스트 들여쓰기 + 단계별 마커 자동 순환 — md_parser.py에 `detect_indent_unit()` 추가로 문서별 최소 들여쓰기 단위(공백 2칸/4칸·탭)를 자동 감지하여 `indent_level`을 산출(`expandtabs(4)` 통일), 글머리(`-·*·◦·□`)와 번호(`1.·a.·(1)·①`) 모두 탭/공백 들여쓰기로 계층 정렬. xml_writer.py `LEVEL_MARKERS`(`■□●○▪▫∙∘`, 8단계 순환) 도입으로 깊이별 마커를 자동 교체하고 문서 전체에서 같은 단계=같은 마커로 일관 유지, `build_numbered`도 `indent_level` 반영해 번호 목록 2단계+ 지원. hwpx-core 스위트 181 passed. |
 | 3.35.0 | 2026-06-06 | hwpx-generator v3.13.0: 양식 파악(Form Comprehension) Phase 2.5 추가 — form_mapper.py(결정적 슬롯 추출) + hwpx-form-analyzer 에이전트(의미 매핑) + slot_filler.py(paragraph-id 기반 치환)로 정부 양식 HWPX에서 올바른 삽입 위치를 자동 파악. |
 | 3.34.0 | 2026-06-05 | hwpx-generator v3.12.0: linesegarray 휴리스틱 자동 생성 제거 — 긴 문장이 한 줄에 좁은 자간으로 뭉쳐 렌더링되고 스페이스바를 눌러야 풀리던 버그를 근본 해결. `<hp:linesegarray>`는 한/글이 소유하는 라인 레이아웃 캐시로, 휴리스틱 글자폭 추정(한글 1.0×·영문 0.5×·공백 0.25×)으로 생성된 캐시가 실제 글리프 메트릭과 불일치하여 한/글이 잘못된 레이아웃을 표시한 것이 원인. `cell_writer.py`를 strip 전용으로 재작성(휴리스틱 생성·셀/표 높이 변경 로직 전량 삭제), `build_hwpx.py`·`office/pack.py`가 패키징 시 linesegarray를 제거하여 한/글이 문서를 열 때 정확히 재계산하도록 전환(python-hwpx·hwpx-rekian·public-doc-to-hwpx 합의 방식, 기존 `fix_namespaces.py`와 일관). `pack.py`·`fix_namespaces.py`의 strip 정규식을 self-closing(`<hp:linesegarray/>`)·속성·공백 형태까지 처리하도록 강화(lazy 수량자로 인접 요소 over-match 방지), `build_hwpx._strip_linesegarray`의 잠재 xpath 버그(Clark-notation) 수정. 회귀 테스트 `test_lineseg_strip.py`(S1~S4) 신규 추가, hwpx-core 스위트 156 passed. SKILL.md 규칙 #18·README·AGENTS.md를 strip 정책으로 일치. Oracle 설계+2라운드 리뷰 승인. |
 | 3.33.0 | 2026-05-10 | general-agents v2.0.0: 단일 monolithic `interview` 에이전트(346 lines)를 `agent + skill + command` 3계층 구조로 분리. [oh-my-codex `deep-interview` SKILL](https://github.com/Yeachan-Heo/oh-my-codex/blob/09d6fd05cd10e66eca1e1a9e3e50d60ca4d94362/skills/deep-interview/SKILL.md)을 적응(MIT, commit `09d6fd05`). 7-단계 상태 머신(S1–S7), 5개 readiness 게이트(non-goals/decision-boundaries/pressure-pass/closure-audit/contradiction-audit), 가중치 기반 모호성 채점(버킷 입력 + 게임 방지 캡), 3개 깊이 프로파일(`--quick/--standard/--deep`), 인라인 매트릭스 분류 체계(클러리티 차원 × 한국어 도메인 렌즈)를 도입. 모든 OMX 전용 메커니즘(`state_write`, `omx question`, `.omx/*` 경로, `$ralplan/$autopilot/$ralph/$team` 핸드오프, autoresearch 모드, tmux 페인 라우팅) 제거하고 omo와 표준 Claude Code 양 환경 호환으로 재작성. 질문 도구는 시도-후-폴백 지시 패턴(`AskUserQuestion` → 평문 질문, 재시도 없음). 산출물 경로 `.claude/plans/interview-{slug}-{ts}.md` (slug 추가, 하위 호환). 기본 동작 변경: 인터뷰 후 자동 실행 → **계획-only** + 5개 명시적 핸드오프 옵션(plan-only/refine/execute/delegate/terminate-with-risks). 24개 한국어 질문 은행 보존. `@general-agents 의 interview` 호출 패턴 보존(thin wrapper 에이전트). 신규 파일: `commands/interview.md`, `skills/deep-interview/SKILL.md`(411 lines, 인라인 매트릭스), `references/{question-banks-ko,state-schema,handoff-contracts}.md`, `NOTICE.md`. 수정: `agents/interview.md`(346→97 lines wrapper), `plugin.json`(2.0.0), `marketplace.json`(version+skills+commands 추가). hyperplan + plan agent 워크플로우 산출. |
