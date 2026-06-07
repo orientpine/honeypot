@@ -103,3 +103,21 @@ def test_numbered_item_strips_marker_and_keeps_remaining_text(scripts_dir):
     assert block["number"] == "2"
     assert block["indent_level"] == 0
     assert block["text"] == "[중요] 데이터 100건"
+
+
+def test_numbered_single_tab_is_level_1(scripts_dir):
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    parsed = parser.parse_markdown("\t1. 탭 번호", "inline")
+
+    block = parsed["blocks"][0]
+    assert block["type"] == "numbered_item"
+    assert block["indent_level"] == 1
+
+
+def test_numbered_two_tabs_is_level_2(scripts_dir):
+    parser = load_md_parser_module(scripts_dir / "md_parser.py")
+    parsed = parser.parse_markdown("\t\t1. 탭 두 번 번호", "inline")
+
+    block = parsed["blocks"][0]
+    assert block["type"] == "numbered_item"
+    assert block["indent_level"] == 2

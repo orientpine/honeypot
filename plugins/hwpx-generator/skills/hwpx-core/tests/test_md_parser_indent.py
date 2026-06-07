@@ -39,7 +39,7 @@ def test_dash_bullet_indent_level_2_with_four_spaces(scripts_dir):
     bullet = parsed["blocks"][0]
 
     assert bullet["type"] == "bullet"
-    assert bullet["indent_level"] == 2
+    assert bullet["indent_level"] == 1
 
 
 def test_dash_bullet_indent_level_3_with_six_spaces(scripts_dir):
@@ -48,7 +48,7 @@ def test_dash_bullet_indent_level_3_with_six_spaces(scripts_dir):
     bullet = parsed["blocks"][0]
 
     assert bullet["type"] == "bullet"
-    assert bullet["indent_level"] == 3
+    assert bullet["indent_level"] == 1
 
 
 def test_asterisk_bullet_indent_level_0(scripts_dir):
@@ -107,3 +107,39 @@ def test_indent_resets_after_blank_line(scripts_dir):
     assert len(bullets) == 2
     assert bullets[0]["indent_level"] == 1
     assert bullets[1]["indent_level"] == 0
+
+
+def test_dash_bullet_single_tab_is_level_1(scripts_dir):
+    parser = load_module(scripts_dir, "md_parser")
+    parsed = parser.parse_markdown("\t- 탭 한 번", "inline")
+    bullet = parsed["blocks"][0]
+
+    assert bullet["type"] == "bullet"
+    assert bullet["indent_level"] == 1
+
+
+def test_dash_bullet_two_tabs_is_level_2(scripts_dir):
+    parser = load_module(scripts_dir, "md_parser")
+    parsed = parser.parse_markdown("\t\t- 탭 두 번", "inline")
+    bullet = parsed["blocks"][0]
+
+    assert bullet["type"] == "bullet"
+    assert bullet["indent_level"] == 2
+
+
+def test_dash_bullet_one_tab_then_two_spaces_is_level_2(scripts_dir):
+    parser = load_module(scripts_dir, "md_parser")
+    parsed = parser.parse_markdown("\t  - 탭+공백", "inline")
+    bullet = parsed["blocks"][0]
+
+    assert bullet["type"] == "bullet"
+    assert bullet["indent_level"] == 1
+
+
+def test_tab_indented_bullet_hierarchy(scripts_dir):
+    parser = load_module(scripts_dir, "md_parser")
+    content = "\n".join(["- 상위", "\t- 하위", "\t\t- 더하위"])
+    parsed = parser.parse_markdown(content, "inline")
+    bullets = [block for block in parsed["blocks"] if block.get("type") == "bullet"]
+
+    assert [b["indent_level"] for b in bullets] == [0, 1, 2]

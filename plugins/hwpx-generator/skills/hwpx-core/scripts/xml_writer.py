@@ -17,11 +17,7 @@ from pathlib import Path
 
 HWPUNIT_PER_LEVEL = 800  # 1mm ≈ 283.46 HWPUNIT; indent step per bullet level
 
-try:
-    from PIL import Image
-except Exception:  # pragma: no cover - graceful fallback when Pillow is unavailable
-    Image = None
-
+LEVEL_MARKERS = ["■", "□", "●", "○", "▪", "▫", "∙", "∘"]
 
 ROOT_NS = (
     'xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" '
@@ -240,15 +236,16 @@ def build_paragraph(block: dict, ids: IdGenerator, styles: dict) -> str:
     )
 
 
-def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
-    style_key = str(block.get("style_key", "bullet"))
-    selected_style = styles.get(style_key)
-    if not isinstance(selected_style, dict):
-        selected_style = styles["bullet"]
+def resolve_indent_style(base_style: dict, indent_level_raw, styles: dict) -> dict:
+    """Merge the bullet_level_N style for a given indent level into base_style.
 
-    bullet_style = dict(selected_style)
+    Shared by both symbol bullets and numbered items so that list indentation
+    behaves identically regardless of marker type. When the exact level style
+    is missing, the left margin is extrapolated from the highest defined level
+    using HWPUNIT_PER_LEVEL so deeper tab indentation keeps shifting right.
+    """
+    resolved = dict(base_style)
 
-    indent_level_raw = block.get("indent_level")
     indent_level: int | None = None
     if indent_level_raw is None and "bullet_level_0" in styles:
         indent_level = 0
@@ -258,43 +255,64 @@ def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
         except (TypeError, ValueError):
             indent_level = 0
 
-    if indent_level is not None:
-        if indent_level < 0:
-            indent_level = 0
-        level_key = f"bullet_level_{indent_level}"
-        level_style = styles.get(level_key)
-        if isinstance(level_style, dict):
-            bullet_style.update(level_style)
-        else:
-            max_level = -1
-            for key in styles:
-                m = re.fullmatch(r"bullet_level_(\d+)", str(key))
-                if m is None:
-                    continue
-                try:
-                    n = int(m.group(1))
-                except (TypeError, ValueError):
-                    continue
-                if n > max_level:
-                    max_level = n
+    if indent_level is None:
+        return resolved
+    if indent_level < 0:
+        indent_level = 0
 
-            if max_level >= 0:
-                max_style = styles.get(f"bullet_level_{max_level}", {})
-                if isinstance(max_style, dict):
-                    bullet_style.update(max_style)
-                    base_left = int(
-                        max_style.get("left_margin", bullet_style.get("left_margin", 0))
-                    )
-                    bullet_style["left_margin"] = (
-                        base_left + (indent_level - max_level) * HWPUNIT_PER_LEVEL
-                    )
+    level_key = f"bullet_level_{indent_level}"
+    level_style = styles.get(level_key)
+    if isinstance(level_style, dict):
+        resolved.update(level_style)
+        return resolved
+
+    max_level = -1
+    for key in styles:
+        m = re.fullmatch(r"bullet_level_(\d+)", str(key))
+        if m is None:
+            continue
+        try:
+            n = int(m.group(1))
+        except (TypeError, ValueError):
+            continue
+        if n > max_level:
+            max_level = n
+
+    if max_level >= 0:
+        max_style = styles.get(f"bullet_level_{max_level}", {})
+        if isinstance(max_style, dict):
+            resolved.update(max_style)
+            base_left = int(
+                max_style.get("left_margin", resolved.get("left_margin", 0))
+            )
+            resolved["left_margin"] = (
+                base_left + (indent_level - max_level) * HWPUNIT_PER_LEVEL
+            )
+
+    return resolved
+
+
+def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
+    style_key = str(block.get("style_key", "bullet"))
+    selected_style = styles.get(style_key)
+    if not isinstance(selected_style, dict):
+        selected_style = styles["bullet"]
+
+    bullet_style = resolve_indent_style(
+        dict(selected_style), block.get("indent_level"), styles
+    )
 
     for key in ("paraPrIDRef", "charPrIDRef", "left_margin", "indent"):
         if key in block and block[key] is not None:
             bullet_style[key] = block[key]
 
     marker = str(block.get("marker", "◦"))
-    marker_text = marker if marker else "◦"
+    if block.get("marker_override"):
+        marker_text = marker if marker else "◦"
+    else:
+        level = block.get("indent_level")
+        level = int(level) if level is not None else 0
+        marker_text = LEVEL_MARKERS[level % len(LEVEL_MARKERS)]
     content_segments = normalize_segments(block)
     para_pr_id = int(bullet_style["paraPrIDRef"])
     # Always strip bullet prefix from content to prevent double markers.
@@ -325,10 +343,16 @@ def build_bullet(block: dict, ids: IdGenerator, styles: dict) -> str:
 
 
 def build_numbered(block: dict, ids: IdGenerator, styles: dict) -> str:
-    """Build HWPX paragraph XML for a numbered_item block."""
-    style = styles.get("bullet_level_0")
-    if not isinstance(style, dict):
-        style = styles.get("body", {"paraPrIDRef": "0", "charPrIDRef": "0"})
+    """Build HWPX paragraph XML for a numbered_item block.
+
+    Numbered items honour indent_level the same way symbol bullets do, so
+    tab/space indentation shifts the whole paragraph right by level.
+    """
+    base = styles.get("bullet_level_0")
+    if not isinstance(base, dict):
+        base = styles.get("body", {"paraPrIDRef": "0", "charPrIDRef": "0"})
+
+    style = resolve_indent_style(dict(base), block.get("indent_level"), styles)
 
     number = str(block.get("number") or "1")
     marker = f"{number}."
