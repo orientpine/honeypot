@@ -124,8 +124,32 @@ def parse_table(lines: list[str], start_idx: int) -> tuple[object | None, int]:
     return block, idx
 
 
+def detect_indent_unit(lines: list[str]) -> int:
+    widths: list[int] = []
+    for line in lines:
+        m = BULLET_RE.match(line)
+        if not m:
+            m = NUMBERED_DOT_RE.match(line)
+        if not m:
+            m = NUMBERED_PAREN_RE.match(line)
+        if not m:
+            m = NUMBERED_CIRCLE_RE.match(line)
+        if m:
+            leading = m.group(1)
+            if "\t" in leading:
+                w = 4
+            else:
+                w = len(leading.expandtabs(4))
+            if w > 0:
+                widths.append(w)
+    if not widths:
+        return 2
+    return min(widths)
+
+
 def parse_markdown(content: str, source_file: str) -> dict[str, object]:
     lines = content.splitlines()
+    indent_unit = detect_indent_unit(lines)
     blocks: list[dict[str, object]] = []
     idx = 0
 
@@ -212,7 +236,7 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
         if not numbered_match:
             numbered_match = NUMBERED_CIRCLE_RE.match(line)
         if numbered_match:
-            indent_level = len(numbered_match.group(1)) // 2
+            indent_level = len(numbered_match.group(1).expandtabs(4)) // indent_unit
             number = numbered_match.group(2)
             numbered_lines = [numbered_match.group(3)]
             idx += 1
@@ -251,7 +275,7 @@ def parse_markdown(content: str, source_file: str) -> dict[str, object]:
 
         bullet_match = BULLET_RE.match(line)
         if bullet_match:
-            indent_level = len(bullet_match.group(1)) // 2
+            indent_level = len(bullet_match.group(1).expandtabs(4)) // indent_unit
             marker = bullet_match.group(2)
             bullet_lines = [bullet_match.group(3)]
             idx += 1

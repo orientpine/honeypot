@@ -1,19 +1,27 @@
 from __future__ import annotations
 
 import importlib.util
+from collections.abc import Mapping
+from typing import Protocol, cast
 from pathlib import Path
 
 
-def load_xml_writer_module(script_path: Path):
+class XmlWriterModule(Protocol):
+    def build_fragment(
+        self, parsed: Mapping[str, object], styles: Mapping[str, object]
+    ) -> str: ...
+
+
+def load_xml_writer_module(script_path: Path) -> XmlWriterModule:
     spec = importlib.util.spec_from_file_location("xml_writer", script_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Unable to load module from {script_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module
+    return cast(XmlWriterModule, cast(object, module))
 
 
-def sample_styles() -> dict:
+def sample_styles() -> dict[str, object]:
     return {
         "heading_1": {"charPrIDRef": "48", "paraPrIDRef": "38"},
         "heading_2": {"charPrIDRef": "49", "paraPrIDRef": "39"},
@@ -41,7 +49,7 @@ def sample_styles() -> dict:
     }
 
 
-def test_bullet_auto_strips_leading_bullet_prefix(scripts_dir):
+def test_bullet_auto_strips_leading_bullet_prefix(scripts_dir: Path):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     parsed = {
         "blocks": [
@@ -59,7 +67,7 @@ def test_bullet_auto_strips_leading_bullet_prefix(scripts_dir):
     assert "<hp:t>항목 텍스트</hp:t>" in xml
 
 
-def test_bullet_prefix_always_stripped_even_when_not_auto(scripts_dir):
+def test_bullet_prefix_always_stripped_even_when_not_auto(scripts_dir: Path):
     """Bullet prefix must be stripped regardless of bullet_auto to prevent double markers."""
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     styles = sample_styles()
@@ -80,10 +88,10 @@ def test_bullet_prefix_always_stripped_even_when_not_auto(scripts_dir):
     assert "<hp:t>◦ 항목 텍스트</hp:t>" not in xml
     assert "<hp:t>항목 텍스트</hp:t>" in xml
     # Marker still prepended as separate run
-    assert "<hp:t>◦</hp:t>" in xml
+    assert "<hp:t>■</hp:t>" in xml
 
 
-def test_bullet_no_double_marker_korean_text(scripts_dir):
+def test_bullet_no_double_marker_korean_text(scripts_dir: Path):
     """Regression: Korean bullet text must not produce double markers like ◦ ◦text."""
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     parsed = {
@@ -99,11 +107,11 @@ def test_bullet_no_double_marker_korean_text(scripts_dir):
     xml = writer.build_fragment(parsed, sample_styles())
 
     # Single marker in output, no double bullet
-    assert xml.count("<hp:t>◦</hp:t>") == 1
+    assert xml.count("<hp:t>■</hp:t>") == 1
     assert "<hp:t>LiDAR, 카메라 데이터</hp:t>" in xml
 
 
-def test_bullet_clean_content_not_stripped(scripts_dir):
+def test_bullet_clean_content_not_stripped(scripts_dir: Path):
     """Content without bullet prefix should pass through unchanged."""
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     parsed = {
@@ -119,4 +127,4 @@ def test_bullet_clean_content_not_stripped(scripts_dir):
     xml = writer.build_fragment(parsed, sample_styles())
 
     assert "<hp:t>일반 텍스트 내용</hp:t>" in xml
-    assert "<hp:t>◦</hp:t>" in xml
+    assert "<hp:t>■</hp:t>" in xml

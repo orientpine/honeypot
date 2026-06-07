@@ -162,6 +162,56 @@ def test_numbered_item_uses_build_numbered_and_emits_number_marker(scripts_dir):
     assert re.search(r"<hp:t>\s*1[\.|\)]\s*</hp:t>", xml) is not None
 
 
+def test_numbered_item_indent_level_increases_left_margin(scripts_dir):
+    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
+    parsed = {
+        "blocks": [
+            {
+                "type": "numbered_item",
+                "number": "1",
+                "indent_level": 0,
+                "segments": [{"type": "plain", "text": "레벨 0"}],
+            },
+            {
+                "type": "numbered_item",
+                "number": "2",
+                "indent_level": 1,
+                "segments": [{"type": "plain", "text": "레벨 1"}],
+            },
+            {
+                "type": "numbered_item",
+                "number": "3",
+                "indent_level": 2,
+                "segments": [{"type": "plain", "text": "레벨 2"}],
+            },
+        ]
+    }
+
+    xml = writer.build_fragment(parsed, style_config_with_indent_levels())
+    margins = _left_margins(xml)
+
+    assert len(margins) >= 3
+    assert margins[0] < margins[1] < margins[2]
+
+
+def test_numbered_item_deep_level_fallback_scales_left_margin(scripts_dir):
+    writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
+    parsed = {
+        "blocks": [
+            {
+                "type": "numbered_item",
+                "number": "1",
+                "indent_level": 3,
+                "segments": [{"type": "plain", "text": "레벨 3"}],
+            }
+        ]
+    }
+
+    xml = writer.build_fragment(parsed, style_config_with_indent_levels())
+
+    assert 'leftMargin="3200"' in xml
+
+
 def test_backward_compat_bullet_without_indent_level_behaves_like_level_0(scripts_dir):
     writer = load_xml_writer_module(scripts_dir / "xml_writer.py")
     parsed = {
