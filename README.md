@@ -1,8 +1,10 @@
 # Honeypot
 
-> Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 투자 분석, 특허 분석, 개발 도구
+> Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 특허 분석, 개발 도구
 
-**Version**: 3.36.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 4.0.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+
+> **📦 투자·금융 플러그인 분리 안내**: DC형 퇴직연금 포트폴리오, 주식/ETF 상담, 기관급 주식 분석, 거시경제 분석 등 **투자·금융 관련 플러그인은 별도 저장소로 이전**되었습니다 → **[orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)**. 이 저장소(`honeypot`)에서는 더 이상 `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis` 플러그인을 제공하지 않습니다.
 
 ---
 
@@ -41,10 +43,6 @@
 | 시각 | [**visual-generator**](#visual-generator) | 6개 테마 시각자료 프롬프트 생성 + Gemini/OpenAI gpt-image-2 렌더링 |
 | 시각 | [**pptx-design-styles**](#pptx-design-styles) | 30가지 모던 PPTX 디자인 스타일 가이드 (HEX, 폰트, 레이아웃) |
 | 논문 | [**paper-style-generator**](#paper-style-generator) | PDF 논문 분석 → 논문 작성 스킬 세트 자동 생성 |
-| 투자 | [**investments-portfolio**](#investments-portfolio) | DC형 퇴직연금 포트폴리오 멀티 에이전트 분석 |
-| 투자 | [**stock-consultation**](#stock-consultation) | 주식/ETF 투자 상담 (Bogle/Vanguard 철학) |
-| 투자 | [**equity-research**](#equity-research) | 기관급 주식 분석 리포트 생성 |
-| 투자 | [**macro-analysis**](#macro-analysis) | 거시경제 분석 공용 에이전트 7종 |
 | 분석 | [**patent-trend-analyzer**](#patent-trend-analyzer) | KIPRIS API 기반 특허 동향 분석 + 시각화 |
 | 도구 | [**plugin-dev**](#plugin-dev) | Claude Code 플러그인 개발 종합 툴킷 [^1] |
 | 도구 | [**worktree-workflow**](#worktree-workflow) | Git worktree 기반 병렬 실행 |
@@ -402,148 +400,6 @@ PDF 수집 → MinerU 변환 → 스타일 분석 → 플러그인 생성
 | Skills | paper-style-toolkit (스크립트, 템플릿, 참조자료) |
 
 </details>
-
----
-
-<br>
-
-# 투자·금융
-
----
-
-## investments-portfolio
-
-> DC형 퇴직연금 포트폴리오를 멀티 에이전트 시스템으로 분석합니다.
-
-### 사용법
-
-```
-/investments-portfolio:portfolio-analyze 포트폴리오 분석을 시작해줘
-
-# 투자 프로파일 지정
-/investments-portfolio:portfolio-analyze 안정형 프로파일로 포트폴리오 분석을 해줘
-```
-
-### 워크플로우
-
-```
-거시경제 분석 (macro-analysis 5종)
-        ↓
-    분석 종합 + 검증
-        ↓
-  펀드 추천 + 규제 검증 (DC 70% 한도)
-        ↓
-    출력 검증 + 자료 정리
-```
-
-### 주요 특징
-
-- **거시경제 분석 통합**: 지수, 금리, 섹터, 리스크, 리더십 5개 에이전트 병렬 분석
-- **Bogle/Vanguard 철학**: 저비용 인덱스 펀드 중심 추천
-- **DC 규제 자동 검증**: 위험자산 70% 한도 등 규제 준수 확인
-- **출력**: `portfolios/YYYY-MM-DD-{profile}-{session}/` 폴더에 5개 보고서
-
-<details>
-<summary>구성 요소 (3 Agents · 1 Command · 11 Skills)</summary>
-
-| 유형 | 항목 |
-|------|------|
-| Agents | fund-portfolio, compliance-checker, output-critic |
-| Command | `portfolio-analyze` (오케스트레이터) |
-| Skills | analyst-common, bogle-principles, data-updater, dc-pension-rules, devil-advocate, file-save-protocol, fund-output-template, fund-selection-criteria, macro-output-template, perspective-balance, web-search-verifier |
-
-**참고**: 거시경제 분석은 [macro-analysis](#macro-analysis) 플러그인의 7개 에이전트를 공유합니다.
-
-</details>
-
----
-
-## stock-consultation
-
-> 주식/ETF 투자 상담을 Bogle/Vanguard 철학 기반 멀티 에이전트 시스템으로 수행합니다.
-
-### 사용법
-
-```
-# 종목 상담
-/stock-consultation:stock-consult AAPL 투자 상담을 해줘
-
-# 주제별 상담
-/stock-consultation:stock-consult 반도체 섹터 ETF 추천해줘
-
-# 자료 제공 시
-/stock-consultation:stock-consult TSLA 분석해줘
-materials_path: ./research_data/
-```
-
-### 워크플로우
-
-```
-거시경제 분석 → 종목 스크리닝 → 밸류에이션 → 반대 논거 → 최종 검증
-```
-
-### 주요 특징
-
-- **5단계 파이프라인**: 거시 분석부터 Bear Case까지 체계적 검증
-- **Devil's Advocate**: 반대 논거 에이전트가 투자 위험을 적극 검증
-- **데이터 검증**: 실시간 웹 검색 기반 수치 정확성 확인
-
-<details>
-<summary>구성 요소 (5 Agents · 1 Command · 3 Skills)</summary>
-
-| 유형 | 항목 |
-|------|------|
-| Agents | materials-organizer, stock-screener, stock-valuation, bear-case-critic, stock-critic |
-| Command | `stock-consult` (오케스트레이터) |
-| Skills | analyst-common-stock, file-save-protocol-stock, stock-data-verifier |
-
-**참고**: 거시경제 분석은 [macro-analysis](#macro-analysis) 플러그인의 7개 에이전트를 공유합니다.
-
-</details>
-
----
-
-## equity-research
-
-> 티커와 함께 호출하면 기관급(institutional-grade) 주식 분석 리포트를 생성합니다.
-
-### 사용법
-
-```
-# 기본 분석
-@equity-research AAPL
-
-# 상세 분석
-@equity-research NVDA --detailed
-```
-
-### 주요 특징
-
-- **Opus 모델** 기반 고품질 분석
-- **3축 병렬 리서치**: 재무 성과, 시장 포지셔닝, 고급 인텔리전스
-- **기관급 포맷**: 구체적 수치, 애널리스트 목표가, 기간별 메트릭 포함
-
-| 구성 | 항목 |
-|------|------|
-| Agent | equity-research-analyst (단일 에이전트) |
-
----
-
-## macro-analysis
-
-> investments-portfolio, stock-consultation 등에서 공유하는 거시경제 분석 에이전트 7종입니다.
-
-이 플러그인은 단독으로 호출하기보다 다른 투자 플러그인의 **내부 인프라**로 사용됩니다.
-
-| Agent | 역할 |
-|-------|------|
-| `index-fetcher` | 주요 지수 데이터 수집 |
-| `rate-analyst` | 금리 환경 분석 |
-| `sector-analyst` | 섹터별 동향 분석 |
-| `risk-analyst` | 시장 리스크 분석 |
-| `leadership-analyst` | 리더십/정책 영향 분석 |
-| `macro-synthesizer` | 5개 분석 결과 종합 |
-| `macro-critic` | 종합 분석 검증 |
 
 ---
 
@@ -1158,7 +1014,7 @@ plugins/{plugin-name}/
 ```
 honeypot/
 ├── .claude-plugin/
-│   └── marketplace.json              # 마켓플레이스 레지스트리 (18개 플러그인)
+│   └── marketplace.json              # 마켓플레이스 레지스트리 (14개 플러그인)
 ├── plugins/
 │   ├── isd-generator/                # ISD 연구계획서 생성
 │   │   ├── agents/                   # 6 agents
@@ -1176,20 +1032,10 @@ honeypot/
 │   │   ├── agents/                   # 4 agents
 │   │   ├── commands/                 # report-generate
 │   │   └── skills/                   # 3 skills
-│   ├── investments-portfolio/        # DC 연금 포트폴리오
-│   │   ├── agents/                   # 3 agents
-│   │   ├── commands/                 # portfolio-analyze
-│   │   └── skills/                   # 11 skills
-│   ├── stock-consultation/           # 주식/ETF 투자 상담
-│   │   ├── agents/                   # 5 agents
-│   │   ├── commands/                 # stock-consult
-│   │   └── skills/                   # 3 skills
 │   ├── hwpx-generator/              # HWPX 문서 생성/편집/분석
 │   │   ├── agents/                   # 2 agents
 │   │   ├── commands/                 # hwpx-generate
 │   │   └── skills/                   # 2 skills
-│   ├── macro-analysis/              # 거시경제 분석 공용 에이전트
-│   │   └── agents/                   # 7 agents
 │   ├── obsidian-skills/              # Obsidian vault 스킬
 │   │   └── skills/                   # 5 skills
 │   ├── general-agents/              # 범용 에이전트
@@ -1198,8 +1044,6 @@ honeypot/
 │   │   ├── agents/                   # 5 agents
 │   │   ├── commands/                 # accelerated-learn
 │   │   └── skills/                   # 1 skill
-│   ├── equity-research/             # 기관급 주식 분석
-│   │   └── agents/                   # 1 agent
 │   ├── worktree-workflow/           # Git worktree 워크플로우
 │   │   └── agents/                   # 1 agent
 │   ├── plugin-dev/                  # 플러그인 개발 종합 툴킷
@@ -1238,6 +1082,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 4.0.0 | 2026-06-09 | **투자·금융 플러그인 4종 분리(BREAKING)** — `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis`를 honeypot에서 제거하고 별도 저장소 [orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)로 이전. marketplace.json 4개 엔트리 삭제(18→14개 플러그인) + metadata.description에서 "DC연금 포트폴리오 분석" 제거, README 투자·금융 섹션/한눈에 보기 표/프로젝트 구조 트리 정리 + 분리 안내 추가, AGENTS.md WHERE TO LOOK 3행·ANTI-PATTERNS 2행·상황별 인덱스 정리, docs/agents/unique-styles.md Multi-Agent Portfolio System 섹션 제거. 마켓플레이스 구조 변경이므로 MAJOR 버전 상향. |
 | 3.36.0 | 2026-06-07 | hwpx-generator v3.14.0: 마크다운 다단계 리스트 들여쓰기 + 단계별 마커 자동 순환 — md_parser.py에 `detect_indent_unit()` 추가로 문서별 최소 들여쓰기 단위(공백 2칸/4칸·탭)를 자동 감지하여 `indent_level`을 산출(`expandtabs(4)` 통일), 글머리(`-·*·◦·□`)와 번호(`1.·a.·(1)·①`) 모두 탭/공백 들여쓰기로 계층 정렬. xml_writer.py `LEVEL_MARKERS`(`■□●○▪▫∙∘`, 8단계 순환) 도입으로 깊이별 마커를 자동 교체하고 문서 전체에서 같은 단계=같은 마커로 일관 유지, `build_numbered`도 `indent_level` 반영해 번호 목록 2단계+ 지원. hwpx-core 스위트 181 passed. |
 | 3.35.0 | 2026-06-06 | hwpx-generator v3.13.0: 양식 파악(Form Comprehension) Phase 2.5 추가 — form_mapper.py(결정적 슬롯 추출) + hwpx-form-analyzer 에이전트(의미 매핑) + slot_filler.py(paragraph-id 기반 치환)로 정부 양식 HWPX에서 올바른 삽입 위치를 자동 파악. |
 | 3.34.0 | 2026-06-05 | hwpx-generator v3.12.0: linesegarray 휴리스틱 자동 생성 제거 — 긴 문장이 한 줄에 좁은 자간으로 뭉쳐 렌더링되고 스페이스바를 눌러야 풀리던 버그를 근본 해결. `<hp:linesegarray>`는 한/글이 소유하는 라인 레이아웃 캐시로, 휴리스틱 글자폭 추정(한글 1.0×·영문 0.5×·공백 0.25×)으로 생성된 캐시가 실제 글리프 메트릭과 불일치하여 한/글이 잘못된 레이아웃을 표시한 것이 원인. `cell_writer.py`를 strip 전용으로 재작성(휴리스틱 생성·셀/표 높이 변경 로직 전량 삭제), `build_hwpx.py`·`office/pack.py`가 패키징 시 linesegarray를 제거하여 한/글이 문서를 열 때 정확히 재계산하도록 전환(python-hwpx·hwpx-rekian·public-doc-to-hwpx 합의 방식, 기존 `fix_namespaces.py`와 일관). `pack.py`·`fix_namespaces.py`의 strip 정규식을 self-closing(`<hp:linesegarray/>`)·속성·공백 형태까지 처리하도록 강화(lazy 수량자로 인접 요소 over-match 방지), `build_hwpx._strip_linesegarray`의 잠재 xpath 버그(Clark-notation) 수정. 회귀 테스트 `test_lineseg_strip.py`(S1~S4) 신규 추가, hwpx-core 스위트 156 passed. SKILL.md 규칙 #18·README·AGENTS.md를 strip 정책으로 일치. Oracle 설계+2라운드 리뷰 승인. |
