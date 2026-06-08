@@ -1,6 +1,6 @@
 # Project-Specific Unique Styles
 
-> **언제 읽나요**: ISD figure 프롬프트 작성, 투자 포트폴리오 멀티 에이전트 워크플로우 설정, paper-style-generator 사용, wiki-gen 운영 등 **프로젝트별 고유 스타일/규칙**이 적용되는 작업을 할 때.
+> **언제 읽나요**: ISD figure 프롬프트 작성, paper-style-generator 사용, wiki-gen 운영 등 **프로젝트별 고유 스타일/규칙**이 적용되는 작업을 할 때.
 > **상위 문서**: [AGENTS.md](../../AGENTS.md)
 
 ## Figure Prompt Requirements (500+ lines)
@@ -11,14 +11,6 @@ ISD generator의 figure 에이전트가 사용하는 프롬프트 형식 요구�
 - ASCII layout for 6 regions
 - 50+ text items, 8+ data tables
 - 4-color palette: `#1E3A5F`, `#4A90A4`, `#2E7D5A`, `#F5F7FA`
-
-## Multi-Agent Portfolio System
-
-investments-portfolio 플러그인의 멀티 에이전트 워크플로우입니다.
-
-- **Workflow**: `macro-analysis` → `fund-portfolio` → `compliance-checker` → `output-critic`
-- **Output files**: `00-macro-outlook.md` through `04-portfolio-summary.md`
-- **Folder**: `portfolios/YYYY-MM-DD-{profile}-{session}/`
 
 ## Paper Style Generator (Meta-Plugin)
 
