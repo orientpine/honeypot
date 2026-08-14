@@ -3,6 +3,7 @@ name: input-analyzer
 description: "연구 노트 입력을 분석하여 입력 형식(폴더/파일/코드베이스)을 감지하고, 연구 도메인을 자동 추론하며, 파일 구조를 분류하는 에이전트"
 tools: Read, Glob, Grep
 model: sonnet
+effort: high
 skills: field-keywords
 ---
 
