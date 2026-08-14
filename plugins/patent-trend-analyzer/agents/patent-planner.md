@@ -2,6 +2,7 @@
 name: patent-planner
 description: "특허 연구 영역 키워드 최적화, IPC 코드 매핑, 검색 전략 수립 전문 에이전트. Use when: 새로운 특허 조사 프로젝트를 시작하거나 검색 키워드 및 IPC 코드 전략을 최적화할 때."
 model: sonnet
+effort: high
 tools: Read, Glob, Grep, Bash
 ---
 
