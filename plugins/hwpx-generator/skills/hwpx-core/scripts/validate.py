@@ -110,6 +110,8 @@ def validate(hwpx_path: str, *, strict: bool = False) -> tuple[list[str], list[s
         errors.extend(errors_img)
         warnings.extend(warnings_img)
 
+        errors.extend(_linesegarray_checks(zf, names))
+
         # Strict mode: ZIP-level surgery compliance checks
         if strict:
             errors.extend(_strict_checks(zf, names))
@@ -224,6 +226,28 @@ def _image_checks(zf: ZipFile, names: list[str]) -> tuple[list[str], list[str]]:
                 )
 
     return errors, warnings
+
+
+def _linesegarray_checks(zf: ZipFile, names: list[str]) -> list[str]:
+    """Flag any leaked <hp:linesegarray> in section XML as a hard error.
+
+    linesegarray is HWP's per-paragraph line-layout cache. Every generation
+    path (XML-first build/pack AND ZIP-surgery) must STRIP it so Hangul
+    recomputes layout on open; a leaked stale cache crams text onto one line
+    and ignores 자간. This enforces the strip policy at the mandatory
+    validation gate so the bug cannot silently recur.
+    """
+    errors: list[str] = []
+    for name in names:
+        if name.startswith("Contents/") and name.endswith(".xml") and "section" in name:
+            count = zf.read(name).decode("utf-8", "replace").count("linesegarray")
+            if count:
+                errors.append(
+                    f"[linesegarray] {name} contains {count} stale "
+                    f"<hp:linesegarray> element(s); must be stripped so 한/글 "
+                    f"recomputes layout (otherwise text overlaps on one line)"
+                )
+    return errors
 
 
 def _strict_checks(zf: ZipFile, names: list[str]) -> list[str]:

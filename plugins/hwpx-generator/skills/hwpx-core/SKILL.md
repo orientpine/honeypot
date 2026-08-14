@@ -926,7 +926,7 @@ HWPX 파일이 한글에서 열리지 않을 때:
 15. **무단 페이지 증가 금지**: 사용자 명시 요청/승인 없이 쪽수 증가를 유발하는 구조 변경 금지
 16. **구조 변경 제한**: 사용자 요청이 없는 한 문단/표의 추가·삭제·분할·병합 금지 (치환 중심 편집)
 17. **page_guard 필수 통과**: `validate.py`와 별개로 `page_guard.py`를 반드시 통과해야 완료 처리
-18. **linesegarray 제거**: linesegarray는 한/글이 소유하는 라인 레이아웃 캐시이므로 생성 파이프라인은 이를 **생성하지 않고 제거**한다. build_hwpx.py·pack.py·fix_namespaces.py 모두 패키징 시 `<hp:linesegarray>`를 제거하여 한/글이 문서를 열 때 정확한 레이아웃을 재계산하도록 한다. 휴리스틱 자동 생성은 실제 글리프 메트릭과 불일치하여 자간이 좁아지고 한 줄에 뭉치는 렌더링 버그를 유발하므로 **금지**한다. section0.xml 작성 시 linesegarray를 포함하지 않는다.
+18. **linesegarray 제거**: linesegarray는 한/글이 소유하는 라인 레이아웃 캐시이므로 생성 파이프라인은 이를 **생성하지 않고 제거**한다. build_hwpx.py·pack.py·fix_namespaces.py(XML-first/패키징 경로)와 **zip_surgery.py의 `write_zip()`(ZIP-surgery 경로)** 모두 `Contents/section*.xml`에서 `<hp:linesegarray>`를 제거하여 한/글이 문서를 열 때 정확한 레이아웃을 재계산하도록 한다. **특히 ZIP-surgery 경로(slot_filler.py 슬롯 채우기, section_transplant.py 챕터 이식, replace_text 치환)는 템플릿/소스에 남아 있던 linesegarray가 산출물로 통과하면 자간이 좁아지고 한 줄에 뭉치는 버그를 재현하므로, `write_zip()`이 기록 직전 자동 strip한다.** 휴리스틱 자동 생성은 실제 글리프 메트릭과 불일치하므로 **금지**한다. section0.xml 작성 시 linesegarray를 포함하지 않는다. **강제 게이트**: `validate.py`의 `_linesegarray_checks()`가 `Contents/section*.xml`에 linesegarray가 남아 있으면 hard-fail(exit 1)하므로, 어떤 경로가 strip을 누락하더라도 Phase 4 필수 검증에서 산출 전에 차단된다(재발 방지).
 19. **ZIP-level surgery 규칙**: 기존 HWPX 편집 시 `zip_surgery.py`를 사용하고, 상세 규칙은 `$SKILL_DIR/references/zip-surgery-guide.md` 준수. ET.tostring()/tree.write() 사용 금지, 개행 삽입 금지, standalone='no' 보존 필수.
 20. **표 속성 필수**: `noAdjust="0"` (행 높이 자동 조절) + `pageBreak="CELL"` (페이지 넘김 허용)
 21. **validate.py --strict**: ZIP-level surgery 결과물은 `validate.py --strict`로 추가 검증 (standalone, xmlns, newlines, 표 속성)
