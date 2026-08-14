@@ -1,7 +1,7 @@
 # OpenAI gpt-image-2 Quality Rubric
 
 **Purpose**: gpt-image-2 생성 이미지의 5D 품질 평가 기준. Gemini 5D와 필드명·임계값 byte-identical 유지.
-**Evaluation Model**: gpt-5.5 (Responses API, Structured Outputs json_schema strict)
+**Evaluation Model**: gpt-5.6 (Responses API, Structured Outputs json_schema strict)
 
 ---
 

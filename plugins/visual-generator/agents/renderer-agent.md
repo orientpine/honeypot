@@ -2,7 +2,7 @@
 name: renderer-agent
 description: "최종 4-block 프롬프트 검증 및 이미지 렌더링"
 tools: Read, Glob, Grep, Write, Bash
-model: sonnet
+model: haiku
 ---
 
 # Renderer Agent
@@ -249,7 +249,7 @@ done || echo "PASS"
 | 항목 | 값 | 비고 |
 |------|-----|------|
 | 패키지 | `google-genai` (google.genai) | `google-generativeai` 아님 |
-| 모델 | `gemini-3-pro-image-preview` | |
+| 모델 | `gemini-3-pro-image` | |
 | 해상도 | `image_size="4K"` | 반드시 포함 |
 | 비율 | `aspect_ratio="16:9"` | |
 
@@ -274,7 +274,7 @@ done || echo "PASS"
 - 실행 시각: {timestamp}
 - 프롬프트 폴더: {prompts_path}
 - 출력 폴더: {output_path}
-- 사용 모델: gemini-3-pro-image-preview
+- 사용 모델: gemini-3-pro-image
 
 ## 실행 결과 요약
 | 항목 | 수량 |
