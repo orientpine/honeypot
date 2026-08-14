@@ -453,7 +453,7 @@ Content Placement 추가 규칙:
 
 ## Korean Text Safety Rules
 
-아래 6개 규칙은 Gemini의 한글 텍스트 hallucination을 방지하기 위한 필수 안전 장치다.
+아래 6개 규칙은 이미지 모델의 한글 텍스트 hallucination을 방지하기 위한 필수 안전 장치다.
 
 > **concept 테마 면제**: concept 테마는 텍스트 항목 0개이므로 Korean Text Safety Rules를 적용하지 않는다.
 
@@ -474,8 +474,8 @@ Scene Description에서 모든 주요 박스/영역의 빈 공간 처리를 명�
 
 ### Rule 4: 분야/카테고리 헤더 명시
 
-이미지에 렌더링될 모든 한글은 CONTENT에 있어야 한다.
-Gemini 추론에 맡기면 유사 자형 혼동(난↔산) 발생 위험이 있다.
+분야명·카테고리 헤더도 예외 없이 CONTENT에 명시한다.
+헤더만은 모델이 알아서 채워 주겠거니 가정하면 유사 자형 혼동(난↔산)이 그대로 이미지에 박힌다.
 
 ### Rule 5: Scene Description anti-hallucination 필수 문구
 
@@ -490,8 +490,7 @@ Gemini 추론에 맡기면 유사 자형 혼동(난↔산) 발생 위험이 있�
 
 ## Style Sheet Management
 
-Style Sheet는 세션 전체 스타일 일관성의 단일 소스다.
-이 절차는 선택이 아닌 필수다.
+Style Sheet는 세션 전체 스타일 일관성의 단일 소스다. 이것을 건너뛰면 슬라이드마다 팔레트가 갈라져 덱 전체가 따로 놀게 된다.
 
 ### create Mode
 

@@ -2,7 +2,7 @@
 name: prompt-validator
 description: "4-block 마크다운 프롬프트 콘텐츠 품질 검증 에이전트. Use when validating prompt content quality after prompt-designer and before renderer-agent."
 tools: Read, Glob, Grep, Write
-model: sonnet
+model: haiku
 ---
 
 # Prompt Validator Agent

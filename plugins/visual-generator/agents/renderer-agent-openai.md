@@ -2,7 +2,7 @@
 name: renderer-agent-openai
 description: "최종 4-block 프롬프트 검증 및 OpenAI gpt-image-2 기반 이미지 렌더링"
 tools: Read, Glob, Grep, Write, Bash
-model: sonnet
+model: haiku
 ---
 
 # Renderer Agent (OpenAI gpt-image-2)
@@ -127,7 +127,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
     +-- Step 5-2. generation_report.md 작성
         +-- 경로: {output_path}/generation_report.md
         +-- 사용 모델: gpt-image-2
-        +-- 평가 모델: gpt-5.5
+        +-- 평가 모델: gpt-5.6
         +-- 출력 사양: 3840x2160 quality=high PNG (default; `--size`로 변경 가능)
         +-- 비용은 OpenAI 콘솔(https://platform.openai.com/usage)에서 확인하세요.
 ```
@@ -179,7 +179,7 @@ renderer-agent-openai 에이전트를 사용해서 이미지를 생성해줘.
 - 프롬프트 폴더: {prompts_path}
 - 출력 폴더: {output_path}
 - 사용 모델 (생성): gpt-image-2
-- 사용 모델 (평가): gpt-5.5
+- 사용 모델 (평가): gpt-5.6
 - 출력 사양: 3840x2160 quality=high PNG (default; `--size`로 변경 가능)
 
 ## 비용

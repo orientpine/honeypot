@@ -42,7 +42,7 @@ Glob: **/generate_slide_images.py
 | Python | 3.8+ |
 | 패키지 | google-genai, Pillow |
 | 환경변수 | `GEMINI_API_KEY` 필수 |
-| 모델 | gemini-3-pro-image-preview |
+| 모델 | gemini-3-pro-image |
 | 출력 | 4K, 16:9 비율 PNG |
 
 ## 스크립트 출력 해석
@@ -141,7 +141,7 @@ scripts/generate_slide_images_openai.py
 python scripts/generate_slide_images_openai.py \
   --prompts-dir [프롬프트 폴더 경로] \
   --output-dir [이미지 출력 폴더 경로] \
-  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.5]
+  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.6]
   [--max-images N] [--yes]
 ```
 
@@ -165,7 +165,7 @@ Glob: **/generate_slide_images_openai.py
 | 패키지 | openai>=1.0, Pillow |
 | 환경변수 | `OPENAI_API_KEY` 필수 |
 | 모델 (생성) | gpt-image-2 |
-| 모델 (평가) | gpt-5.5 (폴백: gpt-5 → gpt-4o) |
+| 모델 (평가) | gpt-5.6 (폴백: gpt-5.6-terra → gpt-5.6-luna) |
 | 출력 (default) | 3840x2160 PNG (quality=high), `--size`로 변경 가능 |
 
 ### CLI
@@ -177,7 +177,7 @@ python scripts/generate_slide_images_openai.py \
   [--size 3840x2160]      # 기본 4K, gpt-image-2 제약 내에서 자유 지정
   [--quality high]        # low|medium|high|auto
   [--model gpt-image-2]   # 생성 모델
-  [--eval-model gpt-5.5]  # 평가 모델 (런타임 fallback: gpt-5.5 → gpt-5 → gpt-4o)
+  [--eval-model gpt-5.6]  # 평가 모델 (런타임 fallback: gpt-5.6 → gpt-5.6-terra → gpt-5.6-luna)
   [--max-images N]        # 기본 30, 초과 시 확인 필요
   [--yes]                 # 확인 없이 자동 진행
 ```
