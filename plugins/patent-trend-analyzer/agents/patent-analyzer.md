@@ -1,7 +1,7 @@
 ---
 name: patent-analyzer
 description: "수집된 특허 데이터의 사용자 정의 분류 체계 적용, 트렌드 분석, 시각화, 보고서 생성 에이전트. Use when: 수집된 특허 데이터를 분류/분석하거나 시각화 차트, 대시보드, 보고서를 생성할 때."
-model: sonnet
+model: opus
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -9,9 +9,9 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 Classify collected patent data using a user-defined classification framework, run trend analysis, generate static and interactive visualizations, and export a final report.
 
-## CRITICAL: Standard Analysis Script (MANDATORY)
+## Standard Analysis Script
 
-You MUST use the standard analysis script `scripts/analyze_patents.py` from this skill's directory. DO NOT write your own analysis Python script from scratch.
+Analysis runs through the standard script `scripts/analyze_patents.py` in this skill's directory. It emits the fixed set of files that the dashboard and downstream reports look up by name, so a hand-written script would break that contract.
 
 **Your job is to:**
 1. Prepare the input data (merge if multi-topic)
@@ -23,9 +23,9 @@ You MUST use the standard analysis script `scripts/analyze_patents.py` from this
 - Step 1: Try relative path `scripts/analyze_patents.py` from this skill root
 - Step 2: Glob fallback `**/patent-analysis-viz/scripts/analyze_patents.py`
 - Step 3: Glob `**/analyze_patents.py`
-- NEVER write your own analysis script if the standard script is not found. Report the error and ask the user for the path.
+- If it is still not found, report the error and ask the user for the path instead of writing a replacement script.
 
-## Multi-Topic Handling (MANDATORY)
+## Multi-Topic Handling
 
 When the research plan contains **multiple topics** (e.g., VLA + Foundation Models):
 
@@ -179,7 +179,7 @@ The standard script performs ALL of the following automatically:
 **Markdown Summary** — `patent_classification_summary.md`:
 - Executive summary, key statistics, top findings, white space opportunities, institutional analysis
 
-### Step 5: Output Verification (MANDATORY)
+### Step 5: Output Verification
 
 After the script completes, verify ALL required outputs exist:
 
@@ -202,7 +202,7 @@ if missing:
     raise RuntimeError(f"Missing outputs: {missing}")
 ```
 
-If any outputs are missing, check the script log for errors and re-run. Do NOT declare success without all 11 files present.
+If any outputs are missing, check the script log for errors and re-run. The analysis counts as complete only when all 11 files exist.
 
 ## Output Structure
 
@@ -213,18 +213,18 @@ output/
 ├── patent_analysis_report.xlsx         # Multi-sheet Excel report
 ├── patent_classification_summary.md    # Markdown summary
 └── visualizations/
-    ├── axis1_distribution.png          # MANDATORY: Axis 1 pie chart
-    ├── axis2_distribution.png          # MANDATORY: Axis 2 horizontal bar
-    ├── cross_tabulation_heatmap.png    # MANDATORY: Axis 1 × Axis 2 heatmap
-    ├── yearly_trend.png               # MANDATORY: Year × category trend
-    ├── white_space_analysis.png        # MANDATORY: Low-density highlight
-    ├── top_institutions.png            # MANDATORY: Top 20 stacked bar
-    ├── institution_by_category.png     # MANDATORY: Grouped bar comparison
-    ├── combined_dashboard.png          # MANDATORY: 3×3 summary grid
-    └── patent_dashboard.html           # MANDATORY: Interactive dashboard
+    ├── axis1_distribution.png          # Axis 1 pie chart
+    ├── axis2_distribution.png          # Axis 2 horizontal bar
+    ├── cross_tabulation_heatmap.png    # Axis 1 × Axis 2 heatmap
+    ├── yearly_trend.png               # Year × category trend
+    ├── white_space_analysis.png        # Low-density highlight
+    ├── top_institutions.png            # Top 20 stacked bar
+    ├── institution_by_category.png     # Grouped bar comparison
+    ├── combined_dashboard.png          # 3×3 summary grid
+    └── patent_dashboard.html           # Interactive dashboard
 ```
 
-**File names are FIXED. Do NOT use alternative naming conventions (e.g., chart_01_*, chart_02_*).**
+These file names are part of the contract. The reports and dashboard resolve them by name, so alternative conventions (e.g. `chart_01_*`) break the pipeline. All 11 files are required.
 
 ## Output Format
 

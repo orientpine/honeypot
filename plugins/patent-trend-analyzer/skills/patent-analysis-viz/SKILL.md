@@ -11,9 +11,9 @@ description: "특허 데이터 다축 분류, 트렌드 분석, 시각화 대시
 
 ---
 
-## CRITICAL: Standard Analysis Script
+## 표준 분석 스크립트
 
-이 스킬은 `scripts/analyze_patents.py` 표준 분석 스크립트를 포함합니다. patent-analyzer 에이전트는 반드시 이 스크립트를 사용하여 분석을 수행해야 합니다.
+이 스킬은 `scripts/analyze_patents.py` 표준 분석 스크립트를 포함합니다. 이 스크립트가 11개 고정 출력물을 생성하고 대시보드·보고서가 그 파일명을 그대로 참조하므로, patent-analyzer 에이전트는 분석을 이 스크립트로 수행합니다.
 
 ### 스크립트 참조 및 실행
 
@@ -37,8 +37,7 @@ Glob: `**/patent-analysis-viz/scripts/analyze_patents.py`
 **Step 3. Glob도 실패 시 확장 탐색**
 Glob: `**/analyze_patents.py`
 
-**절대 금지**: 스크립트를 찾지 못했을 때 자체적으로 Python 코드를 작성하지 마세요.
-반드시 에러를 보고하고 사용자에게 경로 확인을 요청하세요.
+스크립트를 끝내 찾지 못하면 직접 Python 코드를 작성하지 말고, 에러를 보고한 뒤 사용자에게 경로 확인을 요청하세요. 자체 구현은 고정 출력물 계약을 깨뜨립니다.
 
 ---
 
@@ -158,7 +157,7 @@ for each patent:
 
 ---
 
-## Mandatory Output (FIXED — 파일명 변경 금지)
+## 고정 출력물 (파일명 변경 금지)
 
 ```
 output/
@@ -184,4 +183,4 @@ output/
     └── patent_dashboard.html           # 인터랙티브 대시보드
 ```
 
-**11개 파일이 모두 생성되어야 분석 완료로 간주합니다.**
+11개 파일이 모두 생성되어야 분석 완료로 간주합니다.
