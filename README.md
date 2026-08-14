@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 특허 분석, 개발 도구
 
-**Version**: 4.0.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 4.2.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 > **📦 투자·금융 플러그인 분리 안내**: DC형 퇴직연금 포트폴리오, 주식/ETF 상담, 기관급 주식 분석, 거시경제 분석 등 **투자·금융 관련 플러그인은 별도 저장소로 이전**되었습니다 → **[orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)**. 이 저장소(`honeypot`)에서는 더 이상 `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis` 플러그인을 제공하지 않습니다.
 
@@ -234,7 +234,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 ### 테마 갤러리 — Gemini vs OpenAI gpt-image-2
 
-동일한 프롬프트(스마트 팩토리, 6개 테마)를 두 렌더링 엔진으로 비교한 결과입니다. 좌측은 **Gemini** (`gemini-3-pro-image-preview`, 5504×3072 PNG), 우측은 **OpenAI gpt-image-2** (3840×2160 JPEG, quality=high).
+동일한 프롬프트(스마트 팩토리, 6개 테마)를 두 렌더링 엔진으로 비교한 결과입니다. 좌측은 **Gemini** (당시 렌더링에 사용한 `gemini-3-pro-image-preview`, 5504×3072 PNG — 이 preview 모델은 2026-06-25 종료되었고, 현재 파이프라인은 GA 후속 모델 `gemini-3-pro-image`를 사용합니다), 우측은 **OpenAI gpt-image-2** (3840×2160 JPEG, quality=high).
 
 <table>
 <thead>
@@ -327,7 +327,7 @@ IMAX 분할 화면처럼 좌우 풀블리드 이미지.
 </tbody>
 </table>
 
-> 두 엔진 모두 동일한 4-block 마크다운 프롬프트(`assets/theme-examples/prompts/0[1-6]_theme_*.md`)로 렌더링되었습니다. 좌측 6장은 `generate_slide_images.py`(Gemini), 우측 6장은 `generate_slide_images_openai.py`(OpenAI gpt-image-2 + gpt-5.5 5D 평가)로 생성되었습니다.
+> 두 엔진 모두 동일한 4-block 마크다운 프롬프트(`assets/theme-examples/prompts/0[1-6]_theme_*.md`)로 렌더링되었습니다. 좌측 6장은 `generate_slide_images.py`(Gemini), 우측 6장은 `generate_slide_images_openai.py`(OpenAI gpt-image-2 + gpt-5.6 5D 평가)로 생성되었습니다.
 
 <details>
 <summary>구성 요소 (6 Agents · 1 Command · 8 Skills)</summary>
@@ -1082,6 +1082,8 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 4.2.0 | 2026-08-14 | **전 플러그인 모델 식별자 마이그레이션 + 프롬프트 현대화** — Gemini 이미지 모델을 GA `gemini-3-pro-image`로 전환(`gemini-3-pro-image-preview`가 2026-06-25 종료됨에 따른 필수 이전, `generate_slide_images.py` `MODEL_NAME` 및 `generate_images.py` 기본값, `GEMINI_MODEL` 환경변수 오버라이드는 유지). OpenAI 평가 체인을 `gpt-5.6 → gpt-5.6-terra → gpt-5.6-luna`로 이전(`DEFAULT_EVAL_MODEL`/`EVAL_FALLBACK_TAIL`), **이미지 생성 경로 `gpt-image-2`는 현행 모델이므로 변경 없음**. 35개 플러그인 에이전트의 `model:` 별칭을 재조정(`opus` 9 · `sonnet` 21 · `haiku` 3 · `inherit` 2, 전 구간 별칭만 사용하고 full ID 고정 없음)하고, 추론 부담이 큰 에이전트 9종에 신규 `effort:` 프론트매터를 도입. 품질 판단이 개입하는 `prompt-validator`·`patent-searcher`는 리뷰 결과 `sonnet` 유지. `plugin-dev`의 `validate-agent.sh`를 현행 프론트매터 스펙에 맞게 갱신(`fable`·full ID 허용, `model`/`color` optional, `effort` 검증)하고 authoring 문서(`agent-development` SKILL, `docs/agents/marketplace-rules.md`, `resource/agents_build_manual.md`)를 동기화. 에이전트를 보유한 9개 플러그인의 프롬프트 문구 현대화 (`link-curator`·`obsidian-skills`·`pptx-design-styles`·`wiki-gen`은 감사 결과 변경 불필요, `hwpx-generator`는 별도 작업 진행 중이라 제외). |
+| 4.1.0 | 2026-06-29 | hwpx-generator v3.15.0: **ZIP-surgery 경로 linesegarray strip 누락으로 인한 자간 뭉침/텍스트 중첩 버그 재발 근본 수정**. `<hp:linesegarray>`(한/글 라인 레이아웃 캐시)가 stale일 때 한 줄에 텍스트가 중첩되고 자간이 무시되며, 커서를 두고 스페이스를 눌러 relayout해야 풀리던 문제. v3.12.0 strip 픽스는 XML-first 빌드(build_hwpx.py)·패키징(pack.py·fix_namespaces.py) 경로에만 적용되어, 그 직후 추가된 **ZIP-surgery 계열(slot_filler.py 슬롯 채우기, section_transplant.py 챕터 이식, zip_surgery.replace_text 치환)이 strip을 우회** → 정부 양식/템플릿 채우기(Workflow 7)마다 템플릿·소스에 박혀 있던 linesegarray가 산출물로 통과해 재현됨. 모든 surgery가 funnel하는 단일 choke point `zip_surgery.write_zip()`에 `strip_linesegarray()`(pack.py와 동일 검증된 regex, self-closing·속성·공백 형태 처리, 개행 미삽입)를 추가하여 `Contents/section*.xml` 기록 직전 일괄 제거 — 채운 슬롯뿐 아니라 형제 문단·이식 문단까지 전부 커버. validate_surgery 불변식(개행 1개·standalone·xmlns·non-section byte-identical) 유지. **재발 방지 강제 게이트**: 근본 원인이 "수동·비강제 strip 의존"이었으므로, `validate.py`에 `_linesegarray_checks()`를 추가하여 `Contents/section*.xml`에 linesegarray가 1건이라도 남으면 Phase 4 필수 검증이 hard-fail(exit 1)하도록 enforcement — 어떤 경로가 strip을 누락해도 산출 전에 차단된다. 회귀 테스트 `test_lineseg_strip_surgery.py`(S5 save / S6 slot_filler / S7 transplant / S8 모든 shape+validate / S9 validate.py 검출) 신규 추가(RED→GREEN), hwpx-core 스위트 188 passed(+7, dev/ 데이터 부재 10건은 사전 존재 환경 의존 실패로 무관). 실제 report-template.hwpx(206건) CLI E2E QA로 산출물 linesegarray 0건 + validate.py 검출 동작 확인. zip_surgery.py·validate.py docstring·zip-surgery-guide.md·SKILL.md 규칙 #18을 strip+enforcement 정책으로 정합. |
 | 4.0.0 | 2026-06-09 | **투자·금융 플러그인 4종 분리(BREAKING)** — `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis`를 honeypot에서 제거하고 별도 저장소 [orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)로 이전. marketplace.json 4개 엔트리 삭제(18→14개 플러그인) + metadata.description에서 "DC연금 포트폴리오 분석" 제거, README 투자·금융 섹션/한눈에 보기 표/프로젝트 구조 트리 정리 + 분리 안내 추가, AGENTS.md WHERE TO LOOK 3행·ANTI-PATTERNS 2행·상황별 인덱스 정리, docs/agents/unique-styles.md Multi-Agent Portfolio System 섹션 제거. 마켓플레이스 구조 변경이므로 MAJOR 버전 상향. |
 | 3.36.0 | 2026-06-07 | hwpx-generator v3.14.0: 마크다운 다단계 리스트 들여쓰기 + 단계별 마커 자동 순환 — md_parser.py에 `detect_indent_unit()` 추가로 문서별 최소 들여쓰기 단위(공백 2칸/4칸·탭)를 자동 감지하여 `indent_level`을 산출(`expandtabs(4)` 통일), 글머리(`-·*·◦·□`)와 번호(`1.·a.·(1)·①`) 모두 탭/공백 들여쓰기로 계층 정렬. xml_writer.py `LEVEL_MARKERS`(`■□●○▪▫∙∘`, 8단계 순환) 도입으로 깊이별 마커를 자동 교체하고 문서 전체에서 같은 단계=같은 마커로 일관 유지, `build_numbered`도 `indent_level` 반영해 번호 목록 2단계+ 지원. hwpx-core 스위트 181 passed. |
 | 3.35.0 | 2026-06-06 | hwpx-generator v3.13.0: 양식 파악(Form Comprehension) Phase 2.5 추가 — form_mapper.py(결정적 슬롯 추출) + hwpx-form-analyzer 에이전트(의미 매핑) + slot_filler.py(paragraph-id 기반 치환)로 정부 양식 HWPX에서 올바른 삽입 위치를 자동 파악. |

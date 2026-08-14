@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "4.0.0",
+    "version": "4.2.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, 특허 분석, 문서 생성을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -13,7 +13,7 @@
       "name": "accelerated-learner",
       "source": "./plugins/accelerated-learner",
       "description": "48시간 가속 학습 — 소스 자료 분석, 멘탈모델 추출, 논쟁 매핑, 판별 질문, 소크라틱 튜터링",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "strict": true,
       "agents": [
         "./agents/source-synthesizer.md",
@@ -28,7 +28,7 @@
       "name": "isd-generator",
       "source": "./plugins/isd-generator",
       "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "strict": true,
       "agents": [
         "./agents/chapter1.md",
@@ -44,7 +44,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (4-block v3.0.0, Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison + Renderer)",
-      "version": "3.7.0",
+      "version": "3.8.0",
       "strict": true,
       "agents": [
         "./agents/content-organizer.md",
@@ -69,7 +69,7 @@
       "name": "general-agents",
       "source": "./plugins/general-agents",
       "description": "범용 에이전트 모음 — 한국어 심층 인터뷰 스킬 + 명령어 + wrapper 에이전트. 가중치 기반 모호성 게이팅 + 5개 readiness 게이트 + 7-단계 상태 머신 + 4개 도메인 렌즈. omo/Claude Code 양 환경 호환",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "strict": true,
       "agents": ["./agents/interview.md"],
       "skills": ["./skills"],
@@ -79,7 +79,7 @@
       "name": "paper-style-generator",
       "source": "./plugins/paper-style-generator",
       "description": "PDF 논문 분석을 통한 논문 작성 스타일 스킬 자동 생성 메타-플러그인. MinerU로 PDF 변환 후 스타일 패턴을 추출하여 섹션별 독립 스킬 세트를 생성합니다.",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "strict": true,
       "agents": [
         "./agents/pdf-converter.md",
@@ -92,6 +92,7 @@
       "name": "report-generator",
       "source": "./plugins/report-generator",
       "description": "연구 노트를 분석하여 공학 박사 수준의 국가기관 제출용 연구 보고서를 자동 생성하는 플러그인.",
+      "version": "1.1.0",
       "strict": true,
       "agents": [
         "./agents/input-analyzer.md",
@@ -105,7 +106,7 @@
       "name": "hwpx-generator",
       "source": "./plugins/hwpx-generator",
       "description": "HWPX 문서 생성/편집/분석 통합 플러그인. XML-first 빌드 + ZIP 치환 + ZIP-level surgery 지원. Workflow 7: 마크다운 → HWPX 템플릿 채우기 + 이미지 임베딩.",
-      "version": "3.14.0",
+      "version": "3.15.0",
       "strict": true,
       "agents": [
         "./agents/hwpx-builder.md",
@@ -118,6 +119,7 @@
       "name": "worktree-workflow",
       "source": "./plugins/worktree-workflow",
       "description": "Git worktree를 활용한 Claude Code 병렬 실행 워크플로우",
+      "version": "1.1.0",
       "strict": true,
       "agents": ["./agents/worktree.md"]
     },
@@ -125,7 +127,7 @@
       "name": "plugin-dev",
       "source": "./plugins/plugin-dev",
       "description": "Claude Code 플러그인 개발 종합 툴킷. Hook, MCP, 플러그인 구조, 설정, 커맨드/에이전트/스킬 개발 가이드 제공.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "strict": true,
       "agents": [
         "./agents/agent-creator.md",
@@ -139,7 +141,7 @@
       "name": "patent-trend-analyzer",
       "source": "./plugins/patent-trend-analyzer",
       "description": "KIPRIS API 기반 특허 동향 분석 - 키워드 클러스터링, 검색 최적화, 다축 분류, 시각화 대시보드 생성",
-      "version": "1.3.1",
+      "version": "1.4.0",
       "strict": true,
       "agents": [
         "./agents/patent-planner.md",
