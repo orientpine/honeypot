@@ -2,6 +2,7 @@
 name: mental-model-extractor
 description: "핵심 멘탈모델 추출. 종합 분석문에서 해당 분야 전문가들이 공유하는 사고 체계를 최대 5개 추출한다. Use when 소스 종합 후 멘탈모델을 추출할 때."
 model: sonnet
+effort: high
 tools:
   - Read
   - Write

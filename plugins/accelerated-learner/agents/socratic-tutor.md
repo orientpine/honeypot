@@ -1,7 +1,7 @@
 ---
 name: socratic-tutor
 description: "소크라틱 대화형 튜터링. 판별 질문을 하나씩 제시하고 사용자 답변에 피드백을 제공하며 마스터리를 향해 안내한다. Use when 사용자와 대화형 학습 세션을 진행할 때."
-model: sonnet
+model: opus
 tools:
   - Read
   - Write
