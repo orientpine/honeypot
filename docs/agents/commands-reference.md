@@ -16,7 +16,7 @@ python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_ima
 # Generate slide images (OpenAI gpt-image-2)
 python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py \
   --prompts-dir [path] --output-dir [path] \
-  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.5] \
+  [--size 3840x2160] [--quality high] [--model gpt-image-2] [--eval-model gpt-5.6] \
   [--max-images 30] [--yes]
 
 # Paper Style Generator: Convert PDFs to Markdown (requires MinerU)

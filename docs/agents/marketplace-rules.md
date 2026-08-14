@@ -44,7 +44,8 @@ plugins/{plugin-name}/
 ---
 name: backend-architect
 description: Expert backend architect specializing in scalable API design, microservices architecture, and distributed systems. Use PROACTIVELY when creating new backend services or APIs.
-model: opus       # opus | sonnet | haiku | inherit
+model: opus       # inherit | sonnet | opus | haiku | fable (생략 가능, 기본값 inherit)
+effort: high      # 선택 — low | medium | high | xhigh | max
 ---
 
 You are a backend system architect specializing in scalable, resilient, and maintainable backend systems and APIs.
@@ -65,7 +66,11 @@ You are a backend system architect specializing in scalable, resilient, and main
 |-------|----------|-------------|
 | `name` | Yes | 에이전트 식별자 (hyphen-case) |
 | `description` | Yes | 역할 설명 + 언제 사용해야 하는지. "Use when..." 또는 "Use PROACTIVELY when..." 포함 권장 |
-| `model` | No | `opus` (아키텍처/보안/리뷰), `sonnet` (복잡한 추론), `haiku` (빠른 실행), `inherit` (부모 모델 상속) |
+| `model` | No | 생략 시 `inherit`. 별칭 권장 — `opus`(아키텍처/보안/리뷰), `sonnet`(복잡한 추론), `haiku`(빠른 실행), `inherit`(부모 모델 상속), `fable`(최고 성능이나 opt-in) |
+| `effort` | No | 추론 예산 — `low` \| `medium` \| `high` \| `xhigh` \| `max`. 추론 부담이 큰 에이전트에만 명시 |
+| `color` | No | UI 표시 색상 |
+
+> 그 외 지원 필드(`maxTurns`, `tools`, `disallowedTools`, `skills`, `memory`, `background`, `isolation: worktree`)와 플러그인 에이전트에서 지원하지 않는 필드(`hooks`, `mcpServers`, `permissionMode`)는 [`plugins/plugin-dev/skills/agent-development/SKILL.md`](../../plugins/plugin-dev/skills/agent-development/SKILL.md)의 전체 필드 레퍼런스를 참조하세요.
 
 ### 2. Commands (커맨드)
 
@@ -384,4 +389,15 @@ Created 6 new agents but forgot to update marketplace.json → Agents invisible 
 | `opus` | 아키텍처 설계, 보안 감사, 코드 리뷰 | backend-architect, security-auditor |
 | `sonnet` | 복잡한 추론, 기술 선택, 다단계 분석 | python-pro, typescript-pro |
 | `haiku` | 빠른 실행, 정형화된 작업, 코드 생성 | test-automator, scaffold-generator |
-| `inherit` | 부모 모델 상속 (기본값) | 대부분의 범용 에이전트 |
+| `inherit` | 부모 모델 상속 (`model` 생략 시 기본값) | 대부분의 범용 에이전트 |
+| `fable` | 최고 성능. 단, 모든 환경에서 쓸 수 있지 않고 사용 크레딧을 소모합니다 | opt-in 전용, 기본 선택 금지 |
+
+### 배포용 플러그인은 별칭을 쓰세요
+
+`model:`은 별칭(`inherit`/`sonnet`/`opus`/`haiku`/`fable`) 또는 전체 모델 ID를 받습니다. 둘은 성격이 다릅니다.
+
+- **별칭은 앞으로 굴러갑니다(roll forward)**: `opus` → Opus 5, `sonnet` → Sonnet 5, `haiku` → Haiku 4.5. 세대가 바뀌어도 파일을 고칠 필요가 없습니다.
+- **전체 ID는 세대를 고정(pin)합니다**: 또한 Bedrock/Vertex/Foundry에서 매핑이 달라 이식성을 깨뜨립니다.
+- 따라서 **배포되는 플러그인 에이전트는 별칭만 사용**합니다. 이 저장소의 에이전트에는 전체 ID가 하나도 고정되어 있지 않습니다.
+
+> 프론트매터 필드 전체 사양과 검증 규칙은 [`plugins/plugin-dev/skills/agent-development/SKILL.md`](../../plugins/plugin-dev/skills/agent-development/SKILL.md)에서 확인하세요 (여기에 중복 기술하지 않습니다).

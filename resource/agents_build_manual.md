@@ -132,7 +132,8 @@ JSON 형식 및 사용 가능한 모든 옵션에 대한 자세한 정보는 [CL
 name: your-sub-agent-name
 description: Description of when this subagent should be invoked
 tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
-model: sonnet  # Optional - specify model alias or 'inherit'
+model: sonnet  # Optional - 별칭(inherit|sonnet|opus|haiku|fable) 또는 전체 모델 ID. 생략 시 inherit
+effort: high  # Optional - low | medium | high | xhigh | max
 permissionMode: default  # Optional - permission mode for the subagent
 skills: skill1, skill2  # Optional - skills to auto-load
 ---
@@ -152,7 +153,9 @@ the subagent should follow.
 | `name`           | 예   | 소문자 및 하이픈을 사용하는 고유 식별자                                                                                                                         |
 | `description`    | 예   | 서브에이전트의 목적에 대한 자연어 설명                                                                                                                          |
 | `tools`          | 아니오 | 특정 도구의 쉼표로 구분된 목록입니다. 생략하면 주 스레드의 모든 도구를 상속합니다                                                                                                 |
-| `model`          | 아니오 | 이 서브에이전트에 사용할 모델입니다. 모델 별칭(`sonnet`, `opus`, `haiku`) 또는 주 대화의 모델을 사용하려면 `'inherit'`일 수 있습니다. 생략하면 [구성된 서브에이전트 모델](/ko/model-config)로 기본 설정됩니다 |
+| `model`          | 아니오 | 이 서브에이전트에 사용할 모델입니다. 별칭(`inherit`, `sonnet`, `opus`, `haiku`, `fable`) 또는 전체 모델 ID를 받습니다. 생략하면 `inherit`입니다. 배포용 플러그인은 별칭을 쓰세요 |
+| `effort`         | 아니오 | 추론 예산입니다. `low`, `medium`, `high`, `xhigh`, `max` 중 하나. 추론 부담이 큰 에이전트에만 명시하세요 |
+| `maxTurns`       | 아니오 | 서브에이전트가 쓸 수 있는 최대 턴 수입니다 |
 | `permissionMode` | 아니오 | 서브에이전트의 권한 모드입니다. 유효한 값: `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan`, `ignore`. 서브에이전트가 권한 요청을 처리하는 방식을 제어합니다             |
 | `skills`         | 아니오 | 서브에이전트가 시작할 때 자동으로 로드할 스킬 이름의 쉼표로 구분된 목록입니다. 서브에이전트는 부모 대화에서 스킬을 상속하지 않습니다. 생략하면 스킬이 미리 로드되지 않습니다.                                             |
 | `hooks`          | 아니오 | 이 서브에이전트의 라이프사이클에 범위가 지정된 훅을 정의합니다. `PreToolUse`, `PostToolUse` 및 `Stop` 이벤트를 지원합니다. [서브에이전트에 대한 훅 정의](#define-hooks-for-subagents)를 참조하세요.    |
@@ -161,9 +164,11 @@ the subagent should follow.
 
 `model` 필드를 사용하면 서브에이전트가 사용하는 [AI 모델](/ko/model-config)을 제어할 수 있습니다:
 
-* **모델 별칭**: 사용 가능한 별칭 중 하나를 사용합니다: `sonnet`, `opus` 또는 `haiku`
-* **`'inherit'`**: 주 대화와 동일한 모델을 사용합니다(일관성을 위해 유용함)
-* **생략**: 지정하지 않으면 서브에이전트에 대해 구성된 기본 모델(`sonnet`)을 사용합니다
+* **모델 별칭**: `inherit`, `sonnet`, `opus`, `haiku`, `fable` 중 하나를 씁니다. **별칭은 앞으로 굴러갑니다** — `opus`는 Opus 5, `sonnet`은 Sonnet 5, `haiku`는 Haiku 4.5로 자동 연결되므로 세대가 바뀌어도 파일을 고칠 필요가 없습니다.
+* **전체 모델 ID**: 특정 세대를 고정합니다. Bedrock/Vertex/Foundry에서는 매핑이 달라지므로 배포되는 플러그인에서는 피하고 별칭을 쓰세요.
+* **`fable`**: 가장 강력하지만 모든 환경에서 쓸 수 있지 않고 사용 크레딧을 소모합니다. opt-in으로만 선택하세요.
+* **`'inherit'`**: 주 대화와 동일한 모델을 사용합니다(일관성을 위해 유용함).
+* **생략**: `model`은 선택 필드이며, 지정하지 않으면 `inherit`으로 동작합니다. 필수 필드는 `name`과 `description` 둘뿐입니다.
 
 <Note>
   `'inherit'`를 사용하는 것은 서브에이전트가 주 대화의 모델 선택에 적응하도록 하려는 경우 특히 유용하며, 전체 세션에서 일관된 기능과 응답 스타일을 보장합니다.
