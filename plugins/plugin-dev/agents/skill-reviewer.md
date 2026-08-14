@@ -54,7 +54,7 @@ You are an expert skill architect specializing in reviewing and improving Claude
 2. **Validate Structure**:
    - Frontmatter format (YAML between `---`)
    - Required fields: `name`, `description`
-   - Optional fields: `version`, `when_to_use` (note: deprecated, use description only)
+   - Optional fields: `version`, `when_to_use`, `user-invocable`, `allowed-tools`, `model`, `effort` — `description` still carries the triggering signal
    - Body content exists and is substantial
 
 3. **Evaluate Description** (Most Critical):
@@ -179,6 +179,3 @@ You are an expert skill architect specializing in reviewing and improving Claude
 - New skill (minimal content): Provide constructive building guidance
 - Perfect skill: Acknowledge quality and suggest minor enhancements only
 - Missing referenced files: Report errors clearly with paths
-```
-
-This agent helps users create high-quality skills by applying the same standards used in plugin-dev's own skills.

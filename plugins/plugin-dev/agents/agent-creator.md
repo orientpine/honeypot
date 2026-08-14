@@ -100,8 +100,9 @@ When a user describes what they want an agent to do, you will:
      - Edge case handling
 
 3. **Select Configuration**:
-   - **Model**: Use `inherit` unless user specifies (sonnet for complex, haiku for simple)
-   - **Color**: Choose appropriate color:
+   - **Model**: Omit the field (inherits the parent session) unless the user asks for a specific model. Prefer rolling aliases (`sonnet`, `opus`, `haiku`) over pinned full IDs such as `claude-opus-5`, because aliases roll forward to the newest model and resolve correctly across providers. Never default to `fable` — it is opt-in only.
+   - **Effort**: Set `effort` (`low`/`medium`/`high`/`xhigh`/`max`) only when the task needs more or less reasoning than the model's default
+   - **Color** (optional): Choose appropriate color:
      - blue/cyan: Analysis, review
      - green: Generation, creation
      - yellow: Validation, caution
@@ -114,13 +115,15 @@ When a user describes what they want an agent to do, you will:
    ---
    name: [identifier]
    description: [Use this agent when... Examples: <example>...</example>]
-   model: inherit
-   color: [chosen-color]
-   tools: ["Tool1", "Tool2"]  # Optional
+   model: inherit             # optional — omit to inherit
+   color: [chosen-color]      # optional
+   tools: ["Tool1", "Tool2"]  # optional
    ---
 
    [Complete system prompt]
    ```
+
+   Only `name` and `description` are mandatory. `hooks`, `mcpServers`, and `permissionMode` are ignored for plugin agents — do not emit them.
 
 5. **Explain to User**: Provide summary of created agent:
    - What it does
@@ -133,7 +136,7 @@ When a user describes what they want an agent to do, you will:
 - Identifier follows naming rules (lowercase, hyphens, 3-50 chars)
 - Description has strong trigger phrases and 2-4 examples
 - Examples show both explicit and proactive triggering
-- System prompt is comprehensive (500-3,000 words)
+- System prompt is comprehensive (500-3,000 characters)
 - System prompt has clear structure (role, responsibilities, process, output)
 - Model choice is appropriate
 - Tool selection follows least privilege
@@ -171,6 +174,3 @@ Validate with: `scripts/validate-agent.sh agents/[identifier].md`
 - User wants specific tool access: Honor the request in agent configuration
 - User specifies model: Use specified model instead of inherit
 - First agent in plugin: Create agents/ directory first
-```
-
-This agent automates agent creation using the proven patterns from Claude Code's internal implementation, making it easy for users to create high-quality autonomous agents.

@@ -10,6 +10,8 @@ version: 0.2.0
 
 Slash commands are frequently-used prompts defined as Markdown files that Claude executes during interactive sessions. Understanding command structure, frontmatter options, and dynamic features enables creating powerful, reusable workflows.
 
+**Commands have been merged into skills.** A skill marked `user-invocable` is what used to be a standalone slash command, and the two share one frontmatter set. Everything below applies to both.
+
 **Key concepts:**
 - Markdown file format for commands
 - YAML frontmatter for configuration
@@ -147,7 +149,7 @@ allowed-tools: Read, Write, Edit, Bash(git:*)
 ### model
 
 **Purpose:** Specify model for command execution
-**Type:** String (sonnet, opus, haiku)
+**Type:** String — alias (`inherit`, `sonnet`, `opus`, `haiku`, `fable`) or full model ID (`claude-opus-5`)
 **Default:** Inherits from conversation
 
 ```yaml
@@ -160,6 +162,9 @@ model: haiku
 - `haiku` - Fast, simple commands
 - `sonnet` - Standard workflows
 - `opus` - Complex analysis
+- `fable` - Most capable, but opt-in only: not available everywhere and it bills usage credits
+
+**Aliases roll forward** to the newest model in their family; a full ID like `claude-opus-5` pins one generation. Use aliases in distributed plugins so the command keeps working across providers and model releases.
 
 ### argument-hint
 
@@ -191,6 +196,23 @@ disable-model-invocation: true
 ```
 
 **Use when:** Command should only be manually invoked
+
+### Other supported fields
+
+| Field | Purpose |
+|-------|---------|
+| `effort` | Reasoning effort: `low` / `medium` / `high` / `xhigh` / `max` |
+| `disallowed-tools` | Tool blocklist (counterpart to `allowed-tools`) |
+| `user-invocable` | Expose the skill as a slash command |
+| `when_to_use` | Trigger guidance for automatic invocation |
+| `arguments` | Structured argument declaration |
+| `context` | Additional context to load before running |
+| `agent` | Delegate execution to a named agent |
+| `background` | Run in the background |
+| `paths` | Path scoping |
+| `hooks` | Hooks attached to this command/skill |
+
+**Naming note:** commands and skills use hyphenated `allowed-tools` / `disallowed-tools`, while agents use `tools` / `disallowedTools` (camelCase). Mixing the two silently drops the restriction.
 
 ## Dynamic Arguments
 

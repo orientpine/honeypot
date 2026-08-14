@@ -1,6 +1,6 @@
 {
   "name": "plugin-dev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Claude Code 플러그인 개발 종합 툴킷. Hook, MCP, 플러그인 구조, 설정, 커맨드/에이전트/스킬 개발 가이드 제공.",
   "author": {
     "name": "Daisy Hollman",

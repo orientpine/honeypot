@@ -15,7 +15,7 @@ Agents are autonomous subprocesses that handle complex, multi-step tasks indepen
 - Markdown file format with YAML frontmatter
 - Triggering via description field with examples
 - System prompt defines agent behavior
-- Model and color customization
+- Model, effort, and tool access are optional refinements
 
 ## Agent File Structure
 
@@ -39,9 +39,10 @@ assistant: "[How assistant should respond and use this agent]"
 [Additional example...]
 </example>
 
-model: inherit
-color: blue
-tools: ["Read", "Write", "Grep"]
+model: inherit                      # optional (default: inherit)
+effort: medium                      # optional
+tools: ["Read", "Write", "Grep"]    # optional
+color: blue                         # optional
 ---
 
 You are [agent role description]...
@@ -112,21 +113,47 @@ assistant: "[How Claude should respond]"
 - Explain reasoning in commentary
 - Be specific about when NOT to use the agent
 
-### model (required)
+### model (optional)
 
-Which model the agent should use.
+Which model the agent should use. **Not required** — when omitted the agent inherits the parent session's model (`inherit`).
 
-**Options:**
-- `inherit` - Use same model as parent (recommended)
-- `sonnet` - Claude Sonnet (balanced)
-- `opus` - Claude Opus (most capable, expensive)
-- `haiku` - Claude Haiku (fast, cheap)
+**Two kinds of values:**
 
-**Recommendation:** Use `inherit` unless agent needs specific model capabilities.
+| Value kind | Examples | Behavior |
+|------------|----------|----------|
+| Alias | `inherit`, `sonnet`, `opus`, `haiku`, `fable` | **Rolls forward** — always resolves to the newest model in that family |
+| Full model ID | `claude-opus-5`, `claude-sonnet-4-6` | **Pins** one specific generation — never changes |
 
-### color (required)
+**Aliases:**
+- `inherit` - Same model as the parent session (default)
+- `sonnet` - Balanced capability and cost
+- `opus` - High capability
+- `haiku` - Fast and cheap
+- `fable` - Most capable, but **opt-in only**: it is not available on every account or provider and it bills usage credits. Never set it as a default (기본값으로 쓰지 마십시오).
 
-Visual identifier for agent in UI.
+**Alias vs. pinned ID — the tradeoff:**
+
+Aliases roll forward. On the Anthropic API `opus` currently resolves to Opus 5, `sonnet` to Sonnet 5, and `haiku` to Haiku 4.5, and those mappings move as new models ship. A full ID such as `claude-opus-5` pins that exact generation permanently. Provider mapping also differs on Bedrock / Vertex / Foundry, so an ID that resolves for one user may not exist for another.
+
+**For distributed marketplace plugins, use aliases.** Pin a full ID only when one specific generation's behavior is a hard requirement, and expect to maintain it as models change. The official `anthropics/claude-code` plugins ship `model: opus` and `wshobson/agents` ships `model: sonnet` — rolling aliases are the norm for distributable plugins.
+
+**Recommendation:** Omit the field (or use `inherit`) unless the agent needs specific model capabilities.
+
+### effort (optional)
+
+Reasoning effort for the agent — how much the model thinks before acting.
+
+**Options:** `low`, `medium`, `high`, `xhigh`, `max`
+
+Availability depends on the selected model; not every model supports every level. Omit the field to use the model's default.
+
+```yaml
+effort: high
+```
+
+### color (optional)
+
+Visual identifier for the agent in the UI. **Not required** — Claude Code assigns one when omitted.
 
 **Options:** `blue`, `cyan`, `green`, `yellow`, `magenta`, `red`
 
@@ -158,6 +185,53 @@ tools: ["Read", "Write", "Grep", "Bash"]
 - Code generation: `["Read", "Write", "Grep"]`
 - Testing: `["Read", "Bash", "Grep"]`
 - Full access: Omit field or use `["*"]`
+
+### disallowedTools (optional)
+
+Blocklist counterpart to `tools`. Use it to keep broad access while removing a few dangerous tools.
+
+```yaml
+disallowedTools: ["Bash", "Write"]
+```
+
+### maxTurns (optional)
+
+Caps how many agent turns run before the agent is stopped — a runaway guard for agents that iterate over many files.
+
+```yaml
+maxTurns: 30
+```
+
+### skills (optional)
+
+Skills the agent is allowed to load. Restricting this keeps the agent's context focused on its domain.
+
+```yaml
+skills: ["agent-development", "plugin-structure"]
+```
+
+### memory (optional)
+
+Whether the agent retains memory across invocations.
+
+### background (optional)
+
+Run the agent as a background task so the main session keeps working while it runs.
+
+### isolation (optional)
+
+**Only supported value:** `worktree` — runs the agent in a separate git worktree, so its edits never touch the user's working tree until they are merged.
+
+```yaml
+isolation: worktree
+```
+
+### Unsupported fields
+
+`hooks`, `mcpServers`, and `permissionMode` are **silently ignored** on plugin-shipped agents. Declaring them produces no error and no effect, which makes the resulting bug hard to find.
+
+- Hooks belong in `hooks/hooks.json` — see the hook-development skill
+- MCP servers belong in `.mcp.json` or `plugin.json` — see the mcp-integration skill
 
 ## System Prompt Design
 
@@ -251,8 +325,8 @@ See `examples/agent-creation-prompt.md` for complete template.
 
 1. Choose agent identifier (3-50 chars, lowercase, hyphens)
 2. Write description with examples
-3. Select model (usually `inherit`)
-4. Choose color for visual identification
+3. Select model only if needed (omit for `inherit`)
+4. Choose color only if you want a fixed one
 5. Define tools (if restricting access)
 6. Write system prompt with structure above
 7. Save as `agents/agent-name.md`
@@ -333,8 +407,6 @@ Ensure system prompt is complete:
 ---
 name: simple-agent
 description: Use this agent when... Examples: <example>...</example>
-model: inherit
-color: blue
 ---
 
 You are an agent that [does X].
@@ -346,22 +418,59 @@ Process:
 Output: [What to provide]
 ```
 
+Only `name` and `description` are mandatory. Every other field is optional: `model` defaults to `inherit`, and the UI picks a color for you.
+
 ### Frontmatter Fields Summary
 
 | Field | Required | Format | Example |
 |-------|----------|--------|---------|
 | name | Yes | lowercase-hyphens | code-reviewer |
 | description | Yes | Text + examples | Use when... <example>... |
-| model | Yes | inherit/sonnet/opus/haiku | inherit |
-| color | Yes | Color name | blue |
+| model | No | alias or full model ID | inherit |
+| effort | No | low/medium/high/xhigh/max | high |
+| maxTurns | No | Integer | 30 |
 | tools | No | Array of tool names | ["Read", "Grep"] |
+| disallowedTools | No | Array of tool names | ["Bash"] |
+| skills | No | Array of skill names | ["plugin-structure"] |
+| memory | No | Boolean | true |
+| background | No | Boolean | true |
+| isolation | No | `worktree` | worktree |
+| color | No | Color name | blue |
+
+`hooks`, `mcpServers`, and `permissionMode` are not supported for plugin agents.
+
+### Command / Skill Frontmatter
+
+Custom commands have been **merged into skills** — a skill marked `user-invocable` is what used to be a standalone slash command. Their frontmatter is a different set from agent frontmatter:
+
+| Field | Purpose |
+|-------|---------|
+| `model` | Model alias or full ID (same values as agents) |
+| `effort` | `low` / `medium` / `high` / `xhigh` / `max` |
+| `argument-hint` | Argument hint shown in the slash-command menu |
+| `allowed-tools` | Tool allowlist |
+| `disallowed-tools` | Tool blocklist |
+| `disable-model-invocation` | Prevent Claude from invoking it automatically |
+| `user-invocable` | Expose it as a slash command |
+| `context` | Additional context to load |
+| `agent` | Delegate execution to a named agent |
+| `background` | Run in the background |
+| `paths` | Path scoping |
+| `when_to_use` | Trigger guidance for automatic invocation |
+
+**Naming difference — easy to get wrong:**
+
+| | Allowlist | Blocklist |
+|---|---|---|
+| Agents | `tools` | `disallowedTools` (camelCase) |
+| Commands / Skills | `allowed-tools` | `disallowed-tools` (hyphenated) |
 
 ### Best Practices
 
 **DO:**
 - ✅ Include 2-4 concrete examples in description
 - ✅ Write specific triggering conditions
-- ✅ Use `inherit` for model unless specific need
+- ✅ Prefer rolling aliases (`inherit`, `sonnet`, `opus`) over pinned full model IDs
 - ✅ Choose appropriate tools (least privilege)
 - ✅ Write clear, structured system prompts
 - ✅ Test agent triggering thoroughly
@@ -373,6 +482,8 @@ Output: [What to provide]
 - ❌ Grant unnecessary tool access
 - ❌ Write vague system prompts
 - ❌ Skip testing
+- ❌ Default an agent to `fable` — it is opt-in only
+- ❌ Declare `hooks`, `mcpServers`, or `permissionMode` (silently ignored)
 
 ## Additional Resources
 
@@ -396,7 +507,6 @@ Working examples in `examples/`:
 Development tools in `scripts/`:
 
 - **`validate-agent.sh`** - Validate agent file structure
-- **`test-agent-trigger.sh`** - Test if agent triggers correctly
 
 ## Implementation Workflow
 
@@ -405,7 +515,7 @@ To create an agent for a plugin:
 1. Define agent purpose and triggering conditions
 2. Choose creation method (AI-assisted or manual)
 3. Create `agents/agent-name.md` file
-4. Write frontmatter with all required fields
+4. Write frontmatter (`name` + `description` required; add `model`/`effort`/`tools` only when needed)
 5. Write system prompt following best practices
 6. Include 2-4 triggering examples in description
 7. Validate with `scripts/validate-agent.sh`
