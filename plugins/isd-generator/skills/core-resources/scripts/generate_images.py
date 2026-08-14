@@ -6,7 +6,7 @@ Gemini API를 사용하여 프롬프트 파일에서 이미지를 생성하는 �
     python generate_images.py --prompts-dir [프롬프트 폴더] --output-dir [출력 폴더]
 
 설정:
-    - 모델: gemini-3-pro-image-preview
+    - 모델: gemini-3-pro-image
     - 해상도: 4K
     - 비율: 16:9
     - 사고모드: 활성화
@@ -24,7 +24,7 @@ from google.genai import types
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3-pro-image-preview")
+MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3-pro-image")
 
 if not GEMINI_API_KEY:
     print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -192,7 +192,7 @@ def main():
         "--model",
         "-m",
         default=None,
-        help="Gemini 모델명 (기본값: GEMINI_MODEL 환경변수 또는 gemini-3-pro-image-preview)",
+        help="Gemini 모델명 (기본값: GEMINI_MODEL 환경변수 또는 gemini-3-pro-image)",
     )
 
     args = parser.parse_args()
