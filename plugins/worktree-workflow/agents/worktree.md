@@ -2,7 +2,7 @@
 name: worktree
 description: "Git worktree 생성, 목록 조회, 삭제를 관리하는 에이전트. 브랜치명 정규화, tmux 세션 자동 생성, 한글 에러 메시지 지원"
 tools: Bash
-model: opus
+model: sonnet
 ---
 
 # Git Worktree Workflow Agent
@@ -167,48 +167,10 @@ Git worktree를 생성, 관리, 삭제하는 자율 에이전트. 사용자의 �
 
 ## Usage Examples
 
-### Create Worktree
-```
-사용자: "feature/user-auth 브랜치로 worktree 만들어줘"
+| 사용자 발화 | 결과 |
+|---|---|
+| "feature/user-auth 브랜치로 worktree 만들어줘" | `../project-worktrees/feature-user-auth` 생성 + tmux 윈도우 `worktree:feature-user-auth` |
+| "현재 worktree 목록 보여줘" | `git worktree list` 결과를 경로 / 브랜치 / `(current)` 표시로 포맷팅 |
+| "feature-user-auth 삭제해줘" | 해당 worktree 제거 + tmux 윈도우 정리, 브랜치는 유지 |
 
-에이전트:
-1. 브랜치명 정규화: feature/user-auth → feature-user-auth
-2. 경로 계산: ../project-worktrees/feature-user-auth
-3. 브랜치 확인 및 worktree 생성
-4. tmux 세션 확인 및 윈도우 생성
-5. 결과 메시지 출력
-
-✓ Worktree 생성 완료
-  경로: ../project-worktrees/feature-user-auth
-  브랜치: feature/user-auth
-  tmux 윈도우: worktree:feature-user-auth
-```
-
-### List Worktrees
-```
-사용자: "현재 worktree 목록 보여줘"
-
-에이전트:
-1. git worktree list 실행
-2. 결과 포맷팅
-
-현재 프로젝트의 Worktree 목록:
-
-/home/user/project                  (main) (current)
-/home/user/project-worktrees/feature-user-auth  (feature/user-auth)
-```
-
-### Delete Worktree
-```
-사용자: "feature-user-auth 삭제해줘"
-
-에이전트:
-1. 경로 계산: ../project-worktrees/feature-user-auth
-2. worktree 제거
-3. tmux 윈도우 제거
-4. 결과 메시지 출력
-
-✓ Worktree 삭제 완료
-  경로: ../project-worktrees/feature-user-auth
-  브랜치: feature/user-auth (유지됨)
-```
+성공 메시지와 에러 메시지 형식은 위 Workflow 각 절에 정의된 것을 그대로 사용합니다.

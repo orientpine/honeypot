@@ -1,6 +1,6 @@
 {
   "name": "worktree-workflow",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Git worktree를 활용한 Claude Code 병렬 실행 워크플로우",
   "author": {
     "name": "Baekdong Cha",
