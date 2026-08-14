@@ -2,6 +2,7 @@
 name: controversy-mapper
 description: "논쟁 지형 매핑. 종합 분석문에서 전문가들이 근본적으로 의견이 갈리는 지점을 식별하고 각 입장의 근거를 정리한다. Use when 소스 종합 후 논쟁 구조를 파악할 때."
 model: sonnet
+effort: high
 tools:
   - Read
   - Write

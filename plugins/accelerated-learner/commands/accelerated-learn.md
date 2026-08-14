@@ -71,7 +71,7 @@ output_dir: {output_dir}/{subject_name}/
 
 ### Phase 2. 멘탈모델 + 논쟁 매핑 (병렬)
 
-1. 아래 두 Task를 **반드시 병렬(parallel/동시) 실행**합니다. 순차 실행 금지.
+1. 아래 두 Task를 병렬(동시)로 실행합니다. 두 에이전트는 동일한 입력(`00-source-synthesis.md`)만 읽고 서로의 산출물에는 의존하지 않으므로, 순차 실행은 결과를 바꾸지 않고 대기 시간만 늘립니다.
 
 Use the Task tool TWICE IN PARALLEL:
 
@@ -150,5 +150,3 @@ output_dir: {output_dir}/{subject_name}/
 
 - 오케스트레이터가 직접 소스 분석/멘탈모델 추출/논쟁 매핑/질문 생성/튜터링 수행 금지
 - 웹 검색으로 소스 자료 보충 금지
-- Phase 2의 두 에이전트를 순차 실행 금지 — 반드시 병렬
-- 에러 발생 시 재시도 없이 즉시 포기 금지 — 반드시 1회 재시도
