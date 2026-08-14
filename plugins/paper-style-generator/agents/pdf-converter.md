@@ -2,7 +2,7 @@
 name: pdf-converter
 description: "MinerU를 사용하여 PDF 논문을 Markdown으로 변환하고 후처리 정제를 수행하는 에이전트"
 tools: Read, Glob, Grep, Write, Edit, Bash
-model: sonnet
+model: haiku
 ---
 
 # PDF Converter Agent
