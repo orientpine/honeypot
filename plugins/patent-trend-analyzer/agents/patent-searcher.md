@@ -1,7 +1,7 @@
 ---
 name: patent-searcher
 description: "KIPRIS API 기반 한국/해외 특허 검색, 배치 내보내기, 중복 제거 실행 에이전트. Use when: 특허 검색 계획을 실행하거나 특허 데이터를 수집/내보내기할 때."
-model: haiku
+model: sonnet
 tools: Read, Write, Bash, Glob
 ---
 
