@@ -2,7 +2,7 @@
 name: chapter3
 description: "국책과제 연구계획서의 '제3장 사업 목표 및 추진 전략' 문서를 자동 생성하는 에이전트. 연구 아이디어를 입력받아 웹 검색을 통해 최신 기술 동향을 조사하고, 아이디어를 확장한 후 정해진 문서 양식에 맞춰 연구목표및내용.md를 생성한다."
 tools: Read, Glob, Grep, Write, Edit, Bash, WebSearch
-model: sonnet
+model: opus
 skills: [chapter3-guide, verification-rules]
 ---
 
