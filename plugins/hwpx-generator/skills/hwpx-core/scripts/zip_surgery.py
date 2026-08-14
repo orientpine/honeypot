@@ -12,10 +12,18 @@ Preserves:
   - Single-line XML body (no added newlines)
   - Byte-identical non-modified entries
 
+Strips automatically on write (write_zip):
+  - <hp:linesegarray> from every Contents/section*.xml entry. It is HWP's
+    per-paragraph layout cache; left stale by a fill/replace/transplant it
+    crams text onto one line and ignores 자간 until a manual relayout. Removal
+    lets Hangul recompute correct layout on open. See strip_linesegarray().
+
 Safety rules:
   - NEVER use ET.tostring() or tree.write() on section XML
   - NEVER insert newlines between child elements
-  - NEVER run cell_writer.py on surgery output (Hangul recalculates layout)
+  - NEVER GENERATE linesegarray; stripping is automatic (do not run the
+    lxml-based cell_writer.py on surgery output — it corrupts the declaration,
+    namespaces, and whitespace, and is unnecessary since write_zip strips)
   - ALWAYS validate with validate_surgery() after editing
 
 Usage:
@@ -76,6 +84,56 @@ class SectionParts:
     xml_header: str  # XML declaration + root open tag (with all xmlns)
     body: str  # Everything between root open and close tags
     root_close_tag: str  # "</hs:sec>"
+
+
+# ---------------------------------------------------------------------------
+# linesegarray strip — packaging-time layout-cache removal
+# ---------------------------------------------------------------------------
+
+# Matches a whole <hp:linesegarray> element in every shape: self-closing,
+# with attributes, with nested <hp:lineseg>, and with surrounding whitespace.
+# DOTALL lets ".*?" span the (single-line) body; the lazy quantifier prevents
+# over-matching into a following sibling element.  Identical to the proven
+# regex in office/pack.py and skills/hwpx-templates/scripts/fix_namespaces.py.
+_LINESEG_RE = re.compile(
+    r"\s*<(?P<prefix>[A-Za-z_][\w.-]*):linesegarray\b[^>]*?"
+    r"(?:/>|>.*?</(?P=prefix):linesegarray\s*>)",
+    re.DOTALL,
+)
+
+
+def strip_linesegarray(section_text: str) -> str:
+    """Remove every <hp:linesegarray> line-layout cache from section XML text.
+
+    linesegarray is HWP's per-paragraph precomputed layout cache. When stale
+    (after a slot fill, a placeholder replacement, or a transplant into a
+    different page geometry) HWP renders the cached positions, cramming text
+    onto one line and ignoring 자간 until a manual relayout. Removing the whole
+    element makes Hangul recompute accurate layout on open. Pure string/regex,
+    never inserts newlines, so ZIP-surgery invariants are preserved.
+    """
+    return _LINESEG_RE.sub("", section_text)
+
+
+def _is_section_entry(name: str) -> bool:
+    return (
+        name.startswith("Contents/")
+        and name.endswith(".xml")
+        and "section" in name
+    )
+
+
+def _strip_section_linesegarray(name: str, data: bytes) -> bytes:
+    if not _is_section_entry(name):
+        return data
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data
+    cleaned = strip_linesegarray(text)
+    if cleaned == text:
+        return data
+    return cleaned.encode("utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -144,6 +202,7 @@ def write_zip(
             info.extra = entry.extra
             info.internal_attr = entry.internal_attr
             data = modified.get(name, entry.data)
+            data = _strip_section_linesegarray(name, data)
             zout.writestr(info, data)
 
 

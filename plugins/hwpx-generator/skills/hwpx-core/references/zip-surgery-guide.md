@@ -134,6 +134,11 @@ xml_header = text[:root_open_end]  # XML선언 + 루트 시작 태그 전체
 - `build_hwpx.py` 또는 `pack.py` 경유 빌드에서만 cell_writer 사용 (이들은 자체적으로 네임스페이스/선언을 관리)
 - ZIP-level surgery로 편집한 파일에는 cell_writer를 **절대 실행하지 않는다**
 - linesegarray가 없어도 한글에서 정상적으로 열린다 (한글이 자동 재계산)
+- **linesegarray 제거는 `write_zip()`이 자동 수행한다**: 모든 `Contents/section*.xml`
+  엔트리에서 `strip_linesegarray()`로 stale 캐시를 제거하므로 surgery 산출물은 항상
+  linesegarray-free다. 슬롯 채우기/텍스트 치환/챕터 이식 시 원본·소스에 남아 있던
+  linesegarray가 그대로 통과하여 텍스트가 한 줄에 뭉치던 버그를 근본 차단한다.
+  → cell_writer를 수동 실행할 필요가 전혀 없다.
 
 ---
 
