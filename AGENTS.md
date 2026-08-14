@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-06-09
-**Version:** 4.0.0
+**Version:** 4.2.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -37,6 +37,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX ZIP-level surgery | `plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` | 안전한 ZIP-level 편집 (stdlib only, lxml 불필요), HwpxSurgeon 클래스 |
 | HWPX surgery 가이드 | `plugins/hwpx-generator/skills/hwpx-core/references/zip-surgery-guide.md` | 10가지 안전 규칙 명세 |
 | HWPX linesegarray 제거 (strip-only) | `plugins/hwpx-generator/skills/hwpx-core/scripts/cell_writer.py` | stale linesegarray 제거 유틸리티 (build_hwpx/pack은 기본적으로 제거, 생성 안 함) |
+| HWPX linesegarray strip (ZIP-surgery 경로) | `plugins/hwpx-generator/skills/hwpx-core/scripts/zip_surgery.py` | `write_zip()`이 `Contents/section*.xml` 기록 직전 `strip_linesegarray()`로 자동 제거 — slot_filler/section_transplant/replace_text 산출물의 자간 뭉침·텍스트 중첩 버그 차단 |
 | HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수, ZIP surgery 후 cell_writer 금지 |
 | HWPX 마크다운 파싱 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py` | Markdown → JSON blocks (Workflow 7) |
@@ -136,7 +137,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ## NOTES
 
 - **API Key**: `.env` 파일에서 `GEMINI_API_KEY` 환경변수 로드 (python-dotenv 사용)
-- **Model**: `gemini-3-pro-image-preview` for 4K 16:9 images with Korean text
+- **Model**: `gemini-3-pro-image` for 4K 16:9 images with Korean text
 - **Rate Limit**: 2-second delay between API calls
 - **ISD Output**: `output/[프로젝트명]/chapter_{1-5}/`
 - **All SKILL.md files**: Contain exhaustive workflow phases with numbered steps
