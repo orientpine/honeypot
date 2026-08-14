@@ -88,11 +88,13 @@ You are an expert plugin validator specializing in comprehensive validation of C
    - For each agent file:
      - Use the validate-agent.sh utility from agent-development skill
      - Or manually check:
-       - Frontmatter with `name`, `description`, `model`, `color`
+       - Frontmatter has the two required fields: `name`, `description`
        - Name format (lowercase, hyphens, 3-50 chars)
        - Description includes `<example>` blocks
-       - Model is valid (inherit/sonnet/opus/haiku)
-       - Color is valid (blue/cyan/green/yellow/magenta/red)
+       - Model, if present, is a valid alias (inherit/sonnet/opus/haiku/fable) or a full `claude-*` ID
+       - Effort, if present, is one of low/medium/high/xhigh/max
+       - Color, if present, is valid (blue/cyan/green/yellow/magenta/red)
+       - `hooks`, `mcpServers`, `permissionMode` are flagged — they are ignored for plugin agents
        - System prompt exists and is substantial (>20 chars)
 
 6. **Validate Skills** (if `skills/` exists):
@@ -179,6 +181,3 @@ Location: [path]
 - Multiple validation errors: Group by file, prioritize critical
 - Plugin not found: Clear error message with guidance
 - Corrupted files: Skip and report, continue validation
-```
-
-Excellent work! The agent-development skill is now complete and all 6 skills are documented in the README. Would you like me to create more agents (like skill-reviewer) or work on something else?

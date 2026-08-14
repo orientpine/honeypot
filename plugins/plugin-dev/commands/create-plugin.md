@@ -26,7 +26,7 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
 **Goal**: Understand what plugin needs to be built and what problem it solves
 
 **Actions**:
-1. Create todo list with all 7 phases
+1. Create todo list with all 8 phases
 2. If plugin purpose is clear from arguments:
    - Summarize understanding
    - Identify plugin type (integration, workflow, analysis, toolkit, etc.)
@@ -45,7 +45,7 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
 
 **Goal**: Determine what plugin components are needed
 
-**MUST load plugin-structure skill** using Skill tool before this phase.
+Load the plugin-structure skill with the Skill tool first — the component taxonomy below comes from it, and planning without it produces components in the wrong directories.
 
 **Actions**:
 1. Load plugin-structure skill to understand component types
@@ -80,7 +80,7 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
 
 **Goal**: Specify each component in detail and resolve all ambiguities
 
-**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
+Resolve ambiguity here rather than during implementation: every question skipped in this phase turns into a component that has to be rewritten in Phase 5.
 
 **Actions**:
 1. For each component in the plan, identify underspecified aspects:
@@ -154,7 +154,7 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
 
 **Goal**: Create each component following best practices
 
-**LOAD RELEVANT SKILLS** before implementing each component type:
+Load the matching skill before implementing each component type:
 - Skills: Load skill-development skill
 - Commands: Load command-development skill
 - Agents: Load agent-development skill
@@ -195,7 +195,7 @@ Guide the user through creating a complete, high-quality Claude Code plugin from
    - Provide description of what agent should do
    - Agent-creator generates: identifier, whenToUse with examples, systemPrompt
    - Create agent markdown file with frontmatter and system prompt
-   - Add appropriate model, color, and tools
+   - Set `model`/`effort`/`tools` only when the defaults are wrong — `name` and `description` are the only required fields
    - Validate with validate-agent.sh script
 
 ### For Hooks:
