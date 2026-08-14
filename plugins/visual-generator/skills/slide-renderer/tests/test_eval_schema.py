@@ -38,7 +38,7 @@ def test_evaluate_image_quality_sends_schema_via_text_parameter(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     payload = {
@@ -61,6 +61,6 @@ def test_evaluate_image_quality_sends_schema_via_text_parameter(
 
     result = openai_renderer_module.evaluate_image_quality(client, str(image_path))
 
-    assert captured["model"] == "gpt-5.5"
+    assert captured["model"] == "gpt-5.6"
     assert captured["text"] == openai_renderer_module.EVALUATION_SCHEMA
     assert result["score"] == 8.0

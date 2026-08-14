@@ -8,7 +8,7 @@ OpenAI gpt-image-2 API를 사용하여 슬라이드 프롬프트 파일에서 �
 
 설정 (CLI 옵션으로 오버라이드 가능):
     - 생성 모델: gpt-image-2 (--model)
-    - 평가 모델: gpt-5.5 → gpt-5 → gpt-4o (런타임 fallback chain, --eval-model)
+    - 평가 모델: gpt-5.6 → gpt-5.6-terra → gpt-5.6-luna (런타임 fallback chain, --eval-model)
     - 해상도: 3840x2160 (4K, --size)
     - 품질: high (--quality)
     - 출력 형식: PNG
@@ -35,13 +35,13 @@ from pathlib import Path
 from PIL import Image as PILImage
 
 DEFAULT_IMAGE_MODEL = "gpt-image-2"
-DEFAULT_EVAL_MODEL = "gpt-5.5"
+DEFAULT_EVAL_MODEL = "gpt-5.6"
 DEFAULT_IMAGE_SIZE = "3840x2160"
 DEFAULT_IMAGE_QUALITY = "high"
 OUTPUT_FORMAT = "png"
 
 # 평가 모델 fallback chain (intra-OpenAI only — AGENTS.md anti-pattern: no Gemini fallback)
-EVAL_FALLBACK_TAIL = ["gpt-5", "gpt-4o"]
+EVAL_FALLBACK_TAIL = ["gpt-5.6-terra", "gpt-5.6-luna"]
 
 # 알려진 테마 화이트리스트 (concept만 한글 면제 자격이 있음)
 KNOWN_THEMES = ("concept", "gov", "seminar", "whatif", "pitch", "comparison")
@@ -260,9 +260,9 @@ def _resolve_eval_model(client, preferred: str) -> str:
     AGENTS.md anti-pattern 준수: Gemini로의 silent fallback 절대 금지.
     Chain은 OpenAI 모델 내에서만 순회한다.
 
-    1) preferred (e.g., gpt-5.5)
-    2) gpt-5
-    3) gpt-4o
+    1) preferred (e.g., gpt-5.6)
+    2) gpt-5.6-terra
+    3) gpt-5.6-luna
     """
     global _resolved_eval_model
     if _resolved_eval_model:

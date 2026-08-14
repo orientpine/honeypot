@@ -19,7 +19,7 @@ def test_evaluate_image_quality_reports_api_errors(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     class DummyResponses:
@@ -34,7 +34,7 @@ def test_evaluate_image_quality_reports_api_errors(
     assert result["score"] == 0.0
     assert result["feedback"].startswith("품질 평가 API 오류")
     assert "text.format.name" in result["feedback"]
-    assert "[eval-error] model=gpt-5.5:" in stdout
+    assert "[eval-error] model=gpt-5.6:" in stdout
 
 
 def test_evaluate_image_quality_reports_parse_failures(
@@ -42,7 +42,7 @@ def test_evaluate_image_quality_reports_parse_failures(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     class DummyResponses:
@@ -64,7 +64,7 @@ def test_evaluate_image_quality_preserves_concept_exemption(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     payload = {
@@ -99,7 +99,7 @@ def test_eval_ok_logs_only_once_per_module_session(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     payload = {
@@ -122,7 +122,7 @@ def test_eval_ok_logs_only_once_per_module_session(
     openai_renderer_module.evaluate_image_quality(client, str(image_path))
     stdout = capsys.readouterr().out
 
-    assert stdout.count("[eval-ok] model=gpt-5.5 score=8.0") == 1
+    assert stdout.count("[eval-ok] model=gpt-5.6 score=8.0") == 1
 
 
 def test_explicit_theme_concept_overrides_low_korean_scores(
@@ -130,7 +130,7 @@ def test_explicit_theme_concept_overrides_low_korean_scores(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     # 모델이 구체적 키워드 없이도 한글 차원을 0으로 주는 상황을 재현
@@ -169,7 +169,7 @@ def test_explicit_theme_gov_does_not_inflate_korean_scores(
 ):
     image_path = _write_test_image(openai_renderer_module, tmp_path)
     monkeypatch.setattr(
-        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.5"
+        openai_renderer_module, "_resolve_eval_model", lambda *_: "gpt-5.6"
     )
 
     payload = {
@@ -264,3 +264,49 @@ def test_normalize_theme_rejects_unknown_and_auto(openai_renderer_module):
     assert n("auto") is None
     assert n(None) is None
     assert n("") is None
+
+
+def test_resolve_eval_model_falls_back_to_terra_when_default_unavailable(
+    openai_renderer_module,
+):
+    """Given gpt-5.6 이 계정에서 조회 불가, When _resolve_eval_model 호출,
+    Then 체인의 다음 후보인 gpt-5.6-terra 로 폴백한다."""
+    retrieved: list[str] = []
+
+    class DummyModels:
+        def retrieve(self, model_id):
+            retrieved.append(model_id)
+            if model_id == "gpt-5.6-terra":
+                return SimpleNamespace(id=model_id)
+            raise RuntimeError(f"model_not_found: {model_id}")
+
+    client = SimpleNamespace(models=DummyModels())
+
+    resolved = openai_renderer_module._resolve_eval_model(
+        client, openai_renderer_module.DEFAULT_EVAL_MODEL
+    )
+
+    assert resolved == "gpt-5.6-terra"
+    assert retrieved == ["gpt-5.6", "gpt-5.6-terra"]
+
+
+def test_resolve_eval_model_probes_full_chain_before_giving_up(
+    openai_renderer_module,
+):
+    """Given 체인의 모든 후보가 조회 불가, When _resolve_eval_model 호출,
+    Then gpt-5.6 → terra → luna 순서로 전부 시도하고 마지막 후보를 반환한다."""
+    retrieved: list[str] = []
+
+    class DummyModels:
+        def retrieve(self, model_id):
+            retrieved.append(model_id)
+            raise RuntimeError(f"model_not_found: {model_id}")
+
+    client = SimpleNamespace(models=DummyModels())
+
+    resolved = openai_renderer_module._resolve_eval_model(
+        client, openai_renderer_module.DEFAULT_EVAL_MODEL
+    )
+
+    assert retrieved == ["gpt-5.6", "gpt-5.6-terra", "gpt-5.6-luna"]
+    assert resolved == "gpt-5.6-luna"
