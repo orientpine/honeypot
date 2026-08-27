@@ -21,11 +21,39 @@ IMAGE_MD_RE = re.compile(r"^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$")
 CAPTION_ITALIC_RE = re.compile(r"^\s*\*그림\s+([0-9]+-[0-9]+)\s*:\s*(.*?)\*\s*$")
 
 
+CODE_SPAN_RE = re.compile(r"`([^`]+)`")
+STRIKETHROUGH_RE = re.compile(r"~~([^~]+)~~")
+LINK_RE = re.compile(r"(?<!!)\[([^\]]*)\]\(([^)\s]+)\)")
+
+
+def _link_text(match: re.Match[str]) -> str:
+    label = match.group(1).strip()
+    url = match.group(2).strip()
+    if not label:
+        return url
+    if label == url:
+        return label
+    return f"{label} ({url})"
+
+
+def strip_non_emphasis_markdown(text: str) -> str:
+    """Drop markdown syntax that conveys no emphasis, keeping every word.
+
+    A link's target is content, not syntax, so it is kept beside the label
+    rather than discarded; HWPX runs built here carry no hyperlink, and a
+    silently dropped URL cannot be recovered from the rendered document.
+    """
+    text = CODE_SPAN_RE.sub(r"\1", text)
+    text = STRIKETHROUGH_RE.sub(r"\1", text)
+    return LINK_RE.sub(_link_text, text)
+
+
 def xml_escape(text: str) -> str:
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def parse_inline_segments(text: str) -> list[dict[str, str]]:
+    text = strip_non_emphasis_markdown(text)
     token_re = re.compile(r"(\*\*[^*]+\*\*|\*[^*\n]+\*)")
     segments: list[dict[str, str]] = []
     pos = 0
@@ -65,9 +93,9 @@ def clean_text_to_segments(text: str) -> tuple[str, list[dict[str, str]]]:
 
 
 def strip_inline_markdown(text: str) -> str:
+    text = strip_non_emphasis_markdown(text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
     text = re.sub(r"\*([^*\n]+)\*", r"\1", text)
-    text = re.sub(r"`([^`]+)`", r"\1", text)
     return text
 
 
