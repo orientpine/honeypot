@@ -258,7 +258,7 @@ Markdown 서식 기호(`**`, `*`, `~~` 등)를 HWPX XML의 multi-run 구조로 �
 
 ### 변환 원칙
 
-1. Markdown 기호(`**`, `*`, `~~`, `#`, `` ` ``, `- `, `> `)는 `<hp:t>` 텍스트에 포함시키지 않는다.
+1. Markdown 기호(`**`, `*`, `~~`, `#`, `` ` ``, `- `, `> `)는 `<hp:t>` 텍스트에 포함시키지 않는다. `md_parser.py`의 `strip_non_emphasis_markdown()`이 코드스팬·취소선·링크를 제거하고, 표 셀 경로(`strip_inline_markdown`)와 문단·불릿·인용 경로(`parse_inline_segments`)가 그 한 함수를 공유한다 — 두 경로가 서로 다른 정도로 마커를 흘리던 것을 막는다. 링크는 라벨과 대상을 `라벨 (URL)`로 함께 남긴다.
 2. 서식이 바뀌는 지점마다 별도의 `<hp:run>`을 생성한다 (multi-run 분할).
 3. 예약 charPr ID 30-34는 모든 템플릿(base, gonmun, report, minutes, proposal)에 공통 정의되어 있다.
 4. 블록 레벨 Markdown(`#`, `-`, `>` 등)은 해당 기호를 제거하고 적절한 `paraPrIDRef`로 변환한다.
