@@ -1,7 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-06-09
-**Version:** 4.2.0
+**Version:** 4.3.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -41,6 +41,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 | HWPX 페이지 가드 | `plugins/hwpx-generator/skills/hwpx-core/scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 |
 | HWPX 템플릿 치환 | `plugins/hwpx-generator/skills/hwpx-templates/SKILL.md` | fix_namespaces.py 필수, ZIP surgery 후 cell_writer 금지 |
 | HWPX 마크다운 파싱 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py` | Markdown → JSON blocks (Workflow 7) |
+| HWPX 인라인 마크다운 정규화 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_parser.py` | `strip_non_emphasis_markdown()`이 코드스팬·취소선·링크를 제거. 표 셀(`strip_inline_markdown`)과 문단·불릿·인용(`parse_inline_segments`) 두 경로가 이 한 함수를 공유해 경로별로 다르게 새던 마커를 차단 |
 | HWPX XML 작성 | `plugins/hwpx-generator/skills/hwpx-core/scripts/xml_writer.py` | JSON + style config → HWPX XML fragment |
 | HWPX 이미지 임베딩 | `plugins/hwpx-generator/skills/hwpx-core/scripts/image_embedder.py` | PNG embedding into HWPX (Workflow 7) |
 | HWPX 다중 MD 병합 | `plugins/hwpx-generator/skills/hwpx-core/scripts/md_merger.py` | heading offset 자동계산, --target-level 옵션 |
