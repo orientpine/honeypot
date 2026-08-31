@@ -1,5 +1,7 @@
 # TOOLBOX PROJECT KNOWLEDGE BASE
 
+> **Tool-call encoding**: Always write Korean (and other non-ASCII) strings in tool-call parameters as literal UTF-8; never as `\uXXXX` unicode escapes.
+
 **Generated:** 2026-06-09
 **Version:** 4.3.0
 **Branch:** main
