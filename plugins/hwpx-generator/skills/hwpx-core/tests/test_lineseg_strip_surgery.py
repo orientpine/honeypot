@@ -22,6 +22,7 @@ S8: HwpxSurgeon.save() strips ALL shapes AND validate_surgery() still passes.
 
 from __future__ import annotations
 
+import shutil
 import sys
 import zipfile
 from pathlib import Path
@@ -229,3 +230,29 @@ def test_s9_validate_flags_leaked_linesegarray(tmp_path):
     assert any("linesegarray" in e for e in errors), (
         f"validate() did not flag leaked linesegarray; errors={errors}"
     )
+
+
+# --------------------------------------------------------------------------- #
+# S10: cell_writer.py --hwpx is the REPAIR path for a file that was already
+# built outside write_zip() (agent-written lxml deepcopy + raw zipfile script
+# cloning template paragraphs, which carries the template's linesegarray
+# along). It must strip every linesegarray AND stay surgery-safe: declaration,
+# xmlns, newline count, non-section bytes and compression all untouched.
+# --------------------------------------------------------------------------- #
+def test_s10_cell_writer_hwpx_mode_strips_and_stays_surgery_safe(tmp_path):
+    from cell_writer import process_hwpx_file
+
+    cloned = _para("2147483648", "템플릿 문단 복제로 딸려 온 캐시", extra=_STALE_LSA)
+    src = _make_hwpx(tmp_path / "leaked_src.hwpx", _section(cloned * 3))
+    leaked = tmp_path / "leaked.hwpx"
+    shutil.copy(src, leaked)
+    assert _read_section(leaked).count("<hp:linesegarray") == 3
+
+    removed = process_hwpx_file(leaked)
+
+    assert removed == 3
+    section = _read_section(leaked)
+    assert "linesegarray" not in section, "cell_writer --hwpx left stale linesegarray"
+    assert section.count("템플릿 문단 복제로 딸려 온 캐시") == 3
+    errors = zip_surgery.validate_surgery(src, leaked)
+    assert errors == [], f"cell_writer --hwpx broke surgery invariants: {errors}"
