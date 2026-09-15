@@ -6,18 +6,23 @@ cannot match HWP's real glyph metrics, so this utility only REMOVES the whole
 element — Hancom recomputes layout on open. Heights are never mutated.
 
 Modes:
-- XML mode: strip one section XML.
-- HWPX mode: unpack .hwpx, strip all section*.xml, repack.
+- XML mode: strip one section XML (unpacked build path; lxml is fine here).
+- HWPX mode: repair an already-built .hwpx through zip_surgery.write_zip(),
+  so the XML declaration, namespaces, newline count, non-section bytes and
+  per-entry compression stay byte-identical (surgery-safe).
 """
 
 from __future__ import annotations
 
 import argparse
-import tempfile
+import re
+import sys
 from pathlib import Path
-from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile
 
 import lxml.etree as etree
+
+sys.path.insert(0, str(Path(__file__).parent))
+from zip_surgery import read_zip, write_zip  # noqa: E402
 
 HP_NS = "http://www.hancom.co.kr/hwpml/2011/paragraph"
 HS_NS = "http://www.hancom.co.kr/hwpml/2011/section"
@@ -73,39 +78,26 @@ def process_section_file(
     return count
 
 
-def _pack_hwpx(work_dir: Path, hwpx_path: Path) -> None:
-    """Repack extracted files into HWPX format (mimetype first, ZIP_STORED)."""
-    files = sorted(
-        p.relative_to(work_dir).as_posix() for p in work_dir.rglob("*") if p.is_file()
-    )
+_LSA_OPEN = re.compile(r"<[A-Za-z_][\w.-]*:linesegarray\b")
 
-    mimetype = work_dir / "mimetype"
-    with ZipFile(hwpx_path, "w", ZIP_DEFLATED) as zf:
-        if mimetype.is_file():
-            zf.write(mimetype, "mimetype", compress_type=ZIP_STORED)
-        for rel in files:
-            if rel == "mimetype":
-                continue
-            zf.write(work_dir / rel, rel, compress_type=ZIP_DEFLATED)
+
+def _is_section_entry(name: str) -> bool:
+    return name.startswith("Contents/") and "section" in name and name.endswith(".xml")
 
 
 def process_hwpx_file(hwpx_path: Path, body_width: int = 42520) -> int:
-    """Strip HWPX in place: unpack -> strip -> repack. Returns total removed."""
+    """Strip HWPX in place via zip_surgery.write_zip(). Returns total removed."""
     if not hwpx_path.is_file():
         raise SystemExit(f"HWPX file not found: {hwpx_path}")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmp_root = Path(tmpdir)
-        with ZipFile(hwpx_path, "r") as zf:
-            zf.extractall(tmp_root)
-
-        contents = tmp_root / "Contents"
-        total = 0
-        for section in sorted(contents.glob("section*.xml")):
-            total += process_section_file(section, None, section, body_width)
-
-        _pack_hwpx(tmp_root, hwpx_path)
-        return total
+    entries, order = read_zip(hwpx_path)
+    total = sum(
+        len(_LSA_OPEN.findall(entry.data.decode("utf-8", "replace")))
+        for entry in entries
+        if _is_section_entry(entry.filename)
+    )
+    write_zip(hwpx_path, entries, order)
+    return total
 
 
 def main() -> None:

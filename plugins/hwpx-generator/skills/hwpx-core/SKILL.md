@@ -103,7 +103,7 @@ Glob: **/build_hwpx.py
 |---|---|
 | `scripts/build_hwpx.py` | 템플릿 + XML 오버라이드로 `.hwpx` 조립 |
 | `scripts/zip_surgery.py` | 기존 HWPX 안전 편집 (ZIP-level surgery, 바이트 레벨 보존) |
-| `scripts/cell_writer.py` | stale linesegarray 제거 유틸리티 (생성 안 함) |
+| `scripts/cell_writer.py` | stale linesegarray 제거 유틸리티 (생성 안 함). `--hwpx`는 `zip_surgery.write_zip()` 경유라 이미 만들어진 파일의 **surgery-safe 수리 경로** |
 | `scripts/analyze_template.py` | 레퍼런스 HWPX 구조/스타일 분석 |
 | `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | 본문/표 텍스트 추출 |
@@ -937,6 +937,16 @@ HWPX 파일이 한글에서 열리지 않을 때:
 26. **hp:pic 구조 직접 작성 금지**: hp:pic XML을 에이전트가 직접 작성하지 않는다. 반드시 `image_embedder.py`의 `make_pic_xml()`을 사용한다. 검증된 구조(pypandoc-hwpx/HwpForge)를 사용하며, 요소 순서가 중요하다.
 27. **템플릿 채우기 시 form_map.json 기반 슬롯 삽입 필수**: Workflow 7 / template-fill 경로에서 콘텐츠 삽입은 반드시 `form_mapper.py` + `hwpx-form-analyzer`가 산출한 `form_map.json`의 슬롯에만 수행한다. MD↔템플릿 영역의 즉흥적 매핑 결정은 금지한다.
 28. **빈 셀 전역 치환 금지**: `<hp:t/>` 또는 빈 런을 global `str.replace()`로 치환하지 않는다. 여러 빈 셀이 바이트-동일하므로 전역 치환은 모든 셀을 손상시킨다. 반드시 `slot_filler.py`의 paragraph-id 스코프 치환을 사용한다.
+29. **템플릿 문단 복제(deepcopy) 주의**: 양식의 기존 `<hp:p>`를 복제해 텍스트만 갈아끼우면 그 문단에 붙어 있던 `<hp:linesegarray>`가 그대로 딸려 온다(한/글 저장 양식은 문단마다 하나씩 가진다). 산출물을 `HwpxSurgeon.save()`/`write_zip()`이 아니라 자체 `zipfile` 코드로 쓰면 strip이 일어나지 않아 **표 셀 글자가 한 줄에 겹치고 행 높이가 1줄로 고정되어 잘린다**. paragraph id 충돌 등으로 `slot_filler.py`를 못 쓰고 `hp:cellAddr` 기준 자체 스크립트를 짜더라도, 최종 기록은 반드시 `write_zip()`을 거치고 `validate.py`를 통과시킨다. 이미 그렇게 만들어진 파일은 `cell_writer.py --hwpx <file>`로 수리한다(v3.17.0부터 surgery-safe).
+
+## 증상별 진단 (표 글자 잘림·뭉침)
+
+| 증상 | 원인 | 진단 | 조치 |
+|---|---|---|---|
+| 표 셀 안 여러 줄이 한 줄에 겹쳐 보이거나 셀 아래가 잘림, 행 높이가 1줄로 고정 | 템플릿 문단을 복제하며 딸려 온 stale `<hp:linesegarray>`가 산출물에 남음 (자체 zipfile 기록으로 `write_zip()` strip 우회) | `python3 scripts/validate.py out.hwpx` → `[linesegarray] ... N stale` 에러 | `python3 scripts/cell_writer.py --hwpx out.hwpx` → 재검증. 근본 수정은 산출 경로를 `HwpxSurgeon.save()`로 교체 |
+| 위 증상인데 `linesegarray` 0개 | 표 `noAdjust="1"`(고정 높이) | `validate.py --strict` | `noAdjust="0"`로 변경 |
+
+`cellSz height`는 최소 높이일 뿐이라 내용보다 작아도 한/글이 행을 늘린다. 셀 높이를 손보기 전에 linesegarray부터 확인한다.
 
 ## 빠른 실행 예시
 

@@ -119,20 +119,18 @@ xml_header = text[:root_open_end]  # XML선언 + 루트 시작 태그 전체
 
 ---
 
-## 5. cell_writer.py 사용 금지 (ZIP-level 편집 시)
+## 5. cell_writer.py: `--section`은 빌드 경로 전용, `--hwpx`는 수리 경로
 
-`cell_writer.py --hwpx`는 내부적으로 XML을 파싱 → 직렬화하므로:
+`cell_writer.py --section`(XML 모드)은 lxml 파싱 → 직렬화라 `standalone='no'` 제거·
+네임스페이스 변경·개행 삽입이 일어난다. **unpack → build/pack 경로 안에서만** 쓴다.
 
-- `standalone='no'` 제거
-- 네임스페이스 선언 변경
-- 대량의 개행/들여쓰기 추가
+`cell_writer.py --hwpx <file>`(v3.17.0~)은 `zip_surgery.read_zip()`/`write_zip()`으로
+동작하므로 선언·xmlns·개행 수·비섹션 엔트리·압축 방식을 모두 보존한다. 용도는
+**이미 만들어진 파일의 수리**다: 에이전트가 양식 문단을 deepcopy해 텍스트만 바꾸고
+자체 `zipfile` 코드로 기록해 stale linesegarray가 남은 파일(표 셀 글자 겹침·잘림)을
+이 명령 한 번으로 고친 뒤 `validate.py`로 재확인한다. (v3.16.0 이전 `--hwpx`는
+lxml 재패키징이라 surgery 파일을 깨뜨렸다.)
 
-이 세 가지가 동시에 발생하여 파일을 깨뜨린다.
-
-### 대안
-
-- `build_hwpx.py` 또는 `pack.py` 경유 빌드에서만 cell_writer 사용 (이들은 자체적으로 네임스페이스/선언을 관리)
-- ZIP-level surgery로 편집한 파일에는 cell_writer를 **절대 실행하지 않는다**
 - linesegarray가 없어도 한글에서 정상적으로 열린다 (한글이 자동 재계산)
 - **linesegarray 제거는 `write_zip()`이 자동 수행한다**: 모든 `Contents/section*.xml`
   엔트리에서 `strip_linesegarray()`로 stale 캐시를 제거하므로 surgery 산출물은 항상
