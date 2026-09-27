@@ -2,8 +2,8 @@
 
 > **Tool-call encoding**: Always write Korean (and other non-ASCII) strings in tool-call parameters as literal UTF-8; never as `\uXXXX` unicode escapes.
 
-**Generated:** 2026-06-09
-**Version:** 4.4.0
+**Generated:** 2026-09-27
+**Version:** 4.4.1
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.

@@ -2,34 +2,164 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 특허 분석, 개발 도구
 
-**Version**: 4.4.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 4.4.1 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 > **📦 투자·금융 플러그인 분리 안내**: DC형 퇴직연금 포트폴리오, 주식/ETF 상담, 기관급 주식 분석, 거시경제 분석 등 **투자·금융 관련 플러그인은 별도 저장소로 이전**되었습니다 → **[orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)**. 이 저장소(`honeypot`)에서는 더 이상 `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis` 플러그인을 제공하지 않습니다.
 
 ---
 
-## 빠른 시작
+## 데이터 처리 범위 및 보안 안내
 
-**Step 1.** 마켓플레이스 등록
+> **입력한 문서 내용과 프롬프트는 외부 API로 전송됩니다.** 이 마켓플레이스의 플러그인은 Claude Code 위에서 동작하므로, 대화에 입력하거나 읽어 들인 문서 내용은 Claude Code가 사용하는 모델 API(Anthropic)로 전송되며, 일부 플러그인은 추가로 아래 외부 API를 호출합니다. **대외비·개인정보·보안 등급이 있는 문서는 입력하지 마세요.** 생성된 결과물은 로컬 `output/` 폴더에만 저장되며, 이 저장소 자체는 어떤 데이터도 수집하지 않습니다.
+
+| 플러그인 | 추가 외부 전송 대상 | 전송 내용 |
+|----------|-------------------|----------|
+| 모든 플러그인 | Claude Code 모델 API | 대화 내용, 읽어 들인 입력 문서 |
+| isd-generator (figure), visual-generator | Gemini API (`GEMINI_API_KEY`) | 이미지 생성 프롬프트(텍스트) |
+| visual-generator (`renderer: openai`) | OpenAI API (`OPENAI_API_KEY`) | 이미지 생성 프롬프트 + 품질 평가용 생성 이미지 |
+| patent-trend-analyzer | KIPRIS API | 특허 검색 키워드 |
+| link-curator (`submit: true`) | GitHub (HoneyCombo 저장소) | URL, 한국어 요약, 태그 |
+
+---
+
+## 설치 가이드
+
+> 명령어 표기 규칙: `bash` 블록은 **터미널(PowerShell/cmd/bash)** 에서, `/`로 시작하는 명령은 **Claude Code 세션 안**에서 입력합니다. 프롬프트 기호(`$`, `>`)는 붙이지 않습니다.
+
+**Step 0.** 사전 준비 — Node.js 18 이상, Claude Code 설치 및 로그인
 
 ```bash
-/plugin marketplace add /path/to/honeypot
+npm install -g @anthropic-ai/claude-code
+claude
 ```
 
-**Step 2.** 플러그인 호출
+**Step 1.** 저장소 받기
 
 ```bash
-# 시각자료 생성
-/visual-generator:visual-generate 발표 자료를 만들어줘
-입력 문서: ./proposal.md
-테마: seminar
+git clone https://github.com/orientpine/honeypot.git
+```
 
-# 특허 동향 분석
-/patent-trend-analyzer:analyze-patents "자율주행 라이다" 주제로 특허 동향 분석을 해줘
+**Step 2.** Claude Code 세션 안에서 마켓플레이스 등록 (**절대경로** 사용)
 
-# 연구계획서 생성
+```
+/plugin marketplace add C:\Users\<사용자>\honeypot     # Windows
+/plugin marketplace add /home/<사용자>/honeypot        # macOS / Linux
+```
+
+**Step 3.** 필요한 플러그인 설치 (마켓플레이스 이름은 `honeypot`)
+
+```
+/plugin install hwpx-generator@honeypot
+/plugin install isd-generator@honeypot
+```
+
+**Step 4.** 설치 확인 — `/plugin` 을 입력하면 설치된 플러그인 목록이 표시됩니다. 명령어는 `/` 를 입력하면 자동완성 목록에 나타납니다.
+
+<details>
+<summary>보안 프록시 환경에서 설치할 때</summary>
+
+원내 보안 프록시가 있는 환경에서는 `npm`, `git`, Claude Code, 이미지 생성 스크립트(Python)가 모두 같은 프록시 환경변수를 참조합니다. 설치 전에 터미널에서 먼저 설정하세요.
+
+```powershell
+# PowerShell
+$env:HTTPS_PROXY = "http://proxy.example.com:8080"
+$env:HTTP_PROXY  = "http://proxy.example.com:8080"
+# 사설 인증서를 쓰는 프록시라면
+$env:NODE_EXTRA_CA_CERTS = "C:\certs\corp-root-ca.pem"
+```
+
+```cmd
+:: cmd.exe
+set HTTPS_PROXY=http://proxy.example.com:8080
+set HTTP_PROXY=http://proxy.example.com:8080
+```
+
+```bash
+# git 전용 프록시 (clone 이 멈추는 경우)
+git config --global http.proxy http://proxy.example.com:8080
+```
+
+`ECONNREFUSED`, `ETIMEDOUT`, `ENOTFOUND`, `self signed certificate in certificate chain` 오류는 대부분 프록시·인증서 설정 문제입니다. 아래 [자주 묻는 질문](#자주-묻는-질문)의 오류 표를 참조하세요.
+
+</details>
+
+---
+
+## 퀵스타트 — 직군별 첫 실행 예시
+
+### 연구직: 연구계획서 생성 (isd-generator)
+
+1. `input-template` 스킬 양식에 맞춰 통합 입력 파일을 작성합니다 (프로젝트 개요, 연구 목표, 기술 내용).
+2. 입력 파일이 있는 폴더에서 Claude Code를 실행하고 아래를 입력합니다.
+
+```
 /isd-generator:isd-generate 연구계획서를 생성해줘
 ```
+
+3. 결과는 `output/[프로젝트명]/chapter_3/` 부터 순서대로(3 → 1 → 2 → 4 → 5) 생성됩니다. 각 챕터 본문 전에 검증문서(`chapter{N}_research_verification.md`)가 먼저 만들어지며, 본문의 인용·수치가 어떤 근거로 작성되었는지 확인하는 용도입니다.
+
+### 행정직: 협조문·기안 양식 채우기 (hwpx-generator)
+
+1. 채울 한글 양식(`.hwpx`)을 작업 폴더에 둡니다 (`.hwp` 는 한/글에서 `.hwpx` 로 다른 이름 저장).
+2. Claude Code를 실행하고 아래를 입력합니다.
+
+```
+/hwpx-generator:hwpx-generate 이 템플릿에 출장 기안 내용을 채워줘
+template_hwpx: ./출장기안_양식.hwpx
+```
+
+3. 결과는 `./output/hwpx/` 에 저장됩니다. 병합 셀이 많은 표는 한/글에서 열어 표 구조와 글꼴을 한 번 확인하세요.
+
+### 명령어와 결과물 위치 한눈에 보기
+
+결과물은 **Claude Code를 실행한 폴더(현재 작업 디렉토리)** 를 기준으로 저장됩니다.
+
+| 플러그인 | 명령어 | 기본 결과물 위치 |
+|----------|--------|-----------------|
+| isd-generator | `/isd-generator:isd-generate` | `output/[프로젝트명]/chapter_{1-5}/` |
+| hwpx-generator | `/hwpx-generator:hwpx-generate` | `./output/hwpx/` |
+| report-generator | `/report-generator:report-generate` | `./output/` |
+| visual-generator | `/visual-generator:visual-generate` | `output_folder` 로 지정 (필수) |
+| paper-style-generator | `/paper-style-generator:paper-style-generate` | `./my-marketplace/plugins/{name}-paper-skills/` |
+| patent-trend-analyzer | `/patent-trend-analyzer:analyze-patents` | `output/` |
+| accelerated-learner | `/accelerated-learner:accelerated-learn` | `./output/{subject_name}/` |
+| link-curator | `/link-curator:curate-links` | `output_dir` 로 지정 (필수) |
+| general-agents | `/general-agents:interview` | 커맨드 실행 시 안내 (산출물 경로 절 참조) |
+| plugin-dev | `/plugin-dev:create-plugin` | 생성할 플러그인 폴더 |
+
+---
+
+## 자주 묻는 질문
+
+**Q. `/plugin marketplace add` 가 실패하거나 플러그인이 보이지 않습니다.**
+상대경로 대신 절대경로를 사용하세요. 이미 등록한 적이 있다면 캐시를 지운 뒤 다시 등록합니다: `~/.claude/plugins/cache` (Windows: `%USERPROFILE%\.claude\plugins\cache`) 삭제 → `/plugin marketplace remove honeypot` → `/plugin marketplace add <절대경로>`. 프록시 환경이면 [설치 가이드](#설치-가이드)의 프록시 설정을 먼저 확인하세요.
+
+**Q. 명령어 이름을 기억하기 어렵습니다.**
+Claude Code에서 `/` 만 입력하면 설치된 명령어가 자동완성으로 나타납니다. 형식은 항상 `/{플러그인}:{명령어}` 이며, 전체 목록은 위 [명령어와 결과물 위치 표](#명령어와-결과물-위치-한눈에-보기)에 있습니다.
+
+**Q. 결과물이 어디에 저장되었는지 모르겠습니다.**
+Claude Code를 실행한 폴더 기준의 `output/` 아래에 저장됩니다. 플러그인별 기본 경로는 위 표를 참조하고, `output_dir` / `output_folder` 파라미터로 바꿀 수 있습니다.
+
+**Q. 실행 중 진행 상태가 보이지 않고 오래 걸립니다.**
+오케스트레이터 커맨드는 Phase/Step 단위로 하위 에이전트를 호출하므로 단계 사이에 출력이 없을 수 있습니다. 5개 챕터 생성이나 이미지 렌더링은 수십 분이 걸릴 수 있고, Gemini 이미지 생성은 1장당 40초 이상 소요될 수 있습니다(API 호출 간 2초 대기 포함).
+
+**Q. 오류 메시지가 영어라 원인을 모르겠습니다.**
+
+| 오류 메시지에 포함된 문구 | 원인 | 조치 |
+|--------------------------|------|------|
+| `GEMINI_API_KEY`, `OPENAI_API_KEY`, `API key not found` | API 키 미설정 | 작업 폴더의 `.env` 파일에 `GEMINI_API_KEY=...` 형식으로 저장 (OpenAI 경로는 `OPENAI_API_KEY`) |
+| `ECONNREFUSED`, `ETIMEDOUT`, `ENOTFOUND` | 네트워크·프록시 차단 | `HTTPS_PROXY` / `HTTP_PROXY` 환경변수 설정 후 재실행 |
+| `self signed certificate in certificate chain`, `CERTIFICATE_VERIFY_FAILED` | 프록시 사설 인증서 | `NODE_EXTRA_CA_CERTS` (Node) / `REQUESTS_CA_BUNDLE`, `SSL_CERT_FILE` (Python)에 사내 루트 인증서 경로 지정 |
+| `ModuleNotFoundError: No module named 'google'` / `'openai'` / `'PIL'` | Python 패키지 미설치 | `pip install google-genai Pillow python-dotenv` (OpenAI 경로는 `pip install openai`) |
+| `Unrecognized keys` (plugin.json) | 플러그인 매니페스트에 허용되지 않은 필드 | [docs/agents/marketplace-rules.md](./docs/agents/marketplace-rules.md)의 스키마 준수 절차대로 필드 제거 |
+| `Scanned PDF - OCR required` (paper-style-generator) | 텍스트 레이어가 없는 스캔 PDF | OCR 처리한 PDF 또는 텍스트 레이어가 있는 원본 PDF 사용 |
+| `429`, `RESOURCE_EXHAUSTED`, `rate limit` | API 호출 한도 초과 | 잠시 후 재실행, `max_images` 로 생성 장수 제한 |
+
+**Q. 작성 중인 문서가 외부로 전송되나요?**
+네. 위 [데이터 처리 범위 및 보안 안내](#데이터-처리-범위-및-보안-안내)의 표를 참조하세요. 대외비 문서는 입력하지 않는 것을 원칙으로 합니다.
+
+**Q. 문의나 개선 요청은 어디에 남기나요?**
+[GitHub Issues](https://github.com/orientpine/honeypot/issues)에 남겨 주세요. 반복되는 질문은 이 FAQ에 추가됩니다.
 
 ---
 
@@ -80,6 +210,7 @@
 - **검증문서 필수**: 각 Chapter 본문 작성 전 검증문서가 자동 생성됨
 - **이미지 자동 생성**: Gemini API로 캡션 기반 이미지 생성
 - **출력 경로**: `output/[프로젝트명]/chapter_{1-5}/`
+- **전문 용어 검토 권장**: 기계·재료 등 분야별 전문 용어는 생성 후 사용자 검토가 필요하며, 검증문서(`chapter{N}_research_verification.md`)는 본문 수치·인용의 근거를 확인하는 용도입니다
 
 <details>
 <summary>구성 요소 (6 Agents · 1 Command · 11 Skills)</summary>
@@ -112,6 +243,7 @@
 - **도메인 자동 감지**: ROS2, AI/ML, 범용
 - **최대 9개 챕터**: 자료 부족 챕터는 자동 생략 (최소 3개 보장)
 - **4단계 문장 패턴**: What → Why → How → Impact
+- **원문 대조 검토 필수**: 챕터 매핑 과정에서 연구노트에 없는 내용이 생성될 수 있으므로, quality-checker 결과와 함께 연구노트 원문을 대조해 근거 없는 문장을 걸러내세요
 
 | 파라미터 | 필수 | 설명 | 예시 |
 |----------|:----:|------|------|
@@ -168,6 +300,7 @@ images_dir: ./images/
 - **Workflow 7**: 마크다운 → JSON 블록 파싱 → HWPX XML 작성 → 이미지 임베딩 (md_parser.py, xml_writer.py, image_embedder.py)
 - **챕터 이식**: `section_transplant.py`로 HWPX 간 챕터 단위 콘텐츠 이식 + 스타일 자동 리매핑
 - **양식 파악 (Phase 2.5)**: 정부 양식 HWPX에서 빈 슬롯/라벨 인접 관계를 자동 분석하여 form_map.json을 생성하고 정확한 위치에 내용을 삽입합니다.
+- **표 구조 확인 권장**: 병합 셀이 많은 양식(협조문·출장기안 등)은 결과물을 한/글에서 열어 표 병합과 글꼴 스타일이 유지되었는지 확인하세요
 
 | 파라미터 | 필수 | 설명 |
 |----------|:----:|------|
@@ -221,6 +354,8 @@ images_dir: ./images/
 | `max_images` | - | OpenAI 경로 비용 cap (정수) | `30` |
 
 > **OpenAI 경로 사용 시**: gpt-image-2 high 1536x1024 ≈ $0.165/image + 평가 비용 ~$0.05/image. 기본 30장 cap (`max_images`로 조절). `OPENAI_API_KEY` 환경변수 + `pip install openai>=1.0` 필요.
+
+> **소요 시간과 한글 확인**: Gemini 렌더링은 이미지 1장당 40초 이상 걸릴 수 있습니다(API 호출 간 2초 대기 포함). 렌더링 후 자동 품질 평가를 거치지만, 한글 텍스트의 오탈자는 최종 이미지에서 직접 확인하세요.
 
 > **테마**: `concept` · `gov` · `seminar` · `whatif` · `pitch` · `comparison`
 >
@@ -358,6 +493,7 @@ PDF 폴더: ./papers/
 
 - **PDF 논문 10편 이상** (동일 저자 또는 동일 분야)
 - **MinerU** 설치 필요 (PDF → Markdown 변환용)
+- **텍스트 레이어가 있는 PDF** 사용 — 스캔 이미지 PDF는 변환에 실패하므로(`Scanned PDF - OCR required`) OCR 처리 후 입력
 
 ### 워크플로우
 
@@ -1071,6 +1207,20 @@ honeypot/
 
 ---
 
+## 알려진 제한 및 향후 확장
+
+베타테스터 사용경험 조사(2026-09, 1~4차)에서 확인된 항목입니다. 설치 진입 장벽, 생성 결과의 근거 확인, 오류 발생 시 안내 세 가지가 공통 핵심이었고, 이 중 문서로 해결 가능한 부분은 이번 README에 반영했습니다. 아래는 코드 변경이 필요해 남겨 둔 항목입니다.
+
+| 항목 | 현재 상태 | 계획 |
+|------|-----------|------|
+| 생성 문장의 근거 표기 (report-generator) | 생성 문장이 어떤 연구노트 구간에서 왔는지 표시하지 않음 | 문단 단위로 출처 구간을 표기하고 근거 없는 문장은 별도 표시 |
+| 네트워크·프록시 오류의 한국어 안내 | 원문 오류 메시지가 그대로 노출됨 | 자주 발생하는 오류 유형부터 원인·조치 안내 문구 추가 (임시 대응: [FAQ 오류 표](#자주-묻는-질문)) |
+| 실행 진행 상태 표시 | 오케스트레이터 단계 사이에 출력이 없음 | 실행 단계와 저장 경로를 단계마다 출력 |
+| 부서별 양식 추가 (출장기안·구매요청 등) | hwpx-generator 는 사용자 템플릿 방식으로 대응 | 자주 쓰는 양식을 기본 템플릿으로 추가 |
+| 분야별 전문 용어 사전 (isd-generator) | 기계·재료 분야 용어 정확도는 사용자 검토에 의존 | 분야별 용어 사전 보강 |
+
+---
+
 ## 참고 링크
 
 - [Agent Skills Specification](https://agentskills.io/specification)
@@ -1082,6 +1232,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 4.4.1 | 2026-09-27 | README 사용성 개선 — 베타테스터 사용경험 조사(1~4차 회의, 2026-09) 결과 반영. 상단에 **데이터 처리 범위 및 보안 안내**(외부 API 전송 대상·전송 내용 표, 대외비 문서 입력 금지) 신설, `빠른 시작`을 **설치 가이드**(명령어 표기 규칙, 절대경로 등록, `/plugin install x@honeypot`, 보안 프록시·사설 인증서 환경변수 설정)와 **직군별 퀵스타트**(연구직 isd-generator / 행정직 hwpx-generator)로 재구성, **명령어·결과물 위치 표** 및 **자주 묻는 질문**(등록 실패, 명령어 자동완성, 저장 위치, 진행 상태·소요 시간, 오류 메시지 원인·조치 표, 외부 전송 여부, 문의 채널) 추가. 플러그인 섹션에 사용 주의(isd 용어 검토, report-generator 원문 대조, hwpx 표 구조 확인, paper-style 스캔 PDF 조건, visual-generator 소요 시간·한글 확인) 추가, **알려진 제한 및 향후 확장** 섹션 신설. marketplace.json `metadata.version`이 4.2.0에 머물러 있던 불일치를 4.4.1로 동기화. |
 | 4.4.0 | 2026-09-15 | hwpx-generator v3.17.0: **템플릿 문단 복제(deepcopy) 경로의 stale linesegarray 누출 수리 경로 추가** — 에이전트가 양식 `<hp:p>`를 복제해 텍스트만 바꾸고 자체 `zipfile`로 기록하면 `write_zip()` strip을 우회해 문단마다 붙은 `<hp:linesegarray>`가 남고, 한/글이 표 셀의 여러 줄을 한 줄 위치에 겹쳐 그리며 행 높이를 1줄로 고정해 글자가 잘리던 문제(2026-09-15 청화팜 결과보고서, 489개 누출). `cell_writer.py --hwpx`가 lxml 재패키징 대신 `zip_surgery.read_zip()/write_zip()`을 경유하도록 바꿔 선언·xmlns·개행·비섹션 바이트·압축을 보존하는 **surgery-safe 수리 명령**이 됨. SKILL.md 규칙 29(복제 시 linesegarray 동반, 최종 기록은 반드시 `write_zip()`+`validate.py`) + 증상별 진단표(`cellSz`는 최소 높이라 원인이 아님, linesegarray부터 확인), zip-surgery-guide §5 재작성, S10 회귀 테스트. |
 | 4.3.0 | 2026-08-27 | hwpx-generator v3.16.0: **인라인 마크다운 마커가 `<hp:t>` 본문으로 새던 문제 근본 수정** — `SKILL.md`·`hwpx-builder.md`·`hwpx-generate.md`가 세 곳에서 동일하게 "`**`·`*`·`~~`·`` ` ``·`#`·`-`·`>`를 `<hp:t>`에 남기지 않는다"고 계약하고 있었으나, 실제로 문단 XML을 만드는 경로(`clean_text_to_segments` → `parse_inline_segments`)는 `(\*\*…\*\*|\*…\*)`만 토큰화하고 나머지를 `plain` 세그먼트로 그대로 흘려보냈다. 백틱을 처리하는 `strip_inline_markdown()`은 표 셀 경로에서만 쓰여, **한 저장소 안에 정리 함수가 둘인데 서로 다르고 문서에 도달하는 쪽이 약한 쪽**이었다 — 문단·불릿·인용문에는 코드스팬·취소선·링크가, 표 셀에는 취소선·링크가 원문 그대로 출력됐다. `strip_non_emphasis_markdown()`을 단일 정규화기로 도입해 두 경로가 공유하도록 통합(코드스팬·취소선 제거, 링크는 `[라벨](URL)` → `라벨 (URL)`로 라벨과 대상을 모두 보존 — HWPX run에 하이퍼링크가 없어 URL을 버리면 산출물에서 복구 불가). `(?<!!)` 룩비하인드로 인라인 이미지 `![alt](path)`가 링크로 오인되지 않게 보호. 회귀 테스트 `test_md_parser_inline_markers.py` 6종 신규(RED→GREEN: 문단·불릿/인용·표 셀 3종이 실패 후 통과, 강조 세그먼트 보존·내용 무손실·이미지 오인식 가드 3종은 과도 제거 방지). hwpx-core 스위트 194 passed (+6, dev/ 데이터 부재 10건은 사전 존재 환경 의존 실패로 무관). |
 | 4.2.0 | 2026-08-14 | **전 플러그인 모델 식별자 마이그레이션 + 프롬프트 현대화** — Gemini 이미지 모델을 GA `gemini-3-pro-image`로 전환(`gemini-3-pro-image-preview`가 2026-06-25 종료됨에 따른 필수 이전, `generate_slide_images.py` `MODEL_NAME` 및 `generate_images.py` 기본값, `GEMINI_MODEL` 환경변수 오버라이드는 유지). OpenAI 평가 체인을 `gpt-5.6 → gpt-5.6-terra → gpt-5.6-luna`로 이전(`DEFAULT_EVAL_MODEL`/`EVAL_FALLBACK_TAIL`), **이미지 생성 경로 `gpt-image-2`는 현행 모델이므로 변경 없음**. 35개 플러그인 에이전트의 `model:` 별칭을 재조정(`opus` 9 · `sonnet` 21 · `haiku` 3 · `inherit` 2, 전 구간 별칭만 사용하고 full ID 고정 없음)하고, 추론 부담이 큰 에이전트 9종에 신규 `effort:` 프론트매터를 도입. 품질 판단이 개입하는 `prompt-validator`·`patent-searcher`는 리뷰 결과 `sonnet` 유지. `plugin-dev`의 `validate-agent.sh`를 현행 프론트매터 스펙에 맞게 갱신(`fable`·full ID 허용, `model`/`color` optional, `effort` 검증)하고 authoring 문서(`agent-development` SKILL, `docs/agents/marketplace-rules.md`, `resource/agents_build_manual.md`)를 동기화. 에이전트를 보유한 9개 플러그인의 프롬프트 문구 현대화 (`link-curator`·`obsidian-skills`·`pptx-design-styles`·`wiki-gen`은 감사 결과 변경 불필요, `hwpx-generator`는 별도 작업 진행 중이라 제외). |
@@ -1094,7 +1245,6 @@ honeypot/
 | 3.32.0 | 2026-04-28 | visual-generator v3.7.0: 두 렌더링 경로(Gemini, OpenAI gpt-image-2) 모두 출력 포맷을 JPEG → **PNG**로 통일. Gemini 스크립트는 응답 mime이 PNG이면 raw bytes 직접 저장, 그 외(JPEG/WEBP)는 PIL로 PNG 재인코딩 + RGBA 알파 채널 보존; OpenAI 스크립트는 `OUTPUT_FORMAT="png"` 강제 + 평가 data URL `image/png` 동기화. 출력 파일명/임시 파일/문서(`renderer-agent.md`, `renderer-agent-openai.md`, `visual-generate.md`, `slide-renderer/SKILL.md`) 및 테스트 픽스처(JPEG → PNG) 일괄 동기화. pytest 11/11 통과. |
 | 3.31.3 | 2026-04-28 | README 테마 갤러리에 OpenAI gpt-image-2 렌더링 결과 6장 추가 — 기존 Gemini 6장과 좌우 비교 테이블 형태로 재구성, 동일 프롬프트(스마트 팩토리 6테마)를 양쪽 엔진으로 렌더링한 산출물을 `assets/theme-examples/images-openai/0[1-6]_theme_*.jpg`(3840×2160, quality=high, JPEG)로 저장. 평가 결과 1차 시도부터 6/6 통과(평균 8.2~9.6, 한글 8~10, 환각 8~10). 이미지 src 경로를 절대 raw URL(`058be21` 커밋 해시)에서 저장소 상대경로(`./assets/...`)로 통일하여 submodule/체크아웃에서도 정상 표시. |
 | 3.31.2 | 2026-04-28 | visual-generator v3.6.2: concept 테마 면제 로직을 `theme` 명시적 인자 기반으로 강화 — `evaluate_image_quality(..., theme=...)` 추가, `process_prompts(..., default_theme=...)` 및 CLI `--theme` 옵션 추가, 파일명(`NN_theme_<NAME>.md`) 자동 추출(`_extract_theme_from_filename`)과 `_resolve_theme()` 우선순위(explicit > filename > default > keyword fallback) 도입, 평가 시스템 프롬프트에 concept 면제 조건 명시, rubric 문서 갱신, 관련 단위 테스트 5종 추가. 라이브 검증: 1차 시도부터 한글 차원 10/10, 평균 9.3 통과(이전 5.5→재시도 패턴 해소), 이미지 생성 1회로 retry/비용 ~50% 절감. |
-
 | 3.31.1 | 2026-04-28 | visual-generator v3.6.1: OpenAI Responses API Structured Outputs schema 수정 — `text.format`에 `name`/`schema`를 직접 배치하여 gpt-5.5 이미지 평가가 실제로 동작하도록 수정, 평가 API/파싱 실패를 `[eval-error]`로 명시 로그화, 첫 성공 평가를 `[eval-ok]`로 1회 로깅, `slide-renderer` pytest 추가 및 root `pytest.ini` discovery 등록. 기존 gpt-image-2 생성 경로와 Gemini 경로는 유지. |
 | 3.31.0 | 2026-04-28 | visual-generator v3.6.0: OpenAI 경로 4K default 전환 및 운영 개선 — `IMAGE_SIZE` 1536x1024 → 3840x2160 (공식 gpt-image-2 제약 준수: 양변 16배수, max edge 3840px, total pixels ≤ 8,294,400), CLI 옵션 4종 추가(`--size --quality --model --eval-model`), 평가 모델 런타임 fallback chain(`gpt-5.5 → gpt-5 → gpt-4o`, intra-OpenAI only AGENTS.md anti-pattern 준수), 비용 추정 라인/테이블 전량 제거 후 OpenAI 콘솔 안내 교체, `OUTPUT_FORMAT == "jpeg"` 타웰톨로지 제거 + PIL 검증 단계는 유지, openai SDK lazy-load로 `--help`가 패키지 없이 동작. Gemini 경로 byte-identical 보존 (`generate_slide_images.py` / `renderer-agent.md` / theme-* SKILL.md 변경 없음). |
 | 3.30.0 | 2026-04-26 | visual-generator v3.5.0: OpenAI gpt-image-2 기반 렌더링 경로 추가 — `renderer` (gemini\|openai) + `renderer_choice_timing` (pre\|post\|none) 파라미터로 사용자 선택, 별도 에이전트 (renderer-agent-openai) + 별도 스크립트 (generate_slide_images_openai.py), 5D 평가 (Structured Outputs json_schema strict, gpt-5.5), 1536x1024 quality=high JPEG 출력, --max-images 비용 cap (기본 30), OPENAI_API_KEY 미설정 hard-fail. 기존 Gemini 경로 byte-identical 보존 (백워드 호환). |
