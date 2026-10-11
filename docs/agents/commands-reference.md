@@ -7,11 +7,13 @@
 # Generate images from prompts (requires google-genai, Pillow)
 python plugins/isd-generator/skills/core-resources/scripts/generate_images.py \
   --prompts-dir [path]/prompts/ \
-  --output-dir [path]/figures/
+  --output-dir [path]/figures/ \
+  [--model gemini-3-pro-image|gemini-nano-banana-2.1]   # 기본 gemini-3-pro-image, GEMINI_MODEL env도 동일 허용값
 
 # Generate slide images (Gemini)
 python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images.py \
-  --prompts-dir [path] --output-dir [path]
+  --prompts-dir [path] --output-dir [path] \
+  [--model gemini-3-pro-image|gemini-nano-banana-2.1]   # 기본 gemini-3-pro-image, GEMINI_MODEL env도 동일 허용값
 
 # Generate slide images (OpenAI gpt-image-2)
 python plugins/visual-generator/skills/slide-renderer/scripts/generate_slide_images_openai.py \
