@@ -32,7 +32,7 @@ def test_model_name_defaults_to_ga_model_when_env_is_unset(
     module = _load_generate_images_module()
 
     # Then: it selects the GA model
-    assert module.MODEL_NAME == "gemini-3-pro-image"
+    assert module.MODEL_NAME == "gemini-nano-banana-2.1"
 
 
 def test_model_name_uses_gemini_model_env_override(

@@ -42,7 +42,7 @@ Glob: **/generate_slide_images.py
 | Python | 3.8+ |
 | 패키지 | google-genai, Pillow |
 | 환경변수 | `GEMINI_API_KEY` 필수 |
-| 모델 | gemini-3-pro-image |
+| 모델 | gemini-nano-banana-2.1 |
 | 출력 | 4K, 16:9 비율 PNG |
 
 ## 스크립트 출력 해석
