@@ -23,8 +23,11 @@ scripts/generate_images.py
 ```bash
 python scripts/generate_images.py \
   --prompts-dir [프롬프트 폴더 경로] \
-  --output-dir [이미지 출력 폴더 경로]
+  --output-dir [이미지 출력 폴더 경로] \
+  [--model gemini-3-pro-image|gemini-nano-banana-2.1]
 ```
+
+모델 기본값은 `gemini-3-pro-image`이며, `--model` 또는 `GEMINI_MODEL`로 `gemini-nano-banana-2.1`을 선택할 수 있습니다. 그 외 값은 오류(exit 2)로 거부됩니다.
 
 **Step 2. 상대경로 실패 시 Glob 폴백**
 ```

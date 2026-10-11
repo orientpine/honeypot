@@ -6,7 +6,7 @@ Gemini API를 사용하여 프롬프트 파일에서 이미지를 생성하는 �
     python generate_images.py --prompts-dir [프롬프트 폴더] --output-dir [출력 폴더]
 
 설정:
-    - 모델: gemini-nano-banana-2.1
+    - 모델: gemini-3-pro-image (기본값, --model 또는 GEMINI_MODEL로 gemini-nano-banana-2.1 선택 가능)
     - 해상도: 4K
     - 비율: 16:9
     - 사고모드: 활성화
@@ -24,7 +24,9 @@ from google.genai import types
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-nano-banana-2.1")
+DEFAULT_MODEL = "gemini-3-pro-image"
+SUPPORTED_MODELS = ("gemini-3-pro-image", "gemini-nano-banana-2.1")
+MODEL_NAME = os.environ.get("GEMINI_MODEL", DEFAULT_MODEL)
 
 if not GEMINI_API_KEY:
     print("[에러] GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -192,7 +194,8 @@ def main():
         "--model",
         "-m",
         default=None,
-        help="Gemini 모델명 (기본값: GEMINI_MODEL 환경변수 또는 gemini-nano-banana-2.1)",
+        choices=SUPPORTED_MODELS,
+        help=f"Gemini 모델명 (기본값: GEMINI_MODEL 환경변수 또는 {DEFAULT_MODEL})",
     )
 
     args = parser.parse_args()
@@ -201,6 +204,11 @@ def main():
     global MODEL_NAME
     if args.model:
         MODEL_NAME = args.model
+    if MODEL_NAME not in SUPPORTED_MODELS:
+        parser.error(
+            f"지원하지 않는 GEMINI_MODEL 값: {MODEL_NAME} "
+            f"(허용: {', '.join(SUPPORTED_MODELS)})"
+        )
 
     if not os.path.isdir(args.prompts_dir):
         print(f"[에러] 프롬프트 폴더가 존재하지 않습니다: {args.prompts_dir}")
