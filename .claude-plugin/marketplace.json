@@ -5,7 +5,7 @@
     "url": "https://github.com/orientpine"
   },
   "metadata": {
-    "version": "4.4.1",
+    "version": "4.5.0",
     "description": "ISD 연구계획서 생성, 시각자료 프롬프트, 특허 분석, 문서 생성을 위한 Claude Code 플러그인 마켓플레이스"
   },
   "plugins": [
@@ -28,7 +28,7 @@
       "name": "isd-generator",
       "source": "./plugins/isd-generator",
       "description": "ISD 연구계획서 전체 생성 (오케스트레이터 + 5개 Chapter + 이미지)",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "strict": true,
       "agents": [
         "./agents/chapter1.md",
@@ -44,7 +44,7 @@
       "name": "visual-generator",
       "source": "./plugins/visual-generator",
       "description": "시각자료 프롬프트 생성 및 이미지 렌더링 (4-block v3.0.0, Kurzgesagt/Gov/Seminar/WhatIf/Pitch/Comparison + Renderer)",
-      "version": "3.8.0",
+      "version": "3.8.1",
       "strict": true,
       "agents": [
         "./agents/content-organizer.md",
