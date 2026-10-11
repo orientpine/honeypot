@@ -19,7 +19,8 @@ scripts/generate_slide_images.py
 ```bash
 python scripts/generate_slide_images.py \
   --prompts-dir [프롬프트 폴더 경로] \
-  --output-dir [이미지 출력 폴더 경로]
+  --output-dir [이미지 출력 폴더 경로] \
+  [--model gemini-3-pro-image|gemini-nano-banana-2.1]
 ```
 
 **Step 2. 상대경로 실패 시 Glob 폴백**
@@ -42,7 +43,7 @@ Glob: **/generate_slide_images.py
 | Python | 3.8+ |
 | 패키지 | google-genai, Pillow |
 | 환경변수 | `GEMINI_API_KEY` 필수 |
-| 모델 | gemini-nano-banana-2.1 |
+| 모델 | gemini-3-pro-image (기본값). `--model` 또는 `GEMINI_MODEL`로 gemini-nano-banana-2.1 선택 가능, 그 외 값은 오류(exit 2) |
 | 출력 | 4K, 16:9 비율 PNG |
 
 ## 스크립트 출력 해석

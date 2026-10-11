@@ -26,7 +26,7 @@ skills: [figure-guide, image-reference-guide]
 
 ## Overview
 
-국책과제 연구계획서(ISD) 출력 문서에서 이미지 캡션을 추출하고, 전문적인 PPT 스타일 인포그래픽 이미지를 자동 생성하는 에이전트이다. Gemini API(gemini-nano-banana-2.1 모델)를 활용하여 정부 발표자료 수준의 고품질 이미지를 생성한다.
+국책과제 연구계획서(ISD) 출력 문서에서 이미지 캡션을 추출하고, 전문적인 PPT 스타일 인포그래픽 이미지를 자동 생성하는 에이전트이다. Gemini API(기본 gemini-3-pro-image 모델, 옵션 gemini-nano-banana-2.1)를 활용하여 정부 발표자료 수준의 고품질 이미지를 생성한다.
 
 핵심 기능:
 - 모든 출력 문서에서 `<이미지명>` 형식의 캡션 자동 추출

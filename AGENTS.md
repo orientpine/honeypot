@@ -3,7 +3,7 @@
 > **Tool-call encoding**: Always write Korean (and other non-ASCII) strings in tool-call parameters as literal UTF-8; never as `\uXXXX` unicode escapes.
 
 **Generated:** 2026-10-11
-**Version:** 4.5.0
+**Version:** 4.6.0
 **Branch:** main
 
 > **Reading guide**: 이 파일은 항상 자동 로드됩니다. 상세 지침은 작업 상황에 따라 [`docs/agents/`](./docs/agents/) 하위 파일을 필요할 때만 읽으세요. 어느 파일을 읽어야 하는지는 아래 [📚 상황별 지침 인덱스](#-상황별-지침-인덱스)를 참고하십시오.
@@ -140,7 +140,7 @@ AI agent skill/plugin toolbox for Korean government R&D proposal (ISD) auto-gene
 ## NOTES
 
 - **API Key**: `.env` 파일에서 `GEMINI_API_KEY` 환경변수 로드 (python-dotenv 사용)
-- **Model**: `gemini-nano-banana-2.1` for 4K 16:9 images with Korean text
+- **Model**: `gemini-3-pro-image` (default) for 4K 16:9 images with Korean text; `gemini-nano-banana-2.1` selectable via `--model` or `GEMINI_MODEL` (other values are rejected)
 - **Rate Limit**: 2-second delay between API calls
 - **ISD Output**: `output/[프로젝트명]/chapter_{1-5}/`
 - **All SKILL.md files**: Contain exhaustive workflow phases with numbered steps

@@ -2,7 +2,7 @@
 
 > Claude Code 플러그인 마켓플레이스 — AI 에이전트 기반 문서 생성, 시각자료, 특허 분석, 개발 도구
 
-**Version**: 4.5.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
+**Version**: 4.6.0 &nbsp;|&nbsp; **Author**: [Baekdong Cha](https://github.com/orientpine) &nbsp;|&nbsp; **License**: MIT
 
 > **📦 투자·금융 플러그인 분리 안내**: DC형 퇴직연금 포트폴리오, 주식/ETF 상담, 기관급 주식 분석, 거시경제 분석 등 **투자·금융 관련 플러그인은 별도 저장소로 이전**되었습니다 → **[orientpine/pension_sema_guide](https://github.com/orientpine/pension_sema_guide)**. 이 저장소(`honeypot`)에서는 더 이상 `investments-portfolio`, `stock-consultation`, `equity-research`, `macro-analysis` 플러그인을 제공하지 않습니다.
 
@@ -369,7 +369,7 @@ content-organizer → content-reviewer → prompt-designer → prompt-validator 
 
 ### 테마 갤러리 — Gemini vs OpenAI gpt-image-2
 
-동일한 프롬프트(스마트 팩토리, 6개 테마)를 두 렌더링 엔진으로 비교한 결과입니다. 좌측은 **Gemini** (당시 렌더링에 사용한 `gemini-3-pro-image-preview`, 5504×3072 PNG — 이 preview 모델은 2026-06-25 종료되었고, 현재 파이프라인은 `gemini-nano-banana-2.1`을 사용합니다), 우측은 **OpenAI gpt-image-2** (3840×2160 JPEG, quality=high).
+동일한 프롬프트(스마트 팩토리, 6개 테마)를 두 렌더링 엔진으로 비교한 결과입니다. 좌측은 **Gemini** (당시 렌더링에 사용한 `gemini-3-pro-image-preview`, 5504×3072 PNG — 이 preview 모델은 2026-06-25 종료되었고, 현재 파이프라인은 GA 후속 모델 `gemini-3-pro-image`를 기본으로 사용하며 `--model`/`GEMINI_MODEL`로 `gemini-nano-banana-2.1`을 선택할 수 있습니다), 우측은 **OpenAI gpt-image-2** (3840×2160 JPEG, quality=high).
 
 <table>
 <thead>
@@ -1232,6 +1232,7 @@ honeypot/
 
 | 버전 | 날짜 | 변경 내용 |
 |:----:|:----:|----------|
+| 4.6.0 | 2026-10-11 | Gemini 이미지 모델 기본값을 Pro 티어 `gemini-3-pro-image`로 원복하고 `gemini-nano-banana-2.1`(Flash 티어 후속)을 선택 옵션으로 추가 — visual-generator v3.9.0 `generate_slide_images.py`에 `--model`/`-m` 플래그와 `GEMINI_MODEL` 환경변수 오버라이드 신설, isd-generator v1.2.0 `generate_images.py` 기본값 원복. 두 스크립트 모두 허용값(`gemini-3-pro-image`, `gemini-nano-banana-2.1`) 외의 `--model`·`GEMINI_MODEL` 값을 사용법 오류(exit 2)로 거부. 테스트는 기본값·env 옵션·`--model` 옵션·비허용값 거부를 검증(23 passed). |
 | 4.5.0 | 2026-10-11 | Gemini 이미지 모델을 최신 GA `gemini-nano-banana-2.1`(Nano Banana 2.1)로 전환 — visual-generator v3.8.1 `generate_slide_images.py` `MODEL_NAME`, isd-generator v1.1.1 `generate_images.py` 기본값. Gemini API 변경 이력이 `gemini-3.1-flash-image`를 deprecated 처리하고 `gemini-nano-banana-2.1`로 이전을 안내함에 따른 갱신. 요청 형식(`generate_content`, `response_modalities=["TEXT", "IMAGE"]`, `ImageConfig(aspect_ratio="16:9", image_size="4K")`)은 그대로 유지. 이전 Pro 모델이 필요하면 isd-generator는 `GEMINI_MODEL=gemini-3-pro-image` 또는 `--model`로 지정 가능. |
 | 4.4.1 | 2026-09-27 | README 사용성 개선 — 베타테스터 사용경험 조사(1~4차 회의, 2026-09) 결과 반영. 상단에 **데이터 처리 범위 및 보안 안내**(외부 API 전송 대상·전송 내용 표, 대외비 문서 입력 금지) 신설, `빠른 시작`을 **설치 가이드**(명령어 표기 규칙, 절대경로 등록, `/plugin install x@honeypot`, 보안 프록시·사설 인증서 환경변수 설정)와 **직군별 퀵스타트**(연구직 isd-generator / 행정직 hwpx-generator)로 재구성, **명령어·결과물 위치 표** 및 **자주 묻는 질문**(등록 실패, 명령어 자동완성, 저장 위치, 진행 상태·소요 시간, 오류 메시지 원인·조치 표, 외부 전송 여부, 문의 채널) 추가. 플러그인 섹션에 사용 주의(isd 용어 검토, report-generator 원문 대조, hwpx 표 구조 확인, paper-style 스캔 PDF 조건, visual-generator 소요 시간·한글 확인) 추가, **알려진 제한 및 향후 확장** 섹션 신설. marketplace.json `metadata.version`이 4.2.0에 머물러 있던 불일치를 4.4.1로 동기화. |
 | 4.4.0 | 2026-09-15 | hwpx-generator v3.17.0: **템플릿 문단 복제(deepcopy) 경로의 stale linesegarray 누출 수리 경로 추가** — 에이전트가 양식 `<hp:p>`를 복제해 텍스트만 바꾸고 자체 `zipfile`로 기록하면 `write_zip()` strip을 우회해 문단마다 붙은 `<hp:linesegarray>`가 남고, 한/글이 표 셀의 여러 줄을 한 줄 위치에 겹쳐 그리며 행 높이를 1줄로 고정해 글자가 잘리던 문제(2026-09-15 청화팜 결과보고서, 489개 누출). `cell_writer.py --hwpx`가 lxml 재패키징 대신 `zip_surgery.read_zip()/write_zip()`을 경유하도록 바꿔 선언·xmlns·개행·비섹션 바이트·압축을 보존하는 **surgery-safe 수리 명령**이 됨. SKILL.md 규칙 29(복제 시 linesegarray 동반, 최종 기록은 반드시 `write_zip()`+`validate.py`) + 증상별 진단표(`cellSz`는 최소 높이라 원인이 아님, linesegarray부터 확인), zip-surgery-guide §5 재작성, S10 회귀 테스트. |
