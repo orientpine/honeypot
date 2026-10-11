@@ -6,7 +6,7 @@ Gemini API를 사용하여 슬라이드 프롬프트 파일에서 이미지를 �
     python generate_slide_images.py --prompts-dir [프롬프트 폴더] --output-dir [출력 폴더]
 
 설정:
-- 모델: gemini-3-pro-image
+- 모델: gemini-nano-banana-2.1
     - 해상도: 4K
     - 비율: 16:9
     - 사고모드: 활성화
@@ -32,7 +32,7 @@ from PIL import Image as PILImage
 
 # API 설정
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-MODEL_NAME = "gemini-3-pro-image"
+MODEL_NAME = "gemini-nano-banana-2.1"
 SYSTEM_INSTRUCTION = """You are an expert visual designer creating high-quality presentation slides. Follow these quality requirements strictly:
 
 Korean Typography: All Korean text must be rendered with crisp, perfectly formed characters using heavy-weight Gothic-style sans-serif fonts (Bold/ExtraBold weight 700+). Each Korean syllable block must be complete and legible. Never use thin or light Korean serif fonts.

@@ -36,4 +36,4 @@ def test_model_name_targets_ga_release(monkeypatch: MonkeyPatch) -> None:
 
     model_name = module.__dict__["MODEL_NAME"]
     assert isinstance(model_name, str)
-    assert model_name == "gemini-3-pro-image"
+    assert model_name == "gemini-nano-banana-2.1"
